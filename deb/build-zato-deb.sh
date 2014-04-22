@@ -27,7 +27,7 @@ while([ -h "${CURDIR}" ]) do CURDIR=`$RL "${CURDIR}"`; done
 N="/dev/null";pushd .>$N;cd `dirname ${CURDIR}`>$N;CURDIR=`pwd`;popd>$N
 
 SOURCE_DIR=$CURDIR/package-base
-ARCH=`uname -i`
+ARCH=`dpkg --print-architecture`
 
 ZATO_ROOT_DIR=/opt/zato
 ZATO_TARGET_DIR=$ZATO_ROOT_DIR/$ZATO_VERSION
