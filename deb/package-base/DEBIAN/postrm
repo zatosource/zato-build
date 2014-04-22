@@ -1,0 +1,51 @@
+#! /bin/sh
+
+set -e
+
+case "$1" in  
+    remove)
+    :
+	# Removing Zato User
+	if grep -s -q "^zato:" /etc/passwd; then
+	    echo "Removing user zato..."
+	    userdel zato 2>&1 >/dev/null | grep -i  'error' || true
+	else
+	    echo "User zato already removed."
+	fi
+    ;;
+    purge)
+    :
+	#remove dirs with custom content
+	rm -Rf /opt/zato || true
+    ;;
+    disappear | upgrade | failed-upgrade | abort-upgrade)
+    :
+    ;;
+    *)
+	echo "$0: Unrecognized option \`$1'" 1>&2
+	exit 1
+    ;;
+esac
+
+
+exit 0
+
+
+
+
+
+
+
+
+
+# postrm script for zato
+#
+#if [ "$1" = "purge" ]; then
+#    rm -rf /opt/zato
+#    if id zato | grep -q "groups=.*\(zato\)"; then
+#            deluser -group zato --quiet --system zato
+#    fi
+#    /usr/sbin/userdel zato
+#fi
+#
+#exit 0

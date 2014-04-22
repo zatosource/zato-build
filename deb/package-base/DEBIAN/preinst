@@ -1,0 +1,23 @@
+#!/bin/sh
+
+set -e
+case "$1" in    
+    install)
+	# creating zato group if he isn't already there
+	if ! getent group zato >/dev/null; then
+	    addgroup zato
+	fi
+	# creating zato user if he isn't already there
+	if ! getent passwd zato >/dev/null; then
+	    adduser --ingroup zato --home /opt/zato --shell /bin/bash --gecos "Zato ESB" --disabled-password zato
+	fi
+        ;;
+    upgrade|abort-upgrade)
+        ;;
+    *)
+	echo "$0: Unrecognized option \`$1'" 1>&2
+        exit 0
+        ;;
+esac
+
+exit 0
