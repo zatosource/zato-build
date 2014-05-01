@@ -11,13 +11,10 @@ function symlink_py {
     ln -s `python -c 'import '${1}', os.path, sys; sys.stdout.write(os.path.dirname('${1}'.__file__))'` $CURDIR/zato_extra_paths
 }
 
-#rm -rf $CURDIR/bin
 rm -rf $CURDIR/develop-eggs
 rm -rf $CURDIR/downloads
 rm -rf $CURDIR/eggs
-#rm -rf $CURDIR/include
 rm -rf $CURDIR/.installed.cfg
-#rm -rf $CURDIR/lib
 rm -rf $CURDIR/parts
 rm -rf $CURDIR/zato_extra_paths
 
@@ -33,11 +30,6 @@ mkdir $CURDIR/zato_extra_paths
 symlink_py 'M2Crypto'
 symlink_py 'numpy'
 symlink_py 'scipy'
-
-#sudo pip-python install distribute==0.6.49
-#sudo pip-python install virtualenv==1.9.1
-
-#virtualenv .
 
 $CURDIR/bin/python bootstrap.py -v 1.7.0
 $CURDIR/bin/buildout
