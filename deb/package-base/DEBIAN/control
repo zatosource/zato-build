@@ -1,5 +1,5 @@
 Package: zato
-Version: VER
+Version: VER-RELEASE_NAME
 Architecture: ARCH
 Maintainer: Dariusz Suchojad <dsuch@zato.io>
 Installed-Size: SIZE
