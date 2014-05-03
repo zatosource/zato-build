@@ -3,7 +3,7 @@ Version: VER
 Architecture: ARCH
 Maintainer: Dariusz Suchojad <dsuch@zato.io>
 Installed-Size: SIZE
-Depends: git, bzr, gfortran, haproxy, libatlas3gf-base, libblas3gf, libevent-2.0-5, libgfortran3, liblapack3gf, libpq5, libyaml-0-2, libxml2, libxslt1.1, libumfpack5.4.0, openssl, python2.7, python-m2crypto, python-numpy, python-pip, python-scipy, python-zdaemon, swig, uuid, uuid-runtime
+Depends: git, bzr, gfortran, haproxy, libatlas3gf-base, libblas3gf, libevent-2.0-5, libgfortran3, liblapack3gf, libpq5, libyaml-0-2, libxml2, libxslt1.1, libumfpackLIBUMFPACK_VERSION, openssl, python2.7, python-m2crypto, python-numpy, python-pip, python-scipy, python-zdaemon, swig, uuid, uuid-runtime
 Provides: zato
 Section: ESB
 Priority: optional

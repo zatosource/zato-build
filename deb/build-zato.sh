@@ -32,6 +32,17 @@ ARCH=`dpkg --print-architecture`
 ZATO_ROOT_DIR=/opt/zato
 ZATO_TARGET_DIR=$ZATO_ROOT_DIR/$ZATO_VERSION
 
+# Default libumfpack version on Debian 7 and Ubuntu 12.04
+LIBUMFPACK_VERSION=5.4.0
+
+# Ubuntu 14.04 needs a different one
+if command -v lsb_release > /dev/null; then
+    release=$(lsb_release -r | cut -f2)
+    if [[ "$release" == "14.04" ]]; then
+        LIBUMFPACK_VERSION=5.6.2
+    fi
+fi
+
 echo Building `lsb_release -is` DEB zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH
 
 function cleanup {
@@ -56,9 +67,14 @@ function checkout {
 function install_zato {
 
     cd $ZATO_TARGET_DIR/code
-
     cp ../LICENSE.txt .
     cp ../licenses_3rd_party.txt .
+
+    cd $ZATO_TARGET_DIR
+    shopt -s dotglob
+    mv code/* .
+    shopt -u dotglob
+    rm -Rf code
 
     bash ./install.sh
 
@@ -76,14 +92,21 @@ function build_deb {
     mkdir $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH
     mkdir $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/opt
     mkdir $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH$ZATO_ROOT_DIR
+
     cp -r $ZATO_TARGET_DIR $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH$ZATO_TARGET_DIR
     cp -r $SOURCE_DIR/DEBIAN $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH
     cd $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH
+
     find . -path './DEBIAN' -prune -o -type f -exec md5sum {} + | sed -e 's/.\/opt/opt/g' > $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/md5sums
     SIZE=`du -sk $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/opt |awk '{print $1}'`
+
     sed "s/Version: VER/Version: $ZATO_VERSION-$PACKAGE_VERSION/g" $SOURCE_DIR/DEBIAN/control | sed "s/Architecture: ARCH/Architecture: $ARCH/g" | sed "s/Installed-Size: SIZE/Installed-Size: $SIZE/g" > $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/control
+    sed -i 's/LIBUMFPACK_VERSION/$LIBUMFPACK_VERSION/' $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/control
+    sed -i "s/ZATO_VERSION/$ZATO_VERSION/" $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/postinst
+
     cd $CURDIR/BUILDROOT
     dpkg-deb --build zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH
+
     mv $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH.deb $CURDIR
 }
 
@@ -91,4 +114,3 @@ cleanup
 checkout
 install_zato
 build_deb
-
