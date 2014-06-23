@@ -18,7 +18,7 @@ rm -rf $CURDIR/.installed.cfg
 rm -rf $CURDIR/parts
 rm -rf $CURDIR/zato_extra_paths
 
-sudo yum install git bzr gcc-gfortran haproxy \
+sudo yum -y install git bzr gcc-gfortran haproxy \
     gcc-c++ atlas-devel atlas blas-devel  \
     libevent-devel libgfortran lapack-devel lapack \
     libpqxx-devel libyaml-devel libxml2-devel libxslt-devel suitesparse \
