@@ -45,7 +45,7 @@ rm -rf /opt/%{name}
 
 %post
 echo "export PATH
-PATH="/opt/zato/${version}/code/bin:$PATH"">>/opt/zato/.bashrc
+PATH="/opt/zato/%{version}/code/bin:$PATH"">>/opt/zato/.bashrc
 
 source /opt/zato/.bashrc
 
