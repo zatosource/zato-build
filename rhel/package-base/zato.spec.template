@@ -30,12 +30,18 @@ a commercial-friendly LGPL license. Think:
 » Growing community around the project
 
 %pre
+if [ "$1" = 1 ] ; then
 /usr/bin/getent group zato || /usr/sbin/groupadd zato
 /usr/bin/getent passwd zato || /usr/sbin/useradd -g zato -d /opt/zato -s /bin/bash zato
+fi
+exit 0
 
 %postun
-rm -rf /opt/%{name}
-/usr/sbin/userdel zato
+if [ "$1" = 0 ] ; then
+ rm -rf /opt/%{name}/%{version}
+ /usr/sbin/userdel zato
+fi
+exit 0
 
 %prep
 
