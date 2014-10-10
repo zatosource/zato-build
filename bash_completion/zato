@@ -1,0 +1,256 @@
+## Zato bash completion.
+
+have zato &&
+_zato()
+{
+   local cur prev opts
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    prev2="${COMP_WORDS[COMP_CWORD-2]}"
+
+    first="${COMP_WORDS[1]}"
+    second="${COMP_WORDS[2]}"
+
+    opts_help="-h --help --store-log --verbose --store-config"
+    opts_help_short="-h --help"
+    opts_command="ca check-config component-version create decrypt delete encrypt enmasse info from-config quickstart service start stop update"
+    opts_ca="create"
+    opts_ca_create="ca lb_agent server web_admin"
+    opts_ca_create_ca="--organization --organizational-unit --locality --state-or-province --country --common-name"
+    opts_create="cluster load_balancer odb  server user  web_admin"
+    opts_invoke="--payload --headers --channel --data-format --transport --url-path --max-cid-repr --max-response-repr --async --expiration"
+    opts_enmasse="--server-url --export-local --export-odb --import --ignore-missing-defs --replace-odb-objects --input --cols_width"
+    opts_create_add="--odb_host --odb_port --odb_user --odb_db_name --postgresql_schema --odb_password "
+    case $prev in
+     ca|lb_agent|server|web_admin)
+        if [[ ${prev2} == create ]]; then
+            if [[ ${cur} == -* ]] ; then
+	            COMPREPLY=( $(compgen -W "${opts_ca_create_ca} ${opts_help}" -- ${cur}) )
+		else
+		    COMPREPLY=( $(compgen -d -- ${cur}) )
+	    	fi
+            return 0
+        else
+            COMPREPLY=( $( compgen -W "${opts_ca}  ${opts_help}" -- $cur ) )
+            return 0
+        fi
+        ;;
+     create)
+        case $prev2 in
+	    ca)
+	        COMPREPLY=( $( compgen -W "${opts_ca_create}  ${opts_help}" -- $cur ) )
+        	return 0
+		;;
+	    quickstart)
+		if [[ ${cur} == -* ]] ; then
+		    COMPREPLY=( $( compgen -W "${opts_help} ${opts_create_add} --kvdb_password --cluster_name --servers" -- $cur ) )
+		else
+		    COMPREPLY=( $(compgen -d -- ${cur}) )
+		fi
+        	return 0
+		;;
+	    zato)
+    		COMPREPLY=( $( compgen -W "${opts_create}  ${opts_help}" -- $cur ) )
+        	return 0
+		;;
+	esac
+        ;;
+     cluster)
+	if [[ ${cur} == -* ]] ; then
+	    COMPREPLY=( $( compgen -W "${opts_help} ${opts_create_add} --tech_account_password" -- $cur ) )
+	fi
+	return 0
+	;;
+     load_balancer)
+	if [[ ${cur} == -* ]] ; then
+	    COMPREPLY=( $( compgen -W "${opts_help}" -- $cur ) )
+	else
+	    COMPREPLY=( $(compgen -f -- ${cur}) )
+	fi
+        return 0
+	;;
+     odb)
+	if [[ ${cur} == -* ]] ; then
+	    COMPREPLY=( $( compgen -W "${opts_help} ${opts_create_add}" -- $cur ) )
+	fi
+	return 0
+	;;
+     server)
+	if [[ ${cur} == -* ]] ; then
+	    COMPREPLY=( $( compgen -W "${opts_help} ${opts_create_add} --kvdb_password " -- $cur ) )
+	else
+	    COMPREPLY=( $(compgen -f -- ${cur}) )
+	fi
+        return 0
+	;;
+     user)
+	if [[ ${cur} == -* ]] ; then
+	    COMPREPLY=( $( compgen -W "${opts_help}" -- $cur ) )
+	else
+	    COMPREPLY=( $(compgen -d -- ${cur}) )
+	fi
+        return 0
+	;;
+     web_admin)
+	if [[ ${cur} == -* ]] ; then
+	    COMPREPLY=( $( compgen -W "${opts_help} ${opts_create_add} --tech_account_password" -- $cur ) )
+	else
+	    COMPREPLY=( $(compgen -f -- ${cur}) )
+	fi
+	;;
+     check-config|component-version)
+	if [[ ${cur} == -* ]] ; then
+	    COMPREPLY=( $(compgen -W "${opts_help}" -- ${cur}) )
+	else
+	    COMPREPLY=( $(compgen -d -- ${cur}) )
+	fi
+	return 0
+	;;
+     decrypt|encrypt)
+	if [[ ${cur} == -* ]] ; then
+	    COMPREPLY=( $(compgen -W "${opts_help} --secret" -- ${cur}) )
+	else
+	    COMPREPLY=( $(compgen -f -- ${cur}) )
+	fi
+	return 0
+	;;
+     info)
+	if [[ ${cur} == -* ]] ; then
+	    COMPREPLY=( $(compgen -W "${opts_help} --format --cols_width" -- ${cur}) )
+	else
+	    COMPREPLY=( $(compgen -d -- ${cur}) )
+	fi
+	return 0
+        ;;
+     enmasse)
+	if [[ ${cur} == -* ]] ; then
+	    COMPREPLY=( $(compgen -W "${opts_help} ${opts_enmasse}" -- ${cur}) )
+	else
+	    COMPREPLY=( $(compgen -f -- ${cur}) )
+	fi
+	return 0
+	;;
+    --format)
+	if [[ ${cur} == -* ]] ; then
+            COMPREPLY=( $(compgen -W "${opts_help} --cols_width" -- ${cur}) )
+	else
+	    COMPREPLY=( $(compgen -d -- ${cur}) )
+    	fi
+	return 0
+        ;;
+    from-config)
+	if [[ ${cur} == -* ]] ; then
+            COMPREPLY=( $(compgen -W "${opts_help}" -- ${cur}) )
+	else
+	    COMPREPLY=( $(compgen -f -- ${cur}) )
+    	fi
+	return 0
+	;;
+    start|stop)
+	if [[ ${cur} == -* ]] ; then
+            COMPREPLY=( $(compgen -W "${opts_help}" -- ${cur}) )
+	else
+	    COMPREPLY=( $(compgen -d -- ${cur}) )
+    	fi
+	return 0
+	;;
+    update)
+	COMPREPLY=( $( compgen -W "${opts_help} crypto password openid" -- $cur ) )
+	return 0
+	;;
+    password|crypto)
+	if [[ ${cur} == -* ]] ; then
+            COMPREPLY=( $(compgen -W "${opts_help}" -- ${cur}) )
+	else
+	    COMPREPLY=( $(compgen -f -- ${cur}) )
+    	fi
+	return 0
+	;;
+    quickstart)
+	COMPREPLY=( $( compgen -W "${opts_help} create" -- $cur ) )
+	return 0
+	;;
+    service)
+	COMPREPLY=( $( compgen -W "${opts_help} invoke" -- $cur ) )
+	return 0
+	;;
+    invoke)
+	if [[ ${cur} == -* ]] ; then
+            COMPREPLY=( $(compgen -W "${opts_help} ${opts_invoke}" -- ${cur}) )
+	else
+	    COMPREPLY=( $(compgen -f -- ${cur}) )
+    	fi
+	return 0
+	;;
+     -h|--help|--verbose)
+        return 0
+        ;;
+     --store-log|--store-config)
+	COMPREPLY=( $(compgen -d -- ${cur}) )
+	return 0
+	;;
+     --organization|--organizational-unit|--locality|--state-or-province|--country|--common-name)
+	return 0
+	;;
+     *)
+	case $prev2 in
+	    --organization|--organizational-unit|--locality|--state-or-province|--country|--common-name)
+		if [[ ${cur} == -* ]] ; then
+	            COMPREPLY=( $(compgen -W "${opts_ca_create_ca} ${opts_help}" -- ${cur}) )
+		else
+		    COMPREPLY=( $(compgen -d -- ${cur}) )
+	    	fi
+		return 0
+	    ;;
+	    check-config|component-version)
+		return 0
+	    ;;
+	    decrypt|encrypt)
+		COMPREPLY=( $(compgen -W "${opts_help} --secret" -- ${cur}) )
+		return 0
+	    ;;
+	    --secret)
+		if [[ ${cur} == -* ]] ; then
+	            COMPREPLY=( $(compgen -W "${opts_help}" -- ${cur}) )
+		else
+		    COMPREPLY=( $(compgen -f -- ${cur}) )
+	    	fi
+		return 0
+	    ;;
+	    --payload|--headers|--channel|--data-format|--transport|--url-path|--max-cid-repr|--max-response-repr|--async|--expiration)
+	    if [[ ${cur} == -* ]] ; then
+	            COMPREPLY=( $(compgen -W "${opts_invoke} ${opts_help}" -- ${cur}) )
+		else
+		    COMPREPLY=( $(compgen -d -- ${cur}) )
+	    	fi
+		return 0
+	    ;;
+	    --server-url|--export-local|--export-odb|--import|--ignore-missing-defs|--replace-odb-objects|--input)
+	    if [[ ${cur} == -* ]] ; then
+	            COMPREPLY=( $(compgen -W "${opts_enmasse} ${opts_help}" -- ${cur}) )
+		else
+		    COMPREPLY=( $(compgen -d -- ${cur}) )
+	    	fi
+		return 0
+	    ;;
+	    --odb_host|--odb_port|--odb_user|--odb_db_name|--postgresql_schema|--odb_password|--tech_account_password)
+	    if [[ ${cur} == -* ]] ; then
+	            COMPREPLY=( $(compgen -W "${opts_create_add} ${opts_help}" -- ${cur}) )
+	    	fi
+		return 0
+	    ;;
+	    *)
+		if [[ $prev != "zato" ]]; then
+		COMPREPLY=( $(compgen -W "${opts_help}" -- ${cur}) )
+		return 0
+		fi
+	    ;;
+	esac
+        ;;
+   esac
+
+   COMPREPLY=( $(compgen -W "${opts_command} ${opts_help_short} --version" -- ${cur}) )
+}
+complete -F _zato zato
+
