@@ -39,6 +39,7 @@ exit 0
 %postun
 if [ "$1" = 0 ] ; then
  rm -rf /opt/%{name}/%{version}
+ rm -rf /etc/bash_completion.d/zato
  /usr/sbin/userdel zato
 fi
 exit 0
@@ -47,6 +48,7 @@ exit 0
 
 %files
 %defattr(-,zato,zato,-)
+/etc
 /opt/zato
 
 %post
