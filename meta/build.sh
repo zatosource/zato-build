@@ -43,7 +43,7 @@ else
   systems=`ls -d $PATTERN 2>&1`
   if echo $systems | grep -q "ls:"
    then
-    echo Unrecognized pattern parameter
+    echo Unrecignized pattern parameter
     exit 4
   fi
 fi
@@ -72,9 +72,12 @@ function checkout_zato {
 
   for system in $systems
    do
-    if echo "$system" | grep -q redhat
+    if echo "$system" | grep -q redhat-6
      then
-	PACKAGE="rhel"
+	PACKAGE="rhel6"
+     elif echo "$system" | grep -q redhat-7
+      then
+	PACKAGE="rhel7"
      elif echo "$system" | grep -q "debian\|ubuntu"
       then
 	PACKAGE="deb"
@@ -95,12 +98,15 @@ function build_packages {
    do
     cd $CURDIR/vm/$system
     vagrant up
-    echo "Copying Zato packages to output directories"
+    echo "Copying zato packages to output catalogues"
     if ls $CURDIR/vm/$system/synced/deb/*.deb >/dev/null 2>&1; then
 	/bin/cp $CURDIR/vm/$system/synced/deb/*.deb $CURDIR/output/$system
     fi
-    if ls $CURDIR/vm/$system/synced/rhel/*.rpm >/dev/null 2>&1; then
-	/bin/cp $CURDIR/vm/$system/synced/rhel/*.rpm $CURDIR/output/$system
+    if ls $CURDIR/vm/$system/synced/rhel6/*.rpm >/dev/null 2>&1; then
+	/bin/cp $CURDIR/vm/$system/synced/rhel6/*.rpm $CURDIR/output/$system
+    fi
+    if ls $CURDIR/vm/$system/synced/rhel7/*.rpm >/dev/null 2>&1; then
+	/bin/cp $CURDIR/vm/$system/synced/rhel7/*.rpm $CURDIR/output/$system
     fi
     vagrant halt
    done

@@ -15,8 +15,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provision "shell", inline: "yum -y install git gcc make openssl-devel postgresql-devel sqlite-devel libev libev-devel libffi libffi-devel bzip2 bzip2-devel"
   config.vm.synced_folder "./synced/", "/opt/tmp2"
   config.vm.provision :shell do |shell|
-      shell.inline = "/opt/tmp2/rhel/build-zato.sh $*"
+      shell.inline = "/opt/tmp2/rhel6/build-zato.sh $*"
       shell.args = ["ARGS"]
   end
-  config.vm.provision "shell", inline: "cp /root/rpmbuild/RPMS/x86_64/zato-RPMVER.el6.x86_64.rpm /opt/tmp2/rhel"
+  config.vm.provision "shell", inline: "cp /root/rpmbuild/RPMS/x86_64/zato-RPMVER.el6.x86_64.rpm /opt/tmp2/rhel6"
 end
