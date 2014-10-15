@@ -21,13 +21,23 @@
           <description>Git branch to pull Zato sources from</description>
           <defaultValue></defaultValue>
         </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
+        <hudson.model.ChoiceParameterDefinition>
           <name>DISTRIBUTION</name>
-          <description>Linux distribution name as specified in names of directories under ./vm/.
-
-Alternatively, pass &quot;all&quot; to start building packages for all distributions in ./vm/.</description>
-          <defaultValue></defaultValue>
-        </hudson.model.StringParameterDefinition>
+          <description>Choose a Linux distribution to build a package for. Alternatively, you can choose &quot;all&quot; to build packages for all distributions in a single operation.</description>
+          <choices class="java.util.Arrays$ArrayList">
+            <a class="string-array">
+              <string>all</string>
+              <string>debian-7-32</string>
+              <string>debian-7-64</string>
+              <string>redhat-6-32</string>
+              <string>redhat-6-64</string>
+              <string>ubuntu-12.04-32</string>
+              <string>ubuntu-12.04-64</string>
+              <string>ubuntu-14.04-32</string>
+              <string>ubuntu-14.04.64</string>
+            </a>
+          </choices>
+        </hudson.model.ChoiceParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
   </properties>
