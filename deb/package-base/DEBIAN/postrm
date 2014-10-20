@@ -17,6 +17,7 @@ case "$1" in
     :
 	#remove dirs with custom content
 	rm -Rf /opt/zato || true
+	rm -Rf /etc/bash_completion.d/zato
     ;;
     disappear | upgrade | failed-upgrade | abort-upgrade)
     :
