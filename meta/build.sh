@@ -43,7 +43,7 @@ else
   systems=`ls -d $PATTERN 2>&1`
   if echo $systems | grep -q "ls:"
    then
-    echo Unrecignized pattern parameter
+    echo Unrecognized pattern parameter
     exit 4
   fi
 fi
@@ -51,7 +51,7 @@ echo Building packages zato-$RELEASE_VERSION-$PACKAGE_VERSION for $systems
 }
 
 function cleanup {
-echo "Cleaning synced catalogues..."
+echo "Cleaning up synced directories..."
 for system in $systems
  do
   cd $CURDIR/vm/$system
@@ -98,7 +98,7 @@ function build_packages {
    do
     cd $CURDIR/vm/$system
     vagrant up
-    echo "Copying zato packages to output catalogues"
+    echo "Copying Zato packages to output directories"
     if ls $CURDIR/vm/$system/synced/deb/*.deb >/dev/null 2>&1; then
 	/bin/cp $CURDIR/vm/$system/synced/deb/*.deb $CURDIR/output/$system
     fi
