@@ -1,0 +1,7 @@
+Origin: https://zato.io
+Label: Zato Repository
+Codename: wheezy
+Architectures: amd64 i386 source
+Components: main
+Description: Zato Repository
+SignWith: 
