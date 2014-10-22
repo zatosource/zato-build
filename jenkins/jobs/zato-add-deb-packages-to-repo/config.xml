@@ -39,23 +39,26 @@
     </hudson.model.ParametersDefinitionProperty>
     <EnvInjectJobProperty plugin="envinject@1.90">
       <info>
-        <groovyScriptContent>import java.util.regex.Matcher
-import java.util.regex.Pattern
+        <groovyScriptContent>def suites = [ master: &quot;dev&quot;, &apos;support&apos;: &quot;stable&quot;, u: &quot;u&quot; ]
 
-def branch = BRANCH
-def suites = [ master: &quot;dev&quot;, &apos;support/1.0&apos;: &quot;stable/1.0&quot;, &apos;support/1.1&apos;: &quot;stable/1.1&quot;, u: &quot;u&quot; ]
-def suite = [ SUITE: suites[BRANCH] ]
+def properties = [
 
-def operating_system = ~/\b[a-z]+\b/
-def match1 = (DISTRIBUTION =~ operating_system)
-def os = [ OS: match1]
+&quot;debian-7-32&quot;: [operating_system: &quot;debian&quot;, codename: &quot;wheezy&quot;],
+&quot;debian-7-64&quot;: [operating_system: &quot;debian&quot;, codename: &quot;wheezy&quot;],
+&quot;redhat-6-32&quot;: [operating_system: &quot;redhat&quot;, codename: &quot;redhat6&quot;],
+&quot;redhat-6-64&quot;: [operating_system: &quot;redhat&quot;, codename: &quot;redhat6&quot;],
+&quot;ubuntu-12.04-32&quot;: [operating_system: &quot;ubuntu&quot;, codename: &quot;precise&quot;],
+&quot;ubuntu-12.04-64&quot;: [operating_system: &quot;ubuntu&quot;, codename: &quot;precise&quot;],
+&quot;ubuntu-14.04-32&quot;: [operating_system: &quot;ubuntu&quot;, codename: &quot;trusty&quot;],
+&quot;ubuntu-14.04-64&quot;: [operating_system: &quot;ubuntu&quot;, codename: &quot;trusty&quot;],
 
-def operating_system_version = ~/(\b[a-z]+\b)[-](\b[0-9][0-9]?\b)[.]?(\b[0-9][0-9]?\b)?/
-def match2 = (DISTRIBUTION =~ operating_system_version)
-def os_v = [ OS_V: match2 ]
+]
 
-println match1[0]
-println match2[0][0]</groovyScriptContent>
+def suite = suites[BRANCH]
+def operating_system = properties[DISTRIBUTION][&quot;operating_system&quot;]
+def codename = properties[DISTRIBUTION][&quot;codename&quot;]
+
+def parameters = [ SUITE: suite, OPERATING_SYSTEM: operating_system, CODENAME: codename ]</groovyScriptContent>
         <loadFilesFromMaster>false</loadFilesFromMaster>
       </info>
       <on>true</on>
@@ -83,7 +86,15 @@ println match2[0][0]</groovyScriptContent>
     </jenkins.triggers.ReverseBuildTrigger>
   </triggers>
   <concurrentBuild>false</concurrentBuild>
-  <builders/>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>echo $OPERATING_SYSTEM
+echo $CODENAME
+echo $SUITE
+echo $DISTRIBUTION
+echo $BRANCH</command>
+    </hudson.tasks.Shell>
+  </builders>
   <publishers/>
   <buildWrappers/>
 </project>
