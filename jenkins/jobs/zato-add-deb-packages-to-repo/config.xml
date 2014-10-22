@@ -88,11 +88,7 @@ def parameters = [ SUITE: suite, OPERATING_SYSTEM: operating_system, CODENAME: c
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>echo $OPERATING_SYSTEM
-echo $CODENAME
-echo $SUITE
-echo $DISTRIBUTION
-echo $BRANCH</command>
+      <command>reprepro -b /opt/repo/${SUITE}/${OPERATING_SYSTEM} includedeb ${CODENAME} /home/rafal/repos/meta-installer/output/${DISTRIBUTION}/*.deb</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers/>
