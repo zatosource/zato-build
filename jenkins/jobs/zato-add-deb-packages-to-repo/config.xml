@@ -35,6 +35,16 @@
             </a>
           </choices>
         </hudson.model.ChoiceParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>RELEASE_VERSION</name>
+          <description>Enter release version of Zato.</description>
+          <defaultValue>2.0</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>PACKAGE_NUMBER</name>
+          <description>Enter package number within the release.</description>
+          <defaultValue>rkrysiak1</defaultValue>
+        </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
     <EnvInjectJobProperty plugin="envinject@1.90">
@@ -43,22 +53,30 @@
 
 def properties = [
 
-&quot;debian-7-32&quot;: [operating_system: &quot;debian&quot;, codename: &quot;wheezy&quot;],
-&quot;debian-7-64&quot;: [operating_system: &quot;debian&quot;, codename: &quot;wheezy&quot;],
-&quot;redhat-6-32&quot;: [operating_system: &quot;redhat&quot;, codename: &quot;redhat6&quot;],
-&quot;redhat-6-64&quot;: [operating_system: &quot;redhat&quot;, codename: &quot;redhat6&quot;],
-&quot;ubuntu-12.04-32&quot;: [operating_system: &quot;ubuntu&quot;, codename: &quot;precise&quot;],
-&quot;ubuntu-12.04-64&quot;: [operating_system: &quot;ubuntu&quot;, codename: &quot;precise&quot;],
-&quot;ubuntu-14.04-32&quot;: [operating_system: &quot;ubuntu&quot;, codename: &quot;trusty&quot;],
-&quot;ubuntu-14.04-64&quot;: [operating_system: &quot;ubuntu&quot;, codename: &quot;trusty&quot;],
+&quot;debian-7-32&quot;: [operating_system: &quot;debian&quot;, codename: &quot;wheezy&quot;, architecture: &quot;i386&quot;],
+&quot;debian-7-64&quot;: [operating_system: &quot;debian&quot;, codename: &quot;wheezy&quot;, architecture: &quot;amd64&quot;],
+&quot;redhat-6-32&quot;: [operating_system: &quot;redhat&quot;, codename: &quot;redhat6&quot;, architecture: &quot;i386&quot;],
+&quot;redhat-6-64&quot;: [operating_system: &quot;redhat&quot;, codename: &quot;redhat6&quot;, architecture: &quot;amd64&quot;],
+&quot;ubuntu-12.04-32&quot;: [operating_system: &quot;ubuntu&quot;, codename: &quot;precise&quot;, architecture: &quot;i386&quot;],
+&quot;ubuntu-12.04-64&quot;: [operating_system: &quot;ubuntu&quot;, codename: &quot;precise&quot;, architecture: &quot;amd64&quot;],
+&quot;ubuntu-14.04-32&quot;: [operating_system: &quot;ubuntu&quot;, codename: &quot;trusty&quot;, architecture: &quot;i386&quot;],
+&quot;ubuntu-14.04-64&quot;: [operating_system: &quot;ubuntu&quot;, codename: &quot;trusty&quot;, architecture: &quot;amd64&quot;]
 
 ]
 
 def suite = suites[BRANCH]
 def operating_system = properties[DISTRIBUTION][&quot;operating_system&quot;]
 def codename = properties[DISTRIBUTION][&quot;codename&quot;]
+def architecture = properties[DISTRIBUTION][&quot;architecture&quot;]
 
-def parameters = [ SUITE: suite, OPERATING_SYSTEM: operating_system, CODENAME: codename ]</groovyScriptContent>
+def parameters = [ 
+
+SUITE: suite, 
+OPERATING_SYSTEM: operating_system, 
+CODENAME: codename, 
+ARCHITECTURE: architecture
+
+]</groovyScriptContent>
         <loadFilesFromMaster>false</loadFilesFromMaster>
       </info>
       <on>true</on>
@@ -88,7 +106,7 @@ def parameters = [ SUITE: suite, OPERATING_SYSTEM: operating_system, CODENAME: c
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>reprepro -b /opt/repo/${SUITE}/${OPERATING_SYSTEM} includedeb ${CODENAME} /home/rafal/repos/meta-installer/output/${DISTRIBUTION}/*.deb</command>
+      <command>reprepro -b /opt/repo/${SUITE}/${OPERATING_SYSTEM} includedeb ${CODENAME} /home/rafal/repos/meta-installer/output/${DISTRIBUTION}/zato-${RELEASE_VERSION}-${PACKAGE_NUMBER}_${ARCHITECTURE}-${CODENAME}.deb</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers/>
