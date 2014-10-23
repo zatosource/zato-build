@@ -1,9 +1,34 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description>This job packs deb packages (which have just been build and added to a local deb repository by previous jobs) and files containing repository meta data into .tar package and sends them with scp to  official Zato repository.</description>
+  <description>This job synchronises local Zato repository and remote, official Zato repository, using rsync.</description>
   <keepDependencies>false</keepDependencies>
-  <properties/>
+  <properties>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <com.cloudbees.plugins.credentials.CredentialsParameterDefinition plugin="credentials@1.18">
+          <name>REPO_CREDENTIALS</name>
+          <description>Use these credentials while connecting with Zato remote repo via ssh.</description>
+          <defaultValue>3b365d39-14a7-46c1-b5c3-d20ec0c428c8</defaultValue>
+          <credentialType>com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey</credentialType>
+          <required>true</required>
+        </com.cloudbees.plugins.credentials.CredentialsParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+    <EnvInjectJobProperty plugin="envinject@1.90">
+      <info>
+        <propertiesContent>ZATO_REMOTE_REPO_BASE_DIR=/opt/repo
+ZATO_REMOTE_REPO_HOSTNAME=centosrepo
+ZATO_REMOTE_REPO_USERNAME=rafal</propertiesContent>
+        <loadFilesFromMaster>false</loadFilesFromMaster>
+      </info>
+      <on>true</on>
+      <keepJenkinsSystemVariables>true</keepJenkinsSystemVariables>
+      <keepBuildVariables>true</keepBuildVariables>
+      <overrideBuildParameters>false</overrideBuildParameters>
+      <contributors/>
+    </EnvInjectJobProperty>
+  </properties>
   <scm class="hudson.scm.NullSCM"/>
   <canRoam>true</canRoam>
   <disabled>false</disabled>
@@ -13,7 +38,7 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>rsync -az --delete -e ssh /opt/repo/ rafal@centosrepo:/opt/repo</command>
+      <command>rsync -avz --delete -e ssh ${ZATO_LOCAL_REPO_BASE_DIR}/ ${ZATO_REMOTE_REPO_USERNAME}@${ZATO_REMOTE_REPO_HOSTNAME}:${ZATO_REMOTE_REPO_BASE_DIR}</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers/>
