@@ -31,6 +31,7 @@
               <string>debian-7-64</string>
               <string>redhat-6-32</string>
               <string>redhat-6-64</string>
+              <string>redhat-7-64</string>
               <string>ubuntu-12.04-32</string>
               <string>ubuntu-12.04-64</string>
               <string>ubuntu-14.04-32</string>
@@ -117,6 +118,23 @@ ${JENKINS_HOME}/../repos/meta-installer/build.sh ${RELEASE_VERSION} ${PACKAGE_NU
       <replyTo>$DEFAULT_REPLYTO</replyTo>
       <saveOutput>false</saveOutput>
     </hudson.plugins.emailext.ExtendedEmailPublisher>
+    <hudson.plugins.parameterizedtrigger.BuildTrigger plugin="parameterized-trigger@2.25">
+      <configs>
+        <hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
+          <configs>
+            <hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
+              <properties>RELEASE_VERSION=${RELEASE_VERSION}
+PACKAGE_NUMBER=${PACKAGE_NUMBER}
+BRANCH=${BRANCH}
+DISTRIBUTION=${DISTRIBUTION}</properties>
+            </hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
+          </configs>
+          <projects>zato-conditional-trigger, </projects>
+          <condition>SUCCESS</condition>
+          <triggerWithNoParameters>false</triggerWithNoParameters>
+        </hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
+      </configs>
+    </hudson.plugins.parameterizedtrigger.BuildTrigger>
   </publishers>
   <buildWrappers/>
 </project>
