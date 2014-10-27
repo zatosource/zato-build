@@ -63,9 +63,9 @@ def properties = [
 &quot;debian-7-32&quot;: [operating_system: &quot;debian&quot;, codename: &quot;wheezy&quot;, architecture: &quot;i386&quot;, package_type: &quot;deb&quot;],
 &quot;debian-7-64&quot;: [operating_system: &quot;debian&quot;, codename: &quot;wheezy&quot;, architecture: &quot;amd64&quot;, package_type: &quot;deb&quot;],
 &quot;redhat-6-32&quot;: [operating_system: &quot;rhel&quot;, codename: &quot;el6&quot;, architecture: &quot;i386&quot;, package_type: &quot;rpm&quot;],
-&quot;redhat-6-64&quot;: [operating_system: &quot;rhel&quot;, codename: &quot;el6&quot;, architecture: &quot;amd64&quot;, package_type: &quot;rpm&quot;],
+&quot;redhat-6-64&quot;: [operating_system: &quot;rhel&quot;, codename: &quot;el6&quot;, architecture: &quot;x86_64&quot;, package_type: &quot;rpm&quot;],
 &quot;redhat-7-32&quot;: [operating_system: &quot;rhel&quot;, codename: &quot;el7&quot;, architecture: &quot;i386&quot;, package_type: &quot;rpm&quot;],
-&quot;redhat-7-64&quot;: [operating_system: &quot;rhel&quot;, codename: &quot;el7&quot;, architecture: &quot;amd64&quot;, package_type: &quot;rpm&quot;],
+&quot;redhat-7-64&quot;: [operating_system: &quot;rhel&quot;, codename: &quot;el7&quot;, architecture: &quot;x86_64&quot;, package_type: &quot;rpm&quot;],
 &quot;ubuntu-12.04-32&quot;: [operating_system: &quot;ubuntu&quot;, codename: &quot;precise&quot;, architecture: &quot;i386&quot;, package_type: &quot;deb&quot;],
 &quot;ubuntu-12.04-64&quot;: [operating_system: &quot;ubuntu&quot;, codename: &quot;precise&quot;, architecture: &quot;amd64&quot;, package_type: &quot;deb&quot;],
 &quot;ubuntu-14.04-32&quot;: [operating_system: &quot;ubuntu&quot;, codename: &quot;trusty&quot;, architecture: &quot;i386&quot;, package_type: &quot;deb&quot;],
@@ -141,7 +141,10 @@ OPERATING_SYSTEM=${OPERATING_SYSTEM}
 CODENAME=${CODENAME}
 ARCHITECTURE=${ARCHITECTURE}
 META_INSTALLER_BASE_DIR=${META_INSTALLER_BASE_DIR}
-ZATO_LOCAL_REPO_BASE_DIR=${ZATO_LOCAL_REPO_BASE_DIR}</properties>
+ZATO_LOCAL_REPO_BASE_DIR=${ZATO_LOCAL_REPO_BASE_DIR}
+ZATO_REMOTE_REPO_BASE_DIR=/opt/repo
+ZATO_REMOTE_REPO_HOSTNAME=centosrepo
+ZATO_REMOTE_REPO_USERNAME=rafal</properties>
               </hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
             </configs>
             <projects>zato-add-deb-packages-to-repo</projects>
@@ -173,7 +176,10 @@ OPERATING_SYSTEM=${OPERATING_SYSTEM}
 CODENAME=${CODENAME}
 ARCHITECTURE=${ARCHITECTURE}
 META_INSTALLER_BASE_DIR=${META_INSTALLER_BASE_DIR}
-ZATO_LOCAL_REPO_BASE_DIR=${ZATO_LOCAL_REPO_BASE_DIR}</properties>
+ZATO_LOCAL_REPO_BASE_DIR=${ZATO_LOCAL_REPO_BASE_DIR}
+ZATO_REMOTE_REPO_BASE_DIR=/opt/repo
+ZATO_REMOTE_REPO_HOSTNAME=centosrepo
+ZATO_REMOTE_REPO_USERNAME=rafal</properties>
               </hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
             </configs>
             <projects>zato-add-rpm-packages-to-repo</projects>
