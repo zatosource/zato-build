@@ -1,153 +1,29 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description>Adds .deb packages to a local repo and updates it with reprepro.</description>
+  <description>This job adds deb packages to Zato repository in two steps:&#xd;
+&#xd;
+1. It uses &apos;reprepro includedeb&quot; command to update local Zato repository.&#xd;
+&#xd;
+2. It uses &apos;rsync&apos; command to syncronize the local Zato repository with official, remote Zato repository on CentOS.</description>
   <keepDependencies>false</keepDependencies>
-  <properties>
-    <hudson.model.ParametersDefinitionProperty>
-      <parameterDefinitions>
-        <hudson.model.ChoiceParameterDefinition>
-          <name>DISTRIBUTION</name>
-          <description>Choose a Linux distribution to build a package for. Alternatively, you can choose &quot;all&quot; to build packages for all distributions in a single operation.</description>
-          <choices class="java.util.Arrays$ArrayList">
-            <a class="string-array">
-              <string>all</string>
-              <string>debian-7-32</string>
-              <string>debian-7-64</string>
-              <string>redhat-6-32</string>
-              <string>redhat-6-64</string>
-              <string>ubuntu-12.04-32</string>
-              <string>ubuntu-12.04-64</string>
-              <string>ubuntu-14.04-32</string>
-              <string>ubuntu-14.04-64</string>
-            </a>
-          </choices>
-        </hudson.model.ChoiceParameterDefinition>
-        <hudson.model.ChoiceParameterDefinition>
-          <name>BRANCH</name>
-          <description>Choose a Zato branch</description>
-          <choices class="java.util.Arrays$ArrayList">
-            <a class="string-array">
-              <string>master</string>
-              <string>support/1.0</string>
-              <string>support/1.1</string>
-              <string>u/foobar</string>
-            </a>
-          </choices>
-        </hudson.model.ChoiceParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>RELEASE_VERSION</name>
-          <description>Enter release version of Zato.</description>
-          <defaultValue>2.0</defaultValue>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>PACKAGE_NUMBER</name>
-          <description>Enter package number within the release.</description>
-          <defaultValue>rkrysiak1</defaultValue>
-        </hudson.model.StringParameterDefinition>
-        <com.cloudbees.plugins.credentials.CredentialsParameterDefinition plugin="credentials@1.18">
-          <name></name>
-          <description></description>
-          <defaultValue></defaultValue>
-          <credentialType>com.cloudbees.plugins.credentials.common.StandardCredentials</credentialType>
-          <required>false</required>
-        </com.cloudbees.plugins.credentials.CredentialsParameterDefinition>
-      </parameterDefinitions>
-    </hudson.model.ParametersDefinitionProperty>
-    <EnvInjectJobProperty plugin="envinject@1.90">
-      <info>
-        <groovyScriptContent>def suites = [ master: &quot;dev&quot;, &apos;support&apos;: &quot;stable&quot;, u: &quot;u&quot; ]
-
-def properties = [
-
-&quot;debian-7-32&quot;: [operating_system: &quot;debian&quot;, codename: &quot;wheezy&quot;, architecture: &quot;i386&quot;],
-&quot;debian-7-64&quot;: [operating_system: &quot;debian&quot;, codename: &quot;wheezy&quot;, architecture: &quot;amd64&quot;],
-&quot;redhat-6-32&quot;: [operating_system: &quot;redhat&quot;, codename: &quot;redhat6&quot;, architecture: &quot;i386&quot;],
-&quot;redhat-6-64&quot;: [operating_system: &quot;redhat&quot;, codename: &quot;redhat6&quot;, architecture: &quot;amd64&quot;],
-&quot;ubuntu-12.04-32&quot;: [operating_system: &quot;ubuntu&quot;, codename: &quot;precise&quot;, architecture: &quot;i386&quot;],
-&quot;ubuntu-12.04-64&quot;: [operating_system: &quot;ubuntu&quot;, codename: &quot;precise&quot;, architecture: &quot;amd64&quot;],
-&quot;ubuntu-14.04-32&quot;: [operating_system: &quot;ubuntu&quot;, codename: &quot;trusty&quot;, architecture: &quot;i386&quot;],
-&quot;ubuntu-14.04-64&quot;: [operating_system: &quot;ubuntu&quot;, codename: &quot;trusty&quot;, architecture: &quot;amd64&quot;]
-
-]
-
-def suite = suites[BRANCH]
-def operating_system = properties[DISTRIBUTION][&quot;operating_system&quot;]
-def codename = properties[DISTRIBUTION][&quot;codename&quot;]
-def architecture = properties[DISTRIBUTION][&quot;architecture&quot;]
-
-def parameters = [ 
-
-SUITE: suite, 
-OPERATING_SYSTEM: operating_system, 
-CODENAME: codename, 
-ARCHITECTURE: architecture
-
-]</groovyScriptContent>
-        <loadFilesFromMaster>false</loadFilesFromMaster>
-      </info>
-      <on>true</on>
-      <keepJenkinsSystemVariables>true</keepJenkinsSystemVariables>
-      <keepBuildVariables>true</keepBuildVariables>
-      <overrideBuildParameters>false</overrideBuildParameters>
-      <contributors/>
-    </EnvInjectJobProperty>
-  </properties>
+  <properties/>
   <scm class="hudson.scm.NullSCM"/>
   <canRoam>true</canRoam>
   <disabled>false</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
-  <triggers>
-    <jenkins.triggers.ReverseBuildTrigger>
-      <spec></spec>
-      <upstreamProjects>zato-build-packages</upstreamProjects>
-      <threshold>
-        <name>SUCCESS</name>
-        <ordinal>0</ordinal>
-        <color>BLUE</color>
-        <completeBuild>true</completeBuild>
-      </threshold>
-    </jenkins.triggers.ReverseBuildTrigger>
-  </triggers>
+  <triggers/>
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>reprepro -b ${ZATO_LOCAL_REPO_BASE_DIR}/${SUITE}/${OPERATING_SYSTEM} includedeb ${CODENAME} ${META_INSTALLER_BASE_DIR}/${DISTRIBUTION}/zato-${RELEASE_VERSION}-${PACKAGE_NUMBER}_${ARCHITECTURE}-${CODENAME}.deb</command>
+      <command>#reprepro -b ${ZATO_LOCAL_REPO_BASE_DIR}/${SUITE}/${OPERATING_SYSTEM} includedeb ${CODENAME} ${META_INSTALLER_BASE_DIR}/${DISTRIBUTION}/zato-${RELEASE_VERSION}-${PACKAGE_NUMBER}_${ARCHITECTURE}-${CODENAME}.deb
+
+echo ${ZATO_LOCAL_REPO_BASE_DIR}/${SUITE}/${OPERATING_SYSTEM} ${CODENAME} ${META_INSTALLER_BASE_DIR}/${DISTRIBUTION}/zato-${RELEASE_VERSION}-${PACKAGE_NUMBER}_${ARCHITECTURE}-${CODENAME}.deb
+
+echo &quot;zato-add-deb-packages-to-repo HAS BEEN TRIGGERED!&quot;</command>
     </hudson.tasks.Shell>
   </builders>
-  <publishers>
-    <hudson.plugins.parameterizedtrigger.BuildTrigger plugin="parameterized-trigger@2.25">
-      <configs>
-        <hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
-          <configs>
-            <hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
-              <properties>DISTRIBUTION=${DISTRIBUTION}
-BRANCH=${BRANCH}
-RELEASE_VERSION=${RELEASE_VERSION}
-PACKAGE_NUMBER=${PACKAGE_NUMBER}
-SUITE=${SUITE}
-OPERATING_SYSTEM=${OPERATING_SYSTEM}
-CODENAME=${CODENAME}
-ARCHITECTURE=${ARCHITECTURE}
-META_INSTALLER_BASE_DIR=${META_INSTALLER_BASE_DIR}
-ZATO_LOCAL_REPO_BASE_DIR=${ZATO_LOCAL_REPO_BASE_DIR}</properties>
-            </hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
-          </configs>
-          <projects>zato-deb-repo-rsync</projects>
-          <condition>SUCCESS</condition>
-          <triggerWithNoParameters>false</triggerWithNoParameters>
-        </hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
-      </configs>
-    </hudson.plugins.parameterizedtrigger.BuildTrigger>
-  </publishers>
-  <buildWrappers>
-    <EnvInjectBuildWrapper plugin="envinject@1.90">
-      <info>
-        <propertiesContent>META_INSTALLER_BASE_DIR=/home/rafal/repos/meta-installer/output
-ZATO_LOCAL_REPO_BASE_DIR=/opt/repo</propertiesContent>
-        <loadFilesFromMaster>false</loadFilesFromMaster>
-      </info>
-    </EnvInjectBuildWrapper>
-  </buildWrappers>
+  <publishers/>
+  <buildWrappers/>
 </project>

@@ -1,0 +1,199 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description>Triggers a job according to conditions met.</description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.ChoiceParameterDefinition>
+          <name>DISTRIBUTION</name>
+          <description>Choose a Linux distribution to build a package for. Alternatively, you can choose &quot;all&quot; to build packages for all distributions in a single operation.</description>
+          <choices class="java.util.Arrays$ArrayList">
+            <a class="string-array">
+              <string>all</string>
+              <string>debian-7-32</string>
+              <string>debian-7-64</string>
+              <string>redhat-6-32</string>
+              <string>redhat-6-64</string>
+              <string>ubuntu-12.04-32</string>
+              <string>ubuntu-12.04-64</string>
+              <string>ubuntu-14.04-32</string>
+              <string>ubuntu-14.04-64</string>
+            </a>
+          </choices>
+        </hudson.model.ChoiceParameterDefinition>
+        <hudson.model.ChoiceParameterDefinition>
+          <name>BRANCH</name>
+          <description>Choose a Zato branch</description>
+          <choices class="java.util.Arrays$ArrayList">
+            <a class="string-array">
+              <string>master</string>
+              <string>support/1.0</string>
+              <string>support/1.1</string>
+              <string>u/foobar</string>
+            </a>
+          </choices>
+        </hudson.model.ChoiceParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>RELEASE_VERSION</name>
+          <description>Enter release version of Zato.</description>
+          <defaultValue>2.0</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>PACKAGE_NUMBER</name>
+          <description>Enter package number within the release.</description>
+          <defaultValue>rkrysiak1</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <com.cloudbees.plugins.credentials.CredentialsParameterDefinition plugin="credentials@1.18">
+          <name>REPO_CREDENTIALS</name>
+          <description></description>
+          <defaultValue>3b365d39-14a7-46c1-b5c3-d20ec0c428c8</defaultValue>
+          <credentialType>com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey</credentialType>
+          <required>true</required>
+        </com.cloudbees.plugins.credentials.CredentialsParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+    <EnvInjectJobProperty plugin="envinject@1.90">
+      <info>
+        <groovyScriptContent>def suites = [ master: &quot;dev&quot;, &apos;support&apos;: &quot;stable&quot;, u: &quot;u&quot; ]
+
+def properties = [
+
+&quot;debian-7-32&quot;: [operating_system: &quot;debian&quot;, codename: &quot;wheezy&quot;, architecture: &quot;i386&quot;, package_type: &quot;deb&quot;],
+&quot;debian-7-64&quot;: [operating_system: &quot;debian&quot;, codename: &quot;wheezy&quot;, architecture: &quot;amd64&quot;, package_type: &quot;deb&quot;],
+&quot;redhat-6-32&quot;: [operating_system: &quot;rhel&quot;, codename: &quot;el6&quot;, architecture: &quot;i386&quot;, package_type: &quot;rpm&quot;],
+&quot;redhat-6-64&quot;: [operating_system: &quot;rhel&quot;, codename: &quot;el6&quot;, architecture: &quot;amd64&quot;, package_type: &quot;rpm&quot;],
+&quot;redhat-7-32&quot;: [operating_system: &quot;rhel&quot;, codename: &quot;el7&quot;, architecture: &quot;i386&quot;, package_type: &quot;rpm&quot;],
+&quot;redhat-7-64&quot;: [operating_system: &quot;rhel&quot;, codename: &quot;el7&quot;, architecture: &quot;amd64&quot;, package_type: &quot;rpm&quot;],
+&quot;ubuntu-12.04-32&quot;: [operating_system: &quot;ubuntu&quot;, codename: &quot;precise&quot;, architecture: &quot;i386&quot;, package_type: &quot;deb&quot;],
+&quot;ubuntu-12.04-64&quot;: [operating_system: &quot;ubuntu&quot;, codename: &quot;precise&quot;, architecture: &quot;amd64&quot;, package_type: &quot;deb&quot;],
+&quot;ubuntu-14.04-32&quot;: [operating_system: &quot;ubuntu&quot;, codename: &quot;trusty&quot;, architecture: &quot;i386&quot;, package_type: &quot;deb&quot;],
+&quot;ubuntu-14.04-64&quot;: [operating_system: &quot;ubuntu&quot;, codename: &quot;trusty&quot;, architecture: &quot;amd64&quot;, package_type: &quot;deb&quot;]
+
+]
+
+def suite = suites[BRANCH]
+def operating_system = properties[DISTRIBUTION][&quot;operating_system&quot;]
+def codename = properties[DISTRIBUTION][&quot;codename&quot;]
+def architecture = properties[DISTRIBUTION][&quot;architecture&quot;]
+def package_type = properties[DISTRIBUTION][&quot;package_type&quot;]
+
+def deb_extension = &quot;deb&quot;
+def rpm_extension = &quot;rpm&quot;
+
+def parameters = [ 
+
+SUITE: suite, 
+OPERATING_SYSTEM: operating_system, 
+CODENAME: codename, 
+ARCHITECTURE: architecture,
+PACKAGE_TYPE: package_type,
+DEB_EXTENSION: deb_extension,
+RPM_EXTENSION: rpm_extension
+
+]</groovyScriptContent>
+        <loadFilesFromMaster>false</loadFilesFromMaster>
+      </info>
+      <on>true</on>
+      <keepJenkinsSystemVariables>true</keepJenkinsSystemVariables>
+      <keepBuildVariables>true</keepBuildVariables>
+      <overrideBuildParameters>false</overrideBuildParameters>
+      <contributors/>
+    </EnvInjectJobProperty>
+  </properties>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers>
+    <jenkins.triggers.ReverseBuildTrigger>
+      <spec></spec>
+      <upstreamProjects>zato-build-packages</upstreamProjects>
+      <threshold>
+        <name>SUCCESS</name>
+        <ordinal>0</ordinal>
+        <color>BLUE</color>
+        <completeBuild>true</completeBuild>
+      </threshold>
+    </jenkins.triggers.ReverseBuildTrigger>
+  </triggers>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder plugin="conditional-buildstep@1.3.3">
+      <condition class="org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition" plugin="run-condition@1.0">
+        <arg1>${ENV,var=&quot;PACKAGE_TYPE&quot;}</arg1>
+        <arg2>${ENV,var=&quot;DEB_EXTENSION&quot;}</arg2>
+        <ignoreCase>false</ignoreCase>
+      </condition>
+      <buildStep class="hudson.plugins.parameterizedtrigger.TriggerBuilder" plugin="parameterized-trigger@2.25">
+        <configs>
+          <hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
+            <configs>
+              <hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
+                <properties>DISTRIBUTION=${DISTRIBUTION}
+BRANCH=${BRANCH}
+RELEASE_VERSION=${RELEASE_VERSION}
+PACKAGE_NUMBER=${PACKAGE_NUMBER}
+SUITE=${SUITE}
+OPERATING_SYSTEM=${OPERATING_SYSTEM}
+CODENAME=${CODENAME}
+ARCHITECTURE=${ARCHITECTURE}
+META_INSTALLER_BASE_DIR=${META_INSTALLER_BASE_DIR}
+ZATO_LOCAL_REPO_BASE_DIR=${ZATO_LOCAL_REPO_BASE_DIR}</properties>
+              </hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
+            </configs>
+            <projects>zato-add-deb-packages-to-repo</projects>
+            <condition>ALWAYS</condition>
+            <triggerWithNoParameters>false</triggerWithNoParameters>
+            <buildAllNodesWithLabel>false</buildAllNodesWithLabel>
+          </hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
+        </configs>
+      </buildStep>
+      <runner class="org.jenkins_ci.plugins.run_condition.BuildStepRunner$DontRun" plugin="run-condition@1.0"/>
+    </org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder>
+    <org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder plugin="conditional-buildstep@1.3.3">
+      <condition class="org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition" plugin="run-condition@1.0">
+        <arg1>${ENV,var=&quot;PACKAGE_TYPE&quot;}</arg1>
+        <arg2>${ENV,var=&quot;RPM_EXTENSION&quot;}</arg2>
+        <ignoreCase>false</ignoreCase>
+      </condition>
+      <buildStep class="hudson.plugins.parameterizedtrigger.TriggerBuilder" plugin="parameterized-trigger@2.25">
+        <configs>
+          <hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
+            <configs>
+              <hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
+                <properties>DISTRIBUTION=${DISTRIBUTION}
+BRANCH=${BRANCH}
+RELEASE_VERSION=${RELEASE_VERSION}
+PACKAGE_NUMBER=${PACKAGE_NUMBER}
+SUITE=${SUITE}
+OPERATING_SYSTEM=${OPERATING_SYSTEM}
+CODENAME=${CODENAME}
+ARCHITECTURE=${ARCHITECTURE}
+META_INSTALLER_BASE_DIR=${META_INSTALLER_BASE_DIR}
+ZATO_LOCAL_REPO_BASE_DIR=${ZATO_LOCAL_REPO_BASE_DIR}</properties>
+              </hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
+            </configs>
+            <projects>zato-add-rpm-packages-to-repo</projects>
+            <condition>ALWAYS</condition>
+            <triggerWithNoParameters>false</triggerWithNoParameters>
+            <buildAllNodesWithLabel>false</buildAllNodesWithLabel>
+          </hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
+        </configs>
+      </buildStep>
+      <runner class="org.jenkins_ci.plugins.run_condition.BuildStepRunner$DontRun" plugin="run-condition@1.0"/>
+    </org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder>
+  </builders>
+  <publishers/>
+  <buildWrappers>
+    <EnvInjectBuildWrapper plugin="envinject@1.90">
+      <info>
+        <propertiesContent>META_INSTALLER_BASE_DIR=/home/rafal/repos/meta-installer/output
+ZATO_LOCAL_REPO_BASE_DIR=/opt/repo</propertiesContent>
+        <loadFilesFromMaster>false</loadFilesFromMaster>
+      </info>
+    </EnvInjectBuildWrapper>
+  </buildWrappers>
+</project>
