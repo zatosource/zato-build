@@ -23,7 +23,7 @@ sudo yum -y install git bzr gcc-gfortran haproxy \
     libevent-devel libgfortran lapack-devel lapack \
     libpqxx-devel libyaml-devel libxml2-devel libxslt-devel suitesparse \
     openssl python-devel m2crypto numpy \
-    scipy python-zdaemon swig uuid-devel uuid
+    scipy python-zdaemon swig uuid-devel uuid libffi libffi-devel
 
 mkdir $CURDIR/zato_extra_paths
 
