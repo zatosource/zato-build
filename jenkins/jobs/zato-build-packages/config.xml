@@ -8,17 +8,22 @@
       <parameterDefinitions>
         <hudson.model.StringParameterDefinition>
           <name>RELEASE_VERSION</name>
-          <description>Specify a Zato release version the package will be build for</description>
+          <description>Specify a Zato release version the package will be build for.</description>
           <defaultValue></defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>PACKAGE_NUMBER</name>
-          <description>Specify package number within Zato release version defined as previous parameter</description>
+          <description>Specify package number within Zato release version defined as previous parameter.</description>
           <defaultValue></defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>BRANCH</name>
-          <description>Git branch to pull Zato sources from</description>
+          <description>Git branch to pull Zato sources from.</description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>CLIENT</name>
+          <description>OPTIONAL! Enter only if you want specifically to build a package for a client. Pattern: &lt;[0-9][a-f]&gt;-&lt;client_name&gt;. Use six characters in first part of the pattern.</description>
           <defaultValue></defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.ChoiceParameterDefinition>
@@ -39,6 +44,13 @@
             </a>
           </choices>
         </hudson.model.ChoiceParameterDefinition>
+        <com.cloudbees.plugins.credentials.CredentialsParameterDefinition plugin="credentials@1.18">
+          <name>REPO_CREDENTIALS</name>
+          <description></description>
+          <defaultValue>3b365d39-14a7-46c1-b5c3-d20ec0c428c8</defaultValue>
+          <credentialType>com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey</credentialType>
+          <required>true</required>
+        </com.cloudbees.plugins.credentials.CredentialsParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
   </properties>
@@ -51,8 +63,65 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>${JENKINS_HOME}/../repos/meta-installer/build.sh ${RELEASE_VERSION} ${PACKAGE_NUMBER} ${BRANCH} ${DISTRIBUTION}</command>
+      <command>${JENKINS_HOME}/../repos/zato-build/meta/build.sh ${RELEASE_VERSION} ${PACKAGE_NUMBER} ${BRANCH} ${DISTRIBUTION}</command>
     </hudson.tasks.Shell>
+    <org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder plugin="conditional-buildstep@1.3.3">
+      <condition class="org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition" plugin="run-condition@1.0">
+        <arg1>${ENV,var=&quot;DISTRIBUTION&quot;}</arg1>
+        <arg2>all</arg2>
+        <ignoreCase>false</ignoreCase>
+      </condition>
+      <buildStep class="hudson.plugins.parameterizedtrigger.TriggerBuilder" plugin="parameterized-trigger@2.25">
+        <configs>
+          <hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
+            <configs>
+              <hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
+                <properties>RELEASE_VERSION=${RELEASE_VERSION}
+PACKAGE_NUMBER=${PACKAGE_NUMBER}
+BRANCH=${BRANCH}
+CLIENT=${CLIENT}
+CLIENT_PATH=/${CLIENT}</properties>
+              </hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
+            </configs>
+            <projects>zato-process-all-deb-packages</projects>
+            <condition>ALWAYS</condition>
+            <triggerWithNoParameters>false</triggerWithNoParameters>
+            <buildAllNodesWithLabel>false</buildAllNodesWithLabel>
+          </hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
+        </configs>
+      </buildStep>
+      <runner class="org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail" plugin="run-condition@1.0"/>
+    </org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder>
+    <org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder plugin="conditional-buildstep@1.3.3">
+      <condition class="org.jenkins_ci.plugins.run_condition.logic.Not" plugin="run-condition@1.0">
+        <condition class="org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition">
+          <arg1>${ENV,var=&quot;DISTRIBUTION&quot;}</arg1>
+          <arg2>all</arg2>
+          <ignoreCase>false</ignoreCase>
+        </condition>
+      </condition>
+      <buildStep class="hudson.plugins.parameterizedtrigger.TriggerBuilder" plugin="parameterized-trigger@2.25">
+        <configs>
+          <hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
+            <configs>
+              <hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
+                <properties>RELEASE_VERSION=${RELEASE_VERSION}
+PACKAGE_NUMBER=${PACKAGE_NUMBER}
+BRANCH=${BRANCH}
+DISTRIBUTION=${DISTRIBUTION}
+CLIENT=${CLIENT}
+CLIENT_PATH=/${CLIENT}</properties>
+              </hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
+            </configs>
+            <projects>zato-conditional-trigger</projects>
+            <condition>ALWAYS</condition>
+            <triggerWithNoParameters>false</triggerWithNoParameters>
+            <buildAllNodesWithLabel>false</buildAllNodesWithLabel>
+          </hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
+        </configs>
+      </buildStep>
+      <runner class="org.jenkins_ci.plugins.run_condition.BuildStepRunner$DontRun" plugin="run-condition@1.0"/>
+    </org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder>
   </builders>
   <publishers>
     <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.38.2">
@@ -110,7 +179,7 @@
 
 Command and parameters used:
 
-${JENKINS_HOME}/../repos/meta-installer/build.sh ${RELEASE_VERSION} ${PACKAGE_NUMBER} ${BRANCH} ${DISTRIBUTION}</defaultContent>
+${JENKINS_HOME}/../repos/zato-build/meta/build.sh ${RELEASE_VERSION} ${PACKAGE_NUMBER} ${BRANCH} ${DISTRIBUTION}</defaultContent>
       <attachmentsPattern></attachmentsPattern>
       <presendScript>$DEFAULT_PRESEND_SCRIPT</presendScript>
       <attachBuildLog>false</attachBuildLog>
@@ -118,23 +187,6 @@ ${JENKINS_HOME}/../repos/meta-installer/build.sh ${RELEASE_VERSION} ${PACKAGE_NU
       <replyTo>$DEFAULT_REPLYTO</replyTo>
       <saveOutput>false</saveOutput>
     </hudson.plugins.emailext.ExtendedEmailPublisher>
-    <hudson.plugins.parameterizedtrigger.BuildTrigger plugin="parameterized-trigger@2.25">
-      <configs>
-        <hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
-          <configs>
-            <hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
-              <properties>RELEASE_VERSION=${RELEASE_VERSION}
-PACKAGE_NUMBER=${PACKAGE_NUMBER}
-BRANCH=${BRANCH}
-DISTRIBUTION=${DISTRIBUTION}</properties>
-            </hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
-          </configs>
-          <projects>zato-conditional-trigger, </projects>
-          <condition>SUCCESS</condition>
-          <triggerWithNoParameters>false</triggerWithNoParameters>
-        </hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
-      </configs>
-    </hudson.plugins.parameterizedtrigger.BuildTrigger>
   </publishers>
   <buildWrappers/>
 </project>

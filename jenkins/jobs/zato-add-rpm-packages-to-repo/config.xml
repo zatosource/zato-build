@@ -7,7 +7,19 @@
 &#xd;
 2. It uses &apos;createrepo --update&quot; command to update remote Zato repository.</description>
   <keepDependencies>false</keepDependencies>
-  <properties/>
+  <properties>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <com.cloudbees.plugins.credentials.CredentialsParameterDefinition plugin="credentials@1.18">
+          <name>LOGIN_CENTOS_REPO</name>
+          <description></description>
+          <defaultValue>d8a9c7c2-7473-4c15-836c-7df7c5c28175</defaultValue>
+          <credentialType>com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl</credentialType>
+          <required>true</required>
+        </com.cloudbees.plugins.credentials.CredentialsParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+  </properties>
   <scm class="hudson.scm.NullSCM"/>
   <canRoam>true</canRoam>
   <disabled>false</disabled>
@@ -17,7 +29,7 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>rsync -az --delete -e ssh ${META_INSTALLER_BASE_DIR}/${DISTRIBUTION}/zato-${RELEASE_VERSION}-${PACKAGE_NUMBER}.${CODENAME}.${ARCHITECTURE}.rpm ${ZATO_REMOTE_REPO_USERNAME}@${ZATO_REMOTE_REPO_HOSTNAME}:${ZATO_REMOTE_REPO_BASE_DIR}/${SUITE}/${OPERATING_SYSTEM}/${CODENAME}</command>
+      <command>rsync -az --delete -e ssh ${META_INSTALLER_PACKAGE_DIR}/${DISTRIBUTION}/zato-${RELEASE_VERSION}-${PACKAGE_NUMBER}.${CODENAME}.${ARCHITECTURE}.rpm ${ZATO_REMOTE_REPO_USERNAME}@${ZATO_REMOTE_REPO_HOSTNAME}:${ZATO_REMOTE_REPO_BASE_DIR}/${SUITE}${CLIENT_PATH}/${OPERATING_SYSTEM}</command>
     </hudson.tasks.Shell>
     <jenkins.plugins.publish__over__ssh.BapSshBuilderPlugin plugin="publish-over-ssh@1.12">
       <delegate>
@@ -39,7 +51,7 @@
                   <noDefaultExcludes>false</noDefaultExcludes>
                   <makeEmptyDirs>false</makeEmptyDirs>
                   <patternSeparator>[, ]+</patternSeparator>
-                  <execCommand>createrepo --update ${ZATO_REMOTE_REPO_BASE_DIR}/${SUITE}/${OPERATING_SYSTEM}/${CODENAME}</execCommand>
+                  <execCommand>createrepo --update ${ZATO_REMOTE_REPO_BASE_DIR}/${SUITE}${CLIENT_PATH}/${OPERATING_SYSTEM}/</execCommand>
                   <execTimeout>120000</execTimeout>
                   <usePty>false</usePty>
                 </jenkins.plugins.publish__over__ssh.BapSshTransfer>
