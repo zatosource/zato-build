@@ -23,7 +23,7 @@
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>CLIENT</name>
-          <description>OPTIONAL! Enter only if you want specifically to build a package for a client. Pattern: &lt;[0-9][a-f]&gt;-&lt;client_name&gt;. Use six characters in first part of the pattern.</description>
+          <description>OPTIONAL! Enter only if you want specifically to build a package for a client. Pattern: /&lt;[0-9][a-f]&gt;-&lt;client_name&gt;. Use six characters in first part of the pattern.</description>
           <defaultValue></defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.ChoiceParameterDefinition>
@@ -76,11 +76,10 @@
                 <properties>RELEASE_VERSION=${RELEASE_VERSION}
 PACKAGE_NUMBER=${PACKAGE_NUMBER}
 BRANCH=${BRANCH}
-CLIENT=${CLIENT}
-CLIENT_PATH=/${CLIENT}</properties>
+CLIENT=${CLIENT}</properties>
               </hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
             </configs>
-            <projects>zato-process-all-deb-packages</projects>
+            <projects>zato-process-all-debian-packages</projects>
             <condition>ALWAYS</condition>
             <triggerWithNoParameters>false</triggerWithNoParameters>
             <buildAllNodesWithLabel>false</buildAllNodesWithLabel>
@@ -106,8 +105,7 @@ CLIENT_PATH=/${CLIENT}</properties>
 PACKAGE_NUMBER=${PACKAGE_NUMBER}
 BRANCH=${BRANCH}
 DISTRIBUTION=${DISTRIBUTION}
-CLIENT=${CLIENT}
-CLIENT_PATH=/${CLIENT}</properties>
+CLIENT=${CLIENT}</properties>
               </hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
             </configs>
             <projects>zato-conditional-trigger</projects>

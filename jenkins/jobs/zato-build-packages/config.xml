@@ -83,7 +83,7 @@ CLIENT=${CLIENT}
 CLIENT_PATH=/${CLIENT}</properties>
               </hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
             </configs>
-            <projects>zato-process-all-deb-packages</projects>
+            <projects>zato-process-all-debian-packages</projects>
             <condition>ALWAYS</condition>
             <triggerWithNoParameters>false</triggerWithNoParameters>
             <buildAllNodesWithLabel>false</buildAllNodesWithLabel>
