@@ -48,7 +48,7 @@ exit 0
 
 %files
 %defattr(-,zato,zato,-)
-/etc
+/etc/bash_completion.d/zato
 /opt/zato
 
 %post
