@@ -1,6 +1,6 @@
 ## Zato bash completion.
 
-have zato &&
+#have zato &&
 _zato()
 {
    local cur prev opts
