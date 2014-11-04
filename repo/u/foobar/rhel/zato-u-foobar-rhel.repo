@@ -1,0 +1,6 @@
+[zato-u-foobar]
+name=zato-u-foobar
+baseurl=https://zato.io/repo/u/a62nu1-foobar/rhel/el$releasever/$basearch
+enabled=1
+gpgcheck=1
+gpgkey=https://zato.io/repo/zato-0CBD7F72.pgp.asc
