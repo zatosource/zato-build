@@ -7,7 +7,6 @@ _zato()
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
-    prev2="${COMP_WORDS[COMP_CWORD-2]}"
 
     first="${COMP_WORDS[1]}"
     second="${COMP_WORDS[2]}"
@@ -24,6 +23,7 @@ _zato()
     opts_create_add="--odb_host --odb_port --odb_user --odb_db_name --postgresql_schema --odb_password "
     case $prev in
      ca|lb_agent|server|web_admin)
+        prev2="${COMP_WORDS[COMP_CWORD-2]}"
         if [[ ${prev2} == create ]]; then
             if [[ ${cur} == -* ]] ; then
 	            COMPREPLY=( $(compgen -W "${opts_ca_create_ca} ${opts_help}" -- ${cur}) )
@@ -37,6 +37,7 @@ _zato()
         fi
         ;;
      create)
+        prev2="${COMP_WORDS[COMP_CWORD-2]}"
         case $prev2 in
 	    ca)
 	        COMPREPLY=( $( compgen -W "${opts_ca_create}  ${opts_help}" -- $cur ) )
@@ -194,6 +195,9 @@ _zato()
 	return 0
 	;;
      *)
+        if (($COMP_CWORD >= 2)) ; then
+	prev2="${COMP_WORDS[COMP_CWORD-2]}"
+	fi
 	case $prev2 in
 	    --organization|--organizational-unit|--locality|--state-or-province|--country|--common-name)
 		if [[ ${cur} == -* ]] ; then
