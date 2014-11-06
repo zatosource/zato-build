@@ -32,7 +32,7 @@
       <command>reprepro -b ${ZATO_LOCAL_REPO_BASE_DIR}/${SUITE}/${OPERATING_SYSTEM} includedeb ${CODENAME} ${META_INSTALLER_PACKAGE_DIR}/${DISTRIBUTION}/zato-${RELEASE_VERSION}-${PACKAGE_NUMBER}_${ARCHITECTURE}-${CODENAME}.deb</command>
     </hudson.tasks.Shell>
     <hudson.tasks.Shell>
-      <command>rsync -az --delete -e ssh ${ZATO_LOCAL_REPO_BASE_DIR}/${SUITE}/${OPERATING_SYSTEM}/ ${ZATO_REMOTE_REPO_USERNAME}@${ZATO_REMOTE_REPO_HOSTNAME}:${ZATO_REMOTE_REPO_BASE_DIR}/${SUITE}${CLIENT_PATH}/${OPERATING_SYSTEM}</command>
+      <command>rsync -az --delete -e ssh ${ZATO_LOCAL_REPO_BASE_DIR}/${SUITE}/${OPERATING_SYSTEM}/ ${ZATO_REMOTE_REPO_USERNAME}@${ZATO_REMOTE_REPO_HOSTNAME}:${ZATO_REMOTE_REPO_BASE_DIR}/${SUITE}${CLIENT}/${OPERATING_SYSTEM}</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers/>
