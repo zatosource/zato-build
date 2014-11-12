@@ -6,9 +6,7 @@
   <properties>
     <EnvInjectJobProperty plugin="envinject@1.90">
       <info>
-        <groovyScriptContent>def suites = [ master: &quot;dev&quot;, &apos;support&apos;: &quot;stable&quot;, u: &quot;u&quot; ]
-
-def properties = [
+        <groovyScriptContent>def properties = [
 
 &quot;debian-7-32&quot;: [operating_system: &quot;debian&quot;, codename: &quot;wheezy&quot;, architecture: &quot;i386&quot;, package_type: &quot;deb&quot;],
 &quot;debian-7-64&quot;: [operating_system: &quot;debian&quot;, codename: &quot;wheezy&quot;, architecture: &quot;amd64&quot;, package_type: &quot;deb&quot;],
@@ -23,7 +21,6 @@ def properties = [
 
 ]
 
-def suite = suites[BRANCH]
 def operating_system = properties[DISTRIBUTION][&quot;operating_system&quot;]
 def codename = properties[DISTRIBUTION][&quot;codename&quot;]
 def architecture = properties[DISTRIBUTION][&quot;architecture&quot;]
@@ -34,7 +31,6 @@ def rpm_extension = &quot;rpm&quot;
 
 def parameters = [ 
 
-SUITE: suite, 
 OPERATING_SYSTEM: operating_system, 
 CODENAME: codename, 
 ARCHITECTURE: architecture,
@@ -77,7 +73,7 @@ RELEASE_VERSION=${RELEASE_VERSION}
 PACKAGE_NUMBER=${PACKAGE_NUMBER}
 CLIENT=${CLIENT}
 CLIENT_PATH=/${CLIENT}
-SUITE=${SUITE}
+REPOSITORY=${REPOSITORY}
 OPERATING_SYSTEM=${OPERATING_SYSTEM}
 CODENAME=${CODENAME}
 ARCHITECTURE=${ARCHITECTURE}
@@ -114,7 +110,7 @@ RELEASE_VERSION=${RELEASE_VERSION}
 PACKAGE_NUMBER=${PACKAGE_NUMBER}
 CLIENT=${CLIENT}
 CLIENT_PATH=/${CLIENT}
-SUITE=${SUITE}
+REPOSITORY=${REPOSITORY}
 OPERATING_SYSTEM=${OPERATING_SYSTEM}
 CODENAME=${CODENAME}
 ARCHITECTURE=${ARCHITECTURE}

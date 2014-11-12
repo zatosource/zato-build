@@ -24,16 +24,11 @@
     </hudson.model.ParametersDefinitionProperty>
     <EnvInjectJobProperty plugin="envinject@1.90">
       <info>
-        <groovyScriptContent>def suites = [ master: &quot;dev&quot;, &apos;support&apos;: &quot;stable&quot;, u: &quot;u&quot; ]
-
-def suite = suites[BRANCH]
-
-def deb_extension = &quot;deb&quot;
+        <groovyScriptContent>def deb_extension = &quot;deb&quot;
 def rpm_extension = &quot;rpm&quot;
 
 def parameters = [ 
 
-SUITE: suite, 
 DEB_EXTENSION: deb_extension,
 RPM_EXTENSION: rpm_extension
 
@@ -93,13 +88,13 @@ RPM_EXTENSION: rpm_extension
   <combinationFilter>(DISTRIBUTION==&quot;redhat-6-32&quot; &amp;&amp; CODENAME==&quot;el6&quot; &amp;&amp; ARCHITECTURE==&quot;i386&quot;) || (DISTRIBUTION==&quot;redhat-6-64&quot; &amp;&amp; CODENAME==&quot;el6&quot; &amp;&amp; ARCHITECTURE==&quot;x86_64&quot;) || (DISTRIBUTION==&quot;redhat-7-64&quot; &amp;&amp; CODENAME==&quot;el7&quot; &amp;&amp; ARCHITECTURE==&quot;x86_64&quot;)</combinationFilter>
   <builders>
     <hudson.tasks.Shell>
-      <command>rsync -az --delete -e ssh ${META_INSTALLER_PACKAGE_DIR}/${DISTRIBUTION}/zato-${RELEASE_VERSION}-${PACKAGE_NUMBER}.${CODENAME}.${ARCHITECTURE}.rpm ${ZATO_REMOTE_REPO_USERNAME}@${ZATO_REMOTE_REPO_HOSTNAME}:${ZATO_REMOTE_REPO_BASE_DIR}/${SUITE}${CLIENT}/${OPERATING_SYSTEM}/${CODENAME}/${ARCHITECTURE}</command>
+      <command>rsync -az --delete -e ssh ${META_INSTALLER_PACKAGE_DIR}/${DISTRIBUTION}/zato-${RELEASE_VERSION}-${PACKAGE_NUMBER}.${CODENAME}.${ARCHITECTURE}.rpm ${ZATO_REMOTE_REPO_USERNAME}@${ZATO_REMOTE_REPO_HOSTNAME}:${ZATO_REMOTE_REPO_BASE_DIR}/${REPOSITORY}${CLIENT}/${OPERATING_SYSTEM}/${CODENAME}/${ARCHITECTURE}</command>
     </hudson.tasks.Shell>
     <hudson.tasks.Shell>
-      <command>ssh ${ZATO_REMOTE_REPO_USERNAME}@${ZATO_REMOTE_REPO_HOSTNAME} createrepo --cache ${ZATO_REMOTE_REPO_BASE_DIR}/${SUITE}${CLIENT}/${OPERATING_SYSTEM}/${CODENAME}/${ARCHITECTURE}/cache --update ${ZATO_REMOTE_REPO_BASE_DIR}/${SUITE}${CLIENT}/${OPERATING_SYSTEM}/${CODENAME}/${ARCHITECTURE}</command>
+      <command>ssh ${ZATO_REMOTE_REPO_USERNAME}@${ZATO_REMOTE_REPO_HOSTNAME} rpm --addsign ${ZATO_REMOTE_REPO_BASE_DIR}/${REPOSITORY}${CLIENT_PATH}/${OPERATING_SYSTEM}/${CODENAME}/${ARCHITECTURE}/zato-${RELEASE_VERSION}-${PACKAGE_NUMBER}.${CODENAME}.${ARCHITECTURE}.rpm</command>
     </hudson.tasks.Shell>
     <hudson.tasks.Shell>
-      <command>ssh ${ZATO_REMOTE_REPO_USERNAME}@${ZATO_REMOTE_REPO_HOSTNAME} rpm --addsign ${ZATO_REMOTE_REPO_BASE_DIR}/${SUITE}${CLIENT}/${OPERATING_SYSTEM}/${CODENAME}/${ARCHITECTURE}/zato-${RELEASE_VERSION}-${PACKAGE_NUMBER}.${CODENAME}.${ARCHITECTURE}.rpm</command>
+      <command>ssh ${ZATO_REMOTE_REPO_USERNAME}@${ZATO_REMOTE_REPO_HOSTNAME} createrepo --cache ${ZATO_REMOTE_REPO_BASE_DIR}/${REPOSITORY}${CLIENT_PATH}/${OPERATING_SYSTEM}/${CODENAME}/${ARCHITECTURE}/cache --update ${ZATO_REMOTE_REPO_BASE_DIR}/${REPOSITORY}${CLIENT_PATH}/${OPERATING_SYSTEM}/${CODENAME}/${ARCHITECTURE}</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers/>

@@ -24,11 +24,7 @@
     </hudson.model.ParametersDefinitionProperty>
     <EnvInjectJobProperty plugin="envinject@1.90">
       <info>
-        <groovyScriptContent>def suites = [ master: &quot;dev&quot;, &apos;support&apos;: &quot;stable&quot;, u: &quot;u&quot; ]
-
-def suite = suites[BRANCH]
-
-def deb_extension = &quot;deb&quot;
+        <groovyScriptContent>def deb_extension = &quot;deb&quot;
 def rpm_extension = &quot;rpm&quot;
 
 def parameters = [ 
@@ -93,11 +89,24 @@ RPM_EXTENSION: rpm_extension
   </axes>
   <combinationFilter>(DISTRIBUTION==&quot;ubuntu-12.04-32&quot; &amp;&amp; CODENAME==&quot;precise&quot; &amp;&amp; ARCHITECTURE==&quot;i386&quot;) || (DISTRIBUTION==&quot;ubuntu-12.04-64&quot; &amp;&amp; CODENAME==&quot;precise&quot; &amp;&amp; ARCHITECTURE==&quot;amd64&quot;) || (DISTRIBUTION==&quot;ubuntu-14.04-32&quot; &amp;&amp; CODENAME==&quot;trusty&quot; &amp;&amp; ARCHITECTURE==&quot;i386&quot;) || (DISTRIBUTION==&quot;ubuntu-14.04-64&quot; &amp;&amp; CODENAME==&quot;trusty&quot; &amp;&amp; ARCHITECTURE==&quot;amd64&quot;)</combinationFilter>
   <builders>
+    <org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder plugin="conditional-buildstep@1.3.3">
+      <condition class="org.jenkins_ci.plugins.run_condition.logic.Not" plugin="run-condition@1.0">
+        <condition class="org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition">
+          <arg1>${ENV,var=&quot;CLIENT&quot;}</arg1>
+          <arg2>&quot;&quot;</arg2>
+          <ignoreCase>false</ignoreCase>
+        </condition>
+      </condition>
+      <buildStep class="hudson.tasks.Shell">
+        <command>ssh ${ZATO_REMOTE_REPO_USERNAME}@${ZATO_REMOTE_REPO_HOSTNAME} &quot;mkdir -p $ZATO_REMOTE_REPO_BASE_DIR/u$CLIENT_PATH/$OPERATING_SYSTEM&quot;</command>
+      </buildStep>
+      <runner class="org.jenkins_ci.plugins.run_condition.BuildStepRunner$DontRun" plugin="run-condition@1.0"/>
+    </org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder>
     <hudson.tasks.Shell>
-      <command>reprepro -b ${ZATO_LOCAL_REPO_BASE_DIR}/${SUITE}/${OPERATING_SYSTEM} includedeb ${CODENAME} ${META_INSTALLER_PACKAGE_DIR}/${DISTRIBUTION}/zato-${RELEASE_VERSION}-${PACKAGE_NUMBER}_${ARCHITECTURE}-${CODENAME}.deb</command>
+      <command>reprepro -b ${ZATO_LOCAL_REPO_BASE_DIR}/${REPOSITORY}${CLIENT_PATH}/${OPERATING_SYSTEM} includedeb ${CODENAME} ${META_INSTALLER_PACKAGE_DIR}/${DISTRIBUTION}/zato-${RELEASE_VERSION}-${PACKAGE_NUMBER}_${ARCHITECTURE}-${CODENAME}.deb</command>
     </hudson.tasks.Shell>
     <hudson.tasks.Shell>
-      <command>rsync -az --delete -e ssh ${ZATO_LOCAL_REPO_BASE_DIR}/${SUITE}/${OPERATING_SYSTEM}/ ${ZATO_REMOTE_REPO_USERNAME}@${ZATO_REMOTE_REPO_HOSTNAME}:${ZATO_REMOTE_REPO_BASE_DIR}/${SUITE}${CLIENT}/${OPERATING_SYSTEM}</command>
+      <command>rsync -az --delete -e ssh ${ZATO_LOCAL_REPO_BASE_DIR}/${REPOSITORY}${CLIENT_PATH}/${OPERATING_SYSTEM}/ ${ZATO_REMOTE_REPO_USERNAME}@${ZATO_REMOTE_REPO_HOSTNAME}:${ZATO_REMOTE_REPO_BASE_DIR}/${REPOSITORY}${CLIENT_PATH}/${OPERATING_SYSTEM}</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers/>

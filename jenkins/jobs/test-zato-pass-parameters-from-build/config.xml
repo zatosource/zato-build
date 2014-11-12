@@ -44,6 +44,17 @@
             </a>
           </choices>
         </hudson.model.ChoiceParameterDefinition>
+        <hudson.model.ChoiceParameterDefinition>
+          <name>REPOSITORY</name>
+          <description>Choose repository for build packages. </description>
+          <choices class="java.util.Arrays$ArrayList">
+            <a class="string-array">
+              <string>dev</string>
+              <string>stable</string>
+              <string>u</string>
+            </a>
+          </choices>
+        </hudson.model.ChoiceParameterDefinition>
         <com.cloudbees.plugins.credentials.CredentialsParameterDefinition plugin="credentials@1.18">
           <name>REPO_CREDENTIALS</name>
           <description></description>
@@ -63,32 +74,6 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder plugin="conditional-buildstep@1.3.3">
-      <condition class="org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition" plugin="run-condition@1.0">
-        <arg1>${ENV,var=&quot;DISTRIBUTION&quot;}</arg1>
-        <arg2>all</arg2>
-        <ignoreCase>false</ignoreCase>
-      </condition>
-      <buildStep class="hudson.plugins.parameterizedtrigger.TriggerBuilder" plugin="parameterized-trigger@2.25">
-        <configs>
-          <hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
-            <configs>
-              <hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
-                <properties>RELEASE_VERSION=${RELEASE_VERSION}
-PACKAGE_NUMBER=${PACKAGE_NUMBER}
-BRANCH=${BRANCH}
-CLIENT=${CLIENT}</properties>
-              </hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
-            </configs>
-            <projects>zato-process-all-debian-packages</projects>
-            <condition>ALWAYS</condition>
-            <triggerWithNoParameters>false</triggerWithNoParameters>
-            <buildAllNodesWithLabel>false</buildAllNodesWithLabel>
-          </hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
-        </configs>
-      </buildStep>
-      <runner class="org.jenkins_ci.plugins.run_condition.BuildStepRunner$DontRun" plugin="run-condition@1.0"/>
-    </org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder>
-    <org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder plugin="conditional-buildstep@1.3.3">
       <condition class="org.jenkins_ci.plugins.run_condition.logic.Not" plugin="run-condition@1.0">
         <condition class="org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition">
           <arg1>${ENV,var=&quot;DISTRIBUTION&quot;}</arg1>
@@ -105,7 +90,9 @@ CLIENT=${CLIENT}</properties>
 PACKAGE_NUMBER=${PACKAGE_NUMBER}
 BRANCH=${BRANCH}
 DISTRIBUTION=${DISTRIBUTION}
-CLIENT=${CLIENT}</properties>
+CLIENT=${CLIENT}
+CLIENT_PATH=/${CLIENT}
+REPOSITORY=${REPOSITORY}</properties>
               </hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
             </configs>
             <projects>zato-conditional-trigger</projects>
@@ -133,7 +120,9 @@ CLIENT=${CLIENT}</properties>
                   <properties>RELEASE_VERSION=${RELEASE_VERSION}
 PACKAGE_NUMBER=${PACKAGE_NUMBER}
 BRANCH=${BRANCH}
-CLIENT=${CLIENT}</properties>
+CLIENT=${CLIENT}
+CLIENT_PATH=/${CLIENT}
+REPOSITORY=${REPOSITORY}</properties>
                 </hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
               </configs>
               <projects>zato-process-all-debian-packages</projects>
@@ -165,7 +154,9 @@ CLIENT=${CLIENT}</properties>
                   <properties>RELEASE_VERSION=${RELEASE_VERSION}
 PACKAGE_NUMBER=${PACKAGE_NUMBER}
 BRANCH=${BRANCH}
-CLIENT=${CLIENT}</properties>
+CLIENT=${CLIENT}
+CLIENT_PATH=/${CLIENT}
+REPOSITORY=${REPOSITORY}</properties>
                 </hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
               </configs>
               <projects>zato-process-all-ubuntu-packages</projects>
@@ -197,7 +188,9 @@ CLIENT=${CLIENT}</properties>
                   <properties>RELEASE_VERSION=${RELEASE_VERSION}
 PACKAGE_NUMBER=${PACKAGE_NUMBER}
 BRANCH=${BRANCH}
-CLIENT=${CLIENT}</properties>
+CLIENT=${CLIENT}
+CLIENT_PATH=/${CLIENT}
+REPOSITORY=${REPOSITORY}</properties>
                 </hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
               </configs>
               <projects>zato-process-all-rhel-packages</projects>

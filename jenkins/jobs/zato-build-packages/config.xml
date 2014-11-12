@@ -18,7 +18,7 @@
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>BRANCH</name>
-          <description>Git branch to pull Zato sources from.</description>
+          <description>Git branch to pull Zato source code from.</description>
           <defaultValue></defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
@@ -41,6 +41,17 @@
               <string>ubuntu-12.04-64</string>
               <string>ubuntu-14.04-32</string>
               <string>ubuntu-14.04.64</string>
+            </a>
+          </choices>
+        </hudson.model.ChoiceParameterDefinition>
+        <hudson.model.ChoiceParameterDefinition>
+          <name>REPOSITORY</name>
+          <description>Choose repository for build packages. </description>
+          <choices class="java.util.Arrays$ArrayList">
+            <a class="string-array">
+              <string>dev</string>
+              <string>stable</string>
+              <string>u</string>
             </a>
           </choices>
         </hudson.model.ChoiceParameterDefinition>
