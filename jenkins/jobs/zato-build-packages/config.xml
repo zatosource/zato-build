@@ -91,7 +91,8 @@
 PACKAGE_NUMBER=${PACKAGE_NUMBER}
 BRANCH=${BRANCH}
 CLIENT=${CLIENT}
-CLIENT_PATH=/${CLIENT}</properties>
+CLIENT_PATH=/${CLIENT}
+REPOSITORY=${REPOSITORY}</properties>
               </hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
             </configs>
             <projects>zato-process-all-debian-packages</projects>
@@ -121,7 +122,8 @@ PACKAGE_NUMBER=${PACKAGE_NUMBER}
 BRANCH=${BRANCH}
 DISTRIBUTION=${DISTRIBUTION}
 CLIENT=${CLIENT}
-CLIENT_PATH=/${CLIENT}</properties>
+CLIENT_PATH=/${CLIENT}
+REPOSITORY=${REPOSITORY}</properties>
               </hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
             </configs>
             <projects>zato-conditional-trigger</projects>
