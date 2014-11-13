@@ -1,0 +1,30 @@
+#!/bin/bash
+# INIT script to manage start/stop Zato Daemons
+
+start_all()
+{
+    /bin/su - zato -c "zato start ..."
+}
+
+stop_all()
+{
+    /bin/su - zato -c "zato stop ..."
+}
+
+case "$1" in
+  start)
+    echo "Starting Zato Daemons..."
+    start_all
+    ;;
+  restart)
+    stop_all
+    start_all
+    ;;
+  stop)
+    echo "Stopping Zato Daemons..."
+    stop_all
+    ;;
+  *)
+    echo "Usage: $0 {start, stop, restart}"
+  ;;
+esac

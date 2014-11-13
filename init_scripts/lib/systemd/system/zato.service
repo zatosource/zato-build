@@ -1,0 +1,12 @@
+[Unit]
+Description=Zato ESB Daemons
+After=syslog.target network.target
+
+[Service]
+ExecStart=/etc/init.d/zato start
+ExecStop=/etc/init.d/zato stop
+Type=oneshot
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
