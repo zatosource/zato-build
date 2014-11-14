@@ -11,8 +11,17 @@ for catalog in $ENV/*/
      do
 	x=${component#"$catalog"}
 	if [[ $x =~ "server" ]] || [[ $x =~ "web-admin" ]] || [[ $x =~ "load-balancer" ]]; then
-	    if [[ $1 == "start" ]]; then echo "Starting ${x%"/"} from $component..."; fi
-	    su - zato -c "zato $1 $component"
+	    if [[ $1 == "start" ]]; then 
+		echo "Starting ${x%"/"} from $component..."
+		su - zato -c "zato $1 $component"
+	    fi
+	    if [[ $1 == "stop" ]]; then 
+		su - zato -c "zato $1 $component"
+	    fi
+	    if [[ $1 == "info" ]]; then 
+		status=`su - zato -c "zato $1 $component 2>&1 > /dev/null | grep component_running | sed 's/|//g' | sed 's/component_running//' | sed 's/ //g'"`
+		echo "Status running ${x%"/"} of $component... $status"
+	    fi
 	fi
      done
  done
@@ -31,7 +40,11 @@ case "$1" in
     echo "Stopping Zato components..."
     component_all stop
     ;;
+  status)
+    echo "Status Zato components..."
+    component_all info
+    ;;
   *)
-    echo "Usage: $0 {start, stop, restart}"
+    echo "Usage: $0 {start, stop, restart, status}"
   ;;
 esac
