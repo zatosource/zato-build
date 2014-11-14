@@ -1,28 +1,35 @@
 #!/bin/bash
-# INIT script to manage start/stop Zato Daemons
+# INIT script to manage start/stop Zato components
 
-start_all()
-{
-    /bin/su - zato -c "zato start ..."
-}
+ENV=/opt/zato/env
 
-stop_all()
+component_all()
 {
-    /bin/su - zato -c "zato stop ..."
+for catalog in $ENV/*/
+ do
+    for component in $catalog*/
+     do
+	x=${component#"$catalog"}
+	if [[ $x =~ "server" ]] || [[ $x =~ "web-admin" ]] || [[ $x =~ "load-balancer" ]]; then
+	    if [[ $1 == "start" ]]; then echo "Starting ${x%"/"} from $component..."; fi
+	    su - zato -c "zato $1 $component"
+	fi
+     done
+ done
 }
 
 case "$1" in
   start)
-    echo "Starting Zato Daemons..."
-    start_all
+    echo "Starting Zato components..."
+    component_all start
     ;;
   restart)
-    stop_all
-    start_all
+    component_all stop
+    component_all start
     ;;
   stop)
-    echo "Stopping Zato Daemons..."
-    stop_all
+    echo "Stopping Zato components..."
+    component_all stop
     ;;
   *)
     echo "Usage: $0 {start, stop, restart}"

@@ -1,5 +1,5 @@
 [Unit]
-Description=Zato ESB Daemons
+Description=Zato ESB components
 After=syslog.target network.target
 
 [Service]
