@@ -21,6 +21,16 @@
         </com.cloudbees.plugins.credentials.CredentialsParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
+    <EnvInjectJobProperty plugin="envinject@1.90">
+      <info>
+        <loadFilesFromMaster>false</loadFilesFromMaster>
+      </info>
+      <on>true</on>
+      <keepJenkinsSystemVariables>true</keepJenkinsSystemVariables>
+      <keepBuildVariables>true</keepBuildVariables>
+      <overrideBuildParameters>false</overrideBuildParameters>
+      <contributors/>
+    </EnvInjectJobProperty>
   </properties>
   <scm class="hudson.scm.NullSCM"/>
   <canRoam>true</canRoam>
@@ -34,56 +44,12 @@
       <condition class="org.jenkins_ci.plugins.run_condition.logic.Not" plugin="run-condition@1.0">
         <condition class="org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition">
           <arg1>${ENV,var=&quot;CLIENT&quot;}</arg1>
-          <arg2>&quot;&quot;</arg2>
+          <arg2></arg2>
           <ignoreCase>false</ignoreCase>
         </condition>
       </condition>
-      <buildStep class="jenkins.plugins.publish_over_ssh.BapSshBuilderPlugin" plugin="publish-over-ssh@1.12">
-        <delegate>
-          <consolePrefix>SSH: </consolePrefix>
-          <delegate>
-            <publishers>
-              <jenkins.plugins.publish__over__ssh.BapSshPublisher>
-                <configName>Centos 6 Zato repo</configName>
-                <verbose>true</verbose>
-                <transfers>
-                  <jenkins.plugins.publish__over__ssh.BapSshTransfer>
-                    <remoteDirectory></remoteDirectory>
-                    <sourceFiles></sourceFiles>
-                    <excludes></excludes>
-                    <removePrefix></removePrefix>
-                    <remoteDirectorySDF>false</remoteDirectorySDF>
-                    <flatten>false</flatten>
-                    <cleanRemote>false</cleanRemote>
-                    <noDefaultExcludes>false</noDefaultExcludes>
-                    <makeEmptyDirs>false</makeEmptyDirs>
-                    <patternSeparator>[, ]+</patternSeparator>
-                    <execCommand>if [ ! -d &quot;$ZATO_REMOTE_REPO_BASE_DIR/u$CLIENT_PATH&quot; ]; then
-    echo &quot;Creating directory for client $CLIENT&quot;;
-    mkdir &quot;$ZATO_REMOTE_REPO_BASE_DIR/u$CLIENT_PATH&quot;;
-else
-    echo &quot;Directory $CLIENT_PATH for client $CLIENT already exists&quot;;
-fi</execCommand>
-                    <execTimeout>120000</execTimeout>
-                    <usePty>false</usePty>
-                  </jenkins.plugins.publish__over__ssh.BapSshTransfer>
-                </transfers>
-                <useWorkspaceInPromotion>false</useWorkspaceInPromotion>
-                <usePromotionTimestamp>false</usePromotionTimestamp>
-                <credentials class="jenkins.plugins.publish_over_ssh.BapSshCredentials">
-                  <secretPassphrase>KmzucTx9hxn5wO2xhu5+P5ISITLQ3f0rLdHg6zOjHVc=</secretPassphrase>
-                  <key></key>
-                  <keyPath></keyPath>
-                  <username>rafal</username>
-                </credentials>
-              </jenkins.plugins.publish__over__ssh.BapSshPublisher>
-            </publishers>
-            <continueOnError>false</continueOnError>
-            <failOnError>false</failOnError>
-            <alwaysPublishFromMaster>false</alwaysPublishFromMaster>
-            <hostConfigurationAccess class="jenkins.plugins.publish_over_ssh.BapSshPublisherPlugin" reference="../.."/>
-          </delegate>
-        </delegate>
+      <buildStep class="hudson.tasks.Shell">
+        <command>ssh ${ZATO_REMOTE_REPO_USERNAME}@${ZATO_REMOTE_REPO_HOSTNAME} &quot;mkdir -p $ZATO_REMOTE_REPO_BASE_DIR/u$CLIENT_PATH/${OPERATING_SYSTEM}/${CODENAME}/${ARCHITECTURE}&quot;</command>
       </buildStep>
       <runner class="org.jenkins_ci.plugins.run_condition.BuildStepRunner$DontRun" plugin="run-condition@1.0"/>
     </org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder>
