@@ -38,7 +38,7 @@
                 <org.jenkins__ci.plugins.run__condition.logic.ConditionContainer>
                   <condition class="org.jenkins_ci.plugins.run_condition.logic.Not">
                     <condition class="org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition">
-                      <arg1>${ENV,var=&quot;CLIENT&quot;}</arg1>
+                      <arg1>${ENV,var=&quot;CLIENT_PATH&quot;}</arg1>
                       <arg2></arg2>
                       <ignoreCase>false</ignoreCase>
                     </condition>
@@ -60,7 +60,7 @@
                 <org.jenkins__ci.plugins.run__condition.logic.ConditionContainer>
                   <condition class="org.jenkins_ci.plugins.run_condition.logic.Not">
                     <condition class="org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition">
-                      <arg1>${ENV,var=&quot;CLIENT&quot;}</arg1>
+                      <arg1>${ENV,var=&quot;CLIENT_PATH&quot;}</arg1>
                       <arg2></arg2>
                       <ignoreCase>false</ignoreCase>
                     </condition>

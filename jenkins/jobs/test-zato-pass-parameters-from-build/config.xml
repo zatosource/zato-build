@@ -22,8 +22,8 @@
           <defaultValue></defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
-          <name>CLIENT</name>
-          <description>OPTIONAL! Enter only if you want specifically to build a package for a client. Pattern: /&lt;[0-9][a-f]&gt;-&lt;client_name&gt;. Use six characters in first part of the pattern.</description>
+          <name>CLIENT_PATH</name>
+          <description>OPTIONAL! Enter only if you want specifically to build a package for a client. Pattern: /&lt;[0-9][a-f]&gt;-&lt;client_name&gt;. Remember about opening slash. Use six characters in first part of the pattern.</description>
           <defaultValue></defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.ChoiceParameterDefinition>
@@ -90,8 +90,7 @@
 PACKAGE_NUMBER=${PACKAGE_NUMBER}
 BRANCH=${BRANCH}
 DISTRIBUTION=${DISTRIBUTION}
-CLIENT=${CLIENT}
-CLIENT_PATH=/${CLIENT}
+CLIENT_PATH=${CLIENT_PATH}
 REPOSITORY=${REPOSITORY}</properties>
               </hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
             </configs>
@@ -120,8 +119,7 @@ REPOSITORY=${REPOSITORY}</properties>
                   <properties>RELEASE_VERSION=${RELEASE_VERSION}
 PACKAGE_NUMBER=${PACKAGE_NUMBER}
 BRANCH=${BRANCH}
-CLIENT=${CLIENT}
-CLIENT_PATH=/${CLIENT}
+CLIENT_PATH=${CLIENT_PATH}
 REPOSITORY=${REPOSITORY}</properties>
                 </hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
               </configs>
@@ -154,8 +152,7 @@ REPOSITORY=${REPOSITORY}</properties>
                   <properties>RELEASE_VERSION=${RELEASE_VERSION}
 PACKAGE_NUMBER=${PACKAGE_NUMBER}
 BRANCH=${BRANCH}
-CLIENT=${CLIENT}
-CLIENT_PATH=/${CLIENT}
+CLIENT_PATH=${CLIENT_PATH}
 REPOSITORY=${REPOSITORY}</properties>
                 </hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
               </configs>
@@ -188,8 +185,7 @@ REPOSITORY=${REPOSITORY}</properties>
                   <properties>RELEASE_VERSION=${RELEASE_VERSION}
 PACKAGE_NUMBER=${PACKAGE_NUMBER}
 BRANCH=${BRANCH}
-CLIENT=${CLIENT}
-CLIENT_PATH=/${CLIENT}
+CLIENT_PATH=${CLIENT_PATH}
 REPOSITORY=${REPOSITORY}</properties>
                 </hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
               </configs>
