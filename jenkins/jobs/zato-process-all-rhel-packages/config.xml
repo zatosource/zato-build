@@ -1,27 +1,15 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <matrix-project plugin="matrix-project@1.4">
   <actions/>
-  <description></description>
+  <description>This job is a multi-configuration project.&#xd;
+&#xd;
+It performs specified build steps (which in this job are the same as in zato-add-deb-packages-to-repo job) for each defined configuration of input parameters. Number of configuration sets is the same as the number of Linux RHEL distributions supported by Zato team.&#xd;
+&#xd;
+Those parameters are provided by an user when launching zato-build-packages, and then zato-pass-parameters-from-build jobs.&#xd;
+&#xd;
+Additionally, user has to provide values for few more parameters in section &quot;Build Environment&quot;.</description>
   <keepDependencies>false</keepDependencies>
   <properties>
-    <hudson.model.ParametersDefinitionProperty>
-      <parameterDefinitions>
-        <com.cloudbees.plugins.credentials.CredentialsParameterDefinition plugin="credentials@1.18">
-          <name>REPO_CREDENTIALS</name>
-          <description></description>
-          <defaultValue>3b365d39-14a7-46c1-b5c3-d20ec0c428c8</defaultValue>
-          <credentialType>com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey</credentialType>
-          <required>true</required>
-        </com.cloudbees.plugins.credentials.CredentialsParameterDefinition>
-        <com.cloudbees.plugins.credentials.CredentialsParameterDefinition plugin="credentials@1.18">
-          <name>USER_CREDENTIALS</name>
-          <description></description>
-          <defaultValue>d8a9c7c2-7473-4c15-836c-7df7c5c28175</defaultValue>
-          <credentialType>com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl</credentialType>
-          <required>true</required>
-        </com.cloudbees.plugins.credentials.CredentialsParameterDefinition>
-      </parameterDefinitions>
-    </hudson.model.ParametersDefinitionProperty>
     <EnvInjectJobProperty plugin="envinject@1.90">
       <info>
         <groovyScriptContent>def deb_extension = &quot;deb&quot;
@@ -88,24 +76,39 @@ RPM_EXTENSION: rpm_extension
   <combinationFilter>(DISTRIBUTION==&quot;redhat-6-32&quot; &amp;&amp; CODENAME==&quot;el6&quot; &amp;&amp; ARCHITECTURE==&quot;i386&quot;) || (DISTRIBUTION==&quot;redhat-6-64&quot; &amp;&amp; CODENAME==&quot;el6&quot; &amp;&amp; ARCHITECTURE==&quot;x86_64&quot;) || (DISTRIBUTION==&quot;redhat-7-64&quot; &amp;&amp; CODENAME==&quot;el7&quot; &amp;&amp; ARCHITECTURE==&quot;x86_64&quot;)</combinationFilter>
   <builders>
     <hudson.tasks.Shell>
-      <command>rsync -az --delete -e ssh ${META_INSTALLER_PACKAGE_DIR}/${DISTRIBUTION}/zato-${RELEASE_VERSION}-${PACKAGE_NUMBER}.${CODENAME}.${ARCHITECTURE}.rpm ${ZATO_REMOTE_REPO_USERNAME}@${ZATO_REMOTE_REPO_HOSTNAME}:${ZATO_REMOTE_REPO_BASE_DIR}/${REPOSITORY}${CLIENT_PATH}/${OPERATING_SYSTEM}/${CODENAME}/${ARCHITECTURE}</command>
+      <command>ssh ${ZATO_TEMP_RPM_REPO_USERNAME}@${ZATO_TEMP_RPM_REPO_HOSTNAME} &quot;mkdir -p ${ZATO_TEMP_RPM_REPO_BASE_DIR}/${REPOSITORY}${CLIENT_PATH}/${OPERATING_SYSTEM}/${CODENAME}/${ARCHITECTURE}&quot;</command>
     </hudson.tasks.Shell>
     <hudson.tasks.Shell>
-      <command>ssh ${ZATO_REMOTE_REPO_USERNAME}@${ZATO_REMOTE_REPO_HOSTNAME} rpm --addsign ${ZATO_REMOTE_REPO_BASE_DIR}/${REPOSITORY}${CLIENT_PATH}/${OPERATING_SYSTEM}/${CODENAME}/${ARCHITECTURE}/zato-${RELEASE_VERSION}-${PACKAGE_NUMBER}.${CODENAME}.${ARCHITECTURE}.rpm</command>
+      <command>rsync -az --delete -e ssh ${ZATO_PACKAGE_LOCAL_DIR}/${DISTRIBUTION}/zato-${RELEASE_VERSION}-${PACKAGE_NUMBER}.${CODENAME}.${ARCHITECTURE}.rpm ${ZATO_TEMP_RPM_REPO_USERNAME}@${ZATO_TEMP_RPM_REPO_HOSTNAME}:${ZATO_TEMP_RPM_REPO_BASE_DIR}/${REPOSITORY}${CLIENT_PATH}/${OPERATING_SYSTEM}/${CODENAME}/${ARCHITECTURE}</command>
     </hudson.tasks.Shell>
     <hudson.tasks.Shell>
-      <command>ssh ${ZATO_REMOTE_REPO_USERNAME}@${ZATO_REMOTE_REPO_HOSTNAME} createrepo --cache ${ZATO_REMOTE_REPO_BASE_DIR}/${REPOSITORY}${CLIENT_PATH}/${OPERATING_SYSTEM}/${CODENAME}/${ARCHITECTURE}/cache --update ${ZATO_REMOTE_REPO_BASE_DIR}/${REPOSITORY}${CLIENT_PATH}/${OPERATING_SYSTEM}/${CODENAME}/${ARCHITECTURE}</command>
+      <command>ssh ${ZATO_TEMP_RPM_REPO_USERNAME}@${ZATO_TEMP_RPM_REPO_HOSTNAME} &quot;rpm --addsign ${ZATO_TEMP_RPM_REPO_BASE_DIR}/${REPOSITORY}${CLIENT_PATH}/${OPERATING_SYSTEM}/${CODENAME}/${ARCHITECTURE}/zato-${RELEASE_VERSION}-${PACKAGE_NUMBER}.${CODENAME}.${ARCHITECTURE}.rpm&quot;</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>ssh ${ZATO_TEMP_RPM_REPO_USERNAME}@${ZATO_TEMP_RPM_REPO_HOSTNAME} &quot;createrepo --cache ${ZATO_TEMP_RPM_REPO_BASE_DIR}/${REPOSITORY}${CLIENT_PATH}/${OPERATING_SYSTEM}/${CODENAME}/${ARCHITECTURE}/cache --update ${ZATO_TEMP_RPM_REPO_BASE_DIR}/${REPOSITORY}${CLIENT_PATH}/${OPERATING_SYSTEM}/${CODENAME}/${ARCHITECTURE}&quot;</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>mkdir -p ${ZATO_LOCAL_REPO_BASE_DIR}/${REPOSITORY}${CLIENT_PATH}/${OPERATING_SYSTEM}/${CODENAME}/${ARCHITECTURE}</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>rsync -az --delete -e ssh ${ZATO_TEMP_RPM_REPO_USERNAME}@${ZATO_TEMP_RPM_REPO_HOSTNAME}:${ZATO_TEMP_RPM_REPO_BASE_DIR}/${REPOSITORY}${CLIENT_PATH}/${OPERATING_SYSTEM}/${CODENAME}/${ARCHITECTURE}/ ${ZATO_LOCAL_REPO_BASE_DIR}/${REPOSITORY}${CLIENT_PATH}/${OPERATING_SYSTEM}/${CODENAME}/${ARCHITECTURE}</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>ssh ${ZATO_REMOTE_REPO_USERNAME}@${ZATO_REMOTE_REPO_HOSTNAME} &quot;mkdir -p ${ZATO_REMOTE_REPO_BASE_DIR}/${REPOSITORY}${CLIENT_PATH}/${OPERATING_SYSTEM}/${CODENAME}/${ARCHITECTURE}&quot;</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>rsync -az --delete -e ssh ${ZATO_LOCAL_REPO_BASE_DIR}/${REPOSITORY}${CLIENT_PATH}/${OPERATING_SYSTEM}/${CODENAME}/${ARCHITECTURE}/ ${ZATO_REMOTE_REPO_USERNAME}@${ZATO_REMOTE_REPO_HOSTNAME}:${ZATO_REMOTE_REPO_BASE_DIR}/${REPOSITORY}${CLIENT_PATH}/${OPERATING_SYSTEM}/${CODENAME}/${ARCHITECTURE}</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers/>
   <buildWrappers>
     <EnvInjectBuildWrapper plugin="envinject@1.90">
       <info>
-        <propertiesContent>META_INSTALLER_PACKAGE_DIR=/home/rafal/repos/zato-build/meta/output
-ZATO_LOCAL_REPO_BASE_DIR=/opt/repo
-ZATO_REMOTE_REPO_BASE_DIR=/opt/repo
-ZATO_REMOTE_REPO_USERNAME=rafal
-ZATO_REMOTE_REPO_HOSTNAME=centosrepo</propertiesContent>
+        <propertiesContent>ZATO_PACKAGE_LOCAL_DIR=
+ZATO_LOCAL_REPO_BASE_DIR=
+ZATO_REMOTE_REPO_BASE_DIR=
+ZATO_REMOTE_REPO_USERNAME=
+ZATO_REMOTE_REPO_HOSTNAME=</propertiesContent>
         <loadFilesFromMaster>false</loadFilesFromMaster>
       </info>
     </EnvInjectBuildWrapper>

@@ -3,7 +3,7 @@
   <actions/>
   <description>This job is a multi-configuration project.&#xd;
 &#xd;
-It performs specified build steps (which in this job are the same as in zato-add-deb-packages-to-repo job) for each defined configuration of input parameters. Number of configuration sets is the same as the number of Linux distributions supported by Zato team.&#xd;
+It performs specified build steps (which in this job are the same as in zato-add-deb-packages-to-repo job) for each defined configuration of input parameters. Number of configuration sets is the same as the number of Linux Ubuntu distributions supported by Zato team.&#xd;
 &#xd;
 Those parameters are provided by an user when launching zato-build-packages, and then zato-pass-parameters-from-build jobs.&#xd;
 &#xd;
