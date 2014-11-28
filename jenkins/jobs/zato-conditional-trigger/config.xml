@@ -1,7 +1,13 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description>Triggers a job according to conditions met.</description>
+  <description>This job is launched only if Jenkins has built a single package, either .deb or .rpm.&#xd;
+&#xd;
+According with the package type, either zato-add-deb-packages-to-repo or zato-add-rpm-packages-to-repo job is triggered.&#xd;
+&#xd;
+Under &quot;Build Environment&quot; section, you have to specify few parameters before this job can be used.&#xd;
+&#xd;
+</description>
   <keepDependencies>false</keepDependencies>
   <properties>
     <EnvInjectJobProperty plugin="envinject@1.90">
@@ -76,11 +82,11 @@ REPOSITORY=${REPOSITORY}
 OPERATING_SYSTEM=${OPERATING_SYSTEM}
 CODENAME=${CODENAME}
 ARCHITECTURE=${ARCHITECTURE}
-META_INSTALLER_PACKAGE_DIR=${META_INSTALLER_PACKAGE_DIR}
+ZATO_PACKAGE_LOCAL_DIR=${ZATO_PACKAGE_LOCAL_DIR}
 ZATO_LOCAL_REPO_BASE_DIR=${ZATO_LOCAL_REPO_BASE_DIR}
-ZATO_REMOTE_REPO_BASE_DIR=/opt/repo
-ZATO_REMOTE_REPO_HOSTNAME=centosrepo
-ZATO_REMOTE_REPO_USERNAME=rafal</properties>
+ZATO_REMOTE_REPO_BASE_DIR=${ZATO_REMOTE_REPO_BASE_DIR}
+ZATO_REMOTE_REPO_HOSTNAME=${ZATO_REMOTE_REPO_HOSTNAME}
+ZATO_REMOTE_REPO_USERNAME=${ZATO_REMOTE_REPO_USERNAME}</properties>
               </hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
             </configs>
             <projects>zato-add-deb-packages-to-repo</projects>
@@ -112,11 +118,14 @@ REPOSITORY=${REPOSITORY}
 OPERATING_SYSTEM=${OPERATING_SYSTEM}
 CODENAME=${CODENAME}
 ARCHITECTURE=${ARCHITECTURE}
-META_INSTALLER_PACKAGE_DIR=${META_INSTALLER_PACKAGE_DIR}
+ZATO_PACKAGE_LOCAL_DIR=${ZATO_PACKAGE_LOCAL_DIR}
 ZATO_LOCAL_REPO_BASE_DIR=${ZATO_LOCAL_REPO_BASE_DIR}
-ZATO_REMOTE_REPO_BASE_DIR=/opt/repo
-ZATO_REMOTE_REPO_HOSTNAME=centosrepo
-ZATO_REMOTE_REPO_USERNAME=rafal</properties>
+ZATO_TEMP_RPM_REPO_BASE_DIR=/opt/repo
+ZATO_TEMP_RPM_REPO_HOSTNAME=centostemprepo
+ZATO_TEMP_RPM_REPO_USERNAME=root
+ZATO_REMOTE_REPO_BASE_DIR=${ZATO_REMOTE_REPO_BASE_DIR}
+ZATO_REMOTE_REPO_HOSTNAME=${ZATO_REMOTE_REPO_HOSTNAME}
+ZATO_REMOTE_REPO_USERNAME=${ZATO_REMOTE_REPO_USERNAME}</properties>
               </hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
             </configs>
             <projects>zato-add-rpm-packages-to-repo</projects>
@@ -133,8 +142,14 @@ ZATO_REMOTE_REPO_USERNAME=rafal</properties>
   <buildWrappers>
     <EnvInjectBuildWrapper plugin="envinject@1.90">
       <info>
-        <propertiesContent>META_INSTALLER_PACKAGE_DIR=/home/rafal/repos/zato-build/meta/output
-ZATO_LOCAL_REPO_BASE_DIR=/opt/repo</propertiesContent>
+        <propertiesContent>ZATO_PACKAGE_LOCAL_DIR=
+ZATO_LOCAL_REPO_BASE_DIR=
+ZATO_TEMP_RPM_REPO_BASE_DIR=
+ZATO_TEMP_RPM_REPO_HOSTNAME=
+ZATO_TEMP_RPM_REPO_USERNAME=
+ZATO_REMOTE_REPO_BASE_DIR=
+ZATO_REMOTE_REPO_HOSTNAME=
+ZATO_REMOTE_REPO_USERNAME=</propertiesContent>
         <loadFilesFromMaster>false</loadFilesFromMaster>
       </info>
     </EnvInjectBuildWrapper>
