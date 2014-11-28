@@ -1,7 +1,11 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description>Creating Zato packages</description>
+  <description>This job builds Zato packages.&#xd;
+&#xd;
+It executes &apos;build.sh&apos; script. It&apos;s required to specify a path to the script (which is relative to ${JENKINS_HOME}) and assign it to &apos;RELATIVE_PATH_TO_BUILDSH&apos; parameter.&#xd;
+&#xd;
+After performing this job, Jenkins sends email to addresses specified in &apos;Editable Email Notification&apos; with all parameters needed to successfully perform subsequent jobs which sign and publish Zato packages.</description>
   <keepDependencies>false</keepDependencies>
   <properties>
     <hudson.model.ParametersDefinitionProperty>
@@ -55,15 +59,19 @@
             </a>
           </choices>
         </hudson.model.ChoiceParameterDefinition>
-        <com.cloudbees.plugins.credentials.CredentialsParameterDefinition plugin="credentials@1.18">
-          <name>REPO_CREDENTIALS</name>
-          <description></description>
-          <defaultValue>3b365d39-14a7-46c1-b5c3-d20ec0c428c8</defaultValue>
-          <credentialType>com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey</credentialType>
-          <required>true</required>
-        </com.cloudbees.plugins.credentials.CredentialsParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
+    <EnvInjectJobProperty plugin="envinject@1.90">
+      <info>
+        <propertiesContent>RELATIVE_PATH_TO_BUILDSH=</propertiesContent>
+        <loadFilesFromMaster>false</loadFilesFromMaster>
+      </info>
+      <on>true</on>
+      <keepJenkinsSystemVariables>true</keepJenkinsSystemVariables>
+      <keepBuildVariables>true</keepBuildVariables>
+      <overrideBuildParameters>false</overrideBuildParameters>
+      <contributors/>
+    </EnvInjectJobProperty>
   </properties>
   <scm class="hudson.scm.NullSCM"/>
   <canRoam>true</canRoam>
@@ -74,147 +82,8 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>${JENKINS_HOME}/../repos/zato-build/meta/build.sh ${RELEASE_VERSION} ${PACKAGE_NUMBER} ${BRANCH} ${DISTRIBUTION}</command>
+      <command>${JENKINS_HOME}/${RELATIVE_PATH_TO_BUILDSH} ${RELEASE_VERSION} ${PACKAGE_NUMBER} ${BRANCH} ${DISTRIBUTION}</command>
     </hudson.tasks.Shell>
-    <org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder plugin="conditional-buildstep@1.3.3">
-      <condition class="org.jenkins_ci.plugins.run_condition.logic.Not" plugin="run-condition@1.0">
-        <condition class="org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition">
-          <arg1>${ENV,var=&quot;DISTRIBUTION&quot;}</arg1>
-          <arg2>all</arg2>
-          <ignoreCase>false</ignoreCase>
-        </condition>
-      </condition>
-      <buildStep class="hudson.plugins.parameterizedtrigger.TriggerBuilder" plugin="parameterized-trigger@2.25">
-        <configs>
-          <hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
-            <configs>
-              <hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
-                <properties>RELEASE_VERSION=${RELEASE_VERSION}
-PACKAGE_NUMBER=${PACKAGE_NUMBER}
-BRANCH=${BRANCH}
-DISTRIBUTION=${DISTRIBUTION}
-CLIENT_PATH=${CLIENT_PATH}
-REPOSITORY=${REPOSITORY}</properties>
-              </hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
-            </configs>
-            <projects>zato-conditional-trigger</projects>
-            <condition>ALWAYS</condition>
-            <triggerWithNoParameters>false</triggerWithNoParameters>
-            <buildAllNodesWithLabel>false</buildAllNodesWithLabel>
-          </hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
-        </configs>
-      </buildStep>
-      <runner class="org.jenkins_ci.plugins.run_condition.BuildStepRunner$DontRun" plugin="run-condition@1.0"/>
-    </org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder>
-    <org.jenkinsci.plugins.conditionalbuildstep.ConditionalBuilder plugin="conditional-buildstep@1.3.3">
-      <runner class="org.jenkins_ci.plugins.run_condition.BuildStepRunner$DontRun" plugin="run-condition@1.0"/>
-      <runCondition class="org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition" plugin="run-condition@1.0">
-        <arg1>${ENV,var=&quot;DISTRIBUTION&quot;}</arg1>
-        <arg2>all</arg2>
-        <ignoreCase>false</ignoreCase>
-      </runCondition>
-      <conditionalbuilders>
-        <hudson.plugins.parameterizedtrigger.TriggerBuilder plugin="parameterized-trigger@2.25">
-          <configs>
-            <hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
-              <configs>
-                <hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
-                  <properties>RELEASE_VERSION=${RELEASE_VERSION}
-PACKAGE_NUMBER=${PACKAGE_NUMBER}
-BRANCH=${BRANCH}
-CLIENT_PATH=${CLIENT_PATH}
-REPOSITORY=${REPOSITORY}</properties>
-                </hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
-              </configs>
-              <projects>zato-process-all-debian-packages</projects>
-              <condition>ALWAYS</condition>
-              <triggerWithNoParameters>false</triggerWithNoParameters>
-              <block>
-                <unstableThreshold>
-                  <name>UNSTABLE</name>
-                  <ordinal>1</ordinal>
-                  <color>YELLOW</color>
-                  <completeBuild>true</completeBuild>
-                </unstableThreshold>
-                <failureThreshold>
-                  <name>FAILURE</name>
-                  <ordinal>2</ordinal>
-                  <color>RED</color>
-                  <completeBuild>true</completeBuild>
-                </failureThreshold>
-              </block>
-              <buildAllNodesWithLabel>false</buildAllNodesWithLabel>
-            </hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
-          </configs>
-        </hudson.plugins.parameterizedtrigger.TriggerBuilder>
-        <hudson.plugins.parameterizedtrigger.TriggerBuilder plugin="parameterized-trigger@2.25">
-          <configs>
-            <hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
-              <configs>
-                <hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
-                  <properties>RELEASE_VERSION=${RELEASE_VERSION}
-PACKAGE_NUMBER=${PACKAGE_NUMBER}
-BRANCH=${BRANCH}
-CLIENT_PATH=${CLIENT_PATH}
-REPOSITORY=${REPOSITORY}</properties>
-                </hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
-              </configs>
-              <projects>zato-process-all-ubuntu-packages</projects>
-              <condition>ALWAYS</condition>
-              <triggerWithNoParameters>false</triggerWithNoParameters>
-              <block>
-                <unstableThreshold>
-                  <name>UNSTABLE</name>
-                  <ordinal>1</ordinal>
-                  <color>YELLOW</color>
-                  <completeBuild>true</completeBuild>
-                </unstableThreshold>
-                <failureThreshold>
-                  <name>FAILURE</name>
-                  <ordinal>2</ordinal>
-                  <color>RED</color>
-                  <completeBuild>true</completeBuild>
-                </failureThreshold>
-              </block>
-              <buildAllNodesWithLabel>false</buildAllNodesWithLabel>
-            </hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
-          </configs>
-        </hudson.plugins.parameterizedtrigger.TriggerBuilder>
-        <hudson.plugins.parameterizedtrigger.TriggerBuilder plugin="parameterized-trigger@2.25">
-          <configs>
-            <hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
-              <configs>
-                <hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
-                  <properties>RELEASE_VERSION=${RELEASE_VERSION}
-PACKAGE_NUMBER=${PACKAGE_NUMBER}
-BRANCH=${BRANCH}
-CLIENT_PATH=${CLIENT_PATH}
-REPOSITORY=${REPOSITORY}</properties>
-                </hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
-              </configs>
-              <projects>zato-process-all-rhel-packages</projects>
-              <condition>ALWAYS</condition>
-              <triggerWithNoParameters>false</triggerWithNoParameters>
-              <block>
-                <unstableThreshold>
-                  <name>UNSTABLE</name>
-                  <ordinal>1</ordinal>
-                  <color>YELLOW</color>
-                  <completeBuild>true</completeBuild>
-                </unstableThreshold>
-                <failureThreshold>
-                  <name>FAILURE</name>
-                  <ordinal>2</ordinal>
-                  <color>RED</color>
-                  <completeBuild>true</completeBuild>
-                </failureThreshold>
-              </block>
-              <buildAllNodesWithLabel>false</buildAllNodesWithLabel>
-            </hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
-          </configs>
-        </hudson.plugins.parameterizedtrigger.TriggerBuilder>
-      </conditionalbuilders>
-    </org.jenkinsci.plugins.conditionalbuildstep.ConditionalBuilder>
   </builders>
   <publishers>
     <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.38.2">
@@ -272,10 +141,20 @@ REPOSITORY=${REPOSITORY}</properties>
 
 Command and parameters used:
 
-${JENKINS_HOME}/../repos/zato-build/meta/build.sh ${RELEASE_VERSION} ${PACKAGE_NUMBER} ${BRANCH} ${DISTRIBUTION}</defaultContent>
+${JENKINS_HOME}/${RELATIVE_PATH_TO_BUILDSH} ${RELEASE_VERSION} ${PACKAGE_NUMBER} ${BRANCH} ${DISTRIBUTION}
+
+Full list of parameters:
+
+RELEASE_VERSION = ${RELEASE_VERSION}
+PACKAGE_NUMBER = ${PACKAGE_NUMBER}
+BRANCH = ${BRANCH}
+CLIENT_PATH = ${CLIENT_PATH}
+DISTRIBUTION = ${DISTRIBUTION}
+REPOSITORY = ${REPOSITORY}
+</defaultContent>
       <attachmentsPattern></attachmentsPattern>
       <presendScript>$DEFAULT_PRESEND_SCRIPT</presendScript>
-      <attachBuildLog>false</attachBuildLog>
+      <attachBuildLog>true</attachBuildLog>
       <compressBuildLog>false</compressBuildLog>
       <replyTo>$DEFAULT_REPLYTO</replyTo>
       <saveOutput>false</saveOutput>
