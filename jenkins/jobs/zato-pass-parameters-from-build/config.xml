@@ -1,7 +1,11 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description>This is only a test job meant to be launched in case of zato-build-packages failure or abort, passing parameters to other jobs.</description>
+  <description>This job is used to manually pass parameters from zato-build-packages (which is run at remote server) to other jobs responsible for signing and publishing Zato packages. The parameters from zato-build-packages are send in an email.&#xd;
+&#xd;
+After passing parameters, Jenkins checks whether a single package or multiple packages have been built, and launches relevant subsequent jobs.&#xd;
+&#xd;
+</description>
   <keepDependencies>false</keepDependencies>
   <properties>
     <hudson.model.ParametersDefinitionProperty>
@@ -55,13 +59,6 @@
             </a>
           </choices>
         </hudson.model.ChoiceParameterDefinition>
-        <com.cloudbees.plugins.credentials.CredentialsParameterDefinition plugin="credentials@1.18">
-          <name>REPO_CREDENTIALS</name>
-          <description></description>
-          <defaultValue>3b365d39-14a7-46c1-b5c3-d20ec0c428c8</defaultValue>
-          <credentialType>com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey</credentialType>
-          <required>true</required>
-        </com.cloudbees.plugins.credentials.CredentialsParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
   </properties>
