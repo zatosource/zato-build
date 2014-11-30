@@ -3,8 +3,8 @@ Description=Zato ESB components
 After=syslog.target network.target
 
 [Service]
-ExecStart=/etc/init.d/zato start
-ExecStop=/etc/init.d/zato stop
+ExecStart=/etc/rc.d/init.d/zato start
+ExecStop=/etc/rc.d/init.d/zato stop
 Type=oneshot
 RemainAfterExit=yes
 
