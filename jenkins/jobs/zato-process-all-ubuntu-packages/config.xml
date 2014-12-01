@@ -17,7 +17,6 @@ def rpm_extension = &quot;rpm&quot;
 
 def parameters = [ 
 
-SUITE: suite, 
 DEB_EXTENSION: deb_extension,
 RPM_EXTENSION: rpm_extension
 
@@ -78,7 +77,7 @@ RPM_EXTENSION: rpm_extension
   <combinationFilter>(DISTRIBUTION==&quot;ubuntu-12.04-32&quot; &amp;&amp; CODENAME==&quot;precise&quot; &amp;&amp; ARCHITECTURE==&quot;i386&quot;) || (DISTRIBUTION==&quot;ubuntu-12.04-64&quot; &amp;&amp; CODENAME==&quot;precise&quot; &amp;&amp; ARCHITECTURE==&quot;amd64&quot;) || (DISTRIBUTION==&quot;ubuntu-14.04-32&quot; &amp;&amp; CODENAME==&quot;trusty&quot; &amp;&amp; ARCHITECTURE==&quot;i386&quot;) || (DISTRIBUTION==&quot;ubuntu-14.04-64&quot; &amp;&amp; CODENAME==&quot;trusty&quot; &amp;&amp; ARCHITECTURE==&quot;amd64&quot;)</combinationFilter>
   <builders>
     <hudson.tasks.Shell>
-      <command>reprepro -b ${ZATO_LOCAL_REPO_BASE_DIR}/${REPOSITORY}${CLIENT_PATH}/${OPERATING_SYSTEM} includedeb ${CODENAME} ${ZATO_LOCAL_REPO_BASE_DIR}/${DISTRIBUTION}/zato-${RELEASE_VERSION}-${PACKAGE_NUMBER}_${ARCHITECTURE}-${CODENAME}.deb</command>
+      <command>reprepro -b ${ZATO_LOCAL_REPO_BASE_DIR}/${REPOSITORY}${CLIENT_PATH}/${OPERATING_SYSTEM} includedeb ${CODENAME} ${ZATO_PACKAGE_LOCAL_DIR}/${DISTRIBUTION}/zato-${RELEASE_VERSION}-${PACKAGE_NUMBER}_${ARCHITECTURE}-${CODENAME}.deb</command>
     </hudson.tasks.Shell>
     <hudson.tasks.Shell>
       <command>rsync -az --delete -e ssh ${ZATO_LOCAL_REPO_BASE_DIR}/${REPOSITORY}${CLIENT_PATH}/${OPERATING_SYSTEM}/ ${ZATO_REMOTE_REPO_USERNAME}@${ZATO_REMOTE_REPO_HOSTNAME}:${ZATO_REMOTE_REPO_BASE_DIR}/${REPOSITORY}${CLIENT_PATH}/${OPERATING_SYSTEM}</command>
@@ -89,10 +88,7 @@ RPM_EXTENSION: rpm_extension
     <EnvInjectBuildWrapper plugin="envinject@1.90">
       <info>
         <propertiesContent>ZATO_PACKAGE_LOCAL_DIR=
-ZATO_LOCAL_REPO_BASE_DIR=
-ZATO_REMOTE_REPO_BASE_DIR=
-ZATO_REMOTE_REPO_USERNAME=
-ZATO_REMOTE_REPO_HOSTNAME=</propertiesContent>
+ZATO_LOCAL_REPO_BASE_DIR=</propertiesContent>
         <loadFilesFromMaster>false</loadFilesFromMaster>
       </info>
     </EnvInjectBuildWrapper>

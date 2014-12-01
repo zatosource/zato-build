@@ -85,10 +85,7 @@ RPM_EXTENSION: rpm_extension
     <EnvInjectBuildWrapper plugin="envinject@1.90">
       <info>
         <propertiesContent>ZATO_PACKAGE_LOCAL_DIR=
-ZATO_LOCAL_REPO_BASE_DIR=
-ZATO_REMOTE_REPO_BASE_DIR=
-ZATO_REMOTE_REPO_USERNAME=
-ZATO_REMOTE_REPO_HOSTNAME=</propertiesContent>
+ZATO_LOCAL_REPO_BASE_DIR=</propertiesContent>
         <loadFilesFromMaster>false</loadFilesFromMaster>
       </info>
     </EnvInjectBuildWrapper>
