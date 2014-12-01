@@ -32,7 +32,7 @@ a commercial-friendly LGPL license. Think:
 %pre
 if [ "$1" = 1 ] ; then
 /usr/bin/getent group zato || /usr/sbin/groupadd zato
-/usr/bin/getent passwd zato || /usr/sbin/useradd -g zato -d /opt/zato -s /bin/bash zato
+/usr/bin/getent passwd zato || /usr/sbin/useradd -g zato -d /opt/zato -s /bin/bash --system zato
 fi
 exit 0
 
@@ -52,6 +52,10 @@ exit 0
 /opt/zato
 
 %post
+/bin/cp /etc/skel/.bash_profile /opt/zato/
+/bin/cp /etc/skel/.bashrc /opt/zato/
+chown -R zato:zato /opt/zato
+
 echo "export PATH
 PATH="/opt/zato/%{version}/code/bin:$PATH"">>/opt/zato/.bashrc
 
