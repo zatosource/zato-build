@@ -24,24 +24,19 @@ RUN curl -s https://zato.io/repo/zato-0CBD7F72.pgp.asc | sudo apt-key add -
 RUN apt-add-repository https://zato.io/repo/dev/ubuntu
 RUN apt-get update && apt-get install -y zato
 
-ENTRYPOINT redis-server /etc/redis/redis.conf
-
 # Create work environment for Zato 2.0.0
 
 # Switch to zato user and create Zato environment
-# USER zato
-# WORKDIR /opt/zato
+USER zato
 
 # Sets variable 'zato' to path '/opt/zato/2.0/bin/zato'
-# ENV zato /opt/zato/2.0/bin/zato
+ENV zato /opt/zato/2.0.0/bin/zato
 
-# WORKDIR opt/zato
+RUN mkdir -p env/qs-1
+RUN rm -rf env/qs-1 && mkdir -p env/qs-1
 
-# RUN mkdir -p env/qs-1
-# RUN rm -rf env/qs-1 && mkdir -p env/qs-1
-
-# WORKDIR env/qs-1
-# RUN $zato quickstart create . sqlite localhost 6379 --verbose --kvdb_password ""
+WORKDIR env/qs-1
+RUN $zato quickstart create . sqlite localhost 6379 --verbose --kvdb_password ""
 # RUN $zato check-config server1
 # RUN $zato check-config server2
 
