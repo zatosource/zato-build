@@ -9,7 +9,8 @@ MAINTAINER Rafał Krysiak <rafal@zato.io>
 RUN apt-get update && apt-get install -y apt-transport-https \
     python-software-properties \
     software-properties-common \
-    curl 
+    curl \
+    redis-server
 
 # Add the package signing key
 RUN curl -s https://zato.io/repo/zato-0CBD7F72.pgp.asc | sudo apt-key add -
@@ -22,9 +23,9 @@ RUN apt-get update && apt-get install -y zato
 # Install Redis
 RUN add-apt-repository -y ppa:rwky/redis \
     && apt-get -y update \
-    && apt-get install -y redis-server
+    && apt-get install --only-upgrade -y redis-server
 
-RUN service redis-server start
+RUN service redis-server start > /tmp/redis_start_log.txt 2>&1
 RUN redis-cli ping
 
 # Create work environment for Zato 2.0.0
