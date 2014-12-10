@@ -28,6 +28,7 @@ RUN apt-get update && apt-get install -y zato
 
 # Switch to zato user and create Zato environment
 USER zato
+WORKDIR /opt/zato
 
 # Sets variable 'zato' to path '/opt/zato/2.0/bin/zato'
 ENV zato /opt/zato/2.0.0/bin/zato
