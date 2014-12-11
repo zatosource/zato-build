@@ -38,7 +38,7 @@ RUN mkdir -p env/qs-1
 RUN rm -rf env/qs-1 && mkdir -p env/qs-1
 
 WORKDIR env/qs-1
-# RUN $ZATO_BIN quickstart create . sqlite localhost 6379 --verbose --kvdb_password ""
+RUN $ZATO_BIN quickstart create . sqlite localhost 6379 --verbose --kvdb_password ""
 # RUN ZATO_BIN check-config server1
 # RUN ZATO_BIN check-config server2
 
