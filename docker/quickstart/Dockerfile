@@ -31,17 +31,16 @@ COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 USER zato
 WORKDIR /opt/zato
 
-# Sets variable 'zato' to path '/opt/zato/2.0/bin/zato'
+# Sets environment variable 'ZATO_BIN' to path '/opt/zato/2.0.0/bin/zato'
 ENV ZATO_BIN /opt/zato/2.0.0/bin/zato
 
 RUN mkdir -p env/qs-1
 RUN rm -rf env/qs-1 && mkdir -p env/qs-1
 
 WORKDIR env/qs-1
-# RUN ZATO_BIN quickstart create . sqlite localhost 6379 --verbose --kvdb_password ""
+# RUN $ZATO_BIN quickstart create . sqlite localhost 6379 --verbose --kvdb_password ""
 # RUN ZATO_BIN check-config server1
 # RUN ZATO_BIN check-config server2
 
 USER root
-EXPOSE 6379
 CMD /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
