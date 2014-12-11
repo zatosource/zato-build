@@ -42,11 +42,6 @@ WORKDIR env/qs-1
 # RUN ZATO_BIN check-config server1
 # RUN ZATO_BIN check-config server2
 
-# Switch back to root
 USER root
-RUN whoami
-WORKDIR /root
-RUN pwd
-
 EXPOSE 6379
-CMD ["/usr/bin/supervisord"]
+CMD /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
