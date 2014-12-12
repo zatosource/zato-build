@@ -23,12 +23,18 @@ RUN apt-get update && apt-get install -y zato
 
 # Setup supervisor
 RUN mkdir -p /var/log/supervisor
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+RUN mkdir -p /opt/zato/zato_start_wrapper_scripts
+
+COPY supervisord.conf /etc/supervisor/conf.d/
+COPY zato_start_load_balancer /opt/zato/zato_start_wrapper_scripts/
+COPY zato_start_server1 /opt/zato/zato_start_wrapper_scripts/
+COPY zato_start_web_admin /opt/zato/zato_start_wrapper_scripts/
 
 # Create work environment for Zato 2.0.0
 
 # Switch to zato user and create Zato environment
 USER zato
+EXPOSE 6379 8183 17010 17011 11223
 WORKDIR /opt/zato
 
 # Sets environment variable 'ZATO_BIN' to path '/opt/zato/2.0.0/bin/zato'
