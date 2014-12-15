@@ -41,9 +41,9 @@ COPY zato_start_server1 /opt/zato/zato_start_wrapper_scripts/
 COPY zato_start_web_admin /opt/zato/zato_start_wrapper_scripts/
 
 # Set a password for an user and append it to a config file
-RUN touch /opt/zato/zato_password
-RUN uuidgen > /opt/zato/zato_password
-RUN echo 'password'=$(cat /opt/zato/zato_password) >> /opt/zato/zato_docker.config
+RUN touch /opt/zato/web_admin_password
+RUN uuidgen > /opt/zato/web_admin_password
+RUN echo 'password'=$(cat /opt/zato/web_admin_password) >> /opt/zato/zato_docker.config
 
 # Sets environment variable 'ZATO_BIN' to path '/opt/zato_bin/2.0.0/bin/zato'
 ENV ZATO_BIN /opt/zato/2.0.0/bin/zato
@@ -56,4 +56,5 @@ RUN $ZATO_BIN quickstart create . sqlite localhost 6379 --verbose --kvdb_passwor
 RUN $ZATO_BIN from-config /opt/zato/zato_docker.config
 RUN sed -i 's/127.0.0.1:11223/0.0.0.0:11223/g' /opt/zato/env/qs-1/load-balancer/config/repo/zato.config
 
+USER root
 CMD /usr/bin/supervisord -c /opt/zato/supervisord.conf
