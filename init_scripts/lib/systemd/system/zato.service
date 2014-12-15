@@ -1,0 +1,12 @@
+[Unit]
+Description=Zato ESB components
+After=syslog.target network.target
+
+[Service]
+ExecStart=/etc/rc.d/init.d/zato start
+ExecStop=/etc/rc.d/init.d/zato stop
+Type=oneshot
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
