@@ -48,11 +48,12 @@ RUN echo 'password'=$(cat /opt/zato/zato_password) >> /opt/zato/zato_docker.conf
 # Sets environment variable 'ZATO_BIN' to path '/opt/zato_bin/2.0.0/bin/zato'
 ENV ZATO_BIN /opt/zato/2.0.0/bin/zato
 
-RUN mkdir -p env/qs-1
-RUN rm -rf env/qs-1 && mkdir -p env/qs-1
+RUN mkdir -p /opt/zato/env/qs-1
+RUN rm -rf /opt/zato/env/qs-1 && mkdir -p /opt/zato/env/qs-1
 
-WORKDIR env/qs-1
+WORKDIR /opt/zato/env/qs-1
 RUN $ZATO_BIN quickstart create . sqlite localhost 6379 --verbose --kvdb_password ""
 RUN $ZATO_BIN from-config /opt/zato/zato_docker.config
+RUN sed -i 's/127.0.0.1:11223/0.0.0.0:11223/g' /opt/zato/env/qs-1/load-balancer/config/repo/zato.config
 
 CMD /usr/bin/supervisord -c /opt/zato/supervisord.conf
