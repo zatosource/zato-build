@@ -31,14 +31,10 @@ EXPOSE 6379 8183 17010 17011 11223
 
 # Get additional config files and starter scripts
 WORKDIR /opt/zato
-RUN wget -P /opt/zato https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/supervisord.conf
-RUN wget -P /opt/zato https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/update_password.config
-
-RUN mkdir -p /opt/zato/zato_start_wrapper_scripts
-WORKDIR /opt/zato/zato_start_wrapper_scripts/
-RUN wget -P /opt/zato/zato_start_wrapper_scripts https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/zato_start_load_balancer
-RUN wget -P /opt/zato/zato_start_wrapper_scripts https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/zato_start_server1
-RUN wget -P /opt/zato/zato_start_wrapper_scripts https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/zato_start_web_admin
+RUN wget -P /opt/zato -i https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/filelist
+RUN chmod 755 /opt/zato/zato_start_load_balancer \
+              /opt/zato/zato_start_server1 \
+              /opt/zato/zato_start_web_admin
 
 # Set a password for an user and append it to a config file
 WORKDIR /opt/zato
