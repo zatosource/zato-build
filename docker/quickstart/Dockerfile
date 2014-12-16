@@ -45,7 +45,7 @@ RUN touch /opt/zato/web_admin_password
 RUN uuidgen > /opt/zato/web_admin_password
 RUN echo 'password'=$(cat /opt/zato/web_admin_password) >> /opt/zato/zato_docker.config
 
-# Sets environment variable 'ZATO_BIN' to path '/opt/zato_bin/2.0.0/bin/zato'
+# Sets environment variable 'ZATO_BIN' to path '/opt/zato/2.0.0/bin/zato'
 ENV ZATO_BIN /opt/zato/2.0.0/bin/zato
 
 RUN mkdir -p /opt/zato/env/qs-1
