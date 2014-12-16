@@ -36,6 +36,7 @@ WORKDIR /opt/zato
 RUN wget -P /opt/zato -i https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/filelist
 RUN chmod 755 /opt/zato/zato_start_load_balancer \
               /opt/zato/zato_start_server1 \
+              /opt/zato/zato_start_server2 \
               /opt/zato/zato_start_web_admin
 
 # Set a password for an user and append it to a config file

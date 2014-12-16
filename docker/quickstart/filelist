@@ -2,4 +2,5 @@ https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart
 https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/update_password.config
 https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/zato_start_load_balancer
 https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/zato_start_server1
+https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/zato_start_server2
 https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/zato_start_web_admin
