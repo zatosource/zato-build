@@ -54,6 +54,8 @@ WORKDIR /opt/zato/env/qs-1
 RUN $ZATO_BIN quickstart create . sqlite localhost 6379 --verbose --kvdb_password ""
 RUN $ZATO_BIN from-config /opt/zato/update_password.config
 RUN sed -i 's/127.0.0.1:11223/0.0.0.0:11223/g' /opt/zato/env/qs-1/load-balancer/config/repo/zato.config
+RUN sed -i 's/gunicorn_workers=2/gunicorn_workers=1/g' /opt/zato/env/qs-1/server1/config/repo/server.conf
+RUN sed -i 's/gunicorn_workers=2/gunicorn_workers=1/g' /opt/zato/env/qs-1/server2/config/repo/server.conf
 
 USER root
 CMD /usr/bin/supervisord -c /opt/zato/supervisord.conf
