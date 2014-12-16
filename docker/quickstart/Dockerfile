@@ -23,12 +23,18 @@ RUN apt-get update && apt-get install -y zato
 
 # Setup supervisor
 RUN mkdir -p /var/log/supervisor
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+RUN mkdir -p /opt/zato/zato_start_wrapper_scripts
+
+COPY supervisord.conf /etc/supervisor/conf.d/
+COPY zato_start_load_balancer /opt/zato/zato_start_wrapper_scripts/
+COPY zato_start_server1 /opt/zato/zato_start_wrapper_scripts/
+COPY zato_start_web_admin /opt/zato/zato_start_wrapper_scripts/
 
 # Create work environment for Zato 2.0.0
 
 # Switch to zato user and create Zato environment
 USER zato
+EXPOSE 6379 8183 17010 17011 11223
 WORKDIR /opt/zato
 
 # Sets environment variable 'ZATO_BIN' to path '/opt/zato/2.0.0/bin/zato'
@@ -38,9 +44,7 @@ RUN mkdir -p env/qs-1
 RUN rm -rf env/qs-1 && mkdir -p env/qs-1
 
 WORKDIR env/qs-1
-# RUN $ZATO_BIN quickstart create . sqlite localhost 6379 --verbose --kvdb_password ""
-# RUN ZATO_BIN check-config server1
-# RUN ZATO_BIN check-config server2
+RUN $ZATO_BIN quickstart create . sqlite localhost 6379 --verbose --kvdb_password ""
 
 USER root
 CMD /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
