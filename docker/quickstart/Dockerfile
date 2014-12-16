@@ -8,6 +8,7 @@ RUN apt-get update && apt-get install -y apt-transport-https \
     python-software-properties \
     software-properties-common \
     curl \
+    wget \
     redis-server \
     supervisor
 
@@ -26,22 +27,25 @@ RUN mkdir -p /var/log/supervisor
 # Switch to zato user and create Zato environment
 USER zato
 
-# Expose ports
 EXPOSE 6379 8183 17010 17011 11223
 
+# Get additional config files and starter scripts
 WORKDIR /opt/zato
-RUN mkdir -p /opt/zato/zato_start_wrapper_scripts
+RUN wget -P /opt/zato https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/supervisord.conf
+RUN wget -P /opt/zato https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/update_password.config
 
-COPY supervisord.conf /opt/zato/
-COPY update_password.config /opt/zato/
-COPY zato_start_load_balancer /opt/zato/zato_start_wrapper_scripts/
-COPY zato_start_server1 /opt/zato/zato_start_wrapper_scripts/
-COPY zato_start_web_admin /opt/zato/zato_start_wrapper_scripts/
+RUN mkdir -p /opt/zato/zato_start_wrapper_scripts
+WORKDIR /opt/zato/zato_start_wrapper_scripts/
+RUN wget -P /opt/zato/zato_start_wrapper_scripts https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/zato_start_load_balancer
+RUN wget -P /opt/zato/zato_start_wrapper_scripts https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/zato_start_server1
+RUN wget -P /opt/zato/zato_start_wrapper_scripts https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/zato_start_web_admin
 
 # Set a password for an user and append it to a config file
+WORKDIR /opt/zato
 RUN touch /opt/zato/web_admin_password
 RUN uuidgen > /opt/zato/web_admin_password
 RUN echo 'password'=$(cat /opt/zato/web_admin_password) >> /opt/zato/update_password.config
+RUN cat /opt/zato/update_password.config
 
 ENV ZATO_BIN /opt/zato/2.0.0/bin/zato
 
