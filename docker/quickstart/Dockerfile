@@ -23,28 +23,38 @@ RUN apt-get update && apt-get install -y zato
 
 # Setup supervisor
 RUN mkdir -p /var/log/supervisor
-RUN mkdir -p /opt/zato/zato_start_wrapper_scripts
-
-COPY supervisord.conf /etc/supervisor/conf.d/
-COPY zato_start_load_balancer /opt/zato/zato_start_wrapper_scripts/
-COPY zato_start_server1 /opt/zato/zato_start_wrapper_scripts/
-COPY zato_start_web_admin /opt/zato/zato_start_wrapper_scripts/
-
 # Create work environment for Zato 2.0.0
 
 # Switch to zato user and create Zato environment
 USER zato
+
+# Expose ports
 EXPOSE 6379 8183 17010 17011 11223
+
 WORKDIR /opt/zato
+RUN mkdir -p /opt/zato/zato_start_wrapper_scripts
+
+COPY supervisord.conf /opt/zato/
+COPY zato_docker.config /opt/zato/
+COPY zato_start_load_balancer /opt/zato/zato_start_wrapper_scripts/
+COPY zato_start_server1 /opt/zato/zato_start_wrapper_scripts/
+COPY zato_start_web_admin /opt/zato/zato_start_wrapper_scripts/
+
+# Set a password for an user and append it to a config file
+RUN touch /opt/zato/web_admin_password
+RUN uuidgen > /opt/zato/web_admin_password
+RUN echo 'password'=$(cat /opt/zato/web_admin_password) >> /opt/zato/zato_docker.config
 
 # Sets environment variable 'ZATO_BIN' to path '/opt/zato/2.0.0/bin/zato'
 ENV ZATO_BIN /opt/zato/2.0.0/bin/zato
 
-RUN mkdir -p env/qs-1
-RUN rm -rf env/qs-1 && mkdir -p env/qs-1
+RUN mkdir -p /opt/zato/env/qs-1
+RUN rm -rf /opt/zato/env/qs-1 && mkdir -p /opt/zato/env/qs-1
 
-WORKDIR env/qs-1
+WORKDIR /opt/zato/env/qs-1
 RUN $ZATO_BIN quickstart create . sqlite localhost 6379 --verbose --kvdb_password ""
+RUN $ZATO_BIN from-config /opt/zato/zato_docker.config
+RUN sed -i 's/127.0.0.1:11223/0.0.0.0:11223/g' /opt/zato/env/qs-1/load-balancer/config/repo/zato.config
 
 USER root
-CMD /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
+CMD /usr/bin/supervisord -c /opt/zato/supervisord.conf
