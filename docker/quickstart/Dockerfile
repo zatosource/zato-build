@@ -27,6 +27,8 @@ RUN mkdir -p /var/log/supervisor
 # Switch to zato user and create Zato environment
 USER zato
 
+ENV ZATO_HOME /opt/zato
+
 EXPOSE 6379 8183 17010 17011 11223
 
 # Get additional config files and starter scripts
@@ -41,7 +43,6 @@ WORKDIR /opt/zato
 RUN touch /opt/zato/web_admin_password
 RUN uuidgen > /opt/zato/web_admin_password
 RUN echo 'password'=$(cat /opt/zato/web_admin_password) >> /opt/zato/update_password.config
-RUN cat /opt/zato/update_password.config
 
 ENV ZATO_BIN /opt/zato/2.0.0/bin/zato
 
