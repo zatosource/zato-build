@@ -27,8 +27,6 @@ RUN mkdir -p /var/log/supervisor
 # Switch to zato user and create Zato environment
 USER zato
 
-ENV ZATO_HOME /opt/zato
-
 EXPOSE 6379 8183 17010 17011 11223
 
 # Get additional config files and starter scripts
