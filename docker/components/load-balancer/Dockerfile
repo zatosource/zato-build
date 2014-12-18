@@ -22,6 +22,7 @@ USER zato
 
 ENV ZATO_BIN /opt/zato/2.0.0/bin/zato
 EXPOSE 11223
+EXPOSE 20151
 
 RUN mkdir /opt/zato/ca
 COPY zato.load_balancer.cert.pem /opt/zato/ca/
