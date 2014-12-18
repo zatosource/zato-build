@@ -1,0 +1,5 @@
+#!/bin/bash
+
+rm -f /opt/zato/env/load-balancer/zato-lb-agent.pid
+rm -f /opt/zato/env/load-balancer/pidfile
+/opt/zato/2.0.0/bin/zato start /opt/zato/env/load-balancer/ --fg
