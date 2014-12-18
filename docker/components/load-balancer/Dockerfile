@@ -40,3 +40,5 @@ RUN $ZATO_BIN create load_balancer /opt/zato/env/load-balancer \
     /opt/zato/ca/lb.key.pem \
     /opt/zato/ca/lb.crt.pem \
     /opt/zato/ca/cacert.pem
+
+ENTRYPOINT ["/opt/zato/zato_start_load_balancer"]
