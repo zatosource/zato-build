@@ -43,4 +43,7 @@ RUN chmod 755 /opt/zato/zato_start_server
 RUN rm -rf /opt/zato/env/server && mkdir -p /opt/zato/env/server
 
 USER root
-RUN $ZATO_BIN from-config /opt/zato/zato_server_config
+RUN echo 'odb_host'=$(/sbin/ifconfig eth0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}') >> /opt/zato/zato_server_config && \
+    echo 'kvdb_host'=$(/sbin/ifconfig eth0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}') >> /opt/zato/zato_server_config && \
+    echo /sbin/ifconfig eth0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}' && \
+    $ZATO_BIN from-config /opt/zato/zato_server_config
