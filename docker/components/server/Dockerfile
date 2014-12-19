@@ -22,15 +22,25 @@ USER zato
 
 ENV ZATO_BIN /opt/zato/2.0.0/bin/zato
 EXPOSE 17010
+EXPOSE 5432
+EXPOSE 6379
 
 RUN mkdir /opt/zato/ca
 COPY zato.server.cert.pem /opt/zato/ca/
 COPY zato.server.key.pem /opt/zato/ca/
 COPY zato.server.key.pub.pem /opt/zato/ca/
 COPY ca_cert.pem /opt/zato/ca/
+COPY zato_server_config /opt/zato/
 
+USER root
+RUN chown zato:zato /opt/zato/zato_server_config
+
+USER zato
 RUN wget -P /opt/zato \
     https://raw.githubusercontent.com/zatosource/zato-build/docker-zato-components-server/docker/components/server/zato_start_server
 RUN chmod 755 /opt/zato/zato_start_server
 
 RUN rm -rf /opt/zato/env/server && mkdir -p /opt/zato/env/server
+
+USER root
+RUN $ZATO_BIN from-config /opt/zato/zato_server_config
