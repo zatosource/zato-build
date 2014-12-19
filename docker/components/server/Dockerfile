@@ -44,3 +44,5 @@ RUN rm -rf /opt/zato/env/server && mkdir -p /opt/zato/env/server
 
 USER root
 RUN $ZATO_BIN from-config /opt/zato/zato_server_config
+
+ENTRYPOINT ["/opt/zato/zato_start_server"]
