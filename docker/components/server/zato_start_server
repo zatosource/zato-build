@@ -1,0 +1,4 @@
+#!/bin/bash
+
+rm -f /opt/zato/env/server/pidfile
+/opt/zato/2.0.0/bin/zato start /opt/zato/env/server --fg
