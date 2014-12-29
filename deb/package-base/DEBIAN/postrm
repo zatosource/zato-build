@@ -18,6 +18,17 @@ case "$1" in
 	#remove dirs with custom content
 	rm -Rf /opt/zato || true
 	rm -Rf /etc/bash_completion.d/zato
+	rm -rf /etc/init.d/zato
+	rm -rf /etc/rc0.d/K99zato
+	rm -rf /etc/rc1.d/K99zato
+	rm -rf /etc/rc2.d/S99zato
+	rm -rf /etc/rc3.d/S99zato
+	rm -rf /etc/rc4.d/S99zato
+	rm -rf /etc/rc5.d/S99zato
+	rm -rf /etc/rc6.d/K99zato
+	rm -rf /etc/systemd/system/multi-user.target.wants/zato.service
+	rm -rf /etc/zato
+	rm -rf /lib/systemd/system/zato.service
     ;;
     disappear | upgrade | failed-upgrade | abort-upgrade)
     :

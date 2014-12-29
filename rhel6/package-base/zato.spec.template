@@ -34,12 +34,35 @@ if [ "$1" = 1 ] ; then
 /usr/bin/getent group zato || /usr/sbin/groupadd zato
 /usr/bin/getent passwd zato || /usr/sbin/useradd -g zato -d /opt/zato -s /bin/bash zato
 fi
+
+ZATO_BACKUP_DIR=/opt/zato/backup
+ZATO_DATE=`date +%Y%m%d_%H%M%S`
+ZATO_PATTERNS="/opt/zato/2.* /opt/zato/3.*"
+if [ ! -d "$ZATO_BACKUP_DIR" ]; then
+    mkdir $ZATO_BACKUP_DIR
+fi
+for directory in $ZATO_PATTERNS; do
+    mv -f $directory $ZATO_BACKUP_DIR/${directory##*/}_$ZATO_DATE
+done
+
 exit 0
 
 %postun
 if [ "$1" = 0 ] ; then
  rm -rf /opt/%{name}/%{version}
  rm -rf /etc/bash_completion.d/zato
+ rm -rf /etc/init.d/zato
+ rm -rf /etc/rc0.d/K99zato
+ rm -rf /etc/rc1.d/K99zato
+ rm -rf /etc/rc2.d/S99zato
+ rm -rf /etc/rc3.d/S99zato
+ rm -rf /etc/rc4.d/S99zato
+ rm -rf /etc/rc5.d/S99zato
+ rm -rf /etc/rc6.d/K99zato
+ rm -rf /etc/systemd/system/multi-user.target.wants/zato.service
+ rm -rf /etc/zato
+ rm -rf /lib/systemd/system/zato.service
+
  /usr/sbin/userdel zato
 fi
 exit 0
@@ -52,9 +75,15 @@ exit 0
 /opt/zato
 
 %post
+echo "ZATO_PATH=/opt/zato/${version}/code/bin" > /opt/zato/.zato-path
+
+if ! grep -qv zato-path /opt/zato/.bashrc; then
+echo ". /opt/zato/.zato-path" >> /opt/zato/.bashrc
 echo "export PATH
-PATH="/opt/zato/%{version}/code/bin:$PATH"
-. /etc/bash_completion.d/zato">>/opt/zato/.bashrc
+PATH="\$ZATO_PATH:$PATH"">>/opt/zato/.bashrc
+fi
+
+echo ". /etc/bash_completion.d/zato">>/opt/zato/.bashrc
 
 source /opt/zato/.bashrc
 
