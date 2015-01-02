@@ -13,7 +13,7 @@ case "$1" in
 	fi
 	ZATO_BACKUP_DIR=/opt/zato/backup
 	ZATO_DATE=`date +%Y%m%d_%H%M%S`
-	ZATO_PATTERNS="/opt/zato/2.* /opt/zato/3.*"
+	ZATO_PATTERNS="/opt/zato/2.* /opt/zato/3.* /opt/zato/4.* /opt/zato/5.* /opt/zato/6.* /opt/zato/7.* /opt/zato/8.* /opt/zato/9.*"
 	if [ ! -d "$ZATO_BACKUP_DIR" ]; then
 	    mkdir $ZATO_BACKUP_DIR
 	fi
