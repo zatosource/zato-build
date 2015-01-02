@@ -20,7 +20,6 @@ RUN apt-get update && apt-get install -y zato
 
 USER zato
 
-ENV ZATO_BIN /opt/zato/2.0.0/bin/zato
 EXPOSE 17010
 
 RUN mkdir /opt/zato/ca
