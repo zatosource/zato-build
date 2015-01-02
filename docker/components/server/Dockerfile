@@ -28,6 +28,7 @@ COPY zato.server.cert.pem /opt/zato/ca/
 COPY zato.server.key.pem /opt/zato/ca/
 COPY zato.server.key.pub.pem /opt/zato/ca/
 COPY ca_cert.pem /opt/zato/ca/
+COPY get_zato_version.sh /opt/zato/
 COPY zato_server.config /opt/zato/
 
 RUN wget -P /opt/zato \
@@ -37,6 +38,6 @@ RUN chmod 755 /opt/zato/zato_start_server
 RUN rm -rf /opt/zato/env/server && mkdir -p /opt/zato/env/server
 
 WORKDIR /opt/zato
-RUN $ZATO_BIN from-config /opt/zato/zato_server.config
+RUN ./get_zato_version.sh
 
 ENTRYPOINT ["/opt/zato/zato_start_server"]
