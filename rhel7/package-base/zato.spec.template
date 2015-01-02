@@ -72,6 +72,17 @@ exit 0
 %files
 %defattr(-,zato,zato,-)
 /etc/bash_completion.d/zato
+/etc/init.d/zato
+/etc/rc0.d/K99zato
+/etc/rc1.d/K99zato
+/etc/rc2.d/S99zato
+/etc/rc3.d/S99zato
+/etc/rc4.d/S99zato
+/etc/rc5.d/S99zato
+/etc/rc6.d/K99zato
+/etc/systemd/system/multi-user.target.wants/zato.service
+/lib/systemd/system/zato.service
+
 /opt/zato
 
 %post
