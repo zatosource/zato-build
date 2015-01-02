@@ -80,6 +80,7 @@ exit 0
 /etc/rc4.d/S99zato
 /etc/rc5.d/S99zato
 /etc/rc6.d/K99zato
+/etc/zato/components-enabled/README
 /etc/systemd/system/multi-user.target.wants/zato.service
 /lib/systemd/system/zato.service
 
