@@ -20,7 +20,7 @@ RUN apt-get update && apt-get install -y zato
 
 USER zato
 
-WORKDIR /opt/zato
+ENV ZATO_BIN /opt/zato/2.0.0/bin/zato
 EXPOSE 17010
 
 RUN mkdir /opt/zato/ca
@@ -28,7 +28,6 @@ COPY zato.server.cert.pem /opt/zato/ca/
 COPY zato.server.key.pem /opt/zato/ca/
 COPY zato.server.key.pub.pem /opt/zato/ca/
 COPY ca_cert.pem /opt/zato/ca/
-COPY get_zato_version.sh /opt/zato/
 COPY zato_server.config /opt/zato/
 
 RUN wget -P /opt/zato \
@@ -38,6 +37,6 @@ RUN chmod 755 /opt/zato/zato_start_server
 RUN rm -rf /opt/zato/env/server && mkdir -p /opt/zato/env/server
 
 WORKDIR /opt/zato
-RUN ./get_zato_version.sh
+RUN $ZATO_BIN from-config /opt/zato/zato_server.config
 
 ENTRYPOINT ["/opt/zato/zato_start_server"]
