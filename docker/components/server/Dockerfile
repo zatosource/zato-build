@@ -28,12 +28,11 @@ COPY zato.server.cert.pem /opt/zato/ca/
 COPY zato.server.key.pem /opt/zato/ca/
 COPY zato.server.key.pub.pem /opt/zato/ca/
 COPY ca_cert.pem /opt/zato/ca/
+COPY zato_server.config /opt/zato/
 
 RUN wget -P /opt/zato \
     https://raw.githubusercontent.com/zatosource/zato-build/docker-zato-components-server/docker/components/server/zato_start_server
 RUN chmod 755 /opt/zato/zato_start_server
-RUN wget -P /opt/zato \
-    https://raw.githubusercontent.com/zatosource/zato-build/docker-zato-components-server/docker/components/server/zato_server.config
 
 RUN rm -rf /opt/zato/env/server && mkdir -p /opt/zato/env/server
 
