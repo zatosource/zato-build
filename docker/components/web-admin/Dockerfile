@@ -18,25 +18,43 @@ RUN curl -s https://zato.io/repo/zato-0CBD7F72.pgp.asc | sudo apt-key add -
 RUN apt-add-repository https://zato.io/repo/dev/ubuntu
 RUN apt-get update && apt-get install -y zato
 
+COPY update_password.config /opt/zato/
+RUN chmod 755 /opt/zato/zato_update_password.config
+RUN chown zato:zato /opt/zato/zato_update_password.config
+
 USER zato
 
 EXPOSE 8183
 
+# Prepare additional config files, CA certificates, keys and starter scripts
 RUN mkdir /opt/zato/ca
 COPY zato.webadmin.cert.pem /opt/zato/ca/
 COPY zato.webadmin.key.pem /opt/zato/ca/
 COPY zato.webadmin.key.pub.pem /opt/zato/ca/
 COPY ca_cert.pem /opt/zato/ca/
-COPY get_zato_version.sh /opt/zato/
 COPY zato_web_admin.config /opt/zato/
 
 RUN wget -P /opt/zato \
     https://raw.githubusercontent.com/zatosource/zato-build/docker-zato-components-web-admin/docker/components/web-admin/zato_start_web_admin
-RUN chmod 755 /opt/zato/zato_start_web_admin
+RUN wget -P /opt/zato \
+    https://raw.githubusercontent.com/zatosource/zato-build/docker-zato-components-web-admin/docker/components/web-admin/zato_from_config_create_web_admin
+RUN wget -P /opt/zato \
+    https://raw.githubusercontent.com/zatosource/zato-build/docker-zato-components-web-admin/docker/components/web-admin/zato_from_config_update_password
+
+RUN chmod 755 /opt/zato/zato_start_web_admin /opt/zato/zato_from_config_create_web_admin \
+              /opt/zato/zato_from_config_update_password
 
 RUN rm -rf /opt/zato/env/web-admin && mkdir -p /opt/zato/env/web-admin
 
+# Set a password for an user and append it to a config file
 WORKDIR /opt/zato
-RUN ./get_zato_version.sh
+RUN touch /opt/zato/web_admin_password
+RUN uuidgen > /opt/zato/web_admin_password
+WORKDIR /opt/zato
+RUN echo 'password'=$(cat /opt/zato/web_admin_password) >> /opt/zato/update_password.config
 
-ENTRYPOINT ["/opt/zato/zato_start_web_admin"]
+WORKDIR /opt/zato
+RUN /opt/zato/zato_from_config_create_web_admin
+RUN /opt/zato/zato_from_config_update_password
+
+CMD /opt/zato/zato_start_web_admin
