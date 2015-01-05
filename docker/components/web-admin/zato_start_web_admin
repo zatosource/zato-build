@@ -1,4 +1,6 @@
 #!/bin/bash
 
+ZATO_VERSION='ls | sort -n | tail -l'
+
 rm -f /opt/zato/env/web-admin/pidfile
-/opt/zato/2.0.0/bin/zato start /opt/zato/env/web-admin --fg
+/opt/zato/$ZATO_VERSION/bin/zato start /opt/zato/env/web-admin --fg
