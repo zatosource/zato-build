@@ -18,7 +18,7 @@ RUN curl -s https://zato.io/repo/zato-0CBD7F72.pgp.asc | sudo apt-key add -
 RUN apt-add-repository https://zato.io/repo/dev/ubuntu
 RUN apt-get update && apt-get install -y zato
 
-COPY update_password.config /opt/zato/
+COPY zato_update_password.config /opt/zato/
 RUN chmod 755 /opt/zato/zato_update_password.config
 RUN chown zato:zato /opt/zato/zato_update_password.config
 
@@ -51,7 +51,7 @@ WORKDIR /opt/zato
 RUN touch /opt/zato/web_admin_password
 RUN uuidgen > /opt/zato/web_admin_password
 WORKDIR /opt/zato
-RUN echo 'password'=$(cat /opt/zato/web_admin_password) >> /opt/zato/update_password.config
+RUN echo 'password'=$(cat /opt/zato/web_admin_password) >> /opt/zato/zato_update_password.config
 
 WORKDIR /opt/zato
 RUN /opt/zato/zato_from_config_create_web_admin
