@@ -35,6 +35,8 @@ RUN wget -P /opt/zato \
 RUN chmod 755 /opt/zato/zato_start_web_admin
 
 RUN rm -rf /opt/zato/env/web-admin && mkdir -p /opt/zato/env/web-admin
+
 WORKDIR /opt/zato
 RUN ./get_zato_version.sh
+
 ENTRYPOINT ["/opt/zato/zato_start_web_admin"]
