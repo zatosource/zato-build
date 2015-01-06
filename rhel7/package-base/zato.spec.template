@@ -44,7 +44,7 @@ if [ ! -d "$ZATO_BACKUP_DIR" ]; then
 fi
 for directory in $ZATO_PATTERNS; do
  if [ -d "$directory" ]; then
-    mv -f $directory $ZATO_BACKUP_DIR/${directory##*/}_$ZATO_DATE
+    cp -R $directory $ZATO_BACKUP_DIR/${directory##*/}_$ZATO_DATE
  fi
 done
 
@@ -92,7 +92,7 @@ exit 0
 %post
 /bin/cp /etc/skel/.bash_profile /opt/zato/
 /bin/cp /etc/skel/.bashrc /opt/zato/
-echo "ZATO_PATH=/opt/zato/${version}/code/bin" > /opt/zato/.zato-path
+echo "ZATO_PATH=/opt/zato/ZATO_VERSION/code/bin" > /opt/zato/.zato-path
 chown -R zato:zato /opt/zato
 
 if ! grep -qv zato-path /opt/zato/.bashrc; then
