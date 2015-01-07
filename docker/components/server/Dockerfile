@@ -33,11 +33,11 @@ RUN wget -P /opt/zato \
     https://raw.githubusercontent.com/zatosource/zato-build/docker-zato-components-server/docker/components/server/zato_start_server
 RUN chmod 755 /opt/zato/zato_start_server
 RUN wget -P /opt/zato \
-    https://raw.githubusercontent.com/zatosource/zato-build/docker-zato-components-server/docker/components/server/zato_from_config
+    https://raw.githubusercontent.com/zatosource/zato-build/docker-zato-components-server/docker/components/server/zato_from_config_create_server
 
 RUN rm -rf /opt/zato/env/server && mkdir -p /opt/zato/env/server
 
 WORKDIR /opt/zato
-RUN ./zato_from_config
+RUN ./zato_from_config_create_server
 
 ENTRYPOINT ["/opt/zato/zato_start_server"]
