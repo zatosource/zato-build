@@ -19,6 +19,7 @@ RUN apt-add-repository https://zato.io/repo/dev/ubuntu
 RUN apt-get update && apt-get install -y zato
 
 USER zato
+WORKDIR /opt/zato
 
 EXPOSE 17010
 
@@ -35,9 +36,14 @@ RUN chmod 755 /opt/zato/zato_start_server
 RUN wget -P /opt/zato \
     https://raw.githubusercontent.com/zatosource/zato-build/docker-zato-components-server/docker/components/server/zato_from_config_create_server
 
+USER root
+WORKDIR /opt/zato
+RUN chown zato:zato /opt/zato/zato_from_config_create_server
+
+USER zato
+WORKDIR /opt/zato
 RUN rm -rf /opt/zato/env/server && mkdir -p /opt/zato/env/server
 
-WORKDIR /opt/zato
-RUN ./zato_from_config_create_server
+RUN /opt/zato/zato_from_config_create_server
 
 ENTRYPOINT ["/opt/zato/zato_start_server"]
