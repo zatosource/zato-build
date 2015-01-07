@@ -2,4 +2,5 @@
 
 ZATO_VERSION=`ls | sort -n | tail -1`
 
+cd /opt/zato
 /opt/zato/$ZATO_VERSION/bin/zato from-config /opt/zato/zato_server.config
