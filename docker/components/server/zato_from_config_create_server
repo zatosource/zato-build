@@ -4,3 +4,6 @@ cd /opt/zato
 ZATO_VERSION=`ls | sort -n | tail -1`
 
 /opt/zato/$ZATO_VERSION/bin/zato from-config /opt/zato/zato_server.config
+
+sed -i 's/gunicorn_workers=2/gunicorn_workers=1/g' \
+    /opt/zato/server/config/repo/server.conf
