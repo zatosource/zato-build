@@ -36,7 +36,7 @@ if [ "$1" = 1 ] ; then
 fi
 
 ZATO_BACKUP_DIR=/opt/zato/backup
-ZATO_DATE=`date +%Y%m%d_%H%M%S`
+ZATO_DATE=`date +%Y%m%d_%T`
 ZATO_PATTERNS="/opt/zato/2.* /opt/zato/3.* /opt/zato/4.* /opt/zato/5.* /opt/zato/6.* /opt/zato/7.* /opt/zato/8.* /opt/zato/9.*"
 if [ ! -d "$ZATO_BACKUP_DIR" ]; then
     mkdir /opt/zato
@@ -95,7 +95,7 @@ exit 0
 echo "ZATO_PATH=/opt/zato/ZATO_VERSION/code/bin" > /opt/zato/.zato-path
 chown -R zato:zato /opt/zato
 
-if ! grep -qv zato-path /opt/zato/.bashrc; then
+if ! grep -qv zato-path /opt/zato/.bashrc ; then
 echo ". /opt/zato/.zato-path" >> /opt/zato/.bashrc
 echo "export PATH
 PATH="\$ZATO_PATH:$PATH"">>/opt/zato/.bashrc
