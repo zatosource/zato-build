@@ -39,11 +39,14 @@ RUN wget -P /opt/zato \
 USER root
 WORKDIR /opt/zato
 RUN chown zato:zato /opt/zato/zato_from_config_create_server
+RUN chmod +x /opt/zato/zato_from_config_create_server
 
 USER zato
 WORKDIR /opt/zato
 RUN rm -rf /opt/zato/env/server && mkdir -p /opt/zato/env/server
 
 RUN /opt/zato/zato_from_config_create_server
+RUN sed -i 's/gunicorn_workers=2/gunicorn_workers=1/g' \
+    /opt/zato/env/server/config/repo/server.conf
 
 ENTRYPOINT ["/opt/zato/zato_start_server"]
