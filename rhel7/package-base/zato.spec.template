@@ -95,7 +95,7 @@ exit 0
 echo "ZATO_PATH=/opt/zato/ZATO_VERSION/code/bin" > /opt/zato/.zato-path
 chown -R zato:zato /opt/zato
 
-if ! grep -qv zato-path /opt/zato/.bashrc ; then
+if ! grep -q zato-path /opt/zato/.bashrc; then
 echo ". /opt/zato/.zato-path" >> /opt/zato/.bashrc
 echo "export PATH
 PATH="\$ZATO_PATH:$PATH"">>/opt/zato/.bashrc
