@@ -19,26 +19,26 @@ RUN apt-add-repository https://zato.io/repo/dev/ubuntu
 RUN apt-get update && apt-get install -y zato
 
 USER zato
+WORKDIR /opt/zato
 
-ENV ZATO_BIN /opt/zato/2.0.0/bin/zato
 EXPOSE 11223
 
 RUN mkdir /opt/zato/ca
-COPY lb.crt.pem /opt/zato/ca/
-COPY lb.key.pem /opt/zato/ca/
-COPY lb.key.pub.pem /opt/zato/ca/
-COPY cacert.pem /opt/zato/ca/
+COPY zato.load_balancer.cert.pem /opt/zato/ca/
+COPY zato.load_balancer.key.pem /opt/zato/ca/
+COPY zato.load_balancer.key.pub.pem /opt/zato/ca/
+COPY ca_cert.pem /opt/zato/ca/
+COPY zato_load_balancer.config /opt/zato/
 
 RUN wget -P /opt/zato \
     https://raw.githubusercontent.com/zatosource/zato-build/docker-zato-components-lb/docker/components/load-balancer/zato_start_load_balancer
-RUN chmod 755 /opt/zato/zato_start_load_balancer
+RUN wget -P /opt/zato \
+    https://raw.githubusercontent.com/zatosource/zato-build/docker-zato-components-lb/docker/components/load-balancer/zato_from_config_create_load_balancer
+RUN chmod 755 /opt/zato/zato_start_load_balancer \
+             /opt/zato/zato_from_config_create_load_balancer
 
 RUN rm -rf /opt/zato/env/load-balancer && mkdir -p /opt/zato/env/load-balancer
 
-RUN $ZATO_BIN create load_balancer /opt/zato/env/load-balancer \
-    /opt/zato/ca/lb.key.pub.pem \
-    /opt/zato/ca/lb.key.pem \
-    /opt/zato/ca/lb.crt.pem \
-    /opt/zato/ca/cacert.pem
+RUN /opt/zato/zato_from_config_create_load_balancer
 
 ENTRYPOINT ["/opt/zato/zato_start_load_balancer"]
