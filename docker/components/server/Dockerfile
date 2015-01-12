@@ -42,7 +42,7 @@ RUN rm -rf /opt/zato/env/server && mkdir -p /opt/zato/env/server
 RUN /opt/zato/zato_from_config_create_server
 RUN sed -i 's/gunicorn_workers=2/gunicorn_workers=1/g' \
     /opt/zato/env/server/config/repo/server.conf
-RUN sed -i 's/127.0.0.1:11223/0.0.0.0:11223/g' \
+RUN sed -i 's/127.0.0.1:17010/0.0.0.0:17010/g' \
     /opt/zato/env/server/config/repo/server.conf
 
-ENTRYPOINT ["/opt/zato/zato_start_server"]
+CMD ["/opt/zato/zato_start_server"]
