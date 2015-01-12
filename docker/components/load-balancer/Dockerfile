@@ -40,5 +40,6 @@ RUN chmod 755 /opt/zato/zato_start_load_balancer \
 RUN rm -rf /opt/zato/env/load-balancer && mkdir -p /opt/zato/env/load-balancer
 
 RUN /opt/zato/zato_from_config_create_load_balancer
+RUN sed -i 's/127.0.0.1:11223/0.0.0.0:11223/g' /opt/zato/env/load-balancer/config/repo/zato.config
 
-ENTRYPOINT ["/opt/zato/zato_start_load_balancer"]
+CMD ["/opt/zato/zato_start_load_balancer"]
