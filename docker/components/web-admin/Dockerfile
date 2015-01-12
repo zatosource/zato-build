@@ -56,5 +56,7 @@ RUN echo 'password'=$(cat /opt/zato/web_admin_password) >> /opt/zato/zato_update
 WORKDIR /opt/zato
 RUN /opt/zato/zato_from_config_create_web_admin
 RUN /opt/zato/zato_from_config_update_password
+RUN sed -i 's/127.0.0.1/0.0.0.0/g' \
+    /opt/zato/env/web-admin/config/repo/web-admin.conf
 
-CMD /opt/zato/zato_start_web_admin
+CMD ["/opt/zato/zato_start_web_admin"]
