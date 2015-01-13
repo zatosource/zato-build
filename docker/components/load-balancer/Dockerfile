@@ -8,6 +8,7 @@ RUN apt-get update && apt-get install -y apt-transport-https \
     python-software-properties \
     software-properties-common \
     curl \
+    telnet \
     wget
 
 # Add the package signing key
@@ -41,5 +42,6 @@ RUN rm -rf /opt/zato/env/load-balancer && mkdir -p /opt/zato/env/load-balancer
 
 RUN /opt/zato/zato_from_config_create_load_balancer
 RUN sed -i 's/127.0.0.1:11223/0.0.0.0:11223/g' /opt/zato/env/load-balancer/config/repo/zato.config
+RUN sed -i 's/localhost/0.0.0.0/g' /opt/zato/env/load-balancer/config/repo/lb-agent.conf
 
 CMD ["/opt/zato/zato_start_load_balancer"]
