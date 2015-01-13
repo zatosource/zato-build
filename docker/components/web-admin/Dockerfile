@@ -8,6 +8,7 @@ RUN apt-get update && apt-get install -y apt-transport-https \
     python-software-properties \
     software-properties-common \
     curl \
+    telnet \
     wget
 
 # Add the package signing key
