@@ -28,7 +28,7 @@ RUN mkdir /opt/zato/ca
 COPY zato.load_balancer.cert.pem /opt/zato/ca/
 COPY zato.load_balancer.key.pem /opt/zato/ca/
 COPY zato.load_balancer.key.pub.pem /opt/zato/ca/
-COPY ca_cert.pem /opt/zato/ca/
+COPY cacert.pem /opt/zato/ca/
 COPY zato_load_balancer.config /opt/zato/
 
 RUN wget -P /opt/zato \
