@@ -29,10 +29,10 @@ EXPOSE 8183
 
 # Prepare additional config files, CA certificates, keys and starter scripts
 RUN mkdir /opt/zato/ca
-COPY zato.webadmin.cert.pem /opt/zato/ca/
-COPY zato.webadmin.key.pem /opt/zato/ca/
-COPY zato.webadmin.key.pub.pem /opt/zato/ca/
-COPY ca_cert.pem /opt/zato/ca/
+COPY zato.web_admin.cert.pem /opt/zato/ca/
+COPY zato.web_admin.key.pem /opt/zato/ca/
+COPY zato.web_admin.key.pub.pem /opt/zato/ca/
+COPY cacert.pem /opt/zato/ca/
 COPY zato_web_admin.config /opt/zato/
 
 RUN wget -P /opt/zato \
