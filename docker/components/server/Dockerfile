@@ -28,7 +28,7 @@ RUN mkdir /opt/zato/ca
 COPY zato.server.cert.pem /opt/zato/ca/
 COPY zato.server.key.pem /opt/zato/ca/
 COPY zato.server.key.pub.pem /opt/zato/ca/
-COPY ca_cert.pem /opt/zato/ca/
+COPY cacert.pem /opt/zato/ca/
 COPY zato_server.config /opt/zato/
 
 RUN wget -P /opt/zato \
