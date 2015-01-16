@@ -19,8 +19,8 @@ for link in $ENV/*
 	fi
 	if [[ $1 == "info" ]]; then 
 	    status=`su - zato -c "zato $1 $component 2>&1 > /dev/null | grep component_running | sed 's/|//g' | sed 's/component_running//' | sed 's/ //g'"`
-	    [ $status == "True" ] && echo "Component $x ($component) running"
-	    [ $status == "False" ] && echo "Component $x ($component) not running"	
+	    [ "$status" == "True" ] && echo "Component $x ($component) running"
+	    [ "$status" == "False" ] && echo "Component $x ($component) not running"	
 	fi
     fi
 done
