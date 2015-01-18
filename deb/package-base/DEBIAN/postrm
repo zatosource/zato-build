@@ -32,6 +32,7 @@ case "$1" in
     ;;
     disappear | upgrade | failed-upgrade | abort-upgrade)
     :
+	rm -Rf /opt/zato/ZATO_VERSION
     ;;
     *)
 	echo "$0: Unrecognized option \`$1'" 1>&2
@@ -41,23 +42,3 @@ esac
 
 
 exit 0
-
-
-
-
-
-
-
-
-
-# postrm script for zato
-#
-#if [ "$1" = "purge" ]; then
-#    rm -rf /opt/zato
-#    if id zato | grep -q "groups=.*\(zato\)"; then
-#            deluser -group zato --quiet --system zato
-#    fi
-#    /usr/sbin/userdel zato
-#fi
-#
-#exit 0

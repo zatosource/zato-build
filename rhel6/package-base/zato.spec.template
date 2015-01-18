@@ -66,6 +66,8 @@ if [ "$1" = 0 ] ; then
  rm -rf /lib/systemd/system/zato.service
 
  /usr/sbin/userdel zato
+else
+ rm -rf /opt/%{name}/%{version}
 fi
 exit 0
 
