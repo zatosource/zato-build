@@ -1,7 +1,7 @@
 Each Zato component - servers, web-admin instances or load-balancers - that needs to be covered by startup scripts,
 and run when the operating system is starting, should be symlinked to in this directory.
 
-For instance, to start servers from ..
+For instance, to start on boot servers from ..
 
 /opt/zato/prod/server2
 /opt/zato/prod/server2
