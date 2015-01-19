@@ -1,16 +1,14 @@
-To enable Zato component to run with Zato init script, 
-put here named symbolic link like in examples below. 
+Each Zato component - servers, web-admin instances or load-balancers - that needs to run on system start-up should be symlinked to in this directory.
 
+For instance, to start servers from ..
 
-Examples:
-=========
+```
+/opt/zato/prod/server2
+/opt/zato/prod/server2
+```
+.. the following symlinks should be created:
 
-Zato component:
-/opt/zato/env/qs-1/server1
-command:
-ln -s /opt/zato/env/qs-1/server1 /etc/zato/components-enabled/qs-1.server1
--------------------------------------------------------------------------------
-Zato component:
-/opt/zato/env/prod/load-balancer
-command:
-ln -s /opt/zato/env/prod/load-balancer /etc/zato/components-enabled/prod.load-balancer
+```
+ln -s /opt/zato/prod/server1 /etc/zato/components-enabled/prod.server1
+ln -s /opt/zato/prod/server2 /etc/zato/components-enabled/prod.server2
+```
