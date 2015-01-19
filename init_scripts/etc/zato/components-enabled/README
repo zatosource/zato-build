@@ -2,13 +2,11 @@ Each Zato component - servers, web-admin instances or load-balancers - that need
 
 For instance, to start servers from ..
 
-```
 /opt/zato/prod/server2
 /opt/zato/prod/server2
-```
+
 .. the following symlinks should be created:
 
-```
-ln -s /opt/zato/prod/server1 /etc/zato/components-enabled/prod.server1
-ln -s /opt/zato/prod/server2 /etc/zato/components-enabled/prod.server2
-```
+$ ln -s /opt/zato/prod/server1 /etc/zato/components-enabled/prod.server1
+$ ln -s /opt/zato/prod/server2 /etc/zato/components-enabled/prod.server2
+
