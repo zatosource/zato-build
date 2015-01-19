@@ -1,4 +1,5 @@
-Each Zato component - servers, web-admin instances or load-balancers - that needs to run on system start-up should be symlinked to in this directory.
+Each Zato component - servers, web-admin instances or load-balancers -
+that needs to run on system start-up should be symlinked to in this directory.
 
 For instance, to start servers from ..
 
