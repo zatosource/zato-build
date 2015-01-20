@@ -28,7 +28,7 @@ _zato()
             if [[ ${cur} == -* ]] ; then
 	            COMPREPLY=( $(compgen -W "${opts_ca_create_ca} ${opts_help}" -- ${cur}) )
 		else
-		    COMPREPLY=( $(compgen -d -- ${cur}) )
+		    compopt -o nospace; COMPREPLY=( $(compgen -S "/" -d -- ${cur}) )
 	    	fi
             return 0
         else
@@ -47,7 +47,7 @@ _zato()
 		if [[ ${cur} == -* ]] ; then
 		    COMPREPLY=( $( compgen -W "${opts_help} ${opts_create_add} --kvdb_password --cluster_name --servers" -- $cur ) )
 		else
-		    COMPREPLY=( $(compgen -d -- ${cur}) )
+		    compopt -o nospace; COMPREPLY=( $(compgen -S "/" -d -- ${cur}) )
 		fi
         	return 0
 		;;
@@ -89,7 +89,7 @@ _zato()
 	if [[ ${cur} == -* ]] ; then
 	    COMPREPLY=( $( compgen -W "${opts_help}" -- $cur ) )
 	else
-	    COMPREPLY=( $(compgen -d -- ${cur}) )
+	    compopt -o nospace; COMPREPLY=( $(compgen -S "/" -d -- ${cur}) )
 	fi
         return 0
 	;;
@@ -104,7 +104,7 @@ _zato()
 	if [[ ${cur} == -* ]] ; then
 	    COMPREPLY=( $(compgen -W "${opts_help}" -- ${cur}) )
 	else
-	    COMPREPLY=( $(compgen -d -- ${cur}) )
+	    compopt -o nospace; COMPREPLY=( $(compgen -S "/" -d -- ${cur}) )
 	fi
 	return 0
 	;;
@@ -120,7 +120,7 @@ _zato()
 	if [[ ${cur} == -* ]] ; then
 	    COMPREPLY=( $(compgen -W "${opts_help} --format --cols_width" -- ${cur}) )
 	else
-	    COMPREPLY=( $(compgen -d -- ${cur}) )
+	    compopt -o nospace; COMPREPLY=( $(compgen -S "/" -d -- ${cur}) )
 	fi
 	return 0
         ;;
@@ -136,7 +136,7 @@ _zato()
 	if [[ ${cur} == -* ]] ; then
             COMPREPLY=( $(compgen -W "${opts_help} --cols_width" -- ${cur}) )
 	else
-	    COMPREPLY=( $(compgen -d -- ${cur}) )
+	    compopt -o nospace; COMPREPLY=( $(compgen -S "/" -d -- ${cur}) )
     	fi
 	return 0
         ;;
@@ -152,7 +152,7 @@ _zato()
 	if [[ ${cur} == -* ]] ; then
             COMPREPLY=( $(compgen -W "${opts_help}" -- ${cur}) )
 	else
-	    COMPREPLY=( $(compgen -d -- ${cur}) )
+	    compopt -o nospace; COMPREPLY=( $(compgen -S "/" -d -- ${cur}) )
     	fi
 	return 0
 	;;
@@ -188,7 +188,7 @@ _zato()
         return 0
         ;;
      --store-log|--store-config)
-	COMPREPLY=( $(compgen -d -- ${cur}) )
+	compopt -o nospace; COMPREPLY=( $(compgen -S "/" -d -- ${cur}) )
 	return 0
 	;;
      --organization|--organizational-unit|--locality|--state-or-province|--country|--common-name)
@@ -203,7 +203,7 @@ _zato()
 		if [[ ${cur} == -* ]] ; then
 	            COMPREPLY=( $(compgen -W "${opts_ca_create_ca} ${opts_help}" -- ${cur}) )
 		else
-		    COMPREPLY=( $(compgen -d -- ${cur}) )
+		    compopt -o nospace; COMPREPLY=( $(compgen -S "/" -d -- ${cur}) )
 	    	fi
 		return 0
 	    ;;
@@ -226,7 +226,7 @@ _zato()
 	    if [[ ${cur} == -* ]] ; then
 	            COMPREPLY=( $(compgen -W "${opts_invoke} ${opts_help}" -- ${cur}) )
 		else
-		    COMPREPLY=( $(compgen -d -- ${cur}) )
+		    compopt -o nospace; COMPREPLY=( $(compgen -S "/" -d -- ${cur}) )
 	    	fi
 		return 0
 	    ;;
@@ -234,7 +234,7 @@ _zato()
 	    if [[ ${cur} == -* ]] ; then
 	            COMPREPLY=( $(compgen -W "${opts_enmasse} ${opts_help}" -- ${cur}) )
 		else
-		    COMPREPLY=( $(compgen -d -- ${cur}) )
+		    compopt -o nospace; COMPREPLY=( $(compgen -S "/" -d -- ${cur}) )
 	    	fi
 		return 0
 	    ;;
