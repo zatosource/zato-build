@@ -28,7 +28,7 @@ for link in $ENV/*
 	    su - zato -c "zato $1 $component"
 	fi
 	if [[ $1 == "info" ]]; then 
-	    status=`su - zato -c "zato $1 $component 2>&1 > /dev/null | grep component_running | sed 's/|//g' | sed 's/component_running//' | sed 's/ //g'"`
+	    status=`su - zato -c "zato $1 $component | grep component_running | sed 's/|//g' | sed 's/component_running//' | sed 's/ //g'"`
 	    if [[ $status == "True" ]]; then
 	     echo "Component $x ($component) running"
 	    elif [[ $status == "False" ]]; then
