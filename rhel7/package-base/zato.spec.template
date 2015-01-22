@@ -49,6 +49,13 @@ done
 
 exit 0
 
+%preun
+if [ $1 = 0 ]; then
+/etc/init.d/zato stop
+fi
+
+exit 0
+
 %postun
 if [ "$1" = 0 ] ; then
  rm -rf /opt/%{name}/%{version}
@@ -66,6 +73,8 @@ if [ "$1" = 0 ] ; then
  rm -rf /lib/systemd/system/zato.service
 
  /usr/sbin/userdel zato
+else
+ rm -rf /opt/%{name}/%{version}
 fi
 exit 0
 
