@@ -7,6 +7,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.provider "virtualbox" do |v|
      v.name = "ubuntu-14.04-64"
+     v.customize ["modifyvm", :id, "--memory", "1024"]
      #v.gui = true
   end
   config.vm.hostname = "ubuntu-1404-64"
