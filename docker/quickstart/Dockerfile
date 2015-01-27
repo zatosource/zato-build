@@ -26,12 +26,13 @@ RUN mkdir -p /var/log/supervisor
 
 # Create work environment for Zato 2.0.0
 
+# Set a password for zato user
 WORKDIR /opt/zato/
-RUN touch zato_user_password change_zato_password
-RUN uuidgen > zato_user_password
-RUN chown zato:zato zato_user_password
-RUN echo 'zato':$(cat /opt/zato/zato_user_password) > change_zato_password
-RUN chpasswd < change_zato_password
+RUN touch /opt/zato/zato_user_password /opt/zato/change_zato_password
+RUN uuidgen > /opt/zato/zato_user_password
+RUN chown zato:zato /opt/zato/zato_user_password
+RUN echo 'zato':$(cat /opt/zato/zato_user_password) > /opt/zato/change_zato_password
+RUN chpasswd < /opt/zato/change_zato_password
 
 # Switch to zato user and create Zato environment
 USER zato
@@ -46,7 +47,7 @@ RUN chmod 755 /opt/zato/zato_start_load_balancer \
               /opt/zato/zato_start_server2 \
               /opt/zato/zato_start_web_admin
 
-# Set a password for an user and append it to a config file
+# Set a password for web admin and append it to a config file
 WORKDIR /opt/zato
 RUN touch /opt/zato/web_admin_password
 RUN uuidgen > /opt/zato/web_admin_password
