@@ -24,6 +24,9 @@ RUN apt-get update && apt-get install -y zato
 # Setup supervisor
 RUN mkdir -p /var/log/supervisor
 
+# Setup sshd
+RUN mkdir /var/run/sshd/
+
 # Create work environment for Zato 2.0.0
 
 # Set a password for zato user
