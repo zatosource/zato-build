@@ -10,6 +10,7 @@ RUN apt-get update && apt-get install -y apt-transport-https \
     curl \
     wget \
     redis-server \
+    ssh \
     supervisor
 
 # Add the package signing key
@@ -17,17 +18,25 @@ RUN curl -s https://zato.io/repo/zato-0CBD7F72.pgp.asc | sudo apt-key add -
 
 # Add Zato repo to your apt
 # update sources and install Zato
-RUN apt-add-repository https://zato.io/repo/dev/ubuntu
+RUN apt-add-repository https://zato.io/repo/stable/2.0/ubuntu
 RUN apt-get update && apt-get install -y zato
 
 # Setup supervisor
 RUN mkdir -p /var/log/supervisor
+
 # Create work environment for Zato 2.0.0
+
+WORKDIR /opt/zato/
+RUN touch zato_user_password change_zato_password
+RUN uuidgen > zato_user_password
+RUN chown zato:zato zato_user_password
+RUN echo 'zato':$(cat /opt/zato/zato_user_password) > change_zato_password
+RUN chpasswd < change_zato_password
 
 # Switch to zato user and create Zato environment
 USER zato
 
-EXPOSE 6379 8183 17010 17011 11223
+EXPOSE 22 6379 8183 17010 17011 11223
 
 # Get additional config files and starter scripts
 WORKDIR /opt/zato
