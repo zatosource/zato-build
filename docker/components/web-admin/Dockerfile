@@ -16,7 +16,7 @@ RUN curl -s https://zato.io/repo/zato-0CBD7F72.pgp.asc | sudo apt-key add -
 
 # Add Zato repo to your apt
 # update sources and install Zato
-RUN apt-add-repository https://zato.io/repo/dev/ubuntu
+RUN apt-add-repository https://zato.io/repo/stable/2.0/ubuntu
 RUN apt-get update && apt-get install -y zato
 
 COPY zato_update_password.config /opt/zato/
@@ -32,7 +32,7 @@ RUN mkdir /opt/zato/ca
 COPY zato.web_admin.cert.pem /opt/zato/ca/
 COPY zato.web_admin.key.pem /opt/zato/ca/
 COPY zato.web_admin.key.pub.pem /opt/zato/ca/
-COPY cacert.pem /opt/zato/ca/
+COPY ca_cert.pem /opt/zato/ca/
 COPY zato_web_admin.config /opt/zato/
 
 RUN wget -P /opt/zato \
