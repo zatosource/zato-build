@@ -1,6 +1,0 @@
-[zato-dev]
-name=zato-dev
-baseurl=https://zato.io/repo/dev/rhel/el$releasever/$basearch
-enabled=1
-gpgcheck=1
-gpgkey=https://zato.io/repo/zato-0CBD7F72.pgp.asc
