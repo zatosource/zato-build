@@ -1,0 +1,20 @@
+---
+- hosts: all
+  sudo: yes
+  tasks:
+    - name: update the system
+      apt: update_cache=yes
+    - name: install Redis
+      apt: name=redis-server state=latest
+    - name: install Zato helper programs
+      apt: name=apt-transport-https
+      apt: name=python-software-properties
+      apt: name=software-properties-common
+    - name: download Zato package signing key
+      get_url: url=https://zato.io/repo/zato-0CBD7F72.pgp.asc dest=/home/vagrant/
+    - name: add Zato package signing key
+      apt_key: file=/home/vagrant/zato-0CBD7F72.pgp.asc
+    - name: add Zato repository
+      apt_repository: repo='deb https://zato.io/repo/stable/2.0/ubuntu trusty main' state=present
+    - name: update the system and install Zato
+      apt: name=zato update_cache=yes
