@@ -13,9 +13,11 @@
       apt: name=redis-server state=latest
 
     - name: install Zato helper programs
-      apt: name=apt-transport-https
-      apt: name=python-software-properties
-      apt: name=software-properties-common
+      apt: name={{ item }} state=present
+      with_items:
+        - apt-transport-https
+        - python-software-properties
+        - software-properties-common
 
     - name: download Zato package signing key
       get_url: url=https://zato.io/repo/zato-0CBD7F72.pgp.asc dest=/home/vagrant/
