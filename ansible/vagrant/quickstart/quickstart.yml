@@ -1,8 +1,13 @@
 ---
 - hosts: all
   sudo: yes
+  remote_user: vagrant
 
   tasks:
+
+    - name: whoami
+      remote_user: vagrant
+      raw: whoami | tee /vagrant/whoami
 
     - name: install Redis
       apt: name=redis-server state=latest
@@ -26,6 +31,15 @@
 
     - name: create quickstart directory
       file: path=/opt/zato/env/qs-1/ owner=zato group=zato state=directory
+      register: qsdir
 
     - name: create quickstart
-      raw: /opt/zato/2.0.2/bin/zato quickstart create /opt/zato/env/qs-1 sqlite localhost 6379 --kvdb_password '' --verbose
+      raw: rm -rf /opt/zato/env/qs-1 && mkdir -p /opt/zato/env/qs-1 && /opt/zato/2.0.2/bin/zato quickstart create /opt/zato/env/qs-1 sqlite localhost 6379 --kvdb_password '' --verbose
+
+    - name: create a directory to store test results
+      file: path=/vagrant/tests owner=vagrant group=vagrant state=directory
+
+    - name: start Zato load balancer
+      remote_user: vagrant
+      raw: /opt/zato/2.0.2/bin/zato start /opt/zato/env/qs-1/load-balancer &&
+           /opt/zato/2.0.2/bin/zato info /opt/zato/env/qs-1/load-balancer | tee /vagrant/tests/lb-info
