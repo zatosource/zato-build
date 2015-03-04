@@ -1,0 +1,4 @@
+---
+
+- name: update the system and install Zato
+  apt: name=zato update_cache=yes state=present

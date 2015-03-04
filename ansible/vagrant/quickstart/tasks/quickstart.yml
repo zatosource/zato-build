@@ -1,0 +1,21 @@
+---
+
+- name: whoami
+  raw: whoami | tee /vagrant/whoami
+
+- name: create quickstart directory
+  file: path=/opt/zato/env/qs-1/ owner=zato group=zato state=directory
+  sudo_user: zato
+
+- name: create quickstart
+  raw: rm -rf /opt/zato/env/qs-1 && mkdir -p /opt/zato/env/qs-1 && /opt/zato/2.0.2/bin/zato quickstart create /opt/zato/env/qs-1 sqlite localhost 6379 --kvdb_password '' --verbose
+  sudo_user: zato
+
+- name: create a directory to store test results
+  file: path=/opt/zato/tests owner=zato group=zato state=directory
+  sudo_user: zato
+
+- name: start Zato load balancer
+  raw: /opt/zato/2.0.2/bin/zato start /opt/zato/env/qs-1/load-balancer &&
+       /opt/zato/2.0.2/bin/zato info /opt/zato/env/qs-1/load-balancer | tee /opt/zato/tests/info-lb
+  sudo_user: zato
