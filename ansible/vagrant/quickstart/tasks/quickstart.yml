@@ -19,3 +19,7 @@
     - server1
     - server2
     - web-admin
+
+- name: start Zato components as services
+  service: name=zato state=restarted enabled=yes
+  sudo_user: root
