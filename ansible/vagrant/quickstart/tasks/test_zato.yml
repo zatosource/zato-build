@@ -1,0 +1,39 @@
+---
+
+- name: create directory to store tests
+  file: path=/opt/zato/tests owner=zato group=zato state=directory
+  sudo_user: zato
+
+- name: create files to store test outputs
+  file: path=/opt/zato/tests/{{ item }} owner=zato group=zato state=touch
+  sudo_user: zato
+  with_items:
+    - ping-lb
+    - check-lb-alive
+    - ping-server1
+    - ping-server2
+    - run-tests
+
+- name: ping load balancer
+  raw: curl localhost:11223/zato/ping | tee /opt/zato/tests/ping-lb
+  sudo_user: zato
+
+- name: check if load balancer is alive
+  raw: curl -v localhost:11223/zato-lb-alive | tee /opt/zato/tests/check-lb-alive
+  sudo_user: zato
+
+- name: ping server1
+  raw: curl -v localhost:17010/zato/ping | tee /opt/zato/tests/ping-server1
+  sudo_user: zato
+
+- name: ping server2
+  raw: curl -v localhost:17011/zato/ping | tee /opt/zato/tests/ping-server2
+  sudo_user: zato
+
+- name: run apitests
+  shell: /opt/zato/2.0.2/bin/py /opt/zato/2.0.2/run-tests.py all 2>&1 | tee /opt/zato/tests/run-tests
+  sudo_user: zato
+
+- name: copy test results to vagrant directory
+  raw: cp -r /opt/zato/tests /vagrant
+  sudo_user: vagrant
