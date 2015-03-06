@@ -32,7 +32,7 @@
 
 - name: run apitests
   shell: /opt/zato/2.0.2/bin/py /opt/zato/2.0.2/run-tests.py all 2>&1 | tee /opt/zato/tests/run-tests
-  sudo_user: zato
+  sudo_user: root
 
 - name: copy test results to vagrant directory
   raw: cp -r /opt/zato/tests /vagrant
