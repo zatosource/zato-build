@@ -1,4 +1,0 @@
----
-
-- name: copy test results to vagrant directory
-  copy: src=/opt/zato/tests dest=/vagrant owner=vagrant group=vagrant directory_mode=yes
