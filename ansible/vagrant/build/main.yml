@@ -1,0 +1,7 @@
+---
+
+- hosts: localhost
+
+  tasks:
+    - name: Build packages
+      script: ./build.sh {{ release_version }} {{ package_version }} {{ branch }} {{ system }}
