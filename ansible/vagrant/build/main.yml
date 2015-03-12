@@ -1,7 +1,9 @@
 ---
-
-- hosts: localhost
+- hosts: all
+  sudo: yes
+  sudo_user: root
 
   tasks:
-    - name: Build packages
-      shell: ./build.sh {{ release_version }} {{ package_version }} {{ branch }} {{ system }}
+
+    - include: tasks/update_system.yml
+    - include: tasks/install_additional_programs.yml
