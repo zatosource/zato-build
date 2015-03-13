@@ -4,4 +4,4 @@
     apt_repository: repo="deb http://ftp.pl.debian.org/debian wheezy-backports main" state=present
 
   - name: update the system
-    apt: update_cache=yes upgrade=full
+    apt: update_cache=yes
