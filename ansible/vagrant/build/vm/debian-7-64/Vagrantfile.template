@@ -8,13 +8,14 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provider "virtualbox" do |v|
      v.name = "debian-7.4-64"
      #v.gui = true
+     v.memory = "1024"
   end
   config.vm.hostname = "debian-74-64"
 
   config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
-  config.vm.provision "shell", inline: "echo \"deb http://ftp.pl.debian.org/debian wheezy-backports main\" >> /etc/apt/sources.list"
-  config.vm.provision "shell", inline: "apt-get update"
-  config.vm.provision "shell", inline: "apt-get -y install git"
+  config.vm.provision "ansible" do |ansible|
+      ansible.playbook = "/home/rafal/repos/zato-build/ansible/vagrant/build/main.yml"
+  end
   config.vm.synced_folder "./synced/", "/opt/tmp"
   config.vm.provision :shell do |shell|
       shell.inline = "/opt/tmp/deb/build-zato.sh $*"

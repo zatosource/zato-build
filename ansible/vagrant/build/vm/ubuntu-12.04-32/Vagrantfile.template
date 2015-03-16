@@ -12,7 +12,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.hostname = "ubuntu-1204-32"
 
   config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
-  config.vm.provision "shell", inline: "apt-get -y install git"
+  config.vm.provision "ansible" do |ansible|
+      ansible.playbook = "/home/rafal/repos/zato-build/ansible/vagrant/build/main.yml"
+  end
   config.vm.synced_folder "./synced/", "/opt/tmp"
   config.vm.provision :shell do |shell|
       shell.inline = "/opt/tmp/deb/build-zato.sh $*"
