@@ -1,6 +1,27 @@
 ---
 
-  - name: install additional software
+  - name: install additional software on Debian-based systems
     apt: name={{ item }} state=present
     with_items:
       - git
+    when: ansible_pkg_mgr == 'apt'
+
+  - name: install EPEL package on Centos
+    yum: name=epel-release state=present
+
+  - name: install additional software on Redhat-based systems
+    yum: name={{ item }} state=present
+    with_items:
+      - git
+      - gcc
+      - make
+      - openssl-devel
+      - postgresql-devel
+      - sqlite-devel
+      - libev
+      - libev-devel
+      - libffi
+      - libffi-devel
+      - bzip2
+      - bzip2-devel
+    when: ansible_pkg_mgr == 'yum'
