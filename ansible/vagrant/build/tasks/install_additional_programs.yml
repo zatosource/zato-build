@@ -4,12 +4,16 @@
     apt: name={{ item }} state=present
     with_items:
       - git
-    when: ansible_pkg_mgr == 'apt'
+    when: ansible_os_family == "Debian" and ansible_pkg_mgr == 'apt'
 
-  - name: install EPEL package on Centos
-    yum: name=epel-release state=present
+  - name: install EPEL and redhat-lsb-core packages on Centos
+    yum: name={{ item }} state=present
+    with_items:
+      - epel-release
+      - redhat-lsb-core
+    when: ansible_distribution == "CentOS"
 
-  - name: install additional software on Redhat-based systems
+  - name: install additional software on CentOS 6
     yum: name={{ item }} state=present
     with_items:
       - git
@@ -24,4 +28,19 @@
       - libffi-devel
       - bzip2
       - bzip2-devel
-    when: ansible_pkg_mgr == 'yum'
+    when: ansible_distribution == "CentOS" and ansible_distribution_version.split('.')[0]|int == 6
+
+  - name: install additional software on CentOS 7
+    yum: name={{ item }} state=present
+    with_items:
+      - git
+      - gcc
+      - make
+      - openssl-devel
+      - postgresql-devel
+      - sqlite-devel
+    when: ansible_distribution == "CentOS" and ansible_distribution_version.split('.')[0]|int == 7
+
+  - name: install pip on Centos 7
+    easy_install: name=pip
+    when: ansible_distribution == "CentOS" and ansible_distribution_version.split('.')[0]|int == 7
