@@ -1,7 +1,7 @@
 ---
 
   - name: add Debian Wheezy backports repository
-    apt_repository: repo="deb http://ftp.pl.debian.org/debian wheezy-backports main" state=present
+    apt_repository: repo="deb http://ftp.is.debian.org/debian wheezy-backports main" state=present
     when: ansible_pkg_mgr == 'apt'
 
   - name: update Debian-based system
