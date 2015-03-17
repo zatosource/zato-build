@@ -12,13 +12,16 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.hostname = "centos7-64"
   
   config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
+  config.vm.synced_folder "./synced/", "/opt/tmp2"
+
   config.vm.provision "ansible" do |ansible|
       ansible.playbook = "/home/rafal/repos/zato-build/ansible/vagrant/build/main.yml"
   end
-  config.vm.synced_folder "./synced/", "/opt/tmp2"
+
   config.vm.provision :shell do |shell|
       shell.inline = "/opt/tmp2/rhel7/build-zato.sh $*"
       shell.args = ["ARGS"]
   end
+
   config.vm.provision "shell", inline: "cp /root/rpmbuild/RPMS/x86_64/zato-RPMVER.el7.x86_64.rpm /opt/tmp2/rhel7"
 end
