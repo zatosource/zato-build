@@ -6,11 +6,8 @@
       - git
     when: ansible_os_family == "Debian" and ansible_pkg_mgr == 'apt'
 
-  - name: install EPEL and redhat-lsb-core packages on Centos
-    yum: name={{ item }} state=present
-    with_items:
-      - epel-release
-      - redhat-lsb-core
+  - name: install EPEL package on Centos
+    yum: name=epel-release state=present
     when: ansible_distribution == "CentOS"
 
   - name: install additional software on CentOS 6
