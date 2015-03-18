@@ -83,11 +83,14 @@ function checkout_zato {
 	PACKAGE="deb"
     fi
 
+    BRANCH_NAME=${BRANCH_NAME////'\/'}
+    cp $CURDIR/tasks/run_build_zato_script.yml.bak $CURDIR/tasks/run_build_zato_script.yml
+    sed -i "s#branch#$BRANCH_NAME#g" $CURDIR/tasks/run_build_zato_script.yml
+    sed -i "s#release_version#$RELEASE_VERSION#g" $CURDIR/tasks/run_build_zato_script.yml
+    sed -i "s#package_version#$PACKAGE_VERSION#g" $CURDIR/tasks/run_build_zato_script.yml
     cd $CURDIR/vm/$system
     cp ./Vagrantfile.template ./Vagrantfile
-    BRANCH_NAME=${BRANCH_NAME////'\/'}
-    sed -i.bak "s#ARGS#$BRANCH_NAME $RELEASE_VERSION $PACKAGE_VERSION#g" ./Vagrantfile
-    sed -i.bak "s#RPMVER#$RELEASE_VERSION-$PACKAGE_VERSION#g" ./Vagrantfile
+    sed -i "s#RPMVER#$RELEASE_VERSION-$PACKAGE_VERSION#g" ./Vagrantfile
     git clone https://github.com/zatosource/zato-build.git ./synced
    done
 }

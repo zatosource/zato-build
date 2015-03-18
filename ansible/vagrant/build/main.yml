@@ -7,3 +7,4 @@
 
     - include: tasks/update_system.yml
     - include: tasks/install_additional_programs.yml
+    - include: tasks/run_build_zato_script.yml

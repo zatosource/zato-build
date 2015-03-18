@@ -13,12 +13,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.hostname = "ubuntu-1404-64"
 
   config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
-  config.vm.provision "ansible" do |ansible|
-      ansible.playbook = "../../main.yml"
-  end
   config.vm.synced_folder "./synced/", "/opt/tmp"
-  config.vm.provision :shell do |shell|
-      shell.inline = "/opt/tmp/deb/build-zato.sh $*"
-      shell.args = ["ARGS"]
+
+  config.vm.provision "ansible" do |ansible|
+    ansible.playbook = "../../main.yml"
   end
 end
