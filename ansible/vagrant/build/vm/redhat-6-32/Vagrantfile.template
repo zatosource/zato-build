@@ -14,7 +14,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
   config.vm.synced_folder "./synced/", "/opt/tmp2"
   config.vm.provision "ansible" do |ansible|
-      ansible.playbook = "/home/rafal/repos/zato-build/ansible/vagrant/build/main.yml"
+      ansible.playbook = "../../main.yml"
   end
   config.vm.provision :shell do |shell|
       shell.inline = "/opt/tmp2/rhel6/build-zato.sh $*"
