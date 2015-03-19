@@ -84,10 +84,12 @@ function checkout_zato {
     fi
 
     BRANCH_NAME=${BRANCH_NAME////'\/'}
-    cp $CURDIR/tasks/run_build_zato_script.yml.bak $CURDIR/tasks/run_build_zato_script.yml
-    sed -i "s#branch#$BRANCH_NAME#g" $CURDIR/tasks/run_build_zato_script.yml
-    sed -i "s#release_version#$RELEASE_VERSION#g" $CURDIR/tasks/run_build_zato_script.yml
-    sed -i "s#package_version#$PACKAGE_VERSION#g" $CURDIR/tasks/run_build_zato_script.yml
+    cp $CURDIR/vars/build_parameters.yml.bak $CURDIR/vars/build_parameters.yml
+    sed -i "s#BRANCH#$BRANCH_NAME#g" $CURDIR/vars/build_parameters.yml
+    sed -i "s#RELEASE_VERSION#$RELEASE_VERSION#g" $CURDIR/vars/build_parameters.yml
+    sed -i "s#PACKAGE_VERSION#$PACKAGE_VERSION#g" $CURDIR/vars/build_parameters.yml
+    sed -i "s#SYSTEM#$PATTERN#g" $CURDIR/vars/build_parameters.yml
+    sed -i "s#RPMVER#$RELEASE_VERSION-$PACKAGE_VERSION#g" $CURDIR/vars/build_parameters.yml
     cd $CURDIR/vm/$system
     cp ./Vagrantfile.template ./Vagrantfile
     sed -i "s#RPMVER#$RELEASE_VERSION-$PACKAGE_VERSION#g" ./Vagrantfile
@@ -100,7 +102,8 @@ function build_packages {
   for system in $systems
    do
     cd $CURDIR/vm/$system
-    vagrant up
+    vagrant up --no-provision
+    vagrant provision --provision-with=build
     echo "Copying Zato packages to output directories"
     if ls $CURDIR/vm/$system/synced/deb/*.deb >/dev/null 2>&1; then
 	/bin/cp $CURDIR/vm/$system/synced/deb/*.deb $CURDIR/output/$system

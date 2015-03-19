@@ -15,7 +15,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
   config.vm.synced_folder "./synced/", "/opt/tmp"
 
-  config.vm.provision "ansible" do |ansible|
-    ansible.playbook = "../../main.yml"
+  config.vm.provision "build", type: "ansible" do |build|
+    build.playbook = "../../build_provision.yml"
+  end
+
+  config.vm.provision "test", type: "ansible" do |test|
+    test.playbook = "../../test_provision.yml"
   end
 end

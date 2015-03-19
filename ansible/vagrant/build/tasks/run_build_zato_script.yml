@@ -1,4 +1,6 @@
 ---
 
+  - include_vars: ../vars/build_parameters.yml
+
   - name: Run build-zato.sh script
-    shell: /opt/tmp/deb/build-zato.sh support/2.0 2.0.9 ansible6
+    shell: /opt/tmp/deb/build-zato.sh {{ branch }} {{ release_version }} {{ package_version }}
