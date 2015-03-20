@@ -6,20 +6,21 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box_url = "https://cloud-images.ubuntu.com/vagrant/trusty/current/trusty-server-cloudimg-amd64-vagrant-disk1.box"
 
   config.vm.provider "virtualbox" do |v|
-     v.name = "ubuntu-14.04-64"
-     v.customize ["modifyvm", :id, "--memory", "1024"]
-     #v.gui = true
+    v.name = "ubuntu-14.04-64"
+    v.memory = "1280"
+    #v.gui = true
   end
   config.vm.hostname = "ubuntu-1404-64"
 
   config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
   config.vm.synced_folder "./synced/", "/opt/tmp"
+  config.vm.synced_folder "../../output/ubuntu-14.04-64/", "/opt/output"
 
   config.vm.provision "build", type: "ansible" do |build|
-    build.playbook = "../../build_provision.yml"
+    build.playbook = "../../provisions/build_provision.yml"
   end
 
   config.vm.provision "test", type: "ansible" do |test|
-    test.playbook = "../../test_provision.yml"
+    test.playbook = "../../provisions/test_provision.yml"
   end
 end
