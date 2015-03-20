@@ -1,0 +1,14 @@
+---
+
+  - hosts: all
+    sudo: yes
+    sudo_user: root
+
+    tasks:
+
+      - include: ../tasks/update_system.yml
+      - include: ../tasks/install_redis.yml
+      - include: ../tasks/install_helpers.yml
+      - include: ../tasks/install_zato_from_package.yml
+      - include: ../tasks/quickstart.yml
+      - include: ../tasks/test_zato.yml
