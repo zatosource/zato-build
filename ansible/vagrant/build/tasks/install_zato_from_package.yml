@@ -1,0 +1,11 @@
+---
+
+  - include_vars: ../vars/build_parameters.yml
+
+  - name: Install Zato from package on a Debian 64-bit system
+    shell: gdebi -n /opt/output/zato-{{ release_version }}-{{ package_version }}_amd64-{{ ansible_distribution_release }}.deb
+    when: ansible_os_family == "Debian" and ansible_userspace_architecture == "x86_64"
+
+  - name: Install Zato from package on a Debian 32-bit system
+    shell: gdebi -n /opt/output/zato-{{ release_version }}-{{ package_version }}_i386-{{ ansible_distribution_release }}.deb
+    when: ansible_os_family == "Debian" and ansible_userspace_architecture == "i386"
