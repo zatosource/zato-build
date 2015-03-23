@@ -1,4 +1,4 @@
 ---
 
-- name: install Redis
+- name: install Redis on Ubuntu Trusty
   apt: name=redis-server state=latest

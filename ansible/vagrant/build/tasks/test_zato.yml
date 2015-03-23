@@ -20,6 +20,9 @@
   raw: curl localhost:11223/zato/ping | tee /opt/zato/tests/ping-lb
   sudo_user: zato
 
+- name: Pause for 20 seconds to make sure all components are up and working
+  pause: seconds=20
+
 - name: check if load balancer is alive
   raw: curl -v localhost:11223/zato-lb-alive | tee /opt/zato/tests/check-lb-alive
   sudo_user: zato

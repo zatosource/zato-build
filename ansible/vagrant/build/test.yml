@@ -9,7 +9,7 @@
 
     - name: Create a 'synced' directory
       file: path=./vm/{{ system }}/synced state=directory
-    
+
     - name: Create a vagrant box
       shell: vagrant up --no-provision chdir=./vm/{{ system }}
 
