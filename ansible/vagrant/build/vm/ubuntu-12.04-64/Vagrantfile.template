@@ -6,18 +6,21 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box_url = "http://files.vagrantup.com/precise64.box"
 
   config.vm.provider "virtualbox" do |v|
-     v.name = "ubuntu-12.04-64"
-     #v.gui = true
+    v.name = "ubuntu-12.04-64"
+    #v.gui = true
+    v.memory = "1280"
   end
   config.vm.hostname = "ubuntu-1204-64"
 
   config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
   config.vm.synced_folder "./synced/", "/opt/tmp"
-  config.vm.provision "ansible" do |ansible|
-      ansible.playbook = "../../main.yml"
+  config.vm.synced_folder "../../output/ubuntu-12.04-64/", "/opt/output"
+
+  config.vm.provision "build", type: "ansible" do |build|
+    build.playbook = "../../provisions/build_provision.yml"
   end
-  config.vm.provision :shell do |shell|
-      shell.inline = "/opt/tmp/deb/build-zato.sh $*"
-      shell.args = ["ARGS"]
+
+  config.vm.provision "test", type: "ansible" do |test|
+    test.playbook = "../../provisions/test_provision.yml"
   end
 end
