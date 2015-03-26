@@ -6,22 +6,21 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box_url = "http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_centos-7.0_chef-provisionerless.box"
 
   config.vm.provider "virtualbox" do |v|
-     v.name = "centos7-64"
-     #v.gui = true
+    v.name = "centos7-64"
+    #v.gui = true
+    v.memory = "1024"
   end
   config.vm.hostname = "centos7-64"
-  
+
   config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
   config.vm.synced_folder "./synced/", "/opt/tmp2"
+  config.vm.synced_folder "../../output/redhat-7-64/", "/opt/output"
 
-  config.vm.provision "ansible" do |ansible|
-      ansible.playbook = "../../main.yml"
+  config.vm.provision "build", type: "ansible" do |build|
+    build.playbook = "../../provisions/build_provision.yml"
   end
 
-  config.vm.provision :shell do |shell|
-      shell.inline = "/opt/tmp2/rhel7/build-zato.sh $*"
-      shell.args = ["ARGS"]
+  config.vm.provision "test", type: "ansible" do |test|
+    test.playbook = "../../provisions/test_provision.yml"
   end
-
-  config.vm.provision "shell", inline: "cp /root/rpmbuild/RPMS/x86_64/zato-RPMVER.el7.x86_64.rpm /opt/tmp2/rhel7"
 end

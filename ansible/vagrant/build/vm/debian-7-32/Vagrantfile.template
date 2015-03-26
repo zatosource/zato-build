@@ -6,19 +6,21 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box_url = "http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_debian-7.4-i386_chef-provisionerless.box"
 
   config.vm.provider "virtualbox" do |v|
-     v.name = "debian-7.4-32"
-     #v.gui = true
-     v.memory = "1024"
+    v.name = "debian-7.4-32"
+    #v.gui = true
+    v.memory = "1024"
   end
   config.vm.hostname = "debian-74-32"
 
   config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
-  config.vm.provision "ansible" do |ansible|
-      ansible.playbook = "../../main.yml"
-  end
   config.vm.synced_folder "./synced/", "/opt/tmp"
-  config.vm.provision :shell do |shell|
-      shell.inline = "/opt/tmp/deb/build-zato.sh $*"
-      shell.args = ["ARGS"]
+  config.vm.synced_folder "../../output/debian-7-32/", "/opt/output"
+
+  config.vm.provision "build", type: "ansible" do |build|
+    build.playbook = "../../provisions/build_provision.yml"
+  end
+
+  config.vm.provision "test", type: "ansible" do |test|
+    test.playbook = "../../provisions/test_provision.yml"
   end
 end
