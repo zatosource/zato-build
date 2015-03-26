@@ -35,8 +35,12 @@
   raw: curl -v localhost:17011/zato/ping | tee /opt/zato/tests/ping-server2
   sudo_user: zato
 
-- name: run apitests
+- name: run apitests on Debian-based systems
   shell: bin/py run-tests.py all 2>&1 | tee /opt/zato/tests/run-tests chdir=/opt/zato/{{ release_version }}
+  sudo_user: zato
+
+- name: run apitests on RHEL-based systems
+  shell: bin/py run-tests.py all 2>&1 | tee /opt/zato/tests/run-tests chdir=/opt/zato/{{ release_version }}/code
   sudo_user: zato
 
 - name: copy test results to vagrant directory
