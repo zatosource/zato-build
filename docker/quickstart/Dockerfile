@@ -27,7 +27,7 @@ RUN mkdir -p /var/log/supervisor
 # Setup sshd
 RUN mkdir /var/run/sshd/
 
-# Create work environment for Zato 2.0.2
+# Create work environment for Zato 2.0.3
 
 # Set a password for zato user
 WORKDIR /opt/zato/
@@ -56,7 +56,7 @@ RUN touch /opt/zato/web_admin_password
 RUN uuidgen > /opt/zato/web_admin_password
 RUN echo 'password'=$(cat /opt/zato/web_admin_password) >> /opt/zato/update_password.config
 
-ENV ZATO_BIN /opt/zato/2.0.2/bin/zato
+ENV ZATO_BIN /opt/zato/2.0.3/bin/zato
 
 RUN mkdir -p /opt/zato/env/qs-1
 RUN rm -rf /opt/zato/env/qs-1 && mkdir -p /opt/zato/env/qs-1
