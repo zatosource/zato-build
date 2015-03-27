@@ -9,16 +9,9 @@
     - name: Destroy vagrant box
       shell: vagrant destroy --force chdir=./vm/{{ system }}
 
-    - name: Remove directories
-      shell: rm -rf {{ item }} chdir=./vm/{{ system }}
+    - name: Remove directories and files
+      file: path=./vm/{{ system }}/{{ item }} state=absent
       with_items:
         - .vagrant
-        - vagrant*
-        - d*
         - synced
-        - synced/.git
-
-    - name: Remove files
-      shell: rm -f {{ item }} chdir=./vm/{{ system }}
-      with_items:
         - Vagrantfile
