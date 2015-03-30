@@ -5,7 +5,14 @@
     with_items:
       - git
       - curl
+      - apt-transport-https
+      - python-software-properties
+      - gdebi
     when: ansible_os_family == "Debian" and ansible_pkg_mgr == 'apt'
+
+  - name: Install software-properties-common on Ubuntu
+    apt: name=software-properties-common state=present
+    when: ansible_distribution == "Ubuntu"
 
   - name: install EPEL package on Centos
     yum: name=epel-release state=present
