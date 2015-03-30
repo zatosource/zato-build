@@ -1,9 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description>This job builds Zato packages using Ansible.&#xd;
-&#xd;
-It executes Ansible playbook which in turn executes &apos;build.sh&apos; script. It&apos;s required to specify a path to the playbook and assign it to &apos;PATH_TO_ANSIBLE_PLAYBOOK&apos; parameter.</description>
+  <description>This job builds and tests Zato packages using Ansible.</description>
   <keepDependencies>false</keepDependencies>
   <properties>
     <hudson.model.ParametersDefinitionProperty>
@@ -82,6 +80,13 @@ It executes Ansible playbook which in turn executes &apos;build.sh&apos; script.
     <hudson.tasks.Shell>
       <command>ansible-playbook -vvvv ${PATH_TO_ANSIBLE_PLAYBOOK}/build.yml --extra-vars &quot;release_version=${RELEASE_VERSION} package_version=${PACKAGE_NUMBER}
 																						   branch=${BRANCH} system=${DISTRIBUTION}&quot;</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>ansible-playbook -vvvv ${PATH_TO_ANSIBLE_PLAYBOOK}/clean.yml --extra-vars &quot;system=${DISTRIBUTION}&quot;</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>ansible-playbook -vvvv ${PATH_TO_ANSIBLE_PLAYBOOK}/test.yml --extra-vars &quot;release_version=${RELEASE_VERSION} package_version=${PACKAGE_NUMBER}
+																						   system=${DISTRIBUTION}&quot;</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers/>

@@ -1,16 +1,14 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description>This job builds Zato packages using Ansible.&#xd;
-&#xd;
-It executes Ansible playbook which in turn executes &apos;build.sh&apos; script. It&apos;s required to specify a path to the playbook and assign it to &apos;PATH_TO_ANSIBLE_PLAYBOOK&apos; parameter.</description>
+  <description>This job tests Zato packages using Ansible.</description>
   <keepDependencies>false</keepDependencies>
   <properties>
     <hudson.model.ParametersDefinitionProperty>
       <parameterDefinitions>
         <hudson.model.StringParameterDefinition>
           <name>RELEASE_VERSION</name>
-          <description>Specify a Zato release version the package will be build for.</description>
+          <description>Specify a Zato release version of the package to be tested.</description>
           <defaultValue></defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
@@ -18,19 +16,9 @@ It executes Ansible playbook which in turn executes &apos;build.sh&apos; script.
           <description>Specify package number within Zato release version defined as previous parameter.</description>
           <defaultValue></defaultValue>
         </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>BRANCH</name>
-          <description>Git branch to pull Zato source code from.</description>
-          <defaultValue></defaultValue>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>CLIENT_PATH</name>
-          <description>OPTIONAL! Enter only if you want specifically to build a package for a client. Pattern: /&lt;[0-9][a-f]&gt;-&lt;client_name&gt;. Remember about opening slash. Use six characters in first part of the pattern.</description>
-          <defaultValue></defaultValue>
-        </hudson.model.StringParameterDefinition>
         <hudson.model.ChoiceParameterDefinition>
           <name>DISTRIBUTION</name>
-          <description>Choose a Linux distribution to build a package for. Alternatively, you can choose &quot;all&quot; to build packages for all distributions in a single operation.</description>
+          <description>Choose a Linux distribution to test a package on. Alternatively, you can choose &quot;all&quot; to test all packages on all distributions in a single operation.</description>
           <choices class="java.util.Arrays$ArrayList">
             <a class="string-array">
               <string>all</string>
@@ -43,17 +31,6 @@ It executes Ansible playbook which in turn executes &apos;build.sh&apos; script.
               <string>ubuntu-12.04-64</string>
               <string>ubuntu-14.04-32</string>
               <string>ubuntu-14.04-64</string>
-            </a>
-          </choices>
-        </hudson.model.ChoiceParameterDefinition>
-        <hudson.model.ChoiceParameterDefinition>
-          <name>REPOSITORY</name>
-          <description>Choose repository for build packages. </description>
-          <choices class="java.util.Arrays$ArrayList">
-            <a class="string-array">
-              <string>dev</string>
-              <string>stable</string>
-              <string>u</string>
             </a>
           </choices>
         </hudson.model.ChoiceParameterDefinition>
@@ -80,8 +57,11 @@ It executes Ansible playbook which in turn executes &apos;build.sh&apos; script.
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>ansible-playbook -vvvv ${PATH_TO_ANSIBLE_PLAYBOOK}/build.yml --extra-vars &quot;release_version=${RELEASE_VERSION} package_version=${PACKAGE_NUMBER}
-																						   branch=${BRANCH} system=${DISTRIBUTION}&quot;</command>
+      <command>ansible-playbook -vvvv ${PATH_TO_ANSIBLE_PLAYBOOK}/clean.yml --extra-vars &quot;system=${DISTRIBUTION}&quot;</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>ansible-playbook -vvvv ${PATH_TO_ANSIBLE_PLAYBOOK}/test.yml --extra-vars &quot;release_version=${RELEASE_VERSION} package_version=${PACKAGE_NUMBER}
+																						   system=${DISTRIBUTION}&quot;</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers/>
