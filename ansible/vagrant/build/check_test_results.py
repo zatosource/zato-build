@@ -19,27 +19,29 @@ def check_content(file):
     pattern_info = re.compile(r'info_*')
     pattern_ping = re.compile(r'ping_*')
 
-    if re.search(pattern_info, file):
-        try:
-            content = json.load(output_file)
+    try:
+        content = json.load(output_file)
+
+        if re.search(pattern_info, file):
             details = {
                 'name': content['component_details']['component'],
                 'running': content['component_running'],
                 'version': content['component_details']['version'],
             }
-
             logging.info("Component:")
 
             for key, value in details.iteritems():
                 logging.info("%s%s: %s" % ('\t', key, value))
+            print '\n'
 
-            logging.info("\n")
+        elif re.search(pattern_ping, file):
+            details = {
+                'result': content['zato_env']['result']
+            }
+            logging.info("%s%s: %s\n" % ('\t', 'ping', details['result']))
 
-        except (ValueError, KeyError):
-            logging.warning("Content of this file is not json.\n")
-
-    elif re.search(pattern_ping, file):
-        pass
+    except ValueError:
+        logging.warning("Content of this file is not json.\n")
 
 
 for directory in virtual_machines:
