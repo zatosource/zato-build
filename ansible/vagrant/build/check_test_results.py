@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import os
+import json
 import logging
+import re
 
 
 logging.basicConfig(level=logging.INFO)
@@ -13,26 +15,32 @@ virtual_machines = os.listdir(vm_dir)
 
 def check_content(file):
 
-    output_file = enumerate(open(file))
-    zato_components = ['LOAD_BALANCER', 'SERVER', 'WEB_ADMIN']
+    output_file = open(file)
+    pattern_info = re.compile(r'info_*')
+    pattern_ping = re.compile(r'ping_*')
 
-    for key, value in output_file:
-        value = value.split('|')
-        new_value = []
-        for item in value:
-            item = item.strip()
-            new_value.append(item)
-        for item in new_value:
-            if 'version' in item:
-                version_start = item.find('Zato')
-                zato_version = item[version_start:-2]
-                logging.info("Component version is %s", (zato_version))
-            elif 'component_running' in item:
-                component_running = new_value[2]
-                if component_running == 'False':
-                    logging.info("Component is running")
-                else:
-                    logging.warning("Component is not running")
+    if re.search(pattern_info, file):
+        try:
+            content = json.load(output_file)
+            details = {
+                'name': content['component_details']['component'],
+                'running': content['component_running'],
+                'version': content['component_details']['version'],
+            }
+
+            logging.info("Component:")
+
+            for key, value in details.iteritems():
+                logging.info("%s%s: %s" % ('\t', key, value))
+
+            logging.info("\n")
+
+        except (ValueError, KeyError):
+            logging.warning("Content of this file is not json.\n")
+
+    elif re.search(pattern_ping, file):
+        pass
+
 
 for directory in virtual_machines:
     logging.info(40 * "=")
