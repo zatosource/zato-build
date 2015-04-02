@@ -15,10 +15,10 @@
     - ping-server1
     - ping-server2
     - run-tests
-    - info_lb
+    - info_load-balancer
     - info_server1
     - info_server2
-    - info_wa
+    - info_web-admin
 
 - name: ping load balancer
   raw: curl localhost:11223/zato/ping | tee /opt/zato/tests/ping-lb
@@ -39,53 +39,33 @@
   raw: curl -v localhost:17011/zato/ping | tee /opt/zato/tests/ping-server2
   sudo_user: zato
 
-- name: Get info on load balancer on Debian-based systems
-  shell: /opt/zato/{{ release_version }}/bin/zato info --format json load-balancer 2>&1 | tee /opt/zato/tests/info_lb chdir=/opt/zato/env/qs-1
+- name: Get info on components on Debian-based systems
+  shell: /opt/zato/{{ release_version }}/bin/zato info --format json {{ item }} 2>&1 | tee /opt/zato/tests/info_{{ item }} chdir=/opt/zato/env/qs-1
+  with_items:
+    - load-balancer
+    - server1
+    - server2
+    - web-admin
   sudo_user: zato
   when: ansible_os_family == "Debian"
 
-- name: Get info on server1 on Debian-based systems
-  shell: /opt/zato/{{ release_version }}/bin/zato info --format json server1 2>&1 | tee /opt/zato/tests/info_server1 chdir=/opt/zato/env/qs-1
-  sudo_user: zato
-  when: ansible_os_family == "Debian"
-
-- name: Get info on server2 on Debian-based systems
-  shell: /opt/zato/{{ release_version }}/bin/zato info --format json server2 2>&1 | tee /opt/zato/tests/info_server2 chdir=/opt/zato/env/qs-1
-  sudo_user: zato
-  when: ansible_os_family == "Debian"
-
-- name: Get info on web admin on Debian-based systems
-  shell: /opt/zato/{{ release_version }}/bin/zato info --format json web-admin 2>&1 | tee /opt/zato/tests/info_wa chdir=/opt/zato/env/qs-1
-  sudo_user: zato
-  when: ansible_os_family == "Debian"
-
-- name: Get info on load balancer on RHEL-based systems
-  shell: /opt/zato/{{ release_version }}/code/bin/zato info --format json load-balancer 2>&1 | tee /opt/zato/tests/info_lb chdir=/opt/zato/env/qs-1
-  sudo_user: zato
-  when: ansible_distribution == "CentOS"
-
-- name: Get info on server1 on RHEL-based systems
-  shell: /opt/zato/{{ release_version }}/code/bin/zato info --format json server1 2>&1 | tee /opt/zato/tests/info_server1 chdir=/opt/zato/env/qs-1
-  sudo_user: zato
-  when: ansible_distribution == "CentOS"
-
-- name: Get info on server2 on RHEL-based systems
-  shell: /opt/zato/{{ release_version }}/code/bin/zato info --format json server2 2>&1 | tee /opt/zato/tests/info_server2 chdir=/opt/zato/env/qs-1
-  sudo_user: zato
-  when: ansible_distribution == "CentOS"
-
-- name: Get info on web admin on RHEL-based systems
-  shell: /opt/zato/{{ release_version }}/code/bin/zato info --format json web-admin 2>&1 | tee /opt/zato/tests/info_wa chdir=/opt/zato/env/qs-1
+- name: Get info on components on RHEL-based systems
+  shell: /opt/zato/{{ release_version }}/code/bin/zato info --format json {{ item }} 2>&1 | tee /opt/zato/tests/info_{{ item }} chdir=/opt/zato/env/qs-1
+  with_items:
+    - load-balancer
+    - server1
+    - server2
+    - web-admin
   sudo_user: zato
   when: ansible_distribution == "CentOS"
 
 - name: run apitests on Debian-based systems
-  shell: bin/py run-tests.py all 2>&1 | tee /opt/zato/tests/run-tests chdir=/opt/zato/{{ release_version }}
+  shell: bin/py run-tests.py nosetests 2>&1 | tee /opt/zato/tests/run-tests chdir=/opt/zato/{{ release_version }}
   sudo_user: zato
   when: ansible_os_family == "Debian"
 
 - name: run apitests on RHEL-based systems
-  shell: bin/py run-tests.py all 2>&1 | tee /opt/zato/tests/run-tests chdir=/opt/zato/{{ release_version }}/code
+  shell: bin/py run-tests.py nosetests 2>&1 | tee /opt/zato/tests/run-tests chdir=/opt/zato/{{ release_version }}/code
   sudo_user: zato
   when: ansible_distribution == "CentOS"
 
