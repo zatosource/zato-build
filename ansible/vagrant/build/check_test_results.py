@@ -16,7 +16,7 @@ test_passed = []
 
 def check_result(result):
 
-    if result == "ZATO_OK":
+    if result == 'ZATO_OK':
         test_passed.append(True)
     elif result is True:
         test_passed.append(True)
@@ -38,10 +38,10 @@ def check_content(file):
             'running': content['component_running'],
             'version': content['component_details']['version'],
         }
-        logging.info(" Component:")
+        logging.info(' Component:')
 
         for key, value in details.iteritems():
-            logging.info(" - %s: %s" % (key, value))
+            logging.info(' - %s: %s' % (key, value))
             check_result(value)
         print '\n'
 
@@ -50,25 +50,25 @@ def check_content(file):
             'result': content['zato_env']['result']
         }
         result = details['result']
-        logging.info(" %s: %s\n" % ('ping', result))
+        logging.info(' %s: %s\n' % ('ping', result))
         check_result(result)
 
 
 for directory in virtual_machines:
-    logging.info(" " + 45 * "=")
-    logging.info(" Checking test results for %s", directory)
+    logging.info(' ' + 45 * '=')
+    logging.info(' Checking test results for %s', directory)
     test_directory = os.path.join(main_vm_dir, directory, 'tests')
     for root, dirs, files in os.walk(test_directory):
         for filename in files:
-            logging.info(" Checking %s now", filename)
+            logging.info(' Checking %s now', filename)
             filename = os.path.join(test_directory, filename)
             try:
                 check_content(filename)
             except ValueError:
-                logging.info(" Content of this file is not json. Skipping.\n")
+                logging.info(' Content of this file is not json. Skipping.\n')
 
 if test_passed.count(False) == 0:
-    logging.info("All tests passed")
+    logging.info('All tests passed')
 else:
-    logging.info("%s" %
-        " Some tests have failed. Refer to test output files to check what has gone wrong.")
+    logging.info('%s' %
+        ' Some tests have failed. Refer to test output files to check what has gone wrong.')
