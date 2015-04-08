@@ -38,7 +38,7 @@
     </hudson.model.ParametersDefinitionProperty>
     <EnvInjectJobProperty plugin="envinject@1.90">
       <info>
-        <propertiesContent>PATH_TO_ANSIBLE_PLAYBOOK=/home/rafal/repos/zato-build/ansible/vagrant/build</propertiesContent>
+        <propertiesContent>PATH_TO_ANSIBLE_PLAYBOOK=</propertiesContent>
         <loadFilesFromMaster>false</loadFilesFromMaster>
       </info>
       <on>true</on>
