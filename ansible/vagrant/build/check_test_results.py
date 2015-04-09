@@ -22,6 +22,30 @@ def check_result(result):
         passed_tests.append(True)
 
 
+def check_text_output(file):
+
+    f = open(file, 'r')
+    content = f.readlines()
+    for line in content:
+        if '504 Gateway Time-out' in line:
+            result = 'FAIL'
+            failed_tests.append(file)
+            logging.info(' %s: %s' % ('Result', result))
+            check_result(result)
+            break
+        elif 'OK' in line:
+            result = 'OK'
+            logging.info(' %s: %s' % ('Result', result))
+            check_result(result)
+            break
+        elif 'FAIL' in line:
+            result = 'FAIL'
+            failed_tests.append(file)
+            logging.info(' %s: %s' % ('Result', result))
+            check_result(result)
+            break
+
+
 def check_content(file):
 
     output_file = open(file)
@@ -54,28 +78,10 @@ def check_content(file):
             logging.info(' %s: %s' % ('ping', result))
             check_result(result)
         except ValueError:
-            f = open(file, 'r')
-            content = f.readlines()
-            for line in content:
-                if '504' in line:
-                    result = 'FAIL'
-                    failed_tests.append(file)
-                    logging.info(' %s: %s' % ('Result', result))
-                    check_result(result)
+            check_text_output(file)
 
     elif re.search(pattern_tests, file) or re.search(pattern_alive, file):
-        f = open(file, 'r')
-        content = f.readlines()
-        for line in content:
-            if 'OK' in line:
-                result = 'OK'
-                logging.info(' %s: %s' % ('Result', result))
-                check_result(result)
-            elif 'FAIL' in line:
-                result = 'FAIL'
-                failed_tests.append(file)
-                logging.info(' %s: %s' % ('Result', result))
-                check_result(result)
+        check_text_output(file)
 
 
 def final_result():
