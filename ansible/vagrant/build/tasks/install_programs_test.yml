@@ -3,6 +3,7 @@
   - name: Install additional software on Debian-based systems
     apt: name={{ item }} state=present
     with_items:
+      - git
       - curl
       - apt-transport-https
       - python-software-properties
@@ -24,24 +25,4 @@
       - epel-release
       - curl
       - git
-      - gcc
-      - make
-      - openssl-devel
-      - postgresql-devel
-      - sqlite-devel
     when: ansible_distribution == "CentOS"
-
-  - name: Install additional software on CentOS 6
-    yum: name={{ item }} state=present
-    with_items:
-      - libev
-      - libev-devel
-      - libffi
-      - libffi-devel
-      - bzip2
-      - bzip2-devel
-    when: ansible_distribution == "CentOS" and ansible_distribution_version.split('.')[0]|int == 6
-
-  - name: Install pip on Centos 7
-    easy_install: name=pip
-    when: ansible_distribution == "CentOS" and ansible_distribution_version.split('.')[0]|int == 7

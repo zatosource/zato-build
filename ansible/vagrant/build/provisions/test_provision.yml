@@ -6,8 +6,8 @@
 
     tasks:
 
-      - include: ../tasks/update_system.yml
-      - include: ../tasks/install_additional_programs.yml
+      - include: ../tasks/update_test_system.yml
+      - include: ../tasks/install_programs_test.yml
       - include: ../tasks/install_redis.yml
         when: ansible_distribution_version == "14.04"
       - include: ../tasks/install_redis_from_source.yml

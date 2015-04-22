@@ -1,28 +1,20 @@
 ---
 
-  - name: Install additional software on Debian-based systems
-    apt: name={{ item }} state=present
-    with_items:
-      - curl
-      - apt-transport-https
-      - python-software-properties
-      - gdebi
-      - libpq-dev
-      - libxml2-dev
-      - libxslt1-dev
-      - python-dev
-      - libyaml-dev
-    when: ansible_os_family == "Debian" and ansible_pkg_mgr == 'apt'
+  - name: add Debian Wheezy backports repository
+    apt_repository: repo="deb http://ftp.is.debian.org/debian wheezy-backports main" state=present
+    when: ansible_distribution == "Debian" and ansible_lsb.major_release == '7'
 
-  - name: Install software-properties-common on Ubuntu
-    apt: name=software-properties-common state=present
-    when: ansible_distribution == "Ubuntu"
+  - name: Do 'apt-get update' on Debian Wheezy
+    apt: update_cache=yes
+    when: ansible_distribution == "Debian" and ansible_lsb.major_release == '7'
+
+  - name: Install git on Debian Wheezy
+    apt: name=git state=present
+    when: ansible_os_family == "Debian"
 
   - name: Install common packages on Centos
     yum: name={{ item }} state=present
     with_items:
-      - epel-release
-      - curl
       - git
       - gcc
       - make
@@ -31,7 +23,7 @@
       - sqlite-devel
     when: ansible_distribution == "CentOS"
 
-  - name: Install additional software on CentOS 6
+  - name: Install additional programs on CentOS 6
     yum: name={{ item }} state=present
     with_items:
       - libev

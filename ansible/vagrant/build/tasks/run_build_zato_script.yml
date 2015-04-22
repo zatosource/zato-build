@@ -2,5 +2,14 @@
 
   - include_vars: ../vars/build_parameters.yml
 
-  - name: Run build-zato.sh script
+  - name: Run build-zato.sh script on Debian-based systems
     shell: /opt/tmp/deb/build-zato.sh {{ branch }} {{ release_version }} {{ package_version }}
+    when: ansible_os_family == "Debian" and ansible_pkg_mgr == 'apt'
+
+  - name: Run build-zato.sh script on CentOS
+    shell: /opt/tmp2/rhel{{ ansible_distribution_major_version }}/build-zato.sh {{ branch }} {{ release_version }} {{ package_version }}
+    when: ansible_distribution == "CentOS"
+
+  - name: copy Zato package on CentOS
+    raw: cp /root/rpmbuild/RPMS/{{ ansible_userspace_architecture }}/zato-{{ rpmver }}.el{{ ansible_distribution_major_version }}.{{ ansible_userspace_architecture }}.rpm /opt/tmp2/rhel{{ ansible_distribution_major_version }}
+    when: ansible_distribution == "CentOS"
