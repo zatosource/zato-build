@@ -22,7 +22,7 @@ RUN apt-get update && apt-get install -y zato
 USER zato
 WORKDIR /opt/zato
 
-EXPOSE 11223
+EXPOSE 11223 20151
 
 RUN mkdir /opt/zato/ca
 COPY zato.load_balancer.cert.pem /opt/zato/ca/
