@@ -22,12 +22,12 @@ RUN apt-get update && apt-get install -y zato
 USER zato
 WORKDIR /opt/zato
 
-EXPOSE 17010
+EXPOSE 17011
 
 RUN mkdir /opt/zato/ca
-COPY zato.server.cert.pem /opt/zato/ca/
-COPY zato.server.key.pem /opt/zato/ca/
-COPY zato.server.key.pub.pem /opt/zato/ca/
+COPY zato.server2.cert.pem /opt/zato/ca/
+COPY zato.server2.key.pem /opt/zato/ca/
+COPY zato.server2.key.pub.pem /opt/zato/ca/
 COPY ca_cert.pem /opt/zato/ca/
 COPY zato_server.config /opt/zato/
 
@@ -43,7 +43,7 @@ RUN rm -rf /opt/zato/env/server && mkdir -p /opt/zato/env/server
 RUN /opt/zato/zato_from_config_create_server
 RUN sed -i 's/gunicorn_workers=2/gunicorn_workers=1/g' \
     /opt/zato/env/server/config/repo/server.conf
-RUN sed -i 's/localhost:17010/0.0.0.0:17010/g' \
+RUN sed -i 's/localhost:17010/0.0.0.0:17011/g' \
     /opt/zato/env/server/config/repo/server.conf
 
 CMD ["/opt/zato/zato_start_server"]
