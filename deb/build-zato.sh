@@ -33,14 +33,14 @@ RELEASE_NAME=`lsb_release -cs`
 ZATO_ROOT_DIR=/opt/zato
 ZATO_TARGET_DIR=$ZATO_ROOT_DIR/$ZATO_VERSION
 
-# Default libumfpack version on Debian 7 and Ubuntu 12.04
-LIBUMFPACK_VERSION=5.4.0
+# Default libumfpack version on Debian 8 and Ubuntu 14.04
+LIBUMFPACK_VERSION=5.6.2
 
-# Ubuntu 14.04 needs a different one
+# Ubuntu 12.04 and Debian 7 needs a older one
 if command -v lsb_release > /dev/null; then
     release=$(lsb_release -r | cut -f2)
-    if [[ "$release" == "14.04" ]]; then
-        LIBUMFPACK_VERSION=5.6.2
+    if [[ "$release" == "12.04" ]] || [[ "$release" == "7.4" ]]; then
+        LIBUMFPACK_VERSION=5.4.0
     fi
 fi
 
