@@ -12,7 +12,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.hostname = "centos65-64"
 
   config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
-  config.vm.provision "shell", inline: "yum -y install git gcc make openssl-devel postgresql-devel sqlite-devel libev libev-devel libffi libffi-devel bzip2 bzip2-devel"
+  config.vm.provision "shell", inline: "yum -y install git gcc make openssl-devel postgresql-devel sqlite-devel libev libev-devel libffi libffi-devel bzip2 bzip2-devel python-setuptools"
+  config.vm.provision "shell", inline: "easy_install pip"
   config.vm.synced_folder "./synced/", "/opt/tmp2"
   config.vm.provision :shell do |shell|
       shell.inline = "/opt/tmp2/rhel6/build-zato.sh $*"

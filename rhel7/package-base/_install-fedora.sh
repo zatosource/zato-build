@@ -11,28 +11,34 @@ function symlink_py {
     ln -s `python -c 'import '${1}', os.path, sys; sys.stdout.write(os.path.dirname('${1}'.__file__))'` $CURDIR/zato_extra_paths
 }
 
-rm -rf $CURDIR/develop-eggs
-rm -rf $CURDIR/downloads
-rm -rf $CURDIR/eggs
-rm -rf $CURDIR/.installed.cfg
-rm -rf $CURDIR/parts
-rm -rf $CURDIR/zato_extra_paths
+RELEASE=`rpm -qa |grep release | cut -f3 -d-`
+if [ "$RELEASE" = "6" ]; then
+    pip_command=pip-python
+else
+    pip_command=pip
+fi
+
+bash $CURDIR/clean.sh
 
 sudo yum -y install git bzr gcc-gfortran haproxy \
     gcc-c++ atlas-devel atlas blas-devel  \
+    bzip2 bzip2-devel libev libev-devel libffi libffi-devel \
     libevent-devel libgfortran lapack-devel lapack \
     libpqxx-devel libyaml-devel libxml2-devel libxslt-devel suitesparse \
-    openssl python-devel m2crypto numpy \
-    scipy python-zdaemon swig uuid-devel uuid libffi libffi-devel
+    openssl openssl-devel python-devel numpy python-pip \
+    scipy python-zdaemon swig uuid-devel uuid
 
 mkdir $CURDIR/zato_extra_paths
 
-symlink_py 'M2Crypto'
 symlink_py 'numpy'
 symlink_py 'scipy'
 
-sudo pip install distribute==0.6.49
-sudo pip install virtualenv==1.9.1
+export CYTHON=$CURDIR/bin/cython
+
+sudo $pip_command install --upgrade pip
+sudo $pip_command install distribute==0.6.49
+sudo $pip_command install virtualenv==1.9.1
+sudo $pip_command install zato-apitest
 
 virtualenv .
 
