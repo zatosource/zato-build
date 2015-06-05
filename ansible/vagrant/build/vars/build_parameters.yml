@@ -1,7 +1,7 @@
 ---
 
-branch: support/2.0
-release_version: 2.0.9
-package_version: ansible6
-system: ubuntu-14.04-64
-rpmver: 2.0.9-ansible6
+branch: 
+release_version: 
+package_version: 
+system: 
+rpmver: 
