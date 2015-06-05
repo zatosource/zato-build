@@ -1,5 +1,0 @@
----
-
-  - name: copy Zato package on CentOS
-    copy: src=/root/rpmbuild/RPMS/x86_64/zato-RPMVER.el7.x86_64.rpm dest=/opt/tmp2/rhel7
-    sudo_user: vagrant
