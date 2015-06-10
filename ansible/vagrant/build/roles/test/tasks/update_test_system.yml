@@ -2,7 +2,7 @@
 
   - name: add Debian Wheezy backports repository
     apt_repository: repo="deb http://ftp.is.debian.org/debian wheezy-backports main" state=present
-    when: ansible_distribution == "Debian" and ansible_lsb.major_release == '7'
+    when: ansible_distribution == "Debian"
 
   - name: update Debian-based system
     apt: update_cache=yes upgrade=full

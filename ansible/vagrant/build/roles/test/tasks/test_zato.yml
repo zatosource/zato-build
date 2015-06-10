@@ -1,6 +1,6 @@
 ---
 
-  - include_vars: ../vars/build_parameters.yml
+  - include_vars: test_parameters.yml
 
   - name: create directory to store tests
     file: path=/opt/zato/tests owner=zato group=zato state=directory
