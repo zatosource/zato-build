@@ -22,4 +22,4 @@
     shell: echo -n | ./install_server.sh chdir=./redis-2.8.19/utils
 
   - name: Run Redis
-    shell: service redis_6379 start
+    service: name=redis_6379 state=started
