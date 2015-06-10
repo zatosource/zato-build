@@ -1,8 +1,7 @@
 ---
-- hosts: all
-  become: yes
 
-  tasks:
+  - hosts: all
 
-    - include: ../tasks/install_programs_build.yml
-    - include: ../tasks/run_build_zato_script.yml
+    roles:
+
+      - build

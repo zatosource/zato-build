@@ -1,18 +1,7 @@
 ---
 
   - hosts: all
-    become: yes
 
-    tasks:
+    roles:
 
-      - include: ../tasks/update_test_system.yml
-      - include: ../tasks/install_programs_test.yml
-      - include: ../tasks/install_redis.yml
-        when: ansible_distribution_version == "14.04"
-      - include: ../tasks/install_redis_from_source.yml
-        when: ansible_os_family == "Debian" and ansible_distribution_version != "14.04"
-      - include: ../tasks/install_redis_on_redhat.yml
-        when: ansible_distribution == "CentOS"
-      - include: ../tasks/install_zato_from_package.yml
-      - include: ../tasks/quickstart.yml
-      - include: ../tasks/test_zato.yml
+      - test

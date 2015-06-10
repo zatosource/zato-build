@@ -1,0 +1,21 @@
+---
+
+  - hosts: localhost
+
+    tasks:
+
+      - name: Prepare Vagrantfile
+        shell: cp ./vm/{{ system }}/Vagrantfile.template ./vm/{{ system }}/Vagrantfile
+
+      - name: Create directory to be synced
+        file: path=./vm/{{ system }}/synced state=directory
+
+      - name: Clone Zato repository to the synced directory
+        git: repo=https://github.com/zatosource/zato-build.git dest=./vm/{{ system }}/synced clone=yes
+
+      - name: Start a vagrant box
+        shell: vagrant up --no-provision chdir=./vm/{{ system }}
+
+      - name: Run the build provision
+        shell: vagrant provision --provision-with build chdir=./vm/{{ system }}
+

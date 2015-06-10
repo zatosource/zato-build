@@ -1,0 +1,13 @@
+---
+
+  - include: update_test_system.yml
+  - include: install_programs_test.yml
+  - include: install_redis.yml
+    when: ansible_distribution_version == "14.04"
+  - include: install_redis_from_source.yml
+    when: ansible_os_family == "Debian" and ansible_distribution_version != "14.04"
+  - include: install_redis_on_redhat.yml
+    when: ansible_distribution == "CentOS"
+  - include: install_zato_from_package.yml
+  - include: quickstart.yml
+  - include: test_zato.yml
