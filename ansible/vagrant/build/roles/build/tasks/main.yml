@@ -1,9 +1,4 @@
 ---
 
-  - hosts: all
-    become: yes
-
-    tasks:
-
-      - include: install_programs_build.yml
-      - include: run_build_zato_script.yml
+  - include: install_programs_build.yml
+  - include: run_build_zato_script.yml
