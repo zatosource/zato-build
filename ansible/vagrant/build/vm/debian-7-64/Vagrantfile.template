@@ -17,10 +17,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.synced_folder "../../output/debian-7-64/", "/opt/output"
 
   config.vm.provision "build", type: "ansible" do |build|
-    build.playbook = "../../provisions/build_provision.yml"
+    build.playbook = "../../build_provision.yml"
   end
 
   config.vm.provision "test", type: "ansible" do |test|
-    test.playbook = "../../provisions/test_provision.yml"
+    test.playbook = "../../test_provision.yml"
   end
 end
