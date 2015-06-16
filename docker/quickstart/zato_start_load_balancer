@@ -1,5 +1,8 @@
 #!/bin/bash
 
+cd /opt/zato
+ZATO_VERSION=`ls | sort -n | tail -1`
+
 rm -f /opt/zato/env/qs-1/load-balancer/zato-lb-agent.pid
 rm -f /opt/zato/env/qs-1/load-balancer/pidfile
 /opt/zato/2.0.5/bin/zato start load-balancer --fg

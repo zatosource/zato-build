@@ -1,6 +1,6 @@
 # Zato
 
-FROM ubuntu:14.04
+FROM sequenceiq/pam:ubuntu-14.04
 MAINTAINER Rafał Krysiak <rafal@zato.io>
 
 # Install helper programs used during Zato installation

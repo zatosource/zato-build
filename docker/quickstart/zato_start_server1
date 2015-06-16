@@ -1,4 +1,7 @@
 #!/bin/bash
 
+cd /opt/zato
+ZATO_VERSION=`ls | sort -n | tail -1`
+
 rm -f /opt/zato/env/qs-1/server1/pidfile
 /opt/zato/2.0.5/bin/zato start server1 --fg
