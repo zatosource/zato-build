@@ -38,11 +38,11 @@ COPY ca_cert.pem /opt/zato/ca/
 COPY zato_web_admin.config /opt/zato/
 
 RUN wget -P /opt/zato \
-    https://raw.githubusercontent.com/zatosource/zato-build/docker-zato-components-web-admin/docker/components/web-admin/zato_start_web_admin
+    https://raw.githubusercontent.com/zatosource/zato-build/master/docker/components/web-admin/zato_start_web_admin
 RUN wget -P /opt/zato \
-    https://raw.githubusercontent.com/zatosource/zato-build/docker-zato-components-web-admin/docker/components/web-admin/zato_from_config_create_web_admin
+    https://raw.githubusercontent.com/zatosource/zato-build/master/docker/components/web-admin/zato_from_config_create_web_admin
 RUN wget -P /opt/zato \
-    https://raw.githubusercontent.com/zatosource/zato-build/docker-zato-components-web-admin/docker/components/web-admin/zato_from_config_update_password
+    https://raw.githubusercontent.com/zatosource/zato-build/master/docker/components/web-admin/zato_from_config_update_password
 
 RUN chmod 755 /opt/zato/zato_start_web_admin /opt/zato/zato_from_config_create_web_admin \
               /opt/zato/zato_from_config_update_password

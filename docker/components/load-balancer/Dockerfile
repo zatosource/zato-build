@@ -34,9 +34,9 @@ COPY ca_cert.pem /opt/zato/ca/
 COPY zato_load_balancer.config /opt/zato/
 
 RUN wget -P /opt/zato \
-    https://raw.githubusercontent.com/zatosource/zato-build/docker-zato-components-lb/docker/components/load-balancer/zato_start_load_balancer
+    https://raw.githubusercontent.com/zatosource/zato-build/master/docker/components/load-balancer/zato_start_load_balancer
 RUN wget -P /opt/zato \
-    https://raw.githubusercontent.com/zatosource/zato-build/docker-zato-components-lb/docker/components/load-balancer/zato_from_config_create_load_balancer
+    https://raw.githubusercontent.com/zatosource/zato-build/master/docker/components/load-balancer/zato_from_config_create_load_balancer
 RUN chmod 755 /opt/zato/zato_start_load_balancer \
              /opt/zato/zato_from_config_create_load_balancer
 
