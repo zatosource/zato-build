@@ -3,6 +3,8 @@
 FROM ubuntu:14.04
 MAINTAINER Rafał Krysiak <rafal@zato.io>
 
+RUN ln -s -f /bin/true /usr/bin/chfn
+
 # Install helper programs used during Zato installation
 RUN apt-get update && apt-get install -y apt-transport-https \
     python-software-properties \
