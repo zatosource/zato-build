@@ -34,9 +34,9 @@ COPY ca_cert.pem /opt/zato/ca/
 COPY zato_server.config /opt/zato/
 
 RUN wget -P /opt/zato \
-    https://raw.githubusercontent.com/zatosource/zato-build/master/docker/components/server/zato_start_server
+    https://raw.githubusercontent.com/zatosource/zato-build/master/docker/components/server2/zato_start_server
 RUN wget -P /opt/zato \
-    https://raw.githubusercontent.com/zatosource/zato-build/master/docker/components/server/zato_from_config_create_server
+    https://raw.githubusercontent.com/zatosource/zato-build/master/docker/components/server2/zato_from_config_create_server
 RUN chmod 755 /opt/zato/zato_start_server \
               /opt/zato/zato_from_config_create_server
 
