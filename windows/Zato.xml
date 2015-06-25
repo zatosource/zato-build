@@ -131,6 +131,27 @@
                 </ruleGroup>
             </ruleList>
         </labelParameter>
+        <labelParameter>
+            <name>b2drun</name>
+            <title>Run boot2docker</title>
+            <description>The installer will now launch boot2docker</description>
+            <explanation></explanation>
+            <image></image>
+            <insertAfter>b2dexists</insertAfter>
+            <insertBefore>installdir</insertBefore>
+            <postShowPageActionList>
+                <registryGet>
+                    <key>HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{05BD04E9-4AB5-46AC-891E-60EA8FD57D56}_is1</key>
+                    <name>InstallLocation</name>
+                    <variable>b2dpath</variable>
+                    <wowMode>64</wowMode>
+                </registryGet>
+                <runProgram>
+                    <program>${b2dpath}start.sh</program>
+                    <programArguments></programArguments>
+                </runProgram>
+            </postShowPageActionList>
+        </labelParameter>
         <directoryParameter>
             <name>installdir</name>
             <description>Installer.Parameter.installdir.description</description>
