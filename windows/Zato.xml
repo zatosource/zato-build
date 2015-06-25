@@ -1,0 +1,147 @@
+<project>
+    <shortName>Zato</shortName>
+    <fullName>Zato</fullName>
+    <version>2.0.5</version>
+    <componentList>
+        <component>
+            <name>Zato</name>
+            <description>Zato Open-source ESB and application server in Python</description>
+            <canBeEdited>1</canBeEdited>
+            <detailedDescription>Zato facilitates intercommunication across applications and data sources spanning your organization's business or technical boundaries and beyond, enabling you to access, design, develop or discover new opportunities and processes.</detailedDescription>
+            <selected>1</selected>
+            <show>1</show>
+            <folderList>
+                <folder>
+                    <description>Program Files</description>
+                    <destination>${installdir}</destination>
+                    <name>programfiles</name>
+                    <platforms>windows</platforms>
+                    <shortcutList>
+                        <shortcut>
+                            <comment>Uninstall</comment>
+                            <exec>${installdir}/${uninstallerName}</exec>
+                            <icon></icon>
+                            <name>Uninstall ${product_fullname}</name>
+                            <path>${installdir}</path>
+                            <platforms>windows</platforms>
+                            <runAsAdmin>0</runAsAdmin>
+                            <runInTerminal>0</runInTerminal>
+                            <windowsExec>${installdir}/${uninstallerName}.exe</windowsExec>
+                            <windowsExecArgs></windowsExecArgs>
+                            <windowsIcon></windowsIcon>
+                            <windowsPath>${installdir}</windowsPath>
+                        </shortcut>
+                    </shortcutList>
+                </folder>
+            </folderList>
+            <startMenuShortcutList>
+                <startMenuShortcut>
+                    <comment>Uninstall ${product_fullname}</comment>
+                    <name>Uninstall ${product_fullname}</name>
+                    <runAsAdmin>0</runAsAdmin>
+                    <runInTerminal>0</runInTerminal>
+                    <windowsExec>${installdir}/${uninstallerName}.exe</windowsExec>
+                    <windowsExecArgs></windowsExecArgs>
+                    <windowsIcon></windowsIcon>
+                    <windowsPath>${installdir}/</windowsPath>
+                </startMenuShortcut>
+            </startMenuShortcutList>
+        </component>
+    </componentList>
+    <allowComponentSelection>1</allowComponentSelection>
+    <componentsDownloadDirectory></componentsDownloadDirectory>
+    <disableSplashScreen>1</disableSplashScreen>
+    <enableDebugger>1</enableDebugger>
+    <enableRollback>1</enableRollback>
+    <enableSslSupport>1</enableSslSupport>
+    <enableTimestamp>1</enableTimestamp>
+    <showDownloadableComponentsProxyPage>0</showDownloadableComponentsProxyPage>
+    <vendor>Zato s.r.c.</vendor>
+    <parameterList>
+        <labelParameter>
+            <name>b2dexists</name>
+            <title>Unmet requirement</title>
+            <description>Zato requires boot2docker to run properly on Windows. The installer will now download and install boot2docker. Click 'Next'.</description>
+            <explanation></explanation>
+            <image></image>
+            <insertBefore>installdir</insertBefore>
+            <postShowPageActionList>
+                <showProgressDialog>
+                    <progressText>Downloading...</progressText>
+                    <title>Download boot2docker</title>
+                    <actionList>
+                        <httpGet>
+                            <filename>${system_temp_directory}\docker-install.exe</filename>
+                            <url>https://github.com/boot2docker/windows-installer/releases/download/v1.7.0/docker-install.exe</url>
+                        </httpGet>
+                    </actionList>
+                </showProgressDialog>
+                <if>
+                    <actionList>
+                        <runProgram>
+                            <program>${system_temp_directory}\docker-install.exe</program>
+                            <programArguments></programArguments>
+                        </runProgram>
+                    </actionList>
+                    <conditionRuleList>
+                        <fileExists>
+                            <path>${system_temp_directory}\docker-install.exe</path>
+                        </fileExists>
+                    </conditionRuleList>
+                </if>
+            </postShowPageActionList>
+            <ruleList>
+                <ruleGroup>
+                    <ruleList>
+                        <registryTest>
+                            <key>HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{05BD04E9-4AB5-46AC-891E-60EA8FD57D56}_is1</key>
+                            <logic>exists</logic>
+                            <name>UninstallString</name>
+                            <negate>1</negate>
+                            <type>REG_NONE</type>
+                            <wowMode>64</wowMode>
+                        </registryTest>
+                        <registryTest>
+                            <key>HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{05BD04E9-4AB5-46AC-891E-60EA8FD57D56}_is1</key>
+                            <logic>exists</logic>
+                            <name>UninstallString</name>
+                            <negate>1</negate>
+                            <type>REG_NONE</type>
+                            <wowMode>32</wowMode>
+                        </registryTest>
+                        <registryTest>
+                            <key>HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{05BD04E9-4AB5-46AC-891E-60EA8FD57D56}_is1</key>
+                            <logic>exists</logic>
+                            <name>UninstallString</name>
+                            <negate>1</negate>
+                            <type>REG_BINARY</type>
+                            <wowMode>32</wowMode>
+                        </registryTest>
+                        <registryTest>
+                            <key>HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{05BD04E9-4AB5-46AC-891E-60EA8FD57D56}_is1</key>
+                            <logic>exists</logic>
+                            <name>UninstallString</name>
+                            <negate>1</negate>
+                            <type>REG_NONE</type>
+                            <wowMode>64</wowMode>
+                        </registryTest>
+                    </ruleList>
+                </ruleGroup>
+            </ruleList>
+        </labelParameter>
+        <directoryParameter>
+            <name>installdir</name>
+            <description>Installer.Parameter.installdir.description</description>
+            <explanation>Installer.Parameter.installdir.explanation</explanation>
+            <value></value>
+            <default>${platform_install_prefix}/${product_shortname}-${product_version}</default>
+            <allowEmptyValue>0</allowEmptyValue>
+            <cliOptionName>prefix</cliOptionName>
+            <insertAfter>b2dexists</insertAfter>
+            <mustBeWritable>1</mustBeWritable>
+            <mustExist>0</mustExist>
+            <width>40</width>
+        </directoryParameter>
+    </parameterList>
+</project>
+
