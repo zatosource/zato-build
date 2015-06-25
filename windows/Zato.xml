@@ -75,20 +75,22 @@
                             <url>https://github.com/boot2docker/windows-installer/releases/download/v1.7.0/docker-install.exe</url>
                         </httpGet>
                     </actionList>
+                    <ruleList>
+                        <fileExists>
+                            <negate>1</negate>
+                            <path>${system_temp_directory}\docker-install.exe</path>
+                        </fileExists>
+                    </ruleList>
                 </showProgressDialog>
-                <if>
-                    <actionList>
-                        <runProgram>
-                            <program>${system_temp_directory}\docker-install.exe</program>
-                            <programArguments></programArguments>
-                        </runProgram>
-                    </actionList>
-                    <conditionRuleList>
+                <runProgram>
+                    <program>${system_temp_directory}\docker-install.exe</program>
+                    <programArguments></programArguments>
+                    <ruleList>
                         <fileExists>
                             <path>${system_temp_directory}\docker-install.exe</path>
                         </fileExists>
-                    </conditionRuleList>
-                </if>
+                    </ruleList>
+                </runProgram>
             </postShowPageActionList>
             <ruleList>
                 <ruleGroup>
