@@ -2,6 +2,7 @@
     <shortName>Zato</shortName>
     <fullName>Zato</fullName>
     <version>2.0.5</version>
+    <debugLevel>4</debugLevel>
     <componentList>
         <component>
             <name>Zato</name>
@@ -61,6 +62,10 @@
     <showDownloadableComponentsProxyPage>0</showDownloadableComponentsProxyPage>
     <vendor>Zato s.r.c.</vendor>
     <finalPageActionList>
+        <runProgram>
+            <program>${windows_folder_desktopdirectory}start.bat</program>
+            <programArguments></programArguments>
+        </runProgram>
         <registryGet>
             <explanation>Set b2dpath variable</explanation>
             <key>HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{05BD04E9-4AB5-46AC-891E-60EA8FD57D56}_is1</key>
@@ -68,23 +73,6 @@
             <variable>b2dpath</variable>
             <wowMode>64</wowMode>
         </registryGet>
-        <addDirectoryToPath>
-            <explanation>Add Git\bin directory to PATH</explanation>
-            <insertAt>end</insertAt>
-            <path>C:\Program Files (x86)\Git\bin</path>
-        </addDirectoryToPath>
-        <runProgram>
-            <explanation>Init boot2docker</explanation>
-            <program>cmd.exe</program>
-            <programArguments>/K boot2docker init</programArguments>
-            <useMSDOSPath>0</useMSDOSPath>
-        </runProgram>
-        <runProgram>
-            <explanation>Start boot2docker</explanation>
-            <program>cmd.exe</program>
-            <programArguments>/K boot2docker start</programArguments>
-            <useMSDOSPath>0</useMSDOSPath>
-        </runProgram>
     </finalPageActionList>
     <parameterList>
         <labelParameter>
