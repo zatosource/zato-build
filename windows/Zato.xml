@@ -59,13 +59,11 @@
     <licenseFileEncoding>utf-8</licenseFileEncoding>
     <outputDirectory>C:/Users/Rafal/Desktop/zato</outputDirectory>
     <readmeFileEncoding>utf-8</readmeFileEncoding>
+    <requireInstallationByRootUser>1</requireInstallationByRootUser>
     <showDownloadableComponentsProxyPage>0</showDownloadableComponentsProxyPage>
     <vendor>Zato s.r.c.</vendor>
+    <windows64bitMode>1</windows64bitMode>
     <finalPageActionList>
-        <runProgram>
-            <program>${windows_folder_desktopdirectory}start.bat</program>
-            <programArguments></programArguments>
-        </runProgram>
         <registryGet>
             <explanation>Set b2dpath variable</explanation>
             <key>HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{05BD04E9-4AB5-46AC-891E-60EA8FD57D56}_is1</key>
@@ -73,6 +71,10 @@
             <variable>b2dpath</variable>
             <wowMode>64</wowMode>
         </registryGet>
+        <runProgram>
+            <program>bash</program>
+            <programArguments>"start.sh"</programArguments>
+        </runProgram>
     </finalPageActionList>
     <parameterList>
         <labelParameter>
