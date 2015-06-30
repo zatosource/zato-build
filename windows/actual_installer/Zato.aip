@@ -1,0 +1,134 @@
+﻿[Setup]
+Version=6.1
+Edition=0
+GUID={AD04DC41-ECE6-2C29-6AD2-184301AB23D6}
+AppName=Zato
+AppVersion=2.0.5
+CompanyName=Zato s.r.c.
+WebSite=https://www.zato.io
+SupportLink=https://www.zato.io
+SetupFile=C:\Users\Rafal\Documents\Setup-Zato.exe
+WizardBitmap=C:\Program Files (x86)\Actual Installer\Bitmaps\Wizard\00.bmp
+HeaderBitmap=C:\Program Files (x86)\Actual Installer\Bitmaps\Header\00.bmp
+CustomIcon=0
+CustomIconFile=
+Windows XP=0
+Windows Vista=0
+Windows 7=0
+Windows 8=1
+Windows 8.1=1
+Windows Server 2003=0
+Windows Server 2008=0
+Windows Server 2008 R2=0
+Windows Server 2012=0
+Windows Server 2012 R2=0
+x64=0
+Admin=1
+Internet=1
+CloseApp=0
+CloseAppFile=iexplore.exe
+CloseAppText=Internet Explorer
+dotNET=0
+dotNETVersion=0
+LinkDN=http://www.microsoft.com/en-us/download/details.aspx?id=17113
+IE=0
+IEVersion=0
+LinkIE=http://www.microsoft.com/en-us/download/internet-explorer-10-details.aspx
+AR=0
+ARVersion=0
+LinkAR=http://get.adobe.com/reader/
+Java=0
+JavaVersion=0
+LinkJR=http://www.java.com/en/download/manual.jsp
+SQL=0
+SQLVersion=0
+LinkSQL=http://www.microsoft.com/en-us/download/details.aspx?id=5783
+SQLE=0
+SQLEVersion=0
+SQLExpressVersion=2005
+LinkSQLE=http://www.microsoft.com/en-us/download/details.aspx?id=30438
+InstallMode=0
+InstallLevel=1
+PromptUninstall=1
+PromptSilentUninstall=0
+CheckVersions=0
+CheckMinVer=1.0
+CheckMaxVer=2.0
+InstallationPath=<ProgramFiles>\<AppName>
+MainExecutable=<InstallDir>\
+Uninstall=1
+ShowAddRemove=1
+SilentUninstall=0
+UninstallForce=0
+UninstallRestart=0
+UninstallSettings=0
+UninstallSettingsCommand=
+VisitUninstallPage=0
+UninstallURL=http://www.company.com/uninstall.html
+Updater=0
+UpdateURL=http://www.company.com/update.txt
+CheckUpdateBefore=0
+AutoCheckUpdate=0
+UpdateDay=1
+AutoSilentUpdate=0
+SilentInstall=0
+ShowPublisher=0
+DialogWelcome=0
+DialogLicense=0
+DialogReadme=0
+DialogUserInfo=0
+DialogDestinationFolder=1
+DialogAdditionalTasks=1
+DialogReady=1
+DialogFinish=1
+DefaultLanguage=English
+AutoDetectLanguage=0
+AcceptAgreement=0
+InfoUserName=0
+InfoUserNameReq=0
+InfoCompany=0
+InfoCompanyReq=0
+InfoCustom=0
+InfoCustomReq=0
+InfoCustomName=
+InfoSerial=0
+InfoSerialReq=0
+SerialsCount=0
+RestartComputer=0
+LaunchFile=1
+LaunchFileName=<InstallDir>\start.bat
+LaunchFileChecked=1
+ViewReadme=0
+ViewReadmeFile=
+ViewReadmeChecked=0
+CustomAction=0
+CustomActionName=Visit Web Site
+CustomActionCommand=<WebSite>
+CustomActionChecked=0
+ProgramGroup=<AppName>
+TotalFiles=2
+FolderSize=0
+
+[Languages]
+English=
+
+[Files]
+0=C:\Program Files (x86)\Actual Installer\Uninstall.exe?<InstallDir>\Uninstall.exe?1?-1
+1=C:\Users\Rafal\Projects\zato-build\windows\start.bat?<InstallDir>\start.bat?1?-1
+
+[Prerequisites]
+0=boot2docker*?https://github.com/boot2docker/windows-installer/releases/download/v1.7.0/docker-install.exe*?64-bit*?Registry Key exists*?HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{05BD04E9-4AB5-46AC-891E-60EA8FD57D56}_is1*?
+
+[License]
+(Default)=
+English=
+
+[Readme]
+(Default)=
+English=
+
+[Shortcuts]
+0=<ProgramGroup>*?<AppName>*?<InstallDir>\*?*?*?<InstallDir>*?*?0*?Normal
+1=<CommonDesktop>*?<AppName>*?<InstallDir>\*?*?*?<InstallDir>*?*?0*?Normal
+2=<ProgramGroup>*?Uninstall <AppName>*?<InstallDir>\Uninstall.exe*?*?*?<InstallDir>*?*?0*?Normal
+
