@@ -1,6 +1,0 @@
----
-
-  release_version: test_release_version
-  package_version: test_package_version
-  system: test_system
-  rpmver: test_rpmver
