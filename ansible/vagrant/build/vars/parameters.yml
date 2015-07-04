@@ -1,7 +1,6 @@
 ---
 
-branch: support/2.0
-release_version: 2.0.4
-package_version: stable
-system: debian-8-64
-rpmver: 2.0.4-stable
+  release_version: zato_release_version
+  package_version: zato_package_version
+  system: zato_system
+  rpmver: zato_rpmver

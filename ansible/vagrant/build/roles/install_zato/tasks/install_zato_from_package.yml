@@ -1,6 +1,6 @@
 ---
 
-  - include_vars: test_parameters.yml
+  - include_vars: vars/parameters.yml
 
   - name: Install Zato from package on a Debian 64-bit system
     shell: gdebi -n /opt/output/zato-{{ release_version }}-{{ package_version }}_amd64-{{ ansible_distribution_release }}.deb
