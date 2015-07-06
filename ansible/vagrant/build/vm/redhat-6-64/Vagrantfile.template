@@ -11,6 +11,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     v.memory = "1024"
   end
   config.vm.hostname = "centos65-64"
+  config.vm.network "private_network", ip: "10.2.3.15"
 
   config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
   config.vm.synced_folder "./synced/", "/opt/tmp2"

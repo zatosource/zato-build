@@ -11,6 +11,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     v.memory = "1280"
   end
   config.vm.hostname = "debian-80-64"
+  config.vm.network "private_network", ip: "10.2.3.13"
 
   config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
   config.vm.synced_folder "./synced/", "/opt/tmp"

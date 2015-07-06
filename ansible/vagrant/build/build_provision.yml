@@ -1,6 +1,6 @@
 ---
 
-  - hosts: all
+  - hosts: '{{ targets }}'
     become: True
 
     roles:

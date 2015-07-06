@@ -11,16 +11,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     v.memory = "1024"
   end
   config.vm.hostname = "debian-74-32"
+  config.vm.network "private_network", ip: "10.2.3.11"
 
   config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
   config.vm.synced_folder "./synced/", "/opt/tmp"
   config.vm.synced_folder "../../output/debian-7-32/", "/opt/output"
 
-  config.vm.provision "build", type: "ansible" do |build|
-    build.playbook = "../../build_provision.yml"
-  end
-
-  config.vm.provision "test", type: "ansible" do |test|
-    test.playbook = "../../test_provision.yml"
-  end
 end

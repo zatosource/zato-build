@@ -22,9 +22,9 @@
         file: path=./vm/{{ system }}/synced state=directory
 
       - name: Create a vagrant box
-        shell: vagrant up --no-provision chdir=./vm/{{ system }}
+        shell: vagrant up chdir=./vm/{{ system }}
 
     # Run the provisioner
-      - name: Run "test" provisioner
-        shell: vagrant provision --provision-with=test chdir=./vm/{{ system }}
+    #      - name: Run "test" provisioner
+    #    shell: vagrant provision --provision-with=test chdir=./vm/{{ system }}
 
