@@ -59,6 +59,7 @@ exit 0
 %postun
 if [ "$1" = 0 ] ; then
  rm -rf /opt/%{name}/%{version}
+ rm -rf /opt/zato/current
  rm -rf /etc/bash_completion.d/zato
  rm -rf /etc/init.d/zato
  rm -rf /etc/rc0.d/K99zato
@@ -75,6 +76,7 @@ if [ "$1" = 0 ] ; then
  /usr/sbin/userdel zato
 else
  rm -rf /opt/%{name}/%{version}
+ rm -rf /opt/zato/current
 fi
 exit 0
 
@@ -98,12 +100,16 @@ exit 0
 /opt/zato
 
 %post
-echo "ZATO_PATH=/opt/zato/ZATO_VERSION/code/bin" > /opt/zato/.zato-path
 
-if ! grep -q zato-path /opt/zato/.bashrc; then
-echo ". /opt/zato/.zato-path" >> /opt/zato/.bashrc
-echo "export PATH
-PATH="\$ZATO_PATH:$PATH"">>/opt/zato/.bashrc
+if ! grep -q /opt/zato/current /opt/zato/.bashrc; then
+    echo "export PATH
+PATH="/opt/zato/current/code/bin:$PATH"">>/opt/zato/.bashrc
+fi
+if [ -h "/opt/zato/current" ]; then
+    rm -rf /opt/zato/current
+    ln -s /opt/zato/ZATO_VERSION /opt/zato/current
+else
+    ln -s /opt/zato/ZATO_VERSION /opt/zato/current
 fi
 
 if ! grep -q bash_completion /opt/zato/.bashrc; then

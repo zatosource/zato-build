@@ -13,13 +13,17 @@ case "$1" in
 	if ! getent passwd zato >/dev/null; then
 	    adduser --ingroup zato --home /opt/zato --shell /bin/bash --gecos "Zato ESB" --disabled-password zato
 	fi
-	echo "ZATO_PATH=/opt/zato/ZATO_VERSION/bin" > /opt/zato/.zato-path
 	chown -R zato:zato /opt/zato
-	if ! grep -q zato-path /opt/zato/.profile; then
-            echo ". /opt/zato/.zato-path" >> /opt/zato/.profile
+	if ! grep -q /opt/zato/current /opt/zato/.profile; then
 echo "export PATH
-PATH="\$ZATO_PATH:$PATH"">>/opt/zato/.profile
-       fi
+PATH="/opt/zato/current/bin:$PATH"">>/opt/zato/.profile
+        fi
+        if [ -h "/opt/zato/current" ]; then
+	    rm -Rf /opt/zato/current
+	    ln -s /opt/zato/ZATO_VERSION /opt/zato/current
+	else
+	    ln -s /opt/zato/ZATO_VERSION /opt/zato/current
+	fi
     ;;
 
     abort-upgrade | abort-remove | abort-deconfigure)

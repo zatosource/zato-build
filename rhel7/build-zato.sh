@@ -70,6 +70,7 @@ function install_zato {
     cd $ZATO_TARGET_DIR/code
     bash ./install.sh
     find $ZATO_TARGET_DIR/. -name *.pyc -exec rm -f {} \;
+    find $ZATO_TARGET_DIR/. ! -perm /004 -exec chmod 644 {} \;
 }
 
 function build_rpm {
