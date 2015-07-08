@@ -17,11 +17,4 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.synced_folder "./synced/", "/opt/tmp"
   config.vm.synced_folder "../../output/ubuntu-12.04-32/", "/opt/output"
 
-  config.vm.provision "build", type: "ansible" do |build|
-    build.playbook = "../../build_provision.yml"
-  end
-
-  config.vm.provision "test", type: "ansible" do |test|
-    test.playbook = "../../test_provision.yml"
-  end
 end
