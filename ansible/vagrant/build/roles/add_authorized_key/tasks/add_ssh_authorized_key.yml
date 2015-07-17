@@ -1,0 +1,7 @@
+---
+
+    - name: Add an authorized SSH key to allow log in as root
+      authorized_key: user=root 
+                      key="{{ lookup('file', '~/.ssh/id_rsa.pub')  }}"
+                      manage_dir=yes
+                      state=present

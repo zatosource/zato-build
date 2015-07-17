@@ -1,31 +1,31 @@
 ---
 
-  - name: add Debian Wheezy backports repository
-    apt_repository: repo="deb http://ftp.is.debian.org/debian wheezy-backports main" state=present
-    when: ansible_distribution == "Debian"
+    - name: add Debian Wheezy backports repository
+      apt_repository: repo="deb http://ftp.is.debian.org/debian wheezy-backports main" state=present
+      when: ansible_distribution == "Debian"
 
-  - name: update Debian-based system
-    apt: update_cache=yes upgrade=full
-    when: ansible_os_family == "Debian" and ansible_pkg_mgr == 'apt'
+    - name: update Debian-based system
+      apt: update_cache=yes upgrade=full
+      when: ansible_os_family == "Debian" and ansible_pkg_mgr == 'apt'
 
-  - name: Install additional software on Debian-based systems
-    apt: name={{ item }} state=present
-    with_items:
-      - git
-      - curl
-      - apt-transport-https
-      - python-software-properties
-      - gdebi
-    when: ansible_os_family == "Debian" and ansible_pkg_mgr == 'apt'
+    - name: Install additional software on Debian-based systems
+      apt: name={{ item }} state=present
+      with_items:
+        - git
+        - curl
+        - apt-transport-https
+        - python-software-properties
+        - gdebi
+      when: ansible_os_family == "Debian" and ansible_pkg_mgr == 'apt'
 
-  - name: Install software-properties-common on Ubuntu
-    apt: name=software-properties-common state=present
-    when: ansible_distribution == "Ubuntu"
+    - name: Install software-properties-common on Ubuntu
+      apt: name=software-properties-common state=present
+      when: ansible_distribution == "Ubuntu"
 
-  - name: Install common packages on Centos
-    yum: name={{ item }} state=present
-    with_items:
-      - epel-release
-      - curl
-      - git
-    when: ansible_distribution == "CentOS"
+    - name: Install common packages on Centos
+      yum: name={{ item }} state=present
+      with_items:
+        - epel-release
+        - curl
+        - git
+      when: ansible_distribution == "CentOS"

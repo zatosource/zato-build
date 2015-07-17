@@ -1,11 +1,11 @@
 [targets]
-debian-74-32 ansible_ssh_host=10.2.3.11 ansible_ssh_user=vagrant
-debian-74-64 ansible_ssh_host=10.2.3.12 ansible_ssh_user=vagrant
-debian-80-64 ansible_ssh_host=10.2.3.13 ansible_ssh_user=vagrant
-centos65-32 ansible_ssh_host=10.2.3.14 ansible_ssh_user=vagrant
-centos65-64 ansible_ssh_host=10.2.3.15 ansible_ssh_user=vagrant
-centos7-64 ansible_ssh_host=10.2.3.16 ansible_ssh_user=vagrant
-ubuntu-1204-32 ansible_ssh_host=10.2.3.17 ansible_ssh_user=vagrant
-ubuntu-1204-64 ansible_ssh_host=10.2.3.18 ansible_ssh_user=vagrant
-ubuntu-1404-32 ansible_ssh_host=10.2.3.19 ansible_ssh_user=vagrant
-ubuntu-1404-64 ansible_ssh_host=10.2.3.20 ansible_ssh_user=vagrant
+debian-74-32
+debian-74-64
+debian-80-64
+centos65-32
+centos65-64
+centos7-64
+ubuntu-1204-32
+ubuntu-1204-64
+ubuntu-1404-32
+ubuntu-1404-64

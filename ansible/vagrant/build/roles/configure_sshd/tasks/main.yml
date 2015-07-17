@@ -1,6 +1,6 @@
 ---
 
-    - include: install_programs_test.yml
+    - include: configure_sshd.yml
       become: yes
       become_method: su
       become_user: root
