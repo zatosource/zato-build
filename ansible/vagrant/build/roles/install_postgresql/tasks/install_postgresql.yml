@@ -1,19 +1,13 @@
 ---
 
-    - name: check who am i
-      shell: whoami
-
-    - name: check the locale
-      shell: locale
-      become_method: su
-      become_user: root
-
     - name: Install PostgreSQL on Debian
-      apt: name=postgresql state=latest
-      when: ansible_distribution == "Debian"
+      apt: name=postgresql state=present update_cache=yes
       become_method: su
       become_user: root
+      when: ansible_distribution == "Debian"
 
     - name: Install PostgreSQL on Ubuntu
-      apt: name=postgresql state=latest
+      apt: name=postgresql state=present update_cache=yes
+      become_method: sudo
+      become_user: root
       when: ansible_distribution == "Ubuntu"

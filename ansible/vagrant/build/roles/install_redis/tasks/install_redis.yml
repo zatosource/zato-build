@@ -2,3 +2,5 @@
 
   - name: install Redis on Ubuntu Trusty
     apt: name=redis-server state=latest
+    become_method: sudo
+    become_user: root

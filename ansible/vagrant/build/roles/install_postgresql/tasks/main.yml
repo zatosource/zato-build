@@ -1,7 +1,4 @@
 ---
 
   - include: install_postgresql.yml
-    when: ansible_distribution == "Debian"
     become: yes
-    become_method: su
-    become_user: root

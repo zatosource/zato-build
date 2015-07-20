@@ -4,9 +4,8 @@
 
     roles:
 
-        #- configure_sshd
         - install_additional_soft
-          #- install_redis
+        - install_redis
         - install_postgresql
           #- install_zato
           #- create_quickstart

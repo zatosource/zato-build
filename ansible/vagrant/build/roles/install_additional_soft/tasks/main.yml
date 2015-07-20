@@ -4,3 +4,10 @@
       become: yes
       become_method: su
       become_user: root
+      when: ansible_distribution == "Debian"
+
+    - include: install_programs_test.yml
+      become: yes
+      become_method: sudo
+      become_user: root
+      when: ansible_distribution == "Ubuntu"
