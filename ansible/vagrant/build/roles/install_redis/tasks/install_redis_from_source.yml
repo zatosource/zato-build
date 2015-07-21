@@ -2,8 +2,6 @@
 
   - name: Install required packages
     apt: name={{ item }} state=present
-    become_method: sudo
-    become_user: root
     with_items:
       - build-essential
       - tcl8.5
@@ -19,15 +17,9 @@
 
   - name: Install Redis
     shell: make install chdir=./redis-2.8.19
-    become_method: sudo
-    become_user: root
 
   - name: Configure Redis to run in the background
     shell: echo -n | ./install_server.sh chdir=./redis-2.8.19/utils
-    become_method: sudo
-    become_user: root
 
   - name: Run Redis
     service: name=redis_6379 state=started
-    become_method: sudo
-    become_user: root

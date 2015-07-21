@@ -1,13 +1,7 @@
 ---
 
     - include: install_programs_test.yml
-      become: yes
-      become_method: su
-      become_user: root
-      when: ansible_distribution == "Debian"
+      when: ansible_distribution == "Debian" or ansible_distribution == "Centos"
 
     - include: install_programs_test.yml
-      become: yes
-      become_method: sudo
-      become_user: root
       when: ansible_distribution == "Ubuntu"
