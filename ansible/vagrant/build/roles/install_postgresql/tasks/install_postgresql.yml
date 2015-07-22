@@ -1,9 +1,28 @@
 ---
 
-    - name: Install PostgreSQL on Debian
+    - name: Install PostgreSQL on Debian-based systems
       apt: name=postgresql state=present update_cache=yes
-      when: ansible_distribution == "Debian"
+      when: ansible_os_family == "Debian"
 
-    - name: Install PostgreSQL on Ubuntu
-      apt: name=postgresql state=present update_cache=yes
-      when: ansible_distribution == "Ubuntu"
+    # Installing PostgreSQL on CentOS is a bit more complicated
+    - name: install PGDG file
+      yum: name=http://yum.postgresql.org/9.4/redhat/rhel-{{ ansible_distribution_major_version }}-{{ ansible_architecture }}/pgdg-centos94-9.4-1.noarch.rpm
+           state=present
+      when: ansible_distribution == "CentOS"
+
+    - name: Install PostgreSQL on CentOS
+      yum: name=postgresql94-server
+           state=present
+           update_cache=yes
+           disablerepo=base,updates
+      when: ansible_distribution == "CentOS"
+
+    - name: Initialize the cluster
+      command: service postgresql-9.4 initdb
+      when: ansible_distribution == "CentOS"
+
+    - name: Start PostgreSQL on Centos
+      service: name=postgresql-9.4
+               state=started
+               enabled=yes
+      when: ansible_distribution == "CentOS"
