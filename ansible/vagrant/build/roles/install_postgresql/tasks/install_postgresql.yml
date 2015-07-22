@@ -17,9 +17,13 @@
            disablerepo=base,updates
       when: ansible_distribution == "CentOS"
 
-    - name: Initialize the cluster
+    - name: Initialize the cluster on CentOS 6
       command: service postgresql-9.4 initdb
-      when: ansible_distribution == "CentOS"
+      when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "6"
+
+    - name: Initialize the cluster on CentOS 7
+      command: /usr/pgsql-9.4/bin/postgresql94-setup initdb
+      when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "7"
 
     - name: Start PostgreSQL on Centos
       service: name=postgresql-9.4
