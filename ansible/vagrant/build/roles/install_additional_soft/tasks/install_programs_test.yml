@@ -4,18 +4,20 @@
       apt_repository: repo="deb http://ftp.is.debian.org/debian wheezy-backports main" state=present
       when: ansible_distribution == "Debian"
 
-    - name: update Debian-based system
-      apt: update_cache=yes upgrade=full
-      when: ansible_os_family == "Debian" and ansible_pkg_mgr == 'apt'
+    # Upgrading a box has to be a separate task
+    - name: upgrade Debians
+      apt: update_cache=yes upgrade=yes
+      when: ansible_os_family == "Debian"
 
     - name: Install additional software on Debian-based systems
-      apt: name={{ item }} state=present
+      apt: name={{ item }} state=present update_cache=yes
       with_items:
         - git
         - curl
         - apt-transport-https
         - python-software-properties
         - gdebi
+        - python-psycopg2 # This one is required by Ansible's postgresql_* modules
       when: ansible_os_family == "Debian" and ansible_pkg_mgr == 'apt'
 
     - name: Install software-properties-common on Ubuntu
@@ -28,4 +30,5 @@
         - epel-release
         - curl
         - git
+        - python-psycopg2 # This one is required by Ansible's postgresql_* modules
       when: ansible_distribution == "CentOS"

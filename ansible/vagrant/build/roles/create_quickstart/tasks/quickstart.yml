@@ -4,18 +4,15 @@
 
   - name: create quickstart directory
     file: path=/opt/zato/env/qs-1/ owner=zato group=zato state=directory
-    become: True
     become_user: zato
 
   - name: create quickstart on Debian-based systems
     shell: rm -rf /opt/zato/env/qs-1 && mkdir -p /opt/zato/env/qs-1 && /opt/zato/{{ release_version }}/bin/zato quickstart create /opt/zato/env/qs-1 sqlite localhost 6379 --kvdb_password '' --verbose
-    become: True
     become_user: zato
     when: ansible_os_family == "Debian"
 
   - name: create quickstart on RHEL-based systems
     shell: rm -rf /opt/zato/env/qs-1 && mkdir -p /opt/zato/env/qs-1 && /opt/zato/{{ release_version }}/code/bin/zato quickstart create /opt/zato/env/qs-1 sqlite localhost 6379 --kvdb_password '' --verbose
-    become: True
     become_user: zato
     when: ansible_distribution == "CentOS"
 

@@ -8,6 +8,7 @@
         - install_additional_soft
         - install_redis
         - install_postgresql
-          #- install_zato
-          #- create_quickstart
-          #- test_quickstart
+        - configure_postgresql
+        - install_zato
+        - create_quickstart_postgresql
+        - test_quickstart
