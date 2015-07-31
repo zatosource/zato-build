@@ -1,0 +1,15 @@
+---
+
+    - name: Install MySQL on Debian-based systems
+      apt: name={{ item }} state=present update_cache=yes
+      with_items:
+        - mysql-server
+        - python-mysqldb
+      when: ansible_os_family == "Debian"
+
+    - name: Install MySQL on CentOS
+      yum: name={{ item }} state=present update_cache=yes
+      with_items:
+        - mysql-server
+        - mysql-python
+      when: ansible_distribution == "CentOS"
