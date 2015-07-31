@@ -1,0 +1,11 @@
+[targets]
+debian-74-32
+debian-74-64
+debian-80-64
+centos65-32
+centos65-64
+centos7-64
+ubuntu-1204-32
+ubuntu-1204-64
+ubuntu-1404-32
+ubuntu-1404-64

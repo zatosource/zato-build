@@ -1,7 +1,0 @@
----
-
-- hosts: localhost
-
-  tasks:
-    - name: Build packages
-      shell: ./build.sh {{ release_version }} {{ package_version }} {{ branch }} {{ system }}

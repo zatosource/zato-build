@@ -1,0 +1,4 @@
+---
+
+    - include: configure_postgresql.yml
+      become_user: postgres

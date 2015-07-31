@@ -1,0 +1,8 @@
+---
+
+  - hosts: '{{ targets }}'
+    become: True
+
+    roles:
+
+      - build

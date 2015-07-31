@@ -1,0 +1,12 @@
+---
+
+  - hosts: '{{ target }}'
+    become: True
+
+    roles:
+
+      - install_additional_soft
+      - install_redis
+      - install_zato
+      - create_quickstart
+      - test_quickstart

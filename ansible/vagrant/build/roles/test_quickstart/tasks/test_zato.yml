@@ -1,0 +1,63 @@
+---
+
+  - include_vars: vars/parameters.yml
+
+  - name: create directory to store tests
+    file: path=/opt/zato/tests owner=zato group=zato state=directory
+
+  - name: create files to store test outputs
+    file: path=/opt/zato/tests/{{ item }} owner=zato group=zato state=touch
+    with_items:
+      - ping-load-balancer.json
+      - check-lb-alive.html
+      - ping-server1.json
+      - ping-server2.json
+      - run-tests.txt
+      - info-load-balancer.json
+      - info-server1.json
+      - info-server2.json
+      - info-web-admin.json
+
+  - name: Pause for 20 seconds to make sure all components are up and working
+    pause: seconds=20
+
+  - name: check if load balancer is alive
+    shell: curl -v localhost:11223/zato-lb-alive | tee /opt/zato/tests/check-lb-alive.html
+
+  - name: ping load balancer
+    shell: curl localhost:11223/zato/ping | tee /opt/zato/tests/ping-load-balancer.json
+
+  - name: ping server1
+    shell: curl -v localhost:17010/zato/ping | tee /opt/zato/tests/ping-server1.json
+
+  - name: ping server2
+    shell: curl -v localhost:17011/zato/ping | tee /opt/zato/tests/ping-server2.json
+
+  - name: Get info on components on Debian-based systems
+    shell: /opt/zato/{{ release_version }}/bin/zato info --format json {{ item }} 2>&1 | tee /opt/zato/tests/info-{{ item }}.json chdir=/opt/zato/env/qs-1
+    with_items:
+      - load-balancer
+      - server1
+      - server2
+      - web-admin
+    when: ansible_os_family == "Debian"
+
+  - name: Get info on components on RHEL-based systems
+    shell: /opt/zato/{{ release_version }}/code/bin/zato info --format json {{ item }} 2>&1 | tee /opt/zato/tests/info-{{ item }}.json chdir=/opt/zato/env/qs-1
+    with_items:
+      - load-balancer
+      - server1
+      - server2
+      - web-admin
+    when: ansible_distribution == "CentOS"
+
+  - name: run apitests on Debian-based systems
+    shell: bin/py run-tests.py nosetests 2>&1 | tee /opt/zato/tests/run-tests.txt chdir=/opt/zato/{{ release_version }}
+    when: ansible_os_family == "Debian"
+
+  - name: run apitests on RHEL-based systems
+    shell: bin/py run-tests.py nosetests 2>&1 | tee /opt/zato/tests/run-tests.txt chdir=/opt/zato/{{ release_version }}/code
+    when: ansible_distribution == "CentOS"
+
+  - name: copy test results to vagrant directory
+    shell: cp -r /opt/zato/tests /vagrant

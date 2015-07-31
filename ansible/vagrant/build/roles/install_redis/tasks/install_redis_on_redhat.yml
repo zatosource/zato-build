@@ -1,0 +1,10 @@
+---
+
+  - name: Install remi package
+    yum: name=http://rpms.famillecollet.com/enterprise/remi-release-{{ ansible_distribution_major_version }}.rpm state=present
+
+  - name: Install Redis from remi repository
+    yum: name=redis enablerepo=remi,remi-test state=present
+
+  - name: Start Redis
+    service: name=redis state=restarted enabled=yes

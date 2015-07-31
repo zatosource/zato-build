@@ -1,0 +1,7 @@
+---
+
+  branch: build_branch
+  release_version: build_release_version
+  package_version: build_package_version
+  system: build_system
+  rpmver: build_rpmver

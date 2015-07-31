@@ -1,0 +1,15 @@
+
+---
+
+  - hosts: '{{ target }}'
+    become: True
+
+    roles:
+
+        - install_additional_soft
+        - install_redis
+        - install_mysql
+        - configure_mysql
+        - install_zato
+        - create_quickstart_mysql
+        - test_quickstart

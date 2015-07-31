@@ -6,17 +6,15 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box_url = "https://cloud-images.ubuntu.com/vagrant/trusty/current/trusty-server-cloudimg-amd64-vagrant-disk1.box"
 
   config.vm.provider "virtualbox" do |v|
-     v.name = "ubuntu-14.04-64"
-     v.customize ["modifyvm", :id, "--memory", "1024"]
-     #v.gui = true
+    v.name = "ubuntu-14.04-64"
+    v.memory = "1280"
+    #v.gui = true
   end
   config.vm.hostname = "ubuntu-1404-64"
+  config.vm.network "private_network", ip: "10.2.3.20"
 
   config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
-  config.vm.provision "shell", inline: "apt-get -y install git"
   config.vm.synced_folder "./synced/", "/opt/tmp"
-  config.vm.provision :shell do |shell|
-      shell.inline = "/opt/tmp/deb/build-zato.sh $*"
-      shell.args = ["ARGS"]
-  end
+  config.vm.synced_folder "../../output/ubuntu-14.04-64/", "/opt/output"
+
 end

@@ -1,0 +1,25 @@
+---
+
+  - name: Install required packages
+    apt: name={{ item }} state=present
+    with_items:
+      - build-essential
+      - tcl8.5
+
+  - name: Download Redis
+    get_url: url=http://download.redis.io/releases/redis-2.8.19.tar.gz dest=./
+
+  - name: Unpack Redis
+    unarchive: src=./redis-2.8.19.tar.gz dest=./ copy=no
+
+  - name: Compile Redis
+    shell: make chdir=./redis-2.8.19
+
+  - name: Install Redis
+    shell: make install chdir=./redis-2.8.19
+
+  - name: Configure Redis to run in the background
+    shell: echo -n | ./install_server.sh chdir=./redis-2.8.19/utils
+
+  - name: Run Redis
+    service: name=redis_6379 state=started

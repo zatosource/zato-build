@@ -1,0 +1,35 @@
+---
+
+  - include_vars: vars/parameters.yml
+
+  - name: create quickstart directory
+    file: path=/opt/zato/env/qs-1/ owner=zato group=zato state=directory
+    become_user: zato
+
+  - name: create quickstart on Debian-based systems
+    shell: rm -rf /opt/zato/env/qs-1 &&
+           mkdir -p /opt/zato/env/qs-1 &&
+           /opt/zato/{{ release_version }}/bin/zato quickstart create \
+           --kvdb_password '' \
+           /opt/zato/env/qs-1 sqlite localhost 6379  --verbose
+    become_user: zato
+    when: ansible_os_family == "Debian"
+
+  - name: create quickstart on RHEL-based systems
+    shell: rm -rf /opt/zato/env/qs-1 &&
+           mkdir -p /opt/zato/env/qs-1 &&
+           /opt/zato/{{ release_version }}/code/bin/zato quickstart create \
+           /opt/zato/env/qs-1 sqlite localhost 6379 --kvdb_password '' --verbose
+    become_user: zato
+    when: ansible_distribution == "CentOS"
+
+  - name: create symlinks to Zato startup scripts
+    file: src=/opt/zato/env/qs-1/{{ item }} dest=/etc/zato/components-enabled/{{ item }} state=link
+    with_items:
+      - load-balancer
+      - server1
+      - server2
+      - web-admin
+
+  - name: start Zato components as services
+    service: name=zato state=restarted enabled=yes

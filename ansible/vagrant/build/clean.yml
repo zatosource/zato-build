@@ -1,0 +1,21 @@
+---
+
+  - hosts: localhost
+
+    tasks:
+
+      - name: Destroy vagrant box
+        shell: vagrant destroy --force chdir=./vm/{{ system }}
+
+      - name: Remove directories and files
+        file: path=./vm/{{ system }}/{{ item }} state=absent
+        with_items:
+          - .vagrant
+          - synced
+          - Vagrantfile
+
+      - name: Clean build role vars file
+        shell: cp parameters.template parameters.yml chdir=./vars
+
+      - name: Clean test role vars files
+        shell: cp parameters.template parameters.yml chdir=./vars

@@ -1,0 +1,5 @@
+---
+
+    - include: add_ssh_authorized_key.yml
+      become: yes
+      become_user: root

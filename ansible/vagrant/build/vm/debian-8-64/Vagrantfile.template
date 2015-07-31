@@ -1,0 +1,20 @@
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+
+  config.vm.box = "jessie64"
+  config.vm.box_url = "https://github.com/holms/vagrant-jessie-box/releases/download/Jessie-v0.1/Debian-jessie-amd64-netboot.box"
+
+  config.vm.provider "virtualbox" do |v|
+    v.name = "debian-8.0-64"
+    #v.gui = true
+    v.memory = "1280"
+  end
+  config.vm.hostname = "debian-80-64"
+  config.vm.network "private_network", ip: "10.2.3.13"
+
+  config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
+  config.vm.synced_folder "./synced/", "/opt/tmp"
+  config.vm.synced_folder "../../output/debian-8-64/", "/opt/output"
+
+end

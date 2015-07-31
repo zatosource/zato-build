@@ -1,0 +1,7 @@
+---
+
+    - name: Do not allow to accept locale from the host
+      lineinfile: dest=/etc/ssh/sshd_config
+                  regexp='^AcceptEnv'
+                  line='#AcceptEnv'
+                  state=present
