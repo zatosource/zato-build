@@ -1,0 +1,4 @@
+---
+
+    - name: Install oracle-xe from package
+      yum: name=/vagrant/Disk1/oracle-xe-11.2.0-1.0.x86_64.rpm
