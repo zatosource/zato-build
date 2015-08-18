@@ -1,0 +1,18 @@
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+
+  config.vm.box = "oracle-box"
+  config.vm.box_url = "http://cloud.terry.im/vagrant/oraclelinux-7-x86_64.box"
+
+  config.vm.provider "virtualbox" do |v|
+    v.name = "oracle-box"
+    #v.gui = true
+    v.memory = "1024"
+  end
+  config.vm.hostname = "oracle-box"
+  config.vm.network "private_network", ip: "10.2.3.99"
+
+  config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
+
+end
