@@ -1,0 +1,18 @@
+---
+
+    - name: Create a log file
+      file: path=/u01/app/oracle/oracle.log owner=oracle state=touch
+
+    - name: Copy all needed files
+      copy: src=./vm/oracle-box/set_access.sql dest=/u01/app/oracle owner=oracle
+
+    - name: Make Oracle Database XE available to remote clients
+      shell: ./product/11.2.0/xe/bin/sqlplus \
+           system/Password123@localhost \
+           @./set_access.sql > oracle.log 2>&1
+      become_user: oracle
+      environment:
+          ORACLE_HOME: /u01/app/oracle/product/11.2.0/xe
+          ORACLE_SID: "XE"
+          #NLS_LANG: `$ORACLE_HOME/bin/nls_lang.sh`
+          PATH: $PATH:$ORACLE_HOME/bin
