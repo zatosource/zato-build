@@ -1,0 +1,7 @@
+---
+
+    - hosts: '{{ target }}'
+
+      roles:
+
+            - add_authorized_key
