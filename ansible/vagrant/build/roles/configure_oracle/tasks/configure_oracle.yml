@@ -4,7 +4,7 @@
       file: path=/u01/app/oracle/oracle.log owner=oracle state=touch
 
     - name: Copy all needed files
-      copy: src=./vm/oracle-box/{{ item }} dest=/u01/app/oracle owner=oracle
+      copy: src={{ item }} dest=/u01/app/oracle owner=oracle
       with_items:
           - set_access.sql
           - create_zato_user.sql

@@ -1,7 +1,10 @@
 ---
 
+    - name: Copy all required files
+      copy: src=Disk1 dest=/tmp
+
     - name: Install Oracle Database XE from package
-      yum: name=/vagrant/Disk1/oracle-xe-11.2.0-1.0.x86_64.rpm
+      yum: name=/tmp/Disk1/oracle-xe-11.2.0-1.0.x86_64.rpm
 
     - name: Create xe_logs directory
       file: path=/xe_logs state=directory
@@ -9,5 +12,5 @@
     # Now we need to configure Oracle in silent mode
     - name: Configure Oracle Database XE in silent mode
       shell: /etc/init.d/oracle-xe configure \
-             responseFile=/vagrant/Disk1/response/xe.rsp > \
+             responseFile=/tmp/Disk1/response/xe.rsp > \
              /xe_logs/XEsilentinstall.log
