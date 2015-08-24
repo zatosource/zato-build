@@ -1,7 +1,0 @@
----
-
-    - hosts: '{{ target }}'
-
-      roles:
-
-            - configure_sshd
