@@ -1,0 +1,20 @@
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+
+    config.vm.box = {{ box_name }}
+    config.vm.box_url = {{ box_url }}
+
+    config.vm.provider "virtualbox" do |v|
+        v.name = {{ provider_box_name }}
+        v.memory = {{ box_memory }}
+        #v.gui = true
+    end
+    config.vm.hostname = {{ box_hostname }}
+    config.vm.network "private_network", ip: {{ ip }}
+
+    config.ssh.shell = "bash -c 'bash_env=/etc/profile exec bash'"
+    config.vm.synced_folder "./synced/", "/opt/tmp"
+    config.vm.synced_folder "../../output/ubuntu-14.04-64/", "/opt/output"
+
+end

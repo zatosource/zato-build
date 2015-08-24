@@ -1,0 +1,9 @@
+---
+
+    - name: Create Vagrantfiles for Zato components
+      template: src=component_box.j2 dest=vm/distributed/{{ item }}
+      with_items:
+          - load-balancer
+          - server1
+          - server2
+          - web-admin
