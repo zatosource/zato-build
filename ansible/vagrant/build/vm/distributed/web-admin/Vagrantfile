@@ -1,0 +1,19 @@
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+
+    config.vm.box = "web-admin_testbox"
+    config.vm.box_url = "https://cloud-images.ubuntu.com/vagrant/trusty/current/trusty-server-cloudimg-amd64-vagrant-disk1.box"
+
+    config.vm.provider "virtualbox" do |v|
+        v.name = "web-admin"
+        v.memory = 512
+        #v.gui = true
+    end
+    config.vm.hostname = "web-admin"
+    config.vm.network "private_network", ip: "10.5.5.4"
+
+    config.ssh.shell = "bash -c 'bash_env=/etc/profile exec bash'"
+    config.vm.synced_folder "./synced/", "/opt/tmp"
+
+end

@@ -1,12 +1,20 @@
-[targets]
-debian-74-32
-debian-74-64
-debian-80-64
-centos65-32
-centos65-64
-centos7-64
-ubuntu-1204-32
-ubuntu-1204-64
-ubuntu-1404-32
-ubuntu-1404-64
-oracle-box
+[vm-hosts]
+debian-74-32 ansible_ssh_host=10.1.74.32
+debian-74-64 ansible_ssh_host=10.1.74.64
+debian-80-64 ansible_ssh_host=10.1.80.64
+centos-65-32 ansible_ssh_host=10.2.65.32
+centos-65-64 ansible_ssh_host=10.2.65.64
+centos-7-64 ansible_ssh_host=10.2.70.64
+ubuntu-1204-32 ansible_ssh_host=10.3.12.32
+ubuntu-1204-64 ansible_ssh_host=10.3.12.64
+ubuntu-1404-32 ansible_ssh_host=10.3.14.32
+ubuntu-1404-64 ansible_ssh_host=10.3.14.64
+
+[oracle-host]
+oracle-box ansible_ssh_host=10.2.3.99
+
+[zato-component-hosts]
+load-balancer ansible_ssh_host=10.5.5.1
+server1 ansible_ssh_host=10.5.5.2
+server2 ansible_ssh_host=10.5.5.3
+web-admin ansible_ssh_host=10.5.5.4

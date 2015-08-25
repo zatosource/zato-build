@@ -1,9 +1,7 @@
 ---
 
+    - include_vars: main.yml
+
     - name: Create Vagrantfiles for Zato components
-      template: src=component_box.j2 dest=vm/distributed/{{ item }}
-      with_items:
-          - load-balancer
-          - server1
-          - server2
-          - web-admin
+      template: src=component_box.j2 dest=vm/distributed/{{ item }}/Vagrantfile
+      with_items: "{{ groups['zato-component-hosts'] }}"
