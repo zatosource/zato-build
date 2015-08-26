@@ -15,15 +15,11 @@
           replace: dest=./vars/parameters.yml regexp="zato_package_version" replace={{ package_version }}
 
       # Prepare test box
-        - name: Prepare a Vagrantfile
-          copy: src=./vm/{{ system }}/Vagrantfile.template dest=./vm/{{ system }}/Vagrantfile
+        - name: Create Vagrantfiles for a base box
+          template: src=./templates/base_box.j2 dest=vm/{{ system }}/Vagrantfile
 
         - name: Create a "synced" directory
           file: path=./vm/{{ system }}/synced state=directory
 
         - name: Create a vagrant box
           shell: vagrant up chdir=./vm/{{ system }}
-
-    # Run the provisioner
-    #      - name: Run "test" provisioner
-    #    shell: vagrant provision --provision-with=test chdir=./vm/{{ system }}
