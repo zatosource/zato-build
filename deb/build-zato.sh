@@ -36,10 +36,10 @@ ZATO_TARGET_DIR=$ZATO_ROOT_DIR/$ZATO_VERSION
 # Default libumfpack version on Debian 8 and Ubuntu 14.04
 LIBUMFPACK_VERSION=5.6.2
 
-# Ubuntu 12.04 and Debian 7 needs a older one
+# Ubuntu 12.04 and Debian 7 needs an older one
 if command -v lsb_release > /dev/null; then
     release=$(lsb_release -r | cut -f2)
-    if [[ "$release" == "12.04" ]] || [[ "$release" == "7.4" ]]; then
+    if [[ "$release" == "12.04" ]] || [[ "$release" == "7.8" ]]; then
         LIBUMFPACK_VERSION=5.4.0
     fi
 fi
