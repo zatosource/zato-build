@@ -15,4 +15,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.synced_folder "./synced/", "/opt/tmp"
   config.vm.synced_folder "../../output/{{ system }}/", "/opt/output"
 
+  {% if hostname == 'centos-65-32' %}
+  config.vm.provision "shell", inline: "yum -y install libselinux-python"
+  {% endif %}
+
 end
