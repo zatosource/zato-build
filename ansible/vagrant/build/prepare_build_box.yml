@@ -19,18 +19,13 @@
 
     # Prepare build box
       - name: Prepare Vagrantfile
-        shell: cp ./vm/{{ system }}/Vagrantfile.template ./vm/{{ system }}/Vagrantfile
+        template: src=./templates/base_box.j2 dest=vm/{{ system }}/Vagrantfile
 
-      - name: Create directory to be synced
+      - name: Create "synced" directory
         file: path=./vm/{{ system }}/synced state=directory
 
       - name: Clone Zato repository to the synced directory
         git: repo=https://github.com/zatosource/zato-build.git dest=./vm/{{ system }}/synced clone=yes
 
-      - name: Start a vagrant box
-        shell: vagrant up --no-provision chdir=./vm/{{ system }}
-
-    # Run the provisioner
-      - name: Run the build provision
-        shell: vagrant provision --provision-with build chdir=./vm/{{ system }}
-
+      - name: Create a vagrant box
+        shell: vagrant up chdir=./vm/{{ system }}

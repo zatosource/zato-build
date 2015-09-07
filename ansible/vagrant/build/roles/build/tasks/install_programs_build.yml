@@ -12,7 +12,7 @@
     apt: name=git state=present
     when: ansible_os_family == "Debian"
 
-  # This is a workaround: it suppresses a prompt that would otherwise
+  # This is a workaround for Debian: it suppresses a prompt that would otherwise
   # make build-zato.sh script to freeze waiting for an answer from an user
   - name: Install libpq-dev on Debian
     apt: name=libpq-dev state=present
