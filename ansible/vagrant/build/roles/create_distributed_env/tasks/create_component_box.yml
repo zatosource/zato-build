@@ -2,6 +2,25 @@
 
     - include_vars: main.yml
 
+    # Prepare vars file for distributed environment
+    - name: Add "system" variable
+      replace: dest=./vars/parameters.yml regexp="zato_system" replace={{ system }}
+
+    - name: Add "release_version" variable
+      replace: dest=./vars/parameters.yml regexp="zato_release_version" replace={{ release_version }}
+
+    - name: Add "package_version" variable
+      replace: dest=./vars/parameters.yml regexp="zato_package_version" replace={{ package_version }}
+
+      # Prepare boxes of distributed environment
     - name: Create Vagrantfiles for Zato components
       template: src=component_box.j2 dest=vm/distributed/{{ item }}/Vagrantfile
+      with_items: "{{ groups['zato-component-hosts'] }}"
+
+    - name: Create "synced" directories
+      file: path=./vm/distributed/{{ item }}/synced state=directory
+      with_items: "{{ groups['zato-component-hosts'] }}"
+
+    - name: Start the boxes
+      shell: vagrant up chdir=./vm/distributed/{{ item }}
       with_items: "{{ groups['zato-component-hosts'] }}"
