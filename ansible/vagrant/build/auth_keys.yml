@@ -1,6 +1,6 @@
 ---
 
-    - hosts: '{{ target }}'
+    - hosts: '{{ host }}'
 
       roles:
 
