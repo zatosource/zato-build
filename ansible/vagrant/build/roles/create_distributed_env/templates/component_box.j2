@@ -2,11 +2,11 @@ VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
-    config.vm.box = "{{ item }}_testbox"
+    config.vm.box = "{{ box }}"
     config.vm.box_url = "{{ box_url }}"
 
     config.vm.provider "virtualbox" do |v|
-        v.name = "{{ item }}"
+        v.name = "zato-{{ item }}"
         v.memory = {{ box_memory }}
         #v.gui = true
     end
