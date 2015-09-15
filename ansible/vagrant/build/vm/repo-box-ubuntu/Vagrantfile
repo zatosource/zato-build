@@ -1,0 +1,23 @@
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+
+    config.vm.box = "trusty64"
+
+    config.vm.provider "virtualbox" do |v|
+        v.name = "repo-box-ubuntu"
+        #v.gui = true
+        v.memory = "256"
+    end
+    config.vm.hostname = "repo-box-ubuntu"
+
+    config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
+
+    config.vm.network "private_network", ip: "10.2.3.89"
+    config.vm.network "forwarded_port", guest: 1521, host: 11521, guest_ip: "10.2.3.89"
+    config.vm.network "forwarded_port", guest: 8080, host: 18081, guest_ip: "10.2.3.89"
+
+    config.vm.provision "shell", path: "apache.sh"
+    config.vm.provision "shell", path: "repo.sh"
+
+end
