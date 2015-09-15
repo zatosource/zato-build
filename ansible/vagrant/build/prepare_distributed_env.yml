@@ -4,4 +4,4 @@
 
       roles:
 
-        - create_distributed_env
+        - prepare_distributed_environment

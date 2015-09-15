@@ -1,0 +1,19 @@
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+
+    config.vm.box = "{{ box }}"
+    config.vm.box_url = "{{ box_url }}"
+
+    config.vm.provider "virtualbox" do |v|
+        v.name = "zato-{{ item }}"
+        v.memory = {{ box_memory }}
+        #v.gui = true
+    end
+    config.vm.hostname = "{{ item }}"
+    config.vm.network "private_network", ip: "{{ hostvars[item]['ansible_ssh_host'] }}"
+
+    config.ssh.shell = "bash -c 'bash_env=/etc/profile exec bash'"
+    config.vm.synced_folder "./synced/", "/opt/tmp"
+
+end
