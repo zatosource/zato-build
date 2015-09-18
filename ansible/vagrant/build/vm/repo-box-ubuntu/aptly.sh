@@ -14,7 +14,7 @@ if ! getent group aptly >/dev/null; then
 fi
 if ! getent passwd zato >/dev/null; then
     adduser --ingroup aptly --home /opt/aptly --shell /bin/bash \
-             -gecos "Maintainer of Zato repository" --disabled-password aptly
+            --gecos "Maintainer of Zato repository" --disabled-password aptly
 fi
 
 # Prepare configuration file
