@@ -17,11 +17,13 @@ if ! getent passwd zato >/dev/null; then
             --gecos "Maintainer of Zato repository" --disabled-password aptly
 fi
 
-# Prepare configuration file
-if [ ! -f /opt/aptly/.aptly.conf ] 
+# Prepare aptly configuration file
+if [ ! -f /opt/aptly/.aptly.conf ]
 then
+    echo 'Copying aptly configuration file.'
     cp /vagrant/.aptly.conf /opt/aptly/
     chown aptly:aptly /opt/aptly/.aptly.conf
+    echo 'Done.'
 else
     echo 'Configuration file already exists, not copying it.'
 fi
