@@ -1,5 +1,14 @@
 #!/bin/bash
 
 # Create Zato test repository
-echo 'Creating a repository...'
-sudo -u aptly aptly repo create -config="/opt/aptly/.aptly.conf" zato-repo
+distributions=( wheezy jessie precise trusty )
+
+
+echo 'Creating repositories...'
+
+for distribution in "${distributions[@]}"
+do
+    sudo -u aptly -H aptly repo create -distribution=$distribution zato-stable-$distribution
+done
+
+echo 'Done.'
