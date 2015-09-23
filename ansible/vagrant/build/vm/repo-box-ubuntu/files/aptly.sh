@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Install Aptly and configure it
-cp /vagrant/aptly.list /etc/apt/sources.list.d
+cp /vagrant/files/aptly.list /etc/apt/sources.list.d
 
 apt-key adv --keyserver keys.gnupg.net --recv-keys 2A194991
 
@@ -21,7 +21,7 @@ fi
 if [ ! -f /opt/aptly/.aptly.conf ]
 then
     echo 'Copying aptly configuration file.'
-    cp /vagrant/.aptly.conf /opt/aptly/
+    cp /vagrant/files/.aptly.conf /opt/aptly/
     chown aptly:aptly /opt/aptly/.aptly.conf
     echo 'Done.'
 else
