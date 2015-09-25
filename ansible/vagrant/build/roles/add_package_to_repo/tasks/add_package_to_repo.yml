@@ -1,0 +1,15 @@
+---
+
+    - name: Add the package to aptly repository
+      shell: aptly repo add zato-stable-{{ codename }} \
+        /vagrant/zato-{{ release_version }}-{{ package_version }}_{{ architecture }}-{{ codename }}.{{ format }}
+
+    - name: Create a snapshot of the repository
+      shell: aptly snapshot create \
+        snap-zato-stable-{{ codename }}-{{ repo_datetime }} \
+        from repo zato-stable-{{ codename }}
+
+    - name: Publish the snapshot
+      shell: aptly publish snapshot \
+          snap-zato-stable-{{ codename }}-{{ repo_datetime }} \
+        repo/stable/2.0/{{ distribution }}

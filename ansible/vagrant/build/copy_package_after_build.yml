@@ -1,0 +1,10 @@
+---
+
+    - hosts: localhost
+      vars_files:
+          - vars/vars.yml
+          - vars/parameters.yml
+
+      roles:
+
+          - copy_package_after_build
