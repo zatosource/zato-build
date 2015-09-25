@@ -1,3 +1,3 @@
 ---
 
-  - include: install_zato_from_package.yml
+  - include: install_zato.yml

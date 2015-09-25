@@ -1,0 +1,14 @@
+---
+
+    - hosts: "{{ host }}"
+      become: True
+      become_user: vagrant
+      vars_files:
+          - vars/vars.yml
+          - vars/parameters.yml
+
+      roles:
+
+          - install_zato
+
+

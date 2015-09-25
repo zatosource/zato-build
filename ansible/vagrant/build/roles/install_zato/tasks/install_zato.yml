@@ -1,0 +1,27 @@
+---
+
+    - name: Add repo box's ca certificate
+      shell: cp /vagrant/repo.crt /usr/local/share/ca-certificates
+      become_user: root
+
+    - name: Update ca certificates
+      shell: update-ca-certificates
+      become_user: root
+
+    - name: Add the package signing key
+      shell: curl -s https://repo-box-{{ distribution }}/repo/zato-deb_sec.gpg | apt-key add -
+      become_user: root
+
+    - name: Add Zato test repository
+      shell: apt-add-repository https://repo-box-{{ codename }}/repo/stable/2.0/{{ distribution }}
+      become_user: root
+
+    - name: Update cache
+      apt: update_cache=yes
+
+    - name: Install Zato
+      apt: name=zato state=present
+
+    - name: Install Zato from package on a Redhat system
+      yum: name=/opt/output/zato-{{ release_version }}-{{ package_version }}.el{{ ansible_distribution_major_version }}.{{ ansible_userspace_architecture }}.rpm state=present
+      when: ansible_distribution == "CentOS"
