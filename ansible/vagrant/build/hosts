@@ -28,3 +28,7 @@ load-balancer ansible_ssh_host=10.5.5.12
 server1 ansible_ssh_host=10.5.5.13
 server2 ansible_ssh_host=10.5.5.14
 web-admin ansible_ssh_host=10.5.5.15
+
+[zato-repos]
+repo-box-centos ansible_ssh_host=10.2.3.90
+repo-box-ubuntu ansible_ssh_host=10.2.3.89
