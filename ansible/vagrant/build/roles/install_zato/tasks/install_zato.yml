@@ -1,13 +1,12 @@
 ---
 
     # Modified https://gist.github.com/rothgar/8793800#file-main-yml
-    #- name: Add repo-boxes to /etc/hosts files on test boxes
-    #lineinfile: "dest=/etc/hosts regexp='.*{{ item }}$'
-    #line='{{ hostvars[item].ansible_default_ipv4.address  }} {{ item }}'
-    #state=present
-    #when: hostvars[item].ansible_default_ipv4.address is defined
-    #with_items: groups['zato-repos']
-    #become_user: root"
+    - name: Add repo-boxes to /etc/hosts files on test boxes
+      lineinfile: "dest=/etc/hosts
+            line='{{ hostvars[item].ansible_ssh_host }} {{ hostvars[item].inventory_hostname }}'
+            state=present"
+      with_items: groups['zato-repos']
+      become_user: root
 
     - name: Copy repo box's ca certificate
       shell: cp /vagrant/repo.crt /usr/local/share/ca-certificates
@@ -21,11 +20,11 @@
       apt: update_cache=yes
 
     - name: Add the package signing key
-      shell: curl -s https://10.2.3.89/repo/zato-deb_pub.gpg | apt-key add -
+      shell: curl -s https://repo-box-ubuntu/repo/zato-deb_pub.gpg | apt-key add -
       become_user: root
 
     - name: Add Zato test repository
-      shell: apt-add-repository https://10.2.3.89/repo/{{ package_version }}/2.0/{{ distribution }}
+      shell: apt-add-repository https://repo-box-ubuntu/repo/{{ package_version }}/2.0/{{ distribution }}
       become_user: root
 
     - name: Install Zato
