@@ -1,3 +1,4 @@
 ---
 
     - include: add_package_to_repo.yml
+    - include: copy_published.yml
