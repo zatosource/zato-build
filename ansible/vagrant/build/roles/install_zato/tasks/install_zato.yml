@@ -17,8 +17,10 @@
     - name: Update cache
       apt: update_cache=yes
 
+    # Notice that apt-key has to be performed by root
     - name: Add the package signing key
       shell: curl -s https://repo-box-ubuntu/repo/zato-deb_pub.gpg | apt-key add -
+      become_user: root
 
     - name: Add Zato test repository
       shell: apt-add-repository https://repo-box-ubuntu/repo/{{ package_version }}/2.0/{{ distribution }}
