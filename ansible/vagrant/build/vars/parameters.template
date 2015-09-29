@@ -1,6 +1,8 @@
 ---
 
-  release_version: zato_release_version
-  package_version: zato_package_version
-  system: zato_system
-  rpmver: zato_rpmver
+release_version: zato_release_version
+package_version: zato_package_version
+system: zato_system
+rpmver: zato_rpmver
+branch: zato_branch
+codename: zato_system_codename
