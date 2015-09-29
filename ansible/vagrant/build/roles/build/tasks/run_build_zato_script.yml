@@ -1,7 +1,5 @@
 ---
 
-  - include_vars: ../vars/build_parameters.yml
-
   - name: Run build-zato.sh script on Debian-based systems
     shell: /opt/tmp/deb/build-zato.sh {{ branch }} {{ release_version }} {{ package_version }}
     when: ansible_os_family == "Debian"

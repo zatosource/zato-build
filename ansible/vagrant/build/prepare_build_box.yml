@@ -6,16 +6,16 @@
 
     # Prepare vars file for "build" provisioner
       - name: Add "system" variable
-        replace: dest=./roles/build/vars/build_parameters.yml regexp="build_system" replace={{ system }}
+        replace: dest=./vars/parameters.yml regexp="zato_system" replace={{ system }}
 
       - name: Add "release_version" variable
-        replace: dest=./roles/build/vars/build_parameters.yml regexp="build_release_version" replace={{ release_version }}
+        replace: dest=./vars/parameters.yml regexp="zato_release_version" replace={{ release_version }}
 
       - name: Add "package_version" variable
-        replace: dest=./roles/build/vars/build_parameters.yml regexp="build_package_version" replace={{ package_version }}
+        replace: dest=./vars/parameters.yml regexp="zato_package_version" replace={{ package_version }}
 
       - name: Add "branch" variable
-        replace: dest=./roles/build/vars/build_parameters.yml regexp="build_branch" replace={{ branch }}
+        replace: dest=./vars/parameters.yml regexp="zato_branch" replace={{ branch }}
 
     # Prepare build box
       - name: Prepare Vagrantfile

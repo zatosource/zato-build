@@ -1,7 +1,9 @@
 ---
 
-    - hosts: '{{ target }}'
+    - hosts: '{{ host }}'
       become: True
+      vars_files:
+          - vars/parameters.yml
 
       roles:
 
