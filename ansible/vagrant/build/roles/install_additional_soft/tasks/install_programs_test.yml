@@ -16,9 +16,9 @@
         - curl
         - apt-transport-https
         - python-software-properties
-        - gdebi
         - python-psycopg2 # This one is required by Ansible's postgresql_* modules
-      when: ansible_os_family == "Debian" and ansible_pkg_mgr == 'apt'
+        - software-properties-common
+      when: ansible_os_family == "Debian"
 
     - name: Install software-properties-common on Ubuntu
       apt: name=software-properties-common state=present
