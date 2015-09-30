@@ -1,15 +1,16 @@
 ---
 
+    # Let's check first if the package
+    # isn't already in the local repo,
+    # and only then add it
+    - name: Get list of packages in the local repository
+      shell: aptly repo search \
+          zato-{{ package_version }}-{{ codename }} zato
+      register: package_list
+
     - name: Add the package to aptly repository
       shell: aptly repo add zato-{{ package_version }}-{{ codename }} \
         /vagrant/zato-{{ release_version }}-{{ package_version }}_{{ architecture }}-{{ codename }}.{{ format }}
-
-    - name: Create a snapshot of the repository
-      shell: aptly snapshot create \
-        snap-zato-{{ package_version }}-{{ codename }}-{{ repo_datetime }} \
-        from repo zato-{{ package_version }}-{{ codename }}
-
-    - name: Publish the snapshot
-      shell: aptly publish snapshot \
-          snap-zato-{{ package_version }}-{{ codename }}-{{ repo_datetime }} \
-        repo/{{ package_version }}/2.0/{{ distribution }}
+      when:
+          "'zato_{{ release_version }}-{{ package_version }}-{{ codename }}_{{ architecture }}' not in package_list.stdout"
+      register: package_added

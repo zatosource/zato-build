@@ -1,4 +1,10 @@
 ---
 
     - include: add_package_to_repo.yml
+
+    - include: create_and_publish_snapshot.yml
+      register: snapshot_published
+      when: package_added.changed == True
+
     - include: copy_published.yml
+      when: snapshot_published.changed == True
