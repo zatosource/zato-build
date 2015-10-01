@@ -1,0 +1,3 @@
+# Yes, that's right, Aptly is available 
+# for Ubuntu in Debian Squeeze repository
+deb http://repo.aptly.info/ squeeze main
