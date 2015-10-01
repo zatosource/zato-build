@@ -1,6 +1,10 @@
 ---
 
     - include: add_package_to_repo.yml
+      when: host == "repo-box-{{ distribution }}"
+
+    - include: test_aptly_add_packages.yml
+      when: host == "aptly-test-box"
 
     - include: create_and_publish_snapshot.yml
       register: snapshot_published

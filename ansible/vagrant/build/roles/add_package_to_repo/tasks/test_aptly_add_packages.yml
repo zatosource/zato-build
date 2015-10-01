@@ -1,0 +1,6 @@
+---
+
+    - name: Add the packages to test the aptly repository
+      shell: aptly repo add zato-{{ package_version }}-{{ codename }} \
+        /vagrant/files/test_packages
+      register: package_added
