@@ -32,3 +32,4 @@ web-admin ansible_ssh_host=10.5.5.15
 [zato-repos]
 repo-box-centos ansible_ssh_host=10.2.3.90
 repo-box-ubuntu ansible_ssh_host=10.2.3.89
+aptly-test-box ansible_ssh_host=10.2.3.95
