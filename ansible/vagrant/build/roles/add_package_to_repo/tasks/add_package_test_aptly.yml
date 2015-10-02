@@ -12,5 +12,5 @@
     - name: Write the list to a file
       lineinfile: "dest=/opt/aptly/zato_package_list.txt
           line='{{ zato_package_list.stdout }}'
-            create=yes
-            state=present"
+          create=yes
+          state=present"
