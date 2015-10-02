@@ -1,0 +1,15 @@
+---
+
+- hosts: "{{ host }}"
+  vars: 
+  vars_files:
+      - vars/vars.yml
+      - vars/parameters.yml
+  become: True
+  become_user: aptly
+
+  roles:
+
+      - add_package_to_repo
+      - prepare_test_box
+      #- install_zato

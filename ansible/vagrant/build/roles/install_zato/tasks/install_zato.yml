@@ -1,31 +1,5 @@
 ---
 
-    - name: Add repo-boxes to /etc/hosts files on test boxes
-      lineinfile: "dest=/etc/hosts
-            line='{{ hostvars[repo_hostname].ansible_ssh_host }} {{ hostvars[repo_hostname].inventory_hostname }}'
-            state=present"
-      become_user: root
-
-    - name: Copy repo box's ca certificate
-      shell: cp /vagrant/repo-box-ubuntu.crt /usr/local/share/ca-certificates
-      become_user: root
-
-    - name: Update ca certificates
-      shell: update-ca-certificates
-      become_user: root
-
-    - name: Update cache
-      apt: update_cache=yes
-
-    # Notice that apt-key has to be performed by root
-    - name: Add the package signing key
-      shell: curl -s https://repo-box-ubuntu/repo/zato-deb_pub.gpg | apt-key add -
-      become_user: root
-
-    - name: Add Zato test repository
-      shell: apt-add-repository https://repo-box-ubuntu/repo/{{ package_version }}/2.0/{{ distribution }}
-      become_user: root
-
     - name: Install Zato
       apt: name=zato={{ release_version }}-{{ package_version }}-{{ codename }} update_cache=yes state=present
 
