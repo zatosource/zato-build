@@ -3,6 +3,7 @@
 
 import re
 import os
+import sys
 
 os.system("apt-cache showpkg zato >> 'showpkg.txt'")
 
@@ -10,34 +11,35 @@ f = open('showpkg.txt', 'r')
 contents = f.read()
 f.close()
 
-#p = re.compile('\d+\.\d+\.\d+-\w+-\w+')
+# The following code will find all strings matching the pattern,
+# e.g. '2.0.5-stable-trusty', and put the into tuple of lists:
+# [('2.0.4', 'stable', 'trusty'), ('2.0.5', 'stable', 'trusty')].
+# All elements are then accessed by their offsets passed
+# via command line to 'set_variables' function.
 p = re.compile('(\d+\.\d+\.\d+)-(\w+)-(\w+)')
 versions = p.findall(contents)
 versions = list(set(versions))
 versions.sort()
 
-release_version_latest = versions[-1][0]
-package_version_latest = versions[-1][1]
-codename_latest = versions[-1][2]
+def set_variables(file, offset):
 
-release_version_previous = versions[-2][0]
-package_version_previous = versions[-2][1]
-codename_previous = versions[-2][2]
+    # 'file' is a path to an output file
+    # where variables are be saved
+    # 'offset' is a position of each parameter
+    # in 'versions' tuple of lists
 
-f = open('/vagrant/latest.yml', 'w')
-f.write(
-    '---\n\n'
-    'release_version: ' + release_version_latest + '\n'
-    'package_version: ' + package_version_latest + '\n'
-    'codename: ' + codename_latest
-)
-f.close()
+    release_version = versions[offset][0]
+    package_version = versions[offset][1]
+    codename = versions[offset][2]
 
-f = open('/vagrant/previous.yml', 'w')
-f.write(
-    '---\n\n'
-    'release_version: ' + release_version_previous + '\n'
-    'package_version: ' + package_version_previous + '\n'
-    'codename: ' + codename_previous
-)
-f.close()
+    f = open(file, 'w')
+    f.write(
+        '---\n\n'
+        'release_version: ' + release_version + '\n'
+        'package_version: ' + package_version + '\n'
+        'codename: ' + codename
+    )
+    f.close()
+
+if __name__ == "__main__":
+    set_variables(sys.argv[1], int(sys.argv[2]))
