@@ -1,15 +1,87 @@
 ---
 
+#- hosts: aptly-test-box
+#  vars_files:
+#      - vars/vars.yml
+#      - vars/parameters.yml
+#  become: True
+#  become_user: aptly
+
+#  roles:
+
+#      - add_package_to_repo
+
+
+- include:  prepare_test_box.yml
+  vars_files:
+      - vars/parameters.yml
+      - vars/vars.yml
+
 - hosts: "{{ host }}"
-  vars: 
+  become: True
   vars_files:
       - vars/vars.yml
       - vars/parameters.yml
-  become: True
-  become_user: aptly
+
+  pre_tasks:
+
+      - name: Prepare additional variables
+        script: ./files/get_zato_version.py
+
+      - name: Fetch new vars files
+        fetch: src=/home/vagrant/{{ item }}
+               dest={{ project_root }}/roles/test_aptly/vars/ flat=yes
+        with_items:
+            - latest.yml
+            - previous.yml
 
   roles:
 
-      - add_package_to_repo
-      - prepare_test_box
-      #- install_zato
+      - { role: install_zato, vars_files: latest.yml }
+
+  tasks:
+
+      - name: Register results
+        shell: /opt/zato/{{ release_version }}/bin/zato --version
+        become_user: zato
+        register: zato_version_latest
+
+      - assert:
+          that:
+            - "'Zato {{ release_version }}.rev' in zato_version_latest.stderr"
+
+- include: clean.yml
+  vars_files:
+      - vars/parameters.yml
+      - vars/vars.yml
+
+- include: prepare_test_box.yml
+  vars_files:
+      - vars/parameters.yml
+      - vars/vars.yml
+
+- hosts: "{{ host }}"
+  become: True
+  vars_files:
+      - vars/vars.yml
+      - vars/parameters.yml
+
+  roles:
+
+      - { role: install_zato, vars_files: previous.yml }
+
+  tasks:
+
+      - name: Register results
+        shell: /opt/zato/{{ release_version }}/bin/zato --version
+        become_user: zato
+        register: zato_version_previous
+
+      - assert:
+          that:
+            - "'Zato {{ release_version }}.rev' in zato_version_previous.stderr"
+
+- include: clean.yml
+  vars_files:
+      - vars/parameters.yml
+      - vars/vars.yml
