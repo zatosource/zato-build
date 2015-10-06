@@ -1,4 +1,4 @@
 ---
 
   - include: prepare_to_install.yml
-  #- include: install_zato.yml
+  - include: install_zato.yml
