@@ -25,19 +25,19 @@ package_version_previous = versions[-2][1]
 codename_previous = versions[-2][2]
 
 f = open('/vagrant/latest.yml', 'w')
-#f.write(
-#    '---\n\n'
-#    'release_version: ' + release_version_latest + '\n'
-#    'package_version: ' + package_version_latest + '\n'
-#    'codename: ' + codename_latest
-#)
+f.write(
+    '---\n\n'
+    'release_version: ' + release_version_latest + '\n'
+    'package_version: ' + package_version_latest + '\n'
+    'codename: ' + codename_latest
+)
 f.close()
 
 f = open('/vagrant/previous.yml', 'w')
-#f.write(
-#    '---\n\n'
-#    'release_version: ' + release_version_previous + '\n'
-#    'package_version: ' + package_version_previous + '\n'
-#    'codename: ' + codename_previous
-#)
+f.write(
+    '---\n\n'
+    'release_version: ' + release_version_previous + '\n'
+    'package_version: ' + package_version_previous + '\n'
+    'codename: ' + codename_previous
+)
 f.close()
