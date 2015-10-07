@@ -1,7 +1,7 @@
 ---
 
     - name: Install Zato
-      apt: name=zato={{ release_version }}-{{ package_version }}-{{ codename }} update_cache=yes state=present
+      apt: name=zato update_cache=yes state=present
 
     - name: Install Zato from package on a Redhat system
       yum: name=/opt/output/zato-{{ release_version }}-{{ package_version }}.el{{ ansible_distribution_major_version }}.{{ ansible_userspace_architecture }}.rpm state=present
