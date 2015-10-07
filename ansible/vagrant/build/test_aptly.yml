@@ -34,6 +34,9 @@
 
   pre_tasks:
 
+      - name: Update apt cache
+        apt: update_cache=yes
+
       - name: Prepare additional variables
         script: ./files/get_zato_version.py {{ item.file }} {{ item.offset }}
         with_items:
@@ -77,13 +80,18 @@
   vars_files:
       - vars/vars.yml
       - vars/parameters.yml
+      - roles/test_aptly/vars/previous.yml
 
   roles:
 
       - prepare_install_zato
-      - { role: install_zato, vars_files: previous.yml }
 
   tasks:
+
+      - name: Install Zato
+        apt: name=zato={{ release_version }}-{{ package_version }}-{{ codename }}
+             update_cache=yes
+             state=present
 
       - name: Register results
         shell: /opt/zato/{{ release_version }}/bin/zato --version
@@ -93,6 +101,44 @@
       - assert:
           that:
             - "'Zato {{ release_version }}.rev' in zato_version_previous.stderr"
+
+- include: clean.yml
+  vars_files:
+      - vars/parameters.yml
+      - vars/vars.yml
+
+
+- include:  prepare_test_box.yml
+  vars_files:
+      - vars/parameters.yml
+      - vars/vars.yml
+
+- hosts: "{{ host }}"
+  become: True
+  vars_files:
+      - vars/vars.yml
+      - vars/parameters.yml
+      - roles/test_aptly/vars/latest.yml
+
+  roles:
+
+      - prepare_install_zato
+
+  tasks:
+
+      - name: Install Zato
+        apt: name=zato={{ release_version }}-{{ package_version }}-{{ codename }}
+             update_cache=yes
+             state=present
+
+      - name: Register results
+        shell: /opt/zato/{{ release_version }}/bin/zato --version
+        become_user: zato
+        register: zato_version_latest
+
+      - assert:
+          that:
+            - "'Zato {{ release_version }}.rev' in zato_version_latest.stderr"
 
 - include: clean.yml
   vars_files:
