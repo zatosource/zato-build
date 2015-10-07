@@ -11,7 +11,6 @@
 
 #      - add_package_to_repo
 
-
 - include:  prepare_test_box.yml
   vars_files:
       - vars/parameters.yml
@@ -23,10 +22,23 @@
       - vars/vars.yml
       - vars/parameters.yml
 
+  roles:
+
+      - prepare_install_zato
+
+- hosts: "{{ host }}"
+  become: True
+  vars_files:
+      - vars/vars.yml
+      - vars/parameters.yml
+
   pre_tasks:
 
       - name: Prepare additional variables
-        script: ./files/get_zato_version.py
+        script: ./files/get_zato_version.py {{ item.file }} {{ item.offset }}
+        with_items:
+            - { file: '/home/vagrant/latest.yml', offset: -1 }
+            - { file: '/home/vagrant/previous.yml', offset: -2 }
 
       - name: Fetch new vars files
         fetch: src=/home/vagrant/{{ item }}
@@ -55,7 +67,7 @@
       - vars/parameters.yml
       - vars/vars.yml
 
-- include: prepare_test_box.yml
+- include:  prepare_test_box.yml
   vars_files:
       - vars/parameters.yml
       - vars/vars.yml
@@ -68,6 +80,7 @@
 
   roles:
 
+      - prepare_install_zato
       - { role: install_zato, vars_files: previous.yml }
 
   tasks:
