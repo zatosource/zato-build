@@ -1,0 +1,10 @@
+---
+
+- name: Register results
+  shell: /opt/zato/{{ release_version }}/bin/zato --version
+  become_user: zato
+  register: zato_version_latest
+
+- assert:
+    that:
+      - "'Zato {{ release_version }}.rev' in zato_version_latest.stderr"

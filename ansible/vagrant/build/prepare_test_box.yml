@@ -5,14 +5,14 @@
       tasks:
 
         # Prepare vars file for "test" provisioner
-        - name: Add "system" variable
-          replace: dest=./vars/parameters.yml regexp="zato_system" replace={{ system }}
+        #- name: Add "system" variable
+        #          replace: dest=./vars/parameters.yml regexp="zato_system" replace={{ system }}
 
-        - name: Add "release_version" variable
-          replace: dest=./vars/parameters.yml regexp="zato_release_version" replace={{ release_version }}
+        #- name: Add "release_version" variable
+        #   replace: dest=./vars/parameters.yml regexp="zato_release_version" replace={{ release_version }}
 
-        - name: Add "package_version" variable
-          replace: dest=./vars/parameters.yml regexp="zato_package_version" replace={{ package_version }}
+        #- name: Add "package_version" variable
+          #replace: dest=./vars/parameters.yml regexp="zato_package_version" replace={{ package_version }}
 
       # Prepare test box
         - name: Create Vagrantfiles for a base box

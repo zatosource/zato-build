@@ -1,0 +1,6 @@
+---
+
+- name: Install Zato
+  apt: name=zato{{ version }}
+       update_cache=yes
+       state=present

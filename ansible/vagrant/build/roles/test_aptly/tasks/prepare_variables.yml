@@ -1,0 +1,17 @@
+---
+
+- name: Update apt cache
+  apt: update_cache=yes
+
+- name: Prepare additional variables
+  script: get_zato_version.py {{ item.file }} {{ item.offset }}
+  with_items:
+      - { file: '/home/vagrant/latest.yml', offset: -1 }
+      - { file: '/home/vagrant/previous.yml', offset: -2 }
+
+- name: Fetch new vars files
+  fetch: src=/home/vagrant/{{ item  }}
+         dest={{ project_root  }}/roles/test_aptly/vars/ flat=yes
+  with_items:
+      - latest.yml
+      - previous.yml
