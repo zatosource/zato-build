@@ -14,8 +14,5 @@
           - synced
           - Vagrantfile
 
-      - name: Clean build role vars file
-        shell: cp parameters.template parameters.yml chdir=./vars
-
-      - name: Clean test role vars files
-        shell: cp parameters.template parameters.yml chdir=./vars
+      #- name: Clean vars file
+      #  shell: cp parameters.template parameters.yml chdir=./vars
