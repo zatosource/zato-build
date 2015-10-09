@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# Upgrade the box and install required apps
+# Upgrade the box and install Apache
 apt-get -y update
 apt-get -y upgrade
-apt-get -y install apache2 reprepro
+apt-get -y install apache2
 
 # Prepare apache configuration file
 if [ ! -f /etc/apache2/sites-available/repo.conf ]
