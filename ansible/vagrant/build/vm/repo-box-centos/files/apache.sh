@@ -3,7 +3,7 @@
 # Upgrade the box and install Apache
 yum -y check-update
 yum -y update
-yum -y install httpd mod_ssl
+yum -y install createrepo httpd mod_ssl
 
 # Prepare repo directory structure
 if [ ! -f /var/www/repo ]
@@ -13,6 +13,15 @@ then
 else
     echo 'Directory structure is already there.'
 fi
+
+# Create repositories
+repo_root=/var/www/repo/stable/2.0/rhel
+repo_dirs=($repo_root/el6/i386 $repo_root/el6/x86_64 \
+           $repo_root/el7/x86_64)
+for dir in ${repo_dirs[*]}
+do
+    createrepo $dir
+done
 
 # Replace default ssl.conf with custom one
 echo 'Overwriting default Apache SSL configuration file.'
