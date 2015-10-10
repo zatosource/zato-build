@@ -4,19 +4,20 @@
 yum -y check-update
 yum -y update
 yum -y install httpd mod_ssl
-service httpd start
 
-# Prepare apache configuration file
-if [ ! -f /etc/httpd/conf.d/repo.conf ]
+# Prepare repo directory structure
+if [ ! -f /var/www/repo ]
 then
-    echo 'Copying apache configuration file.'
-    cp -r /vagrant/files/repo.conf /etc/httpd/conf.d
-    echo 'Done.'
+    echo 'Creating repo directory structure'
+    cp -r /vagrant/files/repo /var/www
 else
-    echo 'Configuration file already exists, not copying it.'
+    echo 'Directory structure is already there.'
 fi
 
-cp /vagrant/files/repo.conf /etc/httpd/conf.d/ssl.conf
+# Replace default ssl.conf with custom one
+echo 'Overwriting default Apache SSL configuration file.'
+cp -r /vagrant/files/ssl/ssl.conf /etc/httpd/conf.d/ssl.conf
+echo 'Done.'
 
 # Copy certificate for our test repo
 if [ ! -f /etc/pki/tls/certs/ca.crt ]
@@ -38,4 +39,4 @@ else
 fi
 
 # Restart the service
-service httpd reload
+service httpd start
