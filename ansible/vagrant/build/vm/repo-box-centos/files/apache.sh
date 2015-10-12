@@ -2,7 +2,6 @@
 
 # Upgrade the box and install Apache
 yum -y check-update
-yum -y update
 yum -y install createrepo httpd mod_ssl
 
 # Prepare repo directory structure
@@ -49,3 +48,4 @@ fi
 
 # Restart the service
 service httpd start
+chkconfig httpd on
