@@ -5,10 +5,8 @@
         dest=/var/www/repo/{{ package_version }}/2.0/{{ distribution }}/{{ codename }}/{{ architecture }}
 
 - name: Sign the package using 'Expect' program
-#shell: /vagrant/files/sign_rpm_with_expect.exp {{ package_version }} {{ distribution }} {{ codename }} {{ architecture }} {{ release_version }}
-  shell: /vagrant/files/sign_rpm_with_expect.exp
-         chdir=/var/www/repo/{{ package_version }}/2.0/{{ distribution }}/{{ codename }}/{{ architecture }}
+  shell: /vagrant/files/sign_rpm_with_expect.exp {{ package_version }} {{ distribution }} {{ codename }} {{ architecture }} {{ release_version }}
 
-#- name: Update the repo (effectively add the package)
-#  shell: createrepo --cache ./cache --update ./
-#         chdir=/var/www/repo/{{ package_version }}/2.0/{{ distribution }}/{{ codename }}/{{ architecture }}
+- name: Update the repo (effectively add the package)
+  shell: createrepo --cache ./cache --update ./
+         chdir=/var/www/repo/{{ package_version }}/2.0/{{ distribution }}/{{ codename }}/{{ architecture }}

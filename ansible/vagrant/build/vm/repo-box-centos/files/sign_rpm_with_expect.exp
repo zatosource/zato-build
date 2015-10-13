@@ -1,10 +1,16 @@
 #!/usr/bin/expect
 
-set timeout 20
+set PACKAGE_VERSION [lindex $argv 0]
+set DISTRIBUTION [lindex $argv 1]
+set CODENAME [lindex $argv 2]
+set ARCHITECTURE [lindex $argv 3]
+set RELEASE_VERSION [lindex $argv 4]
+set PATH /var/www/repo/$PACKAGE_VERSION/2.0/$DISTRIBUTION/$CODENAME/$ARCHITECTURE
+set PACKAGE zato-$RELEASE_VERSION-$PACKAGE_VERSION.$CODENAME.$ARCHITECTURE.rpm
 
 spawn bash
 
-exp_send "rpm --addsign /var/www/repo/stable/2.0/rhel/el6/x86_64/zato-2.0.5-stable.el6.x86_64.rpm\n"
+exp_send "rpm --addsign $PATH/$PACKAGE\n"
 
 expect {
 
