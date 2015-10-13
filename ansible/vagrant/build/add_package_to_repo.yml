@@ -2,7 +2,6 @@
 
     - hosts: "{{ host }}"
       become: True
-      become_user: aptly
       vars:
         repo_datetime: "{{ ansible_date_time.iso8601 }}"
       vars_files:

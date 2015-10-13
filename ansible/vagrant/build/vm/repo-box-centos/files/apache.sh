@@ -1,8 +1,16 @@
 #!/bin/bash
 
-# Upgrade the box and install Apache
+# Prepare the box and install Apache
 yum -y check-update
-yum -y install createrepo httpd mod_ssl
+
+# Python bindings are required (because of selinux)
+yum -y install libselinux-python
+
+# Install createrepo to manage rpm repository
+yum -y install createrepo
+
+# Now install Apache with SSL support
+yum -y install httpd mod_ssl
 
 # Prepare repo directory structure
 if [ ! -f /var/www/repo ]
@@ -48,4 +56,13 @@ fi
 
 # Restart the service
 service httpd start
+
+# Set Apache to be launched at startup
 chkconfig httpd on
+
+# Configure rpm signing key
+gpg # Initialize GPG for root
+gpg --import /vagrant/files/keys/zato-rpm_pub.gpg
+gpg --import /vagrant/files/keys/zato-rpm_sec.gpg
+rpm --import /vagrant/files/keys/zato-rpm_pub.gpg
+echo "%_gpg_name RHEL Repository" > /etc/rpm/macros

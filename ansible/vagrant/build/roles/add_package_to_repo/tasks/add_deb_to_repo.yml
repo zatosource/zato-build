@@ -1,8 +1,7 @@
 ---
 
-    # Let's check first if the package
-    # isn't already in the local repo,
-    # and only then add it
+    # Let's check first if the deb package isn't already in the local repo,
+    # and only then add it.
     - name: Get list of packages in the local repository
       shell: aptly repo search \
           zato-{{ package_version }}-{{ codename }} zato

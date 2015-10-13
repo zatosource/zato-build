@@ -18,6 +18,5 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.network "forwarded_port", guest: 8080, host: 18080, guest_ip: "10.2.3.88"
 
     config.vm.provision "shell", path: "files/apache.sh"
-    config.vm.provision "shell", path: "files/repo.sh", privileged: false
 
 end
