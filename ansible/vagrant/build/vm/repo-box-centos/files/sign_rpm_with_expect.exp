@@ -1,0 +1,15 @@
+#!/usr/bin/expect
+
+set timeout 20
+
+spawn bash
+
+exp_send "rpm --addsign /var/www/repo/stable/2.0/rhel/el6/x86_64/zato-2.0.5-stable.el6.x86_64.rpm\n"
+
+expect {
+
+    "Enter pass phrase:" {
+        send "\r"
+        exp_continue
+    }
+}

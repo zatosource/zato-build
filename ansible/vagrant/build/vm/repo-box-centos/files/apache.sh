@@ -9,6 +9,11 @@ yum -y install libselinux-python
 # Install createrepo to manage rpm repository
 yum -y install createrepo
 
+# Expect is crucial during package signing,
+# because 'rpm' does not give any possibility
+# of performing the process in an non-interactive way
+yum -y install expect
+
 # Now install Apache with SSL support
 yum -y install httpd mod_ssl
 
@@ -61,7 +66,7 @@ service httpd start
 chkconfig httpd on
 
 # Configure rpm signing key
-gpg # Initialize GPG for root
+#gpg # Initialize GPG for root
 gpg --import /vagrant/files/keys/zato-rpm_pub.gpg
 gpg --import /vagrant/files/keys/zato-rpm_sec.gpg
 rpm --import /vagrant/files/keys/zato-rpm_pub.gpg
