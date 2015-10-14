@@ -1,0 +1,13 @@
+---
+
+- name: Copy repo box's ca certificate
+  shell: cp /vagrant/{{ repo_host }}.crt /etc/pki/ca-trust/source/anchors
+
+- name: Enable the dynamic CA configuration
+  shell: update-ca-trust enable
+
+- name: Update ca certificates
+  shell: update-ca-trust extract
+
+- name: Copy repo configuration file
+  shell: cp /vagrant/zato-2.0.repo /etc/yum.repos.d/

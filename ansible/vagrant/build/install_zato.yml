@@ -8,6 +8,5 @@
 
       roles:
 
+          - prepare_install_zato
           - install_zato
-
-

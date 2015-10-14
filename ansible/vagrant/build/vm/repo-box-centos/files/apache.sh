@@ -35,25 +35,28 @@ do
     createrepo $dir
 done
 
+# Copy public test signing key
+cp /vagrant/files/keys/zato-rpm_pub.gpg /var/www/repo
+
 # Replace default ssl.conf with custom one
 echo 'Overwriting default Apache SSL configuration file.'
 cp -r /vagrant/files/ssl/ssl.conf /etc/httpd/conf.d/ssl.conf
 echo 'Done.'
 
 # Copy certificate for our test repo
-if [ ! -f /etc/pki/tls/certs/ca.crt ]
+if [ ! -f /etc/pki/tls/certs/repo-box-centos.crt ]
 then
-    cp -r /vagrant/files/ssl/ca.crt /etc/pki/tls/certs
+    cp -r /vagrant/files/ssl/repo-box-centos.crt /etc/pki/tls/certs
 else
     echo 'Certificate has been set up already.'
 fi
 
 # Copy key for our test repo
-if [ ! -f /etc/pki/tls/private/ca.csr ] \
-   && [ ! -f /etc/pki/tls/private/ca.key ]
+if [ ! -f /etc/pki/tls/private/repo-box-centos.csr ] \
+   && [ ! -f /etc/pki/tls/private/repo-box-centos.key ]
 then
-    cp -r /vagrant/files/ssl/ca.csr \
-          /vagrant/files/ssl/ca.key \
+    cp -r /vagrant/files/ssl/repo-box-centos.csr \
+          /vagrant/files/ssl/repo-box-centos.key \
           /etc/pki/tls/private
 else
     echo 'Keys have been set up already.'
@@ -66,7 +69,6 @@ service httpd start
 chkconfig httpd on
 
 # Configure rpm signing key
-#gpg # Initialize GPG for root
 gpg --import /vagrant/files/keys/zato-rpm_pub.gpg
 gpg --import /vagrant/files/keys/zato-rpm_sec.gpg
 rpm --import /vagrant/files/keys/zato-rpm_pub.gpg

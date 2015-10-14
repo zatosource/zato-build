@@ -1,0 +1,7 @@
+---
+
+- name: Add repo-boxes to /etc/hosts files on test boxes
+  lineinfile: "dest=/etc/hosts
+        line='{{ hostvars[repo_host].ansible_ssh_host }} {{ hostvars[repo_host].inventory_hostname }}'
+        state=present"
+  become_user: root

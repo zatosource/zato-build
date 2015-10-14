@@ -1,4 +1,10 @@
 ---
 
-- name: Install Zato
+- name: Install Zato on Debian
   apt: name=zato update_cache=yes state=present
+  when: ansible_os_family == "Debian"
+
+- name: Install Zato on CentOS
+  yum: name=zato state=present update_cache=yes
+  become_user: root
+  when: ansible_distribution == "CentOS"
