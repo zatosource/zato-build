@@ -1,10 +1,11 @@
 ---
 
-    - hosts: "{{ host }}"
+    - hosts: "{{ hostname }}"
       become: True
       vars_files:
           - vars/vars.yml
-          - vars/parameters.yml
+          - vars/common.yml
+          - vars/build-box.yml
 
       roles:
 

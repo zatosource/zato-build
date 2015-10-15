@@ -1,15 +1,16 @@
 ---
 
-    - hosts: '{{ host }}'
-      become: True
-      vars_files:
-          - vars/vars.yml
-          - vars/parameters.yml
+- hosts: '{{ hostname }}'
+  become: True
+  vars_files:
+      - vars/vars.yml
+      - vars/common.yml
+      - vars/build-box.yml
 
-      roles:
+  roles:
 
-        - install_additional_soft
-        - install_redis
-        - install_zato
-        - create_quickstart
-        - test_quickstart
+    - install_additional_soft
+    - install_redis
+    - install_zato
+    - create_quickstart
+    - test_quickstart

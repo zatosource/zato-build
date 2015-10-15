@@ -1,25 +1,17 @@
 ---
 
-    - hosts: localhost
+- hosts: localhost
+  vars_files:
+      - vars/build-box.yml
+      - vars/common.yml
 
-      tasks:
+  tasks:
 
-        # Prepare vars file for "test" provisioner
-        #- name: Add "system" variable
-        #          replace: dest=./vars/parameters.yml regexp="zato_system" replace={{ system }}
+    - name: Create Vagrantfiles for a base box
+      template: src=./templates/base_box.j2 dest=vm/{{ system }}/Vagrantfile
 
-        #- name: Add "release_version" variable
-        #   replace: dest=./vars/parameters.yml regexp="zato_release_version" replace={{ release_version }}
+    - name: Create a "synced" directory
+      file: path=./vm/{{ system }}/synced state=directory
 
-        #- name: Add "package_version" variable
-          #replace: dest=./vars/parameters.yml regexp="zato_package_version" replace={{ package_version }}
-
-      # Prepare test box
-        - name: Create Vagrantfiles for a base box
-          template: src=./templates/base_box.j2 dest=vm/{{ system }}/Vagrantfile
-
-        - name: Create a "synced" directory
-          file: path=./vm/{{ system }}/synced state=directory
-
-        - name: Create a vagrant box
-          shell: vagrant up chdir=./vm/{{ system }}
+    - name: Create a vagrant box
+      shell: vagrant up chdir=./vm/{{ system }}

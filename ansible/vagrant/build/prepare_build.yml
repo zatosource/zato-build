@@ -1,0 +1,31 @@
+---
+
+- hosts: localhost
+
+  tasks:
+
+    - name: Prepare common vars file
+      template: src=./templates/common.j2
+                dest=./vars/common.yml
+
+    - name: Prepare box vars file
+      template: src=./templates/box_vars.j2
+                dest=./vars/build-box.yml
+
+    # Prepare build box
+    - name: Prepare Vagrantfile
+      template: src=./templates/base_box.j2
+                dest=vm/{{ system }}/Vagrantfile
+
+    - name: Create "synced" directory
+      file: path=./vm/{{ system }}/synced
+            state=directory
+
+    - name: Clone Zato repository to the synced directory
+      git: repo=https://github.com/zatosource/zato-build.git
+           dest=./vm/{{ system }}/synced
+           clone=yes
+
+    - name: Create a vagrant box
+      shell: vagrant up
+             chdir=./vm/{{ system }}
