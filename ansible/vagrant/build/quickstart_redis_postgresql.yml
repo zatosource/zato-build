@@ -9,6 +9,7 @@
         - install_redis
         - install_postgresql
         - configure_postgresql
+        - prepare_install_zato
         - install_zato
         - create_quickstart_postgresql
         - test_quickstart

@@ -11,6 +11,7 @@
 
     - install_additional_soft
     - install_redis
+    - prepare_install_zato
     - install_zato
     - create_quickstart
     - test_quickstart
