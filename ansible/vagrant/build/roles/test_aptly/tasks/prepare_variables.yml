@@ -11,7 +11,7 @@
 
 - name: Fetch new vars files
   fetch: src=/home/vagrant/{{ item  }}
-         dest={{ project_root  }}/roles/test_aptly/vars/ flat=yes
+         dest={{ project_root }}/roles/test_aptly/vars/ flat=yes
   with_items:
       - latest.yml
       - previous.yml
