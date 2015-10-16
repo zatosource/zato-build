@@ -1,11 +1,13 @@
 ---
 
-    - name: Create 'zato1' user
-      mysql_user: name=zato1 
-                  password=zato1
-                  priv=*.*:ALL,GRANT
-                  state=present
+- name: Create 'zato1' user
+  mysql_user: name=zato1
+              password=zato1
+              priv=*.*:ALL,GRANT
+              state=present
 
-    - name: Create 'zato1' database
-      mysql_db: name=zato1 state=present
-                login_user=zato1 login_password=zato1
+- name: Create 'zato1' database
+  mysql_db: name=zato1
+            state=present
+            login_user=zato1
+            login_password=zato1

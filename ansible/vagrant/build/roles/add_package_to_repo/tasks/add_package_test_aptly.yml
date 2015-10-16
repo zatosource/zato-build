@@ -1,16 +1,16 @@
 ---
 
-    - name: Add the packages to test the aptly repository
-      shell: aptly repo add zato-{{ package_version }}-{{ codename }} \
-        /vagrant/files/test_packages
-      register: package_added
+- name: Add the packages to test the aptly repository
+  shell: aptly repo add zato-{{ package_version }}-{{ codename }} \
+    /vagrant/files/test_packages
+  register: package_added
 
-    - name: Get a list of Zato packages
-      shell: aptly repo search zato-{{ package_version }}-{{ codename }} zato
-      register: zato_package_list
+- name: Get a list of Zato packages
+  shell: aptly repo search zato-{{ package_version }}-{{ codename }} zato
+  register: zato_package_list
 
-    - name: Write the list to a file
-      lineinfile: "dest=/opt/aptly/zato_package_list.txt
-          line='{{ zato_package_list.stdout }}'
-          create=yes
-          state=present"
+- name: Write the list to a file
+  lineinfile: "dest=/opt/aptly/zato_package_list.txt
+      line='{{ zato_package_list.stdout }}'
+      create=yes
+      state=present"

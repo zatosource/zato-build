@@ -1,28 +1,28 @@
 ---
 
-    - name: Create a snapshot of the repository
-      shell: aptly snapshot create \
-        snap-zato-{{ package_version }}-{{ codename }}-{{ repo_datetime }} \
-        from repo zato-{{ package_version }}-{{ codename }}
-      register: snapshot_created
+- name: Create a snapshot of the repository
+  shell: aptly snapshot create \
+    snap-zato-{{ package_version }}-{{ codename }}-{{ repo_datetime }} \
+    from repo zato-{{ package_version }}-{{ codename }}
+  register: snapshot_created
 
-    # Check if there is any previous repo
-    # on this host; this is in case this
-    # playbook is being run for the first time
-    # on a host
-    - name: Get a list of published repos
-      shell: aptly publish list
-      register: repo_list
+# Check if there is any previous repo
+# on this host; this is in case this
+# playbook is being run for the first time
+# on a host
+- name: Get a list of published repos
+  shell: aptly publish list
+  register: repo_list
 
-    - name: Drop the previous published repo (if it exists)
-      shell: aptly publish drop {{ codename }} \
-        repo/{{ package_version }}/2.0/{{ distribution }}
-      when:
-        "'repo/{{ package_version }}/2.0/{{ distribution }}/{{ codename }}' in repo_list.stdout"
+- name: Drop the previous published repo (if it exists)
+  shell: aptly publish drop {{ codename }} \
+    repo/{{ package_version }}/2.0/{{ distribution }}
+  when:
+    "'repo/{{ package_version }}/2.0/{{ distribution }}/{{ codename }}' in repo_list.stdout"
 
-    - name: Publish the snapshot
-      shell: aptly publish snapshot \
-          snap-zato-{{ package_version }}-{{ codename }}-{{ repo_datetime }} \
-        repo/{{ package_version }}/2.0/{{ distribution }}
-      register: snapshot_published
-      when: snapshot_created.changed == True
+- name: Publish the snapshot
+  shell: aptly publish snapshot \
+      snap-zato-{{ package_version }}-{{ codename }}-{{ repo_datetime }} \
+    repo/{{ package_version }}/2.0/{{ distribution }}
+  register: snapshot_published
+  when: snapshot_created.changed == True

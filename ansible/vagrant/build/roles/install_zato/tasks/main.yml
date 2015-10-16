@@ -1,3 +1,3 @@
 ---
 
-  - include: install_zato.yml
+- include: install_zato.yml

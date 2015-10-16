@@ -1,49 +1,50 @@
 ---
 
-  - name: add Debian backports repository
-    apt_repository: repo="deb http://ftp.is.debian.org/debian wheezy-backports main" state=present
-    when: ansible_distribution == "Debian"
+- name: add Debian backports repository
+  apt_repository: repo="deb http://ftp.is.debian.org/debian wheezy-backports main"
+                  state=present
+  when: ansible_distribution == "Debian"
 
-  - name: Do 'apt-get update' on Debian
-    apt: update_cache=yes
-    when: ansible_distribution == "Debian"
+- name: Do 'apt-get update' on Debian
+  apt: update_cache=yes
+  when: ansible_distribution == "Debian"
 
-  - name: Install git on Debian and Ubuntu
-    apt: name=git state=present
-    when: ansible_os_family == "Debian"
+- name: Install git on Debian and Ubuntu
+  apt: name=git state=present
+  when: ansible_os_family == "Debian"
 
-  # This is a workaround for Debian: it suppresses a prompt that would otherwise
-  # make build-zato.sh script to freeze waiting for an answer from an user
-  - name: Install libpq-dev on Debian
-    apt: name=libpq-dev state=present
-    environment:
-      DEBIAN_FRONTEND: noninteractive
-    when: ansible_distribution == "Debian"
+# This is a workaround for Debian: it suppresses a prompt that would otherwise
+# make build-zato.sh script to freeze waiting for an answer from an user
+- name: Install libpq-dev on Debian
+  apt: name=libpq-dev state=present
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+  when: ansible_distribution == "Debian"
 
-  - name: Install common packages on Centos
-    yum: name={{ item }} state=present
-    with_items:
-      - epel-release
-      - git
-      - gcc
-      - make
-      - openssl-devel
-      - postgresql-devel
-      - sqlite-devel
-    when: ansible_distribution == "CentOS"
+- name: Install common packages on Centos
+  yum: name={{ item }} state=present
+  with_items:
+    - epel-release
+    - git
+    - gcc
+    - make
+    - openssl-devel
+    - postgresql-devel
+    - sqlite-devel
+  when: ansible_distribution == "CentOS"
 
-  - name: Install additional packages on CentOS 6
-    yum: name={{ item }} enablerepo=epel state=present
-    with_items:
-      - libev
-      - libev-devel
-      - libffi
-      - libffi-devel
-      - bzip2
-      - bzip2-devel
-      - python-setuptools
-    when: ansible_distribution == "CentOS" and ansible_distribution_version.split('.')[0]|int == 6
+- name: Install additional packages on CentOS 6
+  yum: name={{ item }} enablerepo=epel state=present
+  with_items:
+    - libev
+    - libev-devel
+    - libffi
+    - libffi-devel
+    - bzip2
+    - bzip2-devel
+    - python-setuptools
+  when: ansible_distribution == "CentOS" and ansible_distribution_version.split('.')[0]|int == 6
 
-  - name: Install pip on Centos
-    easy_install: name=pip
-    when: ansible_distribution == "CentOS"
+- name: Install pip on Centos
+  easy_install: name=pip
+  when: ansible_distribution == "CentOS"

@@ -1,3 +1,3 @@
 ---
 
-  - include: create_quickstart.yml
+- include: create_quickstart.yml

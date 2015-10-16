@@ -1,11 +1,11 @@
 ---
 
-    - name: Copy a Zato package to a repo-box
-      shell: cp "{{ project_root }}"/output/{{ system }}/zato-{{ release_version }}-{{ package_version }}_{{ architecture }}-{{ codename }}.{{ format }} \
-             "{{ project_root }}"/{{ destination }}
-      when: format == "deb"
+- name: Copy a Zato package to a repo-box
+  shell: cp "{{ project_root }}"/output/{{ system }}/zato-{{ release_version }}-{{ package_version }}_{{ architecture }}-{{ codename }}.{{ format }} \
+         "{{ project_root }}"/{{ destination }}
+  when: format == "deb"
 
-    - name: Copy a Zato rpm package to repo-box-centos
-      shell: cp "{{ project_root }}"/output/{{ system }}/zato-{{ rpmver }}.{{ codename }}.{{ architecture }}.{{ format }} \
+- name: Copy a Zato rpm package to repo-box-centos
+  shell: cp "{{ project_root }}"/output/{{ system }}/zato-{{ rpmver }}.{{ codename }}.{{ architecture }}.{{ format }} \
         "{{ project_root }}"/{{ destination }}
-      when: format == "rpm"
+  when: format == "rpm"
