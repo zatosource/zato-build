@@ -1,7 +1,5 @@
 ---
 
-    - include_vars: main.yml
-
     # Prepare vars file for distributed environment
     - name: Add "system" variable
       replace: dest=./vars/parameters.yml regexp="zato_system" replace={{ system }}
