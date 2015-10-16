@@ -4,13 +4,13 @@
 # and only then add it.
 - name: Get list of packages in the local repository
   shell: aptly repo search \
-      zato-{{ package_version }}-{{ codename }} zato
+         zato-{{ package_version }}-{{ codename }} zato
   register: package_list
   ignore_errors: True
 
 - name: Add the package to aptly repository
   shell: aptly repo add zato-{{ package_version }}-{{ codename }} \
-    /vagrant/zato-{{ release_version }}-{{ package_version }}_{{ architecture }}-{{ codename }}.{{ format }}
+         /opt/aptly/incoming/{{ distribution }}/{{ codename }}/zato-{{ release_version }}-{{ package_version }}_{{ architecture }}-{{ codename }}.{{ format }}
   when:
       "'zato_{{ release_version }}-{{ package_version }}-{{ codename }}_{{ architecture }}' not in package_list.stdout"
   register: package_added
