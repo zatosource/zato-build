@@ -1,7 +1,7 @@
 ---
 
 - name: Copy repo box's ca certificate
-  shell: cp /vagrant/{{ repo_host }}.crt /usr/local/share/ca-certificates
+  copy: src={{ repo_host }}.crt dest=/usr/local/share/ca-certificates
   become_user: root
 
 - name: Update ca certificates
