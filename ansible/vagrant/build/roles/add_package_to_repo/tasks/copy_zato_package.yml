@@ -1,0 +1,11 @@
+---
+
+- name: Copy a Zato package to a deb repo-box
+  copy: src={{ project_root }}/output/{{ system }}/zato-{{ release_version }}-{{ package_version }}_{{ architecture }}-{{ codename }}.{{ format }}
+         dest=/opt/aptly/incoming/{{ distribution }}/{{ codename }}
+  when: format == "deb"
+
+- name: Copy a Zato rpm package to repo-box-centos
+  copy: src={{ project_root }}/output/{{ system }}/zato-{{ rpmver }}.{{ codename }}.{{ architecture }}.{{ format }}
+        dest=/var/www/incoming/{{ codename }}
+  when: format == "rpm"
