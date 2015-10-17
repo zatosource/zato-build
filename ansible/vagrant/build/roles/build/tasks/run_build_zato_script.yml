@@ -9,13 +9,16 @@
   when: ansible_distribution == "CentOS"
 
 - name: Copy Zato package on Debian-based i386 systems
-  shell: cp /opt/tmp/deb/zato-{{ release_version }}-{{ package_version }}_i386-{{ ansible_distribution_release }}.deb /opt/output
+  shell: cp /opt/tmp/deb/zato-{{ release_version }}-{{ package_version }}_i386-{{ ansible_distribution_release }}.deb \
+         /opt/output
   when: ansible_os_family == "Debian" and ansible_userspace_architecture == "i386"
 
 - name: Copy Zato package on Debian-based amd64 systems
-  shell: cp /opt/tmp/deb/zato-{{ release_version }}-{{ package_version }}_amd64-{{ ansible_distribution_release }}.deb /opt/output
+  shell: cp /opt/tmp/deb/zato-{{ release_version }}-{{ package_version }}_amd64-{{ ansible_distribution_release }}.deb \
+         /opt/output
   when: ansible_os_family == "Debian" and ansible_userspace_architecture == "x86_64"
 
 - name: Copy Zato package on CentOS
-  shell: cp /root/rpmbuild/RPMS/{{ ansible_userspace_architecture }}/zato-{{ rpmver }}.el{{ ansible_distribution_major_version }}.{{ ansible_userspace_architecture }}.rpm /opt/output/
+  shell: cp /root/rpmbuild/RPMS/{{ ansible_userspace_architecture }}/zato-{{ release_version }}-{{ package_version }}.el{{ ansible_distribution_major_version }}.{{ ansible_userspace_architecture }}.rpm \
+         /opt/output/
   when: ansible_distribution == "CentOS"
