@@ -1,18 +1,12 @@
 ---
 
 - hosts: localhost
+  vars_files:
+      - vars/build-box.yml
+      - vars/common.yml
 
   tasks:
 
-    - name: Prepare common vars file
-      template: src=./templates/common.j2
-                dest=./vars/common.yml
-
-    - name: Prepare box vars file
-      template: src=./templates/box_vars.j2
-                dest=./vars/build-box.yml
-
-    # Prepare build box
     - name: Prepare Vagrantfile
       template: src=./templates/base_box.j2
                 dest=vm/{{ system }}/Vagrantfile

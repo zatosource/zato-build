@@ -1,0 +1,13 @@
+---
+
+- hosts: localhost
+
+  tasks:
+
+    - name: Prepare common vars file
+      template: src=./templates/common.j2
+                dest=./vars/common.yml
+
+    - name: Prepare box vars file
+      template: src=./templates/box_vars.j2
+                dest=./vars/build-box.yml

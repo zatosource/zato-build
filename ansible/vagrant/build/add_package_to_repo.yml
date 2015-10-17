@@ -1,6 +1,6 @@
 ---
 
-    - hosts: "{{ hostname }}"
+    - hosts: "{{ repo_host }}"
       become: True
       vars:
         repo_datetime: "{{ ansible_date_time.iso8601 }}"
