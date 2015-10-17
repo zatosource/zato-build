@@ -1,4 +1,4 @@
-# Testing Zato using Ansible
+# Building and testing Zato using Ansible
 
 ## Components
 
@@ -8,7 +8,7 @@
 
 ## Vagrant boxes
 
-Ansible builds local Vagrant boxes using boxes pulled from a public
+Ansible creates local Vagrant machines using boxes pulled from a public
 catalog of Vagrant images (mainly from Bento project:
 https://github.com/chef/bento). The local boxes have to be installed
 into Vagrant in a separate step.
@@ -24,15 +24,15 @@ In order to build a package, the following procedure is required:
 ### Box preparation
 
 ```
- $ ansible-playbook prepare_build_box.yml --extra-vars "[extra-vars]"
+ $ ansible-playbook define_variables.yml --extra-vars "[extra-vars]"
 ```
 
 Extra vars being:
 
 - `box` - box name as it appears on `vagrant box list`
-- `box_name` - custom box name
-- `box_memory` - amount of memory the box will have
-- `hostname` - box's hostname
+- `box_name` - custom name for local box
+- `box_memory` - amount of memory
+- `hostname` - a host specified in the project's inventory file ('hosts')
 - `ip` - IP address of the box
 - `system` - one of:
     - debian-7-32
@@ -45,121 +45,76 @@ Extra vars being:
     - ubuntu-12.04-64
     - ubuntu-14.04-32
     - ubuntu-14.04-64
-- `release_version` - Zato version, e.g. '2.0.5'
-- `package_version` - custom version of a package, e.g. 'stable'
-- `rpmver` - if we want to build package for the Redhat family
-- `branch` - git branch the Zato package is to be build from, e.g. 'support/2.0'
-
-### Building a package
-
-```
- $ ansible-playbook build_package.yml --extra-vars "[extra-vars]" --user-vagrant --ask-pass
-```
-
-There's only one extra var to this playbook:
-
-- `release_version`
-- `package_version`
-- `system`
-- `branch`
-- `codename`
-- `rpmver`
-- `host` - a host specified in the project's inventory file (usually called 'hosts')
-
-The script responsible for building a Zato package needs more parameters and it
-takes them from a variable file (location of which may be specified in each playbook
-separately), not from command line.
-
-### Copying the new package to a repo box directory
-
-```
- $ ansible-playbook copy_package_after_build.yml --extra-vars "[extra-vars]"
-```
-
-Extra vars for this playbook are:
-
-- `system`
-- `release_version`
-- `package_version`
-- `rpmver`
+- `release_version` - Zato version, i.e. '2.0.x'
+- `package_version` - custom version of a Zato package, e.g. 'stable'
 - `architecture` - one of:
     - amd64
     - i368
     - x86_64
-- `distribution` - distribution name, e.g. 'ubuntu' or 'debian'
+- `rpmver` - if we want to build package for the Redhat family, e.g. 'el6.x86_64'
 - `format` - package format: 'deb' or 'rpm'
-- `destination` - path to either deb repo box or rpm repo box directory
-
-### Adding the package to a test repo
-
-```
- $ ansible-playbook add_package_to_repo.yml --extra-vars "[extra-vars]" --user vagrant --ask-pass
-```
-
-Extra vars:
-
-- `system`
-- `release_version`
-- `package_version`
-- `rpmver`
-- `architecture`
+- `distribution` - distribution name, e.g. 'ubuntu' or 'rhel'
 - `codename` - distribution codename, e.g. 'el6', 'trusty', 'jessie'
-- `distribution`
-- `format`
-- `host`
+- `branch` - a git branch the Zato package is to be build from, e.g. 'support/2.0'
+
+### Building a package
+
+```
+ $ ansible-playbook build_package.yml --user-vagrant --ask-pass
+```
+
+The script responsible for building a Zato package, 'build.sh', needs
+more parameters and it takes them from a variable file (location of which
+may be specified in each playbook separately), not from command line.
 
 ### Cleaning the build box
 
 Example:
 
 ```
- $ ansible-playbook clean.yml --extra-vars "system=ubuntu-14.04-64"
+ $ ansible-playbook clean.yml
 ```
+
+## Preparing test repositories
+
+### Adding the package to a test repo
+
+```
+ $ ansible-playbook add_package_to_repo.yml \
+   --extra-vars "hostname=[name-of-repo-box]" --user vagrant --ask-pass
+```
+
+Since this playbook's purpose is to add a package to a test repo,
+we need to specify repo box hostname.
+
+## Testing Zato
 
 ### Preparing a test box
 
 ```
- $ ansible-playbook clean.yml --extra-vars "[extra-vars]"
+ $ ansible-playbook prepare_test_box.yml
 ```
-
-Extra vars:
-
-- `box`
-- `box_name`
-- `box_memory`
-- `hostname`
-- `ip`
-- `system`
-- `release_version`
-- `package_version`
-- `rpmver`
-- `branch`
 
 ### Testing Zato
 
-There are many different playbooks and each is meant to test
+There are many different testing playbooks and each is meant to test
 one of Zato's features. For example, to test Zato quickstart
 with Redis and SQLite you have to execute the following:
 
 ```
-$ ansible-playbook quickstart-redis-sqlite.yml --extra-vars "[extra-vars]" \
-  --user vagrant --ask-pass
+$ ansible-playbook quickstart-redis-sqlite.yml \
+  --extra-vars "repo_host=[name-of-repo-box]" --user vagrant --ask-pass
+
 ```
 
 Extra vars:
 
-- `release_version`
-- `package_version`
-- `rpmver`
-- `system`
-- `branch`
-- `codename`
-- `project_root` - project's root directory, specified in vars/vars.yml file
+- `repo_host` - repo box hostname
 
 ### Cleaning after testing
 
 Example:
 
 ```
- $ ansible-playbook clean.yml --extra-vars "system=ubuntu-14.04-64"
+ $ ansible-playbook clean.yml
 ```
