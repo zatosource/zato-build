@@ -33,6 +33,9 @@ RPM_BUILD_DIR=/root/rpmbuild
 RHEL_VERSION=el6
 ARCH=`uname -i`
 
+# debugging
+echo DEBUG $ARCH
+
 ZATO_ROOT_DIR=/opt/zato
 ZATO_TARGET_DIR=$ZATO_ROOT_DIR/$ZATO_VERSION
 
@@ -41,7 +44,7 @@ PYTHON_ARCH_EXTENSION=tgz
 PYTHON_SRC_DIR=$TMP_DIR/Python-$PYTHON_VERSION
 PYTHON_BUILD_DIR=$CURDIR/python-build
 
-echo Building RHEL RPM zato-$ZATO_VERSION-$PACKAGE_VERSION.$RHEL_VERSION.$ARCH
+echo DEBUG Building RHEL RPM zato-$ZATO_VERSION-$PACKAGE_VERSION.$RHEL_VERSION.$ARCH
 
 function prepare {
   yum install -y rpm-build rpmdevtools wget
