@@ -116,7 +116,7 @@ function build_rpm {
 
     cp -r $ZATO_TARGET_DIR $RPM_BUILD_DIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION.$RHEL_VERSION.$ARCH$ZATO_TARGET_DIR
     cd $RPM_BUILD_DIR/SPECS
-    rpmbuild -ba zato.spec
+    rpmbuild -ba --target i386 zato.spec
 }
 
 prepare
