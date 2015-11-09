@@ -1,0 +1,7 @@
+---
+
+- hosts: localhost
+
+  tasks:
+
+      - debug: msg="Your Ansible setup is working."
