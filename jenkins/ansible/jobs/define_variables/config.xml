@@ -1,0 +1,127 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description>This job prepares a set of variables to be used in subsequent Jenkins builds.</description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <jenkins.model.BuildDiscarderProperty>
+      <strategy class="hudson.tasks.LogRotator">
+        <daysToKeep>-1</daysToKeep>
+        <numToKeep>-1</numToKeep>
+        <artifactDaysToKeep>-1</artifactDaysToKeep>
+        <artifactNumToKeep>10</artifactNumToKeep>
+      </strategy>
+    </jenkins.model.BuildDiscarderProperty>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>RELEASE_VERSION</name>
+          <description>Zato release version</description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>PACKAGE_VERSION</name>
+          <description>Zato package version (e.g. stable, test...)</description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.ChoiceParameterDefinition>
+          <name>SYSTEM</name>
+          <description>A system on which a subsequent Jenkins build will be performed</description>
+          <choices class="java.util.Arrays$ArrayList">
+            <a class="string-array">
+              <string>debian-7-32</string>
+              <string>debian-7-64</string>
+              <string>debian-8-64</string>
+              <string>redhat-6-32</string>
+              <string>redhat-6-64</string>
+              <string>ubuntu-12.04-32</string>
+              <string>ubuntu-12.04-64</string>
+              <string>ubuntu-14.04-32</string>
+              <string>ubuntu-14.04-64</string>
+            </a>
+          </choices>
+        </hudson.model.ChoiceParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>BRANCH</name>
+          <description>Zato repository branch from which a package will be build</description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>DISTRIBUTION</name>
+          <description>Name of Linux distribution. One of: debian, rhel, ubuntu</description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>CODENAME</name>
+          <description>Distribution&apos;s codename, e.g. &quot;trusty&quot;, &quot;wheezy&quot;, &quot;el6&quot;</description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>ARCHITECTURE</name>
+          <description>CPU architecture: amd64, i386 or x86_64</description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>FORMAT</name>
+          <description>Zato package format: &quot;deb&quot; or &quot;rpm&quot;</description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>RPMVER</name>
+          <description>This is only needed for rpm packages. Combination of codename and architecture, e.g. &quot;el6.i386&quot;</description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>BOX</name>
+          <description>Vagrant box name. One of the boxes on the Vagrant boxes list (use &apos;$ vagrant box list&apos; to check that</description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>BOX_NAME</name>
+          <description>Custom name of the Vagrant box</description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>HOSTNAME</name>
+          <description>Hostname for the Vagrant box. It has to match a hostname in the &apos;hosts&apos; file, which is a part of Ansible setup</description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>IP</name>
+          <description>The Vagrant box&apos;s IP address</description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>BOX_MEMORY</name>
+          <description>Amount of the Vagrant box&apos;s memory. Keep in mind that Zato on Ubuntu Trusty requires more than 1024 MB of RAM</description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>REPO_HOST</name>
+          <description>Hostname of the Vagrant box where test repository is located. It has to match a hostname in the &apos;hosts&apos; file</description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+  </properties>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>#!/bin/bash
+
+cd &quot;$ANSIBLE_ROOT&quot;
+ansible-playbook -vvvv define_vars.yml --extra-vars &quot;release_version=$RELEASE_VERSION package_version=$PACKAGE_VERSION system=$SYSTEM \
+													 branch=$BRANCH distribution=$DISTRIBUTION codename=$CODENAME architecture=$ARCHITECTURE \
+                                                     format=$FORMAT rpmver=$RPMVER box=$BOX box_name=$BOX_NAME hostname=$HOSTNAME \
+                                                     ip=$IP box_memory=$BOX_MEMORY repo_host=$REPO_HOST&quot;</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers/>
+  <buildWrappers/>
+</project>
