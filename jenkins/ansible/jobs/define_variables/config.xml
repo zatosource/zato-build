@@ -34,6 +34,7 @@
               <string>debian-8-64</string>
               <string>redhat-6-32</string>
               <string>redhat-6-64</string>
+              <string>redhat-7-64</string>
               <string>ubuntu-12.04-32</string>
               <string>ubuntu-12.04-64</string>
               <string>ubuntu-14.04-32</string>
