@@ -1,0 +1,13 @@
+---
+
+- name: Install BST dependencies
+  apt: name={{ item }} state=present update_cache=yes
+  with_items:
+      - libjpeg-dev
+      - zlib1g-dev
+
+- name: Install virtualenv
+  pip: name=virtualenv
+
+#- name: Install BST
+#  script: zato-bst-install.sh /opt/zato/env/qs-1/server1 /opt/zato/env/qs-1/server2

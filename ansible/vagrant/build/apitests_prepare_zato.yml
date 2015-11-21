@@ -1,0 +1,17 @@
+---
+
+- hosts: '{{ hostname }}'
+  become: True
+  vars:
+      - package_version: "{{ package_version }}"
+      - release_version: "{{ release_version }}"
+      - distribution: "{{ distribution }}"
+
+  roles:
+
+      - install_additional_soft
+      - install_redis
+      - prepare_install_zato_from_zatoio
+      - install_zato
+      - create_quickstart
+      - install_bst
