@@ -6,8 +6,19 @@
       - libjpeg-dev
       - zlib1g-dev
 
-- name: Install virtualenv
-  pip: name=virtualenv
+- name: Install virtualenv and PyJWT
+  pip: name={{ item }}
+  with_items:
+      - virtualenv
+      - PyJWT
 
-#- name: Install BST
-#  script: zato-bst-install.sh /opt/zato/env/qs-1/server1 /opt/zato/env/qs-1/server2
+- name: Copy zato-bst-install.sh to a remote host
+  copy: src=./files/zato-bst-install.sh dest=/opt/zato/
+        owner=zato
+        group=zato
+        mode="u+x,g+x,o+x"
+
+- name: Install BST
+  shell: ./zato-bst-install.sh /opt/zato/env/qs-1/server1 /opt/zato/env/qs-1/server2
+         chdir=/opt/zato
+

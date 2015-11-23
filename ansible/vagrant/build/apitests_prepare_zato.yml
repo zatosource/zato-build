@@ -6,6 +6,7 @@
       - package_version: "{{ package_version }}"
       - release_version: "{{ release_version }}"
       - distribution: "{{ distribution }}"
+      - repository: "{{ repository }}"
 
   roles:
 
@@ -15,3 +16,4 @@
       - install_zato
       - create_quickstart
       - install_bst
+      - hot_deploy_services
