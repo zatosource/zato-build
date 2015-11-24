@@ -1,0 +1,4 @@
+---
+
+- include: hot_deploy_from_repo.yml
+  become_user: zato

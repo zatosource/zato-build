@@ -47,7 +47,7 @@ sed -i 's/$BST_PASSWORD/'\"$(cat $ZATO_ROOT/random_password.txt)\"'/g' \
 for SERVER in ${ZATO_SERVERS[@]}
 do
     echo "Stopping Zato server: "$SERVER
-    zato stop $SERVER
+    /opt/zato/current/bin/zato stop $SERVER
 done
 
 for SERVER in ${ZATO_SERVERS[@]}
@@ -61,7 +61,7 @@ do
     cp $BST_ROOT/sample.txt $SERVER/config/repo/proc/bst
 
     echo "Starting Zato server..."
-    zato start $SERVER
+    /opt/zato/current/bin/zato start $SERVER
     sleep 60
 
     echo "Hot-deploying BST services..."
@@ -75,7 +75,7 @@ do
 done
 
 echo "Importing REST channels and their credentials..."
-zato enmasse $ZATO_SERVER/ \
+/opt/zato/current/bin/zato enmasse $ZATO_SERVER/ \
      --input $BST_ROOT/bst-enmasse.json \
      --import --replace-odb-objects
 

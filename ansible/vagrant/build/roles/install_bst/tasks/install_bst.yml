@@ -21,4 +21,5 @@
 - name: Install BST
   shell: ./zato-bst-install.sh /opt/zato/env/qs-1/server1 /opt/zato/env/qs-1/server2
          chdir=/opt/zato
+  become_user: zato
 

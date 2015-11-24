@@ -1,0 +1,43 @@
+---
+
+- name: Stop Zato servers
+  shell: /opt/zato/current/bin/zato stop {{ item }}
+         chdir=/opt/zato/env/qs-1
+  with_items:
+      - server1
+      - server2
+
+- name: Add utils to zato_extra_paths
+  shell: cp -r /opt/zato/services/zato_extra_paths/*.py \
+         /opt/zato/current/zato_extra_paths
+
+- name: Start Zato servers
+  shell: /opt/zato/current/bin/zato start {{ item }}
+         chdir=/opt/zato/env/qs-1
+  with_items:
+      - server1
+      - server2
+
+- name: Wait for the servers to get up
+  pause: seconds=30
+
+- name: Move the services to pickup-dir
+  shell: cp /opt/zato/services/services/*.py \
+         /opt/zato/env/qs-1/{{ item }}/pickup-dir
+  with_items:
+      - server1
+      - server2
+
+- name: Copy BST definitions
+  shell: cp -f /opt/zato/services/bst/outreach_intake.txt \
+         /opt/zato/env/qs-1/{{ item }}/config/repo/proc/bst/
+  with_items:
+      - server1
+      - server2
+
+- name: Use zato enmasse
+  shell: /opt/zato/current/bin/zato enmasse \
+         /opt/zato/env/qs-1/server1/ \
+         --input /opt/zato/services/server_objects/master-enmasse.json \
+         --import \
+         --replace-odb-object
