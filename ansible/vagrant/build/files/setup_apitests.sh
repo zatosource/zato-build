@@ -26,23 +26,35 @@ else
 fi
 
 cd "$ANSIBLE_ROOT"/vm/"$SYSTEM"
-# Try to launch the box
-vagrant up
-STATUS="$?"
 
-# Remove the box if it's present or create a new one if it's not
-if ! "$STATUS" == "0"; then
-    echo "There already is a Ubuntu box up and running..."
-    echo "Destroying it and building a new one."
-    cd "$ANSIBLE_ROOT"
-    ansible-playbook clean.yml
-    ansible-playbook prepare_test_box.yml
+# Check for Vagrantfile, create a box if it doesn't exist,
+# launch the box if it does exist:w
+if [ -f "Vagrantfile" ]; then
+    vagrant up
+    STATUS="$?"
+    if [ "$STATUS" == 0 ]; then
+        echo "There already is a Ubuntu box up and running..."
+        echo "Do you want it to be destroyed and a new one build? [y/n]"
+        read ANSWER
+        if [ "$ANSWER" == "y" ]; then
+            echo "Destroying it and building a new one..."
+            cd "$ANSIBLE_ROOT"
+            ansible-playbook clean.yml
+            ansible-playbook prepare_test_box.yml
+        elif [ "$ANSWER" == "n" ]; then
+            echo "Proceeding with apitests..."
+        else
+            echo "Answer should be either "y" or "n""
+            exit 1
+        fi
+    fi
 else
-    echo "Building a new Ubuntu box."
+    echo "Building a new Ubuntu box..."
     cd "$ANSIBLE_ROOT"
     ansible-playbook prepare_test_box.yml
 fi
 
+cd "$ANSIBLE_ROOT"
 ansible-playbook apitests_prepare_zato.yml \
     --extra-vars "hostname=$HOSTNAME release_version=$RELEASE_VERSION
                   package_version=$PACKAGE_VERSION distribution=$DISTRIBUTION" \
