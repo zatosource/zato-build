@@ -1,8 +1,21 @@
 ---
 
-#- name: Clone git repo
-#  git: repo= git@bitbucket.org:dsuch/pah-zato-services.git
-#       dest=/opt/zato/development
+- name: Clone git repo
+  git: repo={{ repository }}
+       dest=/opt/zato/development
+       accept_hostkey=yes
+       key_file=/opt/zato/.ssh/deployment_key_rsa
+
+- name: Check if the servers are running
+  command: /opt/zato/current/bin/zato info {{ item }}
+         chdir=/opt/zato/env/qs-1/
+  with_items:
+      - server1
+      - server2
+
+- name: Drop and re-add zato database and user
+  shell: psql -f /opt/zato/development/sql/deploy_drop_re-add_zato.sql
+  become_user: postgres
 
 - name: Stop Zato components
   service: name=zato state=stopped
@@ -19,7 +32,7 @@
       - server2
 
 - name: Add utils to zato_extra_paths
-  shell: cp /opt/zato/services/zato_extra_paths/*.py \
+  shell: cp /opt/zato/development/zato_extra_paths/*.py \
          /opt/zato/current/zato_extra_paths
 
 - name: Start Zato components
@@ -37,14 +50,14 @@
       - server2
 
 - name: Move the services to pickup-dir
-  shell: cp /opt/zato/services/services/*.py \
+  shell: cp /opt/zato/development/services/*.py \
          /opt/zato/env/qs-1/{{ item }}/pickup-dir
   with_items:
       - server1
       - server2
 
 - name: Copy BST definitions
-  shell: cp -f /opt/zato/services/bst/outreach_intake.txt \
+  shell: cp -f /opt/zato/development/bst/outreach_intake.txt \
          /opt/zato/env/qs-1/{{ item }}/config/repo/proc/bst/
   with_items:
       - server1
@@ -53,6 +66,6 @@
 - name: Use zato enmasse
   shell: /opt/zato/current/bin/zato enmasse \
          /opt/zato/env/qs-1/server1/ \
-         --input /opt/zato/services/server_objects/master-enmasse.json \
+         --input /opt/zato/development/server_objects/master-enmasse.json \
          --import \
          --replace-odb-object

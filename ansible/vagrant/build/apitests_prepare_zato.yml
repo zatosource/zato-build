@@ -6,14 +6,20 @@
       - package_version: "{{ package_version }}"
       - release_version: "{{ release_version }}"
       - distribution: "{{ distribution }}"
-      - repository: "{{ repository }}"
+  vars_files:
+      - vars/vars.yml
 
   roles:
 
+      - configure_sshd
       - install_additional_soft
       - install_redis
+      - install_postgresql
+      - configure_postgresql
       - prepare_install_zato_from_zatoio
       - install_zato
-      - create_quickstart
+      - create_quickstart_postgresql
       - install_bst
+      - install_zato_apitest
+      - setup_deployment_keys
       - hot_deploy_services
