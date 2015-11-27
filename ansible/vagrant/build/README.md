@@ -60,7 +60,8 @@ Extra vars being:
 ### Building a package
 
 ```
- $ ansible-playbook build_package.yml --user-vagrant --ask-pass
+ $ ansible-playbook build_package.yml --user-vagrant \
+   --private-key ./vm/{{ system }}/.vagrant/machines/default/virtualbox/private_key
 ```
 
 The script responsible for building a Zato package, 'build.sh', needs
@@ -81,7 +82,8 @@ Example:
 
 ```
  $ ansible-playbook add_package_to_repo.yml \
-   --extra-vars "hostname=[name-of-repo-box]" --user vagrant --ask-pass
+   --extra-vars "hostname=[name-of-repo-box]" --user vagrant \
+   --private-key ./vm/{{ system }}/.vagrant/machines/default/virtualbox/private_key
 ```
 
 Since this playbook's purpose is to add a package to a test repo,
@@ -103,7 +105,8 @@ with Redis and SQLite you have to execute the following:
 
 ```
 $ ansible-playbook quickstart-redis-sqlite.yml \
-  --extra-vars "repo_host=[name-of-repo-box]" --user vagrant --ask-pass
+  --extra-vars "repo_host=[name-of-repo-box]" --user vagrant \
+  --private-key ./vm/{{ system }}/.vagrant/machines/default/virtualbox/private_key
 
 ```
 
