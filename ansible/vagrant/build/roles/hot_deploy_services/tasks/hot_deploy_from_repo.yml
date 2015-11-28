@@ -40,7 +40,7 @@
   become_user: root
 
 - name: Wait for the servers to get up
-  pause: seconds=60
+  pause: seconds=30
 
 - name: Check if the servers are running
   command: /opt/zato/current/bin/zato info {{ item }}
@@ -63,9 +63,15 @@
       - server1
       - server2
 
-- name: Use zato enmasse
+- name: List all server objects
+  shell: ls -1 /opt/zato/development/server_objects/
+  register: server_objects
+
+- name: Execute zato enmasse
   shell: /opt/zato/current/bin/zato enmasse \
          /opt/zato/env/qs-1/server1/ \
-         --input /opt/zato/development/server_objects/master-enmasse.json \
+         --input /opt/zato/development/server_objects/{{ item }} \
          --import \
          --replace-odb-object
+  with_items:
+      - "{{ server_objects.stdout_lines }}"
