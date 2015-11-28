@@ -59,10 +59,17 @@ do
 
     echo "Copying sample BST definitions..."
     cp $BST_ROOT/sample.txt $SERVER/config/repo/proc/bst
+done
 
+for SERVER in ${ZATO_SERVERS[@]}
+do
     echo "Starting Zato server..."
     /opt/zato/current/bin/zato start $SERVER
     sleep 60
+done
+
+for SERVER in ${ZATO_SERVERS[@]}
+do
 
     echo "Hot-deploying BST services..."
     cp $BST_ROOT/src/zato/bst/services.py $SERVER/pickup-dir
