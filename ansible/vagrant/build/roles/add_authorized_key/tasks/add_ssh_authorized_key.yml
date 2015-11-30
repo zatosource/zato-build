@@ -1,14 +1,14 @@
 ---
 
-    - name: Add an authorized SSH key to allow log in as root
-      authorized_key: user=root
-                      key="{{ lookup('file', '~/.ssh/ansible/id_rsa_root.pub')  }}"
-                      manage_dir=yes
-                      state=present
+- name: Add an authorized SSH key to allow log in as root
+  authorized_key: "user=root
+                  key={{ lookup('file', '~/.ssh/ansible/id_rsa_root.pub') }}
+                  manage_dir=yes
+                  state=present"
 
-    - name: Change ssh key for vagrant user
-      authorized_key: user=vagrant
-                      key="{{ lookup('file', '~/.ssh/ansible/id_rsa_vagrant.pub')  }}"
-                      manage_dir=yes
-                      state=present
+- name: Change ssh key for vagrant user
+  authorized_key: "user=vagrant
+                  key={{ lookup('file', '~/.ssh/ansible/id_rsa_vagrant.pub') }}
+                  manage_dir=yes
+                  state=present"
 
