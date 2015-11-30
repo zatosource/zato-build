@@ -12,10 +12,3 @@
   with_items:
       - deployment_key_rsa
       - deployment_key_rsa.pub
-
-- name: Clone git repo
-  git: repo={{ repository }}
-       dest=/opt/zato/development
-       accept_hostkey=yes
-       key_file=/opt/zato/.ssh/deployment_key_rsa
-  become_user: zato
