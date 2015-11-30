@@ -15,3 +15,7 @@
 
     - name: Create a vagrant box
       shell: vagrant up chdir=./vm/{{ system }}
+
+    - name: Copy vagrant user's private key
+      shell: cp ./vm/{{ system }}/.vagrant/machines/default/virtualbox/private_key \
+              ./files/vagrant_key/
