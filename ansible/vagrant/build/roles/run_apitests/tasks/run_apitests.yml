@@ -1,0 +1,4 @@
+---
+
+- name: Run Zato apitests
+  shell: apitest run {{ test_suite }} chdir=/opt/zato

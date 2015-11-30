@@ -1,0 +1,10 @@
+---
+
+- hosts: '{{ hostname }}'
+  become: True
+  vars:
+      - test_suite: "{{ test_suite }}"
+
+  roles:
+
+      - run_apitests
