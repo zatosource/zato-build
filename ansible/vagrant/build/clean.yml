@@ -16,5 +16,6 @@
           - synced
           - Vagrantfile
 
-      #- name: Clean vars file
-      #  shell: cp parameters.template parameters.yml chdir=./vars
+      - name: Remove vagrant user's private_key
+        shell: rm ./files/vagrant_key/private_key
+        ignore_errors: yes
