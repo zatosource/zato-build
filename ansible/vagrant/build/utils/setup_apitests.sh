@@ -69,5 +69,5 @@ ansible-playbook -vvvv apitests_prepare_zato.yml \
                   repository=$REPOSITORY"
 
 echo "Running API tests..."
-ansible-playbook -vvvv run_apitests.yml \
-    --extra-vars "test_suite=$TEST_SUITE"
+ansible-playbook -vvvv apitests_run.yml \
+    --extra-vars "hostname=$HOSTNAME test_suite=$TEST_SUITE"
