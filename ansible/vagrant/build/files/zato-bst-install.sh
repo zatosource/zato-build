@@ -70,7 +70,6 @@ done
 
 for SERVER in ${ZATO_SERVERS[@]}
 do
-
     echo "Hot-deploying BST services..."
     cp $BST_ROOT/src/zato/bst/services.py $SERVER/pickup-dir
     sleep 60
