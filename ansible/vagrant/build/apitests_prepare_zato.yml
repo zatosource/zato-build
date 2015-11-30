@@ -6,6 +6,7 @@
       - package_version: "{{ package_version }}"
       - release_version: "{{ release_version }}"
       - distribution: "{{ distribution }}"
+      - repository: "{{ repository }}"
   vars_files:
       - vars/vars.yml
 
