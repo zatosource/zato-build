@@ -20,6 +20,7 @@
       - prepare_install_zato_from_zatoio
       - install_zato
       - create_quickstart_postgresql
+      - configure_zato
       - install_bst
       - install_zato_apitest
       - setup_deployment_keys
