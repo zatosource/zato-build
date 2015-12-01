@@ -13,10 +13,6 @@
       - server1
       - server2
 
-- name: Drop and re-add zato database and user
-  shell: psql -f /opt/zato/development/sql/deploy_drop_re-add_zato.sql
-  become_user: postgres
-
 - name: Stop Zato components
   service: name=zato state=stopped
   become_user: root
@@ -40,7 +36,7 @@
   become_user: root
 
 - name: Wait for the servers to get up
-  pause: seconds=30
+  pause: seconds=90
 
 - name: Check if the servers are running
   command: /opt/zato/current/bin/zato info {{ item }}
