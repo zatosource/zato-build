@@ -1,11 +1,11 @@
 ---
 
 - name: Add 'zato' user
-  postgresql_user: name=zato1 
+  postgresql_user: name=zato
                    role_attr_flags=NOSUPERUSER,NOCREATEDB,NOCREATEROLE
 
-- name: Create 'zato1' database
-  postgresql_db: name=zato1 owner=zato1
+- name: Create 'zato' database
+  postgresql_db: name=zato owner=zato
 
-- name: Add password to user zato1
-  shell: psql --dbname zato1 --command="ALTER ROLE zato1 WITH PASSWORD 'zato1'"
+- name: Add password to user zato
+  shell: psql --dbname zato --command="ALTER ROLE zato WITH PASSWORD 'zato'"
