@@ -1,0 +1,27 @@
+---
+
+- name: Open the service ports in db
+  shell: psql --dbname zato --username zato \
+         --command="UPDATE cluster SET lb_host='0.0.0.0';"
+
+- name: Change web-admin password
+  shell: /opt/zato/current/bin/zato update password \
+         --password admin /opt/zato/env/qs-1/web-admin admin
+
+- name: Open the LB service ports to public IP
+  shell: sed -i "s/bind 127.0.0.1:11223/bind 0.0.0.0:11223/" \
+         /opt/zato/env/qs-1/load-balancer/config/repo/zato.config
+
+- name: Open the server service ports to public IP
+  shell: sed -i "s/gunicorn_bind=localhost:{{ item.port }}/gunicorn_bind=0.0.0.0:{{ item.port }}/" \
+         /opt/zato/env/qs-1/{{ item.server }}/config/repo/server.conf
+  with_items:
+      - { port: '17010', server: 'server1' }
+      - { port: '17011', server: 'server2' }
+
+- name: Change number of gunicorn workers
+  shell: sed -i "s/gunicorn_workers=2/gunicorn_workers=1/" \
+         /opt/zato/env/qs-1/{{ item }}/config/repo/server.conf
+  with_items:
+      - server1
+      - server2
