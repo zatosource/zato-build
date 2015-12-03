@@ -4,11 +4,12 @@
   apt: name={{ item }} state=present
        update_cache=yes
   with_items:
+      - build-essential
       - libpq-dev
+      - libyaml-dev
       - libxml2-dev
       - libxslt1-dev
       - python-dev
-      - libyaml-dev
 
 - name: Install zato-apitest
   pip: name=zato-apitest
