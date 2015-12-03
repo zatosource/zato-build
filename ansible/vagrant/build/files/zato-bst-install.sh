@@ -35,6 +35,8 @@ ln -s $BST_ROOT/bst-env/lib/python2.7/site-packages/webcolors.py \
       $ZATO_ROOT/current/zato_extra_paths
 ln -s $BST_ROOT/src/zato/bst/__init__.py \
       $ZATO_ROOT/current/zato_extra_paths/zato_bst.py
+ln -s $BST_ROOT/src/zato/bst/__init__.py \
+      $ZATO_ROOT/current/zato_extra_paths/zato_transitions.py
 
 # Generate a random password...
 echo "Generating a random password and saving it to a file..."
@@ -44,11 +46,20 @@ sed -i 's/$BST_PASSWORD/'\"$(cat $ZATO_ROOT/random_password.txt)\"'/g' \
        $BST_ROOT/bst-enmasse.json
 
 # Servers have to be stopped before proceeding
-for SERVER in ${ZATO_SERVERS[@]}
+#for SERVER in ${ZATO_SERVERS[@]}
+#do
+#    echo "Stopping Zato server: "$SERVER
+#    /opt/zato/current/bin/zato stop $SERVER
+#done
+
+echo "Stopping all Zato components..."
+declare -A COMPONENTS
+for COMPONENT in "${ZATO_COMPONENTS[@]}"
 do
-    echo "Stopping Zato server: "$SERVER
-    /opt/zato/current/bin/zato stop $SERVER
+    echo "Stopping ""$COMPONENT"
+    /opt/zato/current/bin/zato stop "$COMPONENT"
 done
+sleep 30
 
 for SERVER in ${ZATO_SERVERS[@]}
 do
@@ -61,22 +72,21 @@ do
     cp $BST_ROOT/sample.txt $SERVER/config/repo/proc/bst
 done
 
-for SERVER in ${ZATO_SERVERS[@]}
+for COMPONENT in ${ZATO_COMPONENTS[@]}
 do
-    echo "Starting Zato server..."
-    /opt/zato/current/bin/zato start $SERVER
-    sleep 60
+    echo "Starting Zato components..."
+    /opt/zato/current/bin/zato start $COMPONENT
 done
+sleep 60
 
 for SERVER in ${ZATO_SERVERS[@]}
 do
     echo "Hot-deploying BST services..."
     cp $BST_ROOT/src/zato/bst/services.py $SERVER/pickup-dir
-    sleep 60
+    sleep 20
 
     echo "Reconfiguring Zato server..."
-    sed -i '/startup_services_first_worker/a \
-        labs.proc.bst.definition.startup-setup=' \
+    sed -i 's/zato.kvdb.log-connection-info=/zato.kvdb.log-connection-info=\nlabs.proc.bst.definition.startup-setup=/' \
         $SERVER/config/repo/server.conf
 done
 
