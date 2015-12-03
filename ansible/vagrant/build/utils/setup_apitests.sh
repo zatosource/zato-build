@@ -1,5 +1,11 @@
 #!/bin/bash
 
+if [[ -z "$1"  ]]
+then
+echo You have to pass a URL to a repository
+    exit 1
+fi
+
 ANSIBLE_ROOT="$(dirname `pwd`)"
 
 # Ansible playbook parameters
@@ -8,7 +14,7 @@ RELEASE_VERSION=2.0.7
 PACKAGE_VERSION=stable
 DISTRIBUTION=ubuntu
 SYSTEM=ubuntu-14.04-64
-REPOSITORY=
+REPOSITORY=$1
 TEST_SUITE=/opt/zato/development/tests/apitests
 
 # Path to vagrant's user private key
