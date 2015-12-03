@@ -2,13 +2,10 @@
 
 - hosts: '{{ hostname }}'
   become: True
-  vars:
-      - package_version: "{{ package_version }}"
-      - release_version: "{{ release_version }}"
-      - distribution: "{{ distribution }}"
-      - repository: "{{ repository }}"
   vars_files:
-      - vars/vars.yml
+      - vars/build-box.yml
+      - vars/common.yml
+      - vars/test_suite.yml
 
   roles:
 
