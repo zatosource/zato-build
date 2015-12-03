@@ -1,4 +1,9 @@
 ---
 
 - name: Run Zato apitests
-  shell: apitest run {{ test_suite }} chdir=/opt/zato
+  shell: apitest run {{ test_suite }} 2>&1 | tee /opt/zato/apitests-result.txt
+         chdir=/opt/zato
+
+- name: Copy test results to .vagrant directory
+  shell: cp /opt/zato/apitests-result.txt /vagrant
+  become_user: vagrant
