@@ -17,6 +17,10 @@ PRIVATE_KEY="$ANSIBLE_ROOT"/vm/"$SYSTEM"/.vagrant/machines/default/virtualbox/pr
 BOX_NAME="trusty64"
 BOX_URL="http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_ubuntu-14.04_chef-provisionerless.box"
 
+BOX="$BOX_NAME"
+BOX_MEMORY=1512
+IP=10.2.3.20
+
 BOX_ON_LIST=`vagrant box list | grep "$BOX_NAME"`
 
 if ! grep -q "$BOX_NAME" <<<"$BOX_ON_LIST"; then
@@ -26,6 +30,17 @@ else
     echo "The box "$BOX_NAME" is already installed. Skipping"
 fi
 
+# Define variables
+cd "$ANSIBLE_ROOT"
+echo "Preparing variables..."
+ansible-playbook -vvvv define_vars_test_suite.yml \
+    --extra-vars "box=$BOX_NAME box_name=$BOX_NAME box_memory=$BOX_MEMORY
+                  hostname=$HOSTNAME system=$SYSTEM ip=$IP
+                  release_version=$RELEASE_VERSION package_version=$PACKAGE_VERSION
+                  distribution=$DISTRIBUTION repository=$REPOSITORY
+                  test_suite=$TEST_SUITE project_root=$ANSIBLE_ROOT"
+
+# Launch the box
 cd "$ANSIBLE_ROOT"/vm/"$SYSTEM"
 
 # Check for Vagrantfile, create a box if it doesn't exist,
@@ -44,7 +59,7 @@ if [ -f "Vagrantfile" ]; then
                    cd "$ANSIBLE_ROOT"
                    echo "Removing the box..."
                    ansible-playbook -vvvv clean.yml
-                   echo "Building a new box"
+                   echo "Building a new box..."
                    ansible-playbook -vvvv prepare_test_box.yml
                    break ;;
 
@@ -63,11 +78,10 @@ fi
 
 cd "$ANSIBLE_ROOT"
 echo "Preparing Zato quickstart environment..."
-ansible-playbook -vvvv apitests_prepare_zato.yml \
-    --extra-vars "hostname=$HOSTNAME release_version=$RELEASE_VERSION
-                  package_version=$PACKAGE_VERSION distribution=$DISTRIBUTION
-                  repository=$REPOSITORY"
+ansible-playbook -vvvv apitests_prepare_zato.yml
 
 echo "Running API tests..."
-ansible-playbook -vvvv apitests_run.yml \
-    --extra-vars "hostname=$HOSTNAME test_suite=$TEST_SUITE"
+ansible-playbook -vvvv apitests_run.yml
+
+echo "Destroying the box..."
+ansible-playbook -vvvv clean.yml
