@@ -8,7 +8,17 @@
         group=zato
 
 - name: Change SSH key permissions
-  file: path=/opt/zato/.ssh/{{ item }} mode=0600
+  file: path=/opt/zato/.ssh/{{ item }} mode=0600 owner=zato group=zato
   with_items:
       - deployment_key_rsa
       - deployment_key_rsa.pub
+
+- name: Create SSH config file
+  file: path=/opt/zato/.ssh/config state=touch
+  become_user: zato
+
+- name: Define IdentityFile for SSH connections
+  lineinfile: dest=/opt/zato/.ssh/config
+              line='IdentityFile /opt/zato/.ssh/deployment_key_rsa'
+              state=present
+  become_user: zato
