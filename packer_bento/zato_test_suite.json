@@ -99,8 +99,10 @@
         "scripts/zato/install_redis.sh",
         "scripts/zato/install_zato.sh",
         "scripts/zato/create_quickstart.sh",
+        "scripts/test_suite/configure_zato.sh",
         "scripts/test_suite/install_zato_apitest.sh",
         "scripts/test_suite/install_bst.sh",
+        "scripts/test_suite/install_django.sh",
         "scripts/zato/cleanup.sh",
         "scripts/common/minimize.sh"
       ],
