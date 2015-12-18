@@ -46,8 +46,13 @@ ansible-playbook -vvvv define_vars_test_suite.yml \
                   distribution=$DISTRIBUTION repository=$REPOSITORY
                   test_suite=$TEST_SUITE project_root=$ANSIBLE_ROOT"
 
-# Launch the box
-cd "$ANSIBLE_ROOT"/vm/"$SYSTEM"
+# Launch the box:
+if [ -d "$ANSIBLE_ROOT"/vm/"$SYSTEM" ]; then
+    cd "$ANSIBLE_ROOT"/vm/"$SYSTEM"
+else
+    mkdir "$ANSIBLE_ROOT"/vm/"$SYSTEM"
+    cd "$ANSIBLE_ROOT"/vm/"$SYSTEM"
+fi
 
 # Check for Vagrantfile, create a box if it doesn't exist,
 # launch the box if it does exist:w
@@ -89,5 +94,5 @@ ansible-playbook -vvvv apitests_prepare_zato.yml
 echo "Running API tests..."
 ansible-playbook -vvvv apitests_run.yml
 
-echo "Destroying the box..."
-ansible-playbook -vvvv clean.yml
+#echo "Destroying the box..."
+#ansible-playbook -vvvv clean.yml
