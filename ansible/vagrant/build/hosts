@@ -10,6 +10,7 @@ ubuntu-1204-64
 ubuntu-1404-32
 ubuntu-1404-64
 
+
 [oracle-host]
 oracle-box
 
@@ -33,3 +34,6 @@ web-admin ansible_ssh_host=10.5.5.15
 repo-box-centos ansible_ssh_host=10.2.3.88
 repo-box-ubuntu ansible_ssh_host=10.2.3.89
 aptly-test-box ansible_ssh_host=10.2.3.95
+
+[test-suite-host]
+esb-test-suite ansible_ssh_host=10.33.33.33
