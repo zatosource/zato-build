@@ -19,3 +19,6 @@
     - name: Copy vagrant user's private key
       shell: cp ./vm/{{ system }}/.vagrant/machines/default/virtualbox/private_key \
               ./files/vagrant_key/
+
+    - name: Set the private_key mode to 0600
+      file: path=./files/vagrant_key/private_key mode=0600
