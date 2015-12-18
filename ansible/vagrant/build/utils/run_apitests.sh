@@ -9,7 +9,7 @@ fi
 ANSIBLE_ROOT="$(dirname `pwd`)"
 
 # Ansible playbook parameters
-HOSTNAME=ubuntu-1404-64
+HOSTNAME=esb-test-suite
 RELEASE_VERSION=2.0.7
 PACKAGE_VERSION=stable
 DISTRIBUTION=ubuntu
@@ -25,7 +25,7 @@ BOX_URL="http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_ubu
 
 BOX="$BOX_NAME"
 BOX_MEMORY=1512
-IP=10.2.3.20
+IP=10.33.33.33
 
 BOX_ON_LIST=`vagrant box list | grep "$BOX_NAME"`
 
@@ -55,7 +55,7 @@ else
 fi
 
 # Check for Vagrantfile, create a box if it doesn't exist,
-# launch the box if it does exist:w
+# launch the box if it does exist
 if [ -f "Vagrantfile" ]; then
     vagrant up
     STATUS="$?"
