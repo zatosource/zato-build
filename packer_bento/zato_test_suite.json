@@ -95,6 +95,7 @@
         "scripts/ubuntu/vagrant.sh",
         "scripts/common/vmtools.sh",
         "scripts/ubuntu/cleanup.sh",
+        "scripts/common/utils.sh",
         "scripts/test_suite/install_postgresql.sh",
         "scripts/test_suite/configure_postgresql.sh",
         "scripts/zato/install_redis.sh",
@@ -104,6 +105,7 @@
         "scripts/test_suite/install_zato_apitest.sh",
         "scripts/test_suite/install_bst.sh",
         "scripts/test_suite/install_django.sh",
+        "scripts/test_suite/install_other_packages.sh",
         "scripts/zato/cleanup.sh",
         "scripts/common/minimize.sh"
       ],
