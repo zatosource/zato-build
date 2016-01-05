@@ -31,6 +31,7 @@ su - zato -c "uuidgen > /opt/zato/random_password.txt"
 su - zato -c "sed -i 's/\$BST_PASSWORD/\"$(cat /opt/zato/random_password.txt)\"/g' \
               $BST_ROOT/bst-enmasse.json"
 
+LB_ROOT=/opt/zato/env/qs-1/load-balancer
 SERVER1_ROOT=/opt/zato/env/qs-1/server1
 SERVER2_ROOT=/opt/zato/env/qs-1/server2
 
@@ -41,15 +42,19 @@ su - zato -c "mkdir -p $SERVER2_ROOT/config/repo/proc/bst"
 # Copy sample BST definitions
 su - zato -c "cp $BST_ROOT/sample.txt $SERVER1_ROOT/config/repo/proc/bst"
 
-# Start Zato servers
+# Start Zato components
+su - zato -c "/opt/zato/current/bin/zato start $LB_ROOT"
+sleep 60
 su - zato -c "/opt/zato/current/bin/zato start $SERVER1_ROOT"
+sleep 60
 su - zato -c "/opt/zato/current/bin/zato start $SERVER2_ROOT"
 sleep 60
 
 # Hot-deploy BST services
 su - zato -c "cp $BST_ROOT/src/zato/bst/services.py $SERVER1_ROOT/pickup-dir"
+sleep 30
 su - zato -c "cp $BST_ROOT/src/zato/bst/services.py $SERVER2_ROOT/pickup-dir"
-sleep 60
+sleep 30
 
 # Reconfigure Zato servers
 su - zato -c "sed -i '/startup_services_first_worker/a labs.proc.bst.definition.startup-setup=' \
@@ -58,12 +63,13 @@ su - zato -c "sed -i '/startup_services_first_worker/a labs.proc.bst.definition.
               $SERVER2_ROOT/config/repo/server.conf"
 
 # Import REST channels and their credentials
-su - zato -c "zato enmasse $SERVER1_ROOT/ \
+su - zato -c "/opt/zato/current/bin/zato enmasse $SERVER1_ROOT/ \
               --input $BST_ROOT/bst-enmasse.json \
               --import --replace-odb-objects"
 
 # Stop the servers
 sleep 30
 su - zato -c "/opt/zato/current/bin/zato stop $SERVER1_ROOT"
+sleep 30
 su - zato -c "/opt/zato/current/bin/zato stop $SERVER2_ROOT"
 sleep 30

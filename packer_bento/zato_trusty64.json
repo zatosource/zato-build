@@ -100,6 +100,7 @@
         "scripts/ubuntu/vagrant.sh",
         "scripts/common/vmtools.sh",
         "scripts/ubuntu/cleanup.sh",
+        "scripts/common/utils.sh",
         "scripts/zato/install_zato.sh",
         "scripts/zato/create_quickstart.sh",
         "scripts/zato/cleanup.sh",
