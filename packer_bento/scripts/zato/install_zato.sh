@@ -14,3 +14,6 @@ apt-get update
 
 # Install Zato
 apt-get -y install zato
+
+# Set ownership of 'current' symlink to zato
+chown -h zato:zato /opt/zato/current
