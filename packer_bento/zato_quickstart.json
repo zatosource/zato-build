@@ -68,7 +68,7 @@
     {
       "type": "atlas",
       "token": "{{user `atlas_token`}}",
-      "artifact": "rkrysiak/zato_trusty64",
+      "artifact": "zatosource/zato-2.0.7-quickstart",
       "artifact_type": "vagrant.box",
       "metadata": {
         "created_at": "{{timestamp}}",
@@ -109,7 +109,7 @@
     }
   ],
   "variables": {
-    "box_basename": "zato_trusty64",
+    "box_basename": "zato_quickstart",
     "build_timestamp": "{{isotime \"20060102150405\"}}",
     "git_revision": "__unknown_git_revision__",
     "headless": "",
@@ -121,7 +121,7 @@
     "metadata": "floppy/dummy_metadata.json",
     "mirror": "http://releases.ubuntu.com",
     "mirror_directory": "14.04.3",
-    "name": "zato_trusty64",
+    "name": "zato_quickstart",
     "no_proxy": "{{env `no_proxy`}}",
     "preseed_path": "ubuntu-14.04/preseed.cfg",
     "template": "ubuntu-14.04-amd64",
