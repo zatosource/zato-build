@@ -61,20 +61,23 @@
     }
   ],
   "post-processors": [
-    {
-      "output": "builds/{{user `box_basename`}}.{{.Provider}}.box",
-      "type": "vagrant"
-    },
-    {
-      "type": "atlas",
-      "token": "{{user `atlas_token`}}",
-      "artifact": "zatosource/zato-2.0.7-quickstart",
-      "artifact_type": "vagrant.box",
-      "metadata": {
-        "created_at": "{{timestamp}}",
-        "provider": "virtualbox"
+    [
+      {
+        "output": "builds/{{user `box_basename`}}.{{.Provider}}.box",
+        "type": "vagrant",
+        "compression_level": 9
+      },
+      {
+        "type": "atlas",
+        "token": "{{user `atlas_token`}}",
+        "artifact": "zatosource/zato-2.0.7-quickstart",
+        "artifact_type": "vagrant.box",
+        "metadata": {
+          "created_at": "{{timestamp}}",
+          "provider": "virtualbox"
+        }
       }
-    }
+    ]
   ],
   "provisioners": [
     {
@@ -101,6 +104,7 @@
         "scripts/ubuntu/cleanup.sh",
         "scripts/common/minimize.sh",
         "scripts/common/utils.sh",
+        "scripts/zato/install_redis.sh",
         "scripts/zato/install_zato.sh",
         "scripts/zato/create_quickstart.sh",
         "scripts/zato/cleanup.sh"
