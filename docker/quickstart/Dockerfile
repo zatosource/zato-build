@@ -1,14 +1,15 @@
 # Zato
 
-FROM sequenceiq/pam:ubuntu-14.04
+FROM ubuntu:14.04
 MAINTAINER Rafał Krysiak <rafal@zato.io>
 
 # Install helper programs used during Zato installation
-RUN apt-get update && apt-get install -y apt-transport-https \
+RUN apt-get update && apt-get install -y \
+    apt-transport-https \
     python-software-properties \
     software-properties-common \
+    libcurl4-openssl-dev \
     curl \
-    wget \
     redis-server \
     ssh \
     supervisor
