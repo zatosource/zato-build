@@ -1,0 +1,8 @@
+https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/supervisord.conf
+https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/update_password.config
+https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/zato_start_load_balancer
+https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/zato_start_server1
+https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/zato_start_server2
+https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/zato_start_web_admin
+https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart-dh/generate_password_zato_user.sh
+https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart-dh/generate_password_web_admin.sh
