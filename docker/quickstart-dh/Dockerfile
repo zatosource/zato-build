@@ -41,7 +41,10 @@ RUN wget -P /opt/zato -i https://raw.githubusercontent.com/zatosource/zato-build
 RUN chmod 755 /opt/zato/zato_start_load_balancer \
               /opt/zato/zato_start_server1 \
               /opt/zato/zato_start_server2 \
-              /opt/zato/zato_start_web_admin
+              /opt/zato/zato_start_web_admin \
+              /opt/zato/generate_password_zato_user.sh \
+              /opt/zato/generate_password_web_admin.sh \
+              /opt/zato/create_quickstart.sh
 
 ENV ZATO_BIN /opt/zato/*.*/bin/zato
 
