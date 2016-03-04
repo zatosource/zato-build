@@ -22,6 +22,6 @@ chpasswd < /opt/zato/change_zato_password
 echo "Setting up a password for web admin:"
 touch /opt/zato/web_admin_password
 chown zato:zato /opt/zato/web_admin_password
-su - zato "uuidgen > /opt/zato/web_admin_password"
-su - zato "echo 'password'=$(cat /opt/zato/web_admin_password) >> /opt/zato/update_password.config"
-su - zato "$ZATO_BIN from-config /opt/zato/update_password.config"
+uuidgen > /opt/zato/web_admin_password
+echo 'password'=$(cat /opt/zato/web_admin_password) >> /opt/zato/update_password.config
+$ZATO_BIN from-config /opt/zato/update_password.config
