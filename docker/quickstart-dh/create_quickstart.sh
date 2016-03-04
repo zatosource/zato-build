@@ -25,3 +25,7 @@ chown zato:zato /opt/zato/web_admin_password
 uuidgen > /opt/zato/web_admin_password
 echo 'password'=$(cat /opt/zato/web_admin_password) >> /opt/zato/update_password.config
 $ZATO_BIN from-config /opt/zato/update_password.config
+
+# Make sure zato user have ownership of all files in /opt/zato directory
+echo "Setting ownership of /opt/zato:"
+chown -R zato:zato /opt/zato
