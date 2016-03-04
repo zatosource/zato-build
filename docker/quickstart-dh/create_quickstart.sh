@@ -24,4 +24,4 @@ touch /opt/zato/web_admin_password
 chown zato:zato /opt/zato/web_admin_password
 uuidgen > /opt/zato/web_admin_password
 echo 'password'=$(cat /opt/zato/web_admin_password) >> /opt/zato/update_password.config
-$ZATO_BIN from-config /opt/zato/update_password.config
+su - zato "$ZATO_BIN from-config /opt/zato/update_password.config"
