@@ -10,13 +10,16 @@ su - zato -c "sed -i 's/gunicorn_workers=2/gunicorn_workers=1/g' $ZATO_ENV/serve
 su - zato -c "sed -i 's/gunicorn_workers=2/gunicorn_workers=1/g' $ZATO_ENV/server2/config/repo/server.conf"
 
 # Set a password for zato user
-su - zato "touch /opt/zato/zato_user_password /opt/zato/change_zato_password"
+echo "Setting up a password for zato user:"
+su - zato "touch /opt/zato/zato_user_password"
+su - zato "touch /opt/zato/change_zato_password"
 su - zato "uuidgen > /opt/zato/zato_user_password"
 su - zato "chown zato:zato /opt/zato/zato_user_password"
 su - zato "echo 'zato':$(cat /opt/zato/zato_user_password) > /opt/zato/change_zato_password"
 chpasswd < /opt/zato/change_zato_password
 
 # Set a password for web admin and append it to a config file
+echo "Setting up a password for web admin:"
 su - zato "touch /opt/zato/web_admin_password"
 su - zato "uuidgen > /opt/zato/web_admin_password"
 su - zato "echo 'password'=$(cat /opt/zato/web_admin_password) >> /opt/zato/update_password.config"
