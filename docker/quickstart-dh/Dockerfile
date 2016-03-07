@@ -45,4 +45,6 @@ RUN chmod 755 /opt/zato/zato_start_load_balancer \
               /opt/zato/generate_password_zato_user.sh \
               /opt/zato/generate_password_web_admin.sh \
               /opt/zato/create_quickstart.sh \
-              /opt/zato/start
+              /opt/zato/start.sh
+
+USER root
