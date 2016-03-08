@@ -56,6 +56,7 @@ Extra vars being:
 - `distribution` - distribution name, e.g. 'ubuntu' or 'rhel'
 - `codename` - distribution codename, e.g. 'el6', 'trusty', 'jessie'
 - `branch` - a git branch the Zato package is to be build from, e.g. 'support/2.0'
+- 'repo_host' - host where repo holding Zato packages is located
 
 The script responsible for building a Zato package, 'build.sh', needs
 more parameters and it takes them from a variable file (location of which
