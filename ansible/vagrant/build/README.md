@@ -21,7 +21,7 @@ $ vagrant box add ADDRESS
 
 In order to build a package, the following procedure is required:
 
-### Box preparation
+### Variable preparation
 
 ```
  $ ansible-playbook define_vars.yml --extra-vars "[extra-vars]"
@@ -57,20 +57,23 @@ Extra vars being:
 - `codename` - distribution codename, e.g. 'el6', 'trusty', 'jessie'
 - `branch` - a git branch the Zato package is to be build from, e.g. 'support/2.0'
 
-### Building a package
-
-```
- $ ansible-playbook build_package.yml --user-vagrant \
-   --private-key ./vm/{{ system }}/.vagrant/machines/default/virtualbox/private_key
-```
-
 The script responsible for building a Zato package, 'build.sh', needs
 more parameters and it takes them from a variable file (location of which
 may be specified in each playbook separately), not from command line.
 
-### Cleaning the build box
+### Box preparation
 
-Example:
+```
+ $ ansible-playbook prepare_build_box.yml
+```
+
+### Building a package
+
+```
+ $ ansible-playbook build_package.yml --user vagrant
+```
+
+### Cleaning the build box
 
 ```
  $ ansible-playbook clean.yml
