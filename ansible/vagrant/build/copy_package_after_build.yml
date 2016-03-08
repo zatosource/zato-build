@@ -1,10 +1,18 @@
 ---
 
-    - hosts: localhost
-      vars_files:
-          - vars/vars.yml
-          - vars/common.yml
+- hosts: localhost
+  vars_files:
+    - vars/vars.yml
+    - vars/common.yml
 
-      roles:
+  tasks:
 
-          - copy_package_after_build
+    - name: Copy a Zato package to a repo-box
+      shell: cp ./output/{{ system }}/zato-{{ release_version }}-{{ package_version }}_{{ architecture }}-{{ codename }}.{{ format }} \
+             ./{{ destination }}
+      when: format == "deb"
+
+    - name: Copy a Zato rpm package to repo-box-centos
+      shell: cp ./output/{{ system }}/zato-{{ rpmver }}.{{ codename }}.{{ architecture }}.{{ format }} \
+            ./{{ destination }}
+      when: format == "rpm"

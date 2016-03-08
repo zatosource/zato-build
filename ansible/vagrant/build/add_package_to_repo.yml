@@ -5,9 +5,9 @@
       vars:
         repo_datetime: "{{ ansible_date_time.iso8601 }}"
       vars_files:
-          - vars/vars.yml
-          - vars/common.yml
+          - vars/package.yml
           - vars/build-box.yml
+          - vars/repository.yml
 
       roles:
 
