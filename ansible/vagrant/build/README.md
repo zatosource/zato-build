@@ -24,7 +24,7 @@ In order to build a package, the following procedure is required:
 ### Box preparation
 
 ```
- $ ansible-playbook define_variables.yml --extra-vars "[extra-vars]"
+ $ ansible-playbook define_vars.yml --extra-vars "[extra-vars]"
 ```
 
 Extra vars being:
