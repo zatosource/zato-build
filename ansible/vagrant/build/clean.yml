@@ -3,6 +3,7 @@
   - hosts: localhost
     vars_files:
         - vars/common.yml
+    ignore_errors: yes
 
     tasks:
 
@@ -17,5 +18,4 @@
           - Vagrantfile
 
       - name: Remove vagrant user's private_key
-        shell: rm ./files/vagrant_key/private_key
-        ignore_errors: yes
+        file: path=./files/vagrant_key/private_key state=absent
