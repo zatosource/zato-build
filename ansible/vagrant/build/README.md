@@ -71,7 +71,7 @@ may be specified in each playbook separately), not from command line.
 ### Building a package
 
 ```
- $ ansible-playbook build_package.yml --user vagrant
+ $ ansible-playbook build_package.yml
 ```
 
 ### Cleaning the build box
@@ -85,9 +85,7 @@ may be specified in each playbook separately), not from command line.
 ### Adding the package to a test repo
 
 ```
- $ ansible-playbook add_package_to_repo.yml \
-   --extra-vars "hostname=[name-of-repo-box]" --user vagrant \
-   --private-key ./vm/{{ system }}/.vagrant/machines/default/virtualbox/private_key
+ $ ansible-playbook add_package_to_repo.yml
 ```
 
 Since this playbook's purpose is to add a package to a test repo,
@@ -108,15 +106,9 @@ one of Zato's features. For example, to test Zato quickstart
 with Redis and SQLite you have to execute the following:
 
 ```
-$ ansible-playbook quickstart-redis-sqlite.yml \
-  --extra-vars "repo_host=[name-of-repo-box]" --user vagrant \
-  --private-key ./vm/{{ system }}/.vagrant/machines/default/virtualbox/private_key
+$ ansible-playbook quickstart_redis_sqlite.yml
 
 ```
-
-Extra vars:
-
-- `repo_host` - repo box hostname
 
 ### Cleaning after testing
 
