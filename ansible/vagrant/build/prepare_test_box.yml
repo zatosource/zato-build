@@ -3,7 +3,7 @@
 - hosts: localhost
   vars_files:
       - vars/build-box.yml
-      - vars/common.yml
+      - vars/package.yml
 
   tasks:
 
