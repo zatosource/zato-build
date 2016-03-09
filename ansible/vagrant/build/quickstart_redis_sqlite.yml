@@ -3,9 +3,9 @@
 - hosts: '{{ hostname }}'
   become: True
   vars_files:
-      - vars/vars.yml
-      - vars/common.yml
-      - vars/build-box.yml
+    - vars/package.yml
+    - vars/build-box.yml
+    - vars/repository.yml
 
   roles:
 

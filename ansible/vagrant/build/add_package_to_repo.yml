@@ -1,14 +1,14 @@
 ---
 
-    - hosts: "{{ repo_host }}"
-      become: True
-      vars:
-        repo_datetime: "{{ ansible_date_time.iso8601 }}"
-      vars_files:
-          - vars/package.yml
-          - vars/build-box.yml
-          - vars/repository.yml
+- hosts: "{{ repo_host }}"
+  become: True
+  vars:
+    repo_datetime: "{{ ansible_date_time.iso8601 }}"
+  vars_files:
+    - vars/package.yml
+    - vars/build-box.yml
+    - vars/repository.yml
 
-      roles:
+  roles:
 
-          - add_package_to_repo
+    - add_package_to_repo
