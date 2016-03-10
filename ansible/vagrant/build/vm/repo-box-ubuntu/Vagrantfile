@@ -7,7 +7,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.provider "virtualbox" do |v|
         v.name = "repo-box-ubuntu"
         #v.gui = true
-        v.memory = "256"
+        v.memory = "512"
     end
     config.vm.hostname = "repo-box-ubuntu"
 
