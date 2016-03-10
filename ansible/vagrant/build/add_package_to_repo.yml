@@ -1,5 +1,16 @@
 ---
 
+- hosts: localhost
+  vars_files:
+    - vars/repository.yml
+
+  tasks:
+
+    - name: Copy vagrant user's private key
+      shell: cp  ./.vagrant/machines/default/virtualbox/private_key \
+             ../../files/vagrant_key/
+             chdir=./vm/{{ repo_host }}
+
 - hosts: "{{ repo_host }}"
   become: True
   vars:
