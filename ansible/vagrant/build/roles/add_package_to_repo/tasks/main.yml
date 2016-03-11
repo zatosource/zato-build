@@ -6,28 +6,11 @@
   when: repo_host == "repo-box-ubuntu"
   become_user: aptly
 
-- include: create_and_publish_snapshot.yml
-  register: snapshot_published
-  when: package_added.changed == True
-  become_user: aptly
-
-- include: copy_published.yml
-  when: snapshot_published.changed == True
-  become_user: aptly
-
 # These tasks relate exclusively to testing aptly.
 - include: add_package_test_aptly.yml
   when: repo_host == "aptly-test-box"
   become_user: aptly
 
-- include: create_and_publish_snapshot.yml
-  register: snapshot_published
-  when: package_added.changed == True
-  become_user: aptly
-
-- include: copy_published.yml
-  when: snapshot_published.changed == True
-  become_user: aptly
-
+# Add rpm to repo
 - include: add_rpm_to_repo.yml
   when: repo_host == "repo-box-centos"
