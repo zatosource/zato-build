@@ -33,13 +33,18 @@ else
     echo 'Apache SSL module has been already enabled.'
 fi
 
-# Copy test key and certificate for our test repo
-if [ ! -d /etc/apache2/ssl ]
-then
-    cp -r /vagrant/files/ssl /etc/apache2
-else
-    echo 'SSL keys have been set up already.'
-fi
+# Generate a key and certificate for our test repo
+# First, prepare directory hosting a certificate and a key
+sudo mkdir /etc/apache2/ssl
+
+# Create a certificate and a key
+echo "Generating key and certificate..."
+sudo openssl req -x509 -nodes -days 3650 \
+                 -subj "/C=EU/ST=Someland/L=Some City/O=Sample/CN=10.2.3.89" \
+                 -newkey rsa:2048 \
+                 -keyout /etc/apache2/ssl/repo.key \
+                 -out /etc/apache2/ssl/repo.crt
+echo "Done."
 
 # Enable test repo Virtual Host
 if [ ! -f /etc/apache2/sites-enabled/repo.conf ]
