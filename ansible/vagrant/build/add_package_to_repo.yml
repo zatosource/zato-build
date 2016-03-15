@@ -6,6 +6,9 @@
 
   tasks:
 
+    - name: Make sure a repo box is running
+      shell: vagrant up chdir=./vm/{{ repo_host }}
+
     - name: Copy vagrant user's private key
       shell: cp  ./.vagrant/machines/default/virtualbox/private_key \
              ../../files/vagrant_key/
@@ -19,6 +22,13 @@
     - vars/package.yml
     - vars/build-box.yml
     - vars/repository.yml
+
+  tasks:
+
+    - name: Fetch repo box's certificate
+      fetch: dest=./roles/prepare_install_zato/files/ \
+             src=/etc/apache2/ssl/repo-box-ubuntu.crt
+             fail_on_missing=yes
 
   roles:
 
