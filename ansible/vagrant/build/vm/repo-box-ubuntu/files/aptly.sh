@@ -3,7 +3,7 @@
 # Install Aptly and configure it
 cp /vagrant/files/aptly.list /etc/apt/sources.list.d
 
-apt-key adv --keyserver keys.gnupg.net --recv-keys E083A3782A194991
+apt-key adv --keyserver keys.gnupg.net --recv-keys 9E3E53F19C7DE460
 
 apt-get update
 apt-get -y install aptly
@@ -27,3 +27,8 @@ then
 else
     echo 'Configuration file already exists, not copying it.'
 fi
+
+# Create incoming directory to store copied Zato packages
+mkdir -p /opt/aptly/incoming/ubuntu/precise /opt/aptly/incoming/ubuntu/trusty \
+         /opt/aptly/incoming/debian/wheezy /opt/aptly/incoming/debian/jessie
+chown -R aptly:aptly /opt/aptly/incoming
