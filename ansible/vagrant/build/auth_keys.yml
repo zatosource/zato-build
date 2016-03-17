@@ -1,7 +1,0 @@
----
-
-    - hosts: '{{ host }}'
-
-      roles:
-
-            - add_authorized_key
