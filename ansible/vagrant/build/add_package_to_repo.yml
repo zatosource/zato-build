@@ -16,19 +16,24 @@
 
 - hosts: "{{ repo_host }}"
   become: True
-  vars:
-    repo_datetime: "{{ ansible_date_time.iso8601 }}"
   vars_files:
-    - vars/package.yml
-    - vars/build-box.yml
     - vars/repository.yml
 
   tasks:
 
     - name: Fetch repo box's certificate
       fetch: dest=./roles/prepare_install_zato/files/ \
-             src=/etc/apache2/ssl/repo-box-ubuntu.crt
+             src=/etc/apache2/ssl/{{ repo_host }}.crt
              fail_on_missing=yes
+
+- hosts: "{{ repo_host }}"
+  become: True
+  vars:
+    repo_datetime: "{{ ansible_date_time.iso8601 }}"
+  vars_files:
+    - vars/package.yml
+    - vars/build-box.yml
+    - vars/repository.yml
 
   roles:
 
