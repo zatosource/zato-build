@@ -1,0 +1,41 @@
+---
+
+- name: Clone Zato repository
+  git: repo=https://github.com/zatosource/zato-build.git
+       dest=/opt/tmp/
+       clone=yes
+
+- name: Run build-zato.sh script on Debian-based systems
+  shell: /opt/tmp/deb/build-zato.sh {{ package['branch'] }} \
+                                    {{ package['version'] }} \
+                                    {{ package['release'] }}
+  when: ansible_os_family == "Debian"
+
+- name: Run build-zato.sh script on CentOS
+  shell: >
+    /opt/tmp2/rhel{{ ansible_distribution_major_version }}/build-zato.sh 
+    {{ package['branch'] }} 
+    {{ package['version'] }} 
+    {{ package['release'] }} 
+  when: ansible_distribution == "CentOS"
+
+- name: Copy Zato package on Debian-based i386 systems
+  shell: >
+    cp 
+    /opt/tmp/deb/zato-{{ package['version'] }}-{{ package['release'] }}_i386-{{ ansible_distribution_release }}.deb 
+    /opt/output
+  when: ansible_os_family == "Debian" and ansible_userspace_architecture == "i386"
+
+- name: Copy Zato package on Debian-based amd64 systems
+  shell: >
+    cp 
+    /opt/tmp/deb/zato-{{ package['version'] }}-{{ package['release'] }}_amd64-{{ ansible_distribution_release }}.deb 
+    /opt/output
+  when: ansible_os_family == "Debian" and ansible_userspace_architecture == "x86_64"
+
+- name: Copy Zato package on CentOS
+  shell: >
+    cp 
+    /root/rpmbuild/RPMS/{{ ansible_userspace_architecture }}/zato-{{ package['version'] }}-{{ package['release'] }}.el{{ ansible_distribution_major_version }}.{{ ansible_userspace_architecture }}.rpm 
+    /opt/output/
+  when: ansible_distribution == "CentOS"
