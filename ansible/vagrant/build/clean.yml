@@ -1,21 +1,21 @@
 ---
 
-  - hosts: localhost
-    vars_files:
-        - vars/package.yml
-    ignore_errors: yes
+- hosts: localhost
+  vars_files:
+    - vars/main.yml
+  ignore_errors: yes
 
-    tasks:
+  tasks:
 
-      - name: Destroy vagrant box
-        shell: vagrant destroy --force chdir=./vm/{{ system }}
+    - name: Destroy vagrant box
+      shell: vagrant destroy --force chdir=./vm/{{ package['system'] }}
 
-      - name: Remove directories and files
-        file: path=./vm/{{ system }}/{{ item }} state=absent
-        with_items:
-          - .vagrant
-          - synced
-          - Vagrantfile
+    - name: Remove directories and files
+      file: path=./vm/{{ package['system'] }}/{{ item }} state=absent
+      with_items:
+        - .vagrant
+        - synced
+        - Vagrantfile
 
-      - name: Remove vagrant user's private_key
-        file: path=./files/vagrant_key/private_key state=absent
+    - name: Remove vagrant user's private_key
+      file: path=./files/vagrant_key/private_key state=absent
