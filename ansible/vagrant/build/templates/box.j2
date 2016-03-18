@@ -13,13 +13,5 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.network "private_network", ip: "{{ box['ip'] }}"
 
   config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
-  config.vm.synced_folder "../../output/{{ package['system'] }}/", "/opt/output"
-
-  {% if package['distro'] == 'rhel' %}
-      config.vm.synced_folder "./synced/", "/opt/tmp2"
-      config.vm.provision "shell", inline: "yum -y install libselinux-python"
-  {% else %}
-      config.vm.synced_folder "./synced/", "/opt/tmp"
-  {% endif %}
 
 end
