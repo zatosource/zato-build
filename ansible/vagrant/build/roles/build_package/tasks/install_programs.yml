@@ -27,6 +27,7 @@
     - epel-release
     - git
     - gcc
+    - libselinux-python
     - make
     - openssl-devel
     - postgresql-devel
