@@ -2,32 +2,31 @@
 
 - hosts: localhost
   vars_files:
-      - vars/build-box.yml
-      - vars/package.yml
+      - vars/main.yml
 
   tasks:
 
     - name: Prepare Vagrantfile
-      template: src=./templates/base_box.j2
-                dest=vm/{{ system }}/Vagrantfile
+      template: src=./templates/box.j2
+                dest=vm/{{ package['package['system']'] }}/Vagrantfile
 
     - name: Create "synced" directory
-      file: path=./vm/{{ system }}/synced
+      file: path=./vm/{{ package['package['system']'] }}/synced
             state=directory
 
     - name: Clone Zato repository to the synced directory
       git: repo=https://github.com/zatosource/zato-build.git
-           dest=./vm/{{ system }}/synced
+           dest=./vm/{{ package['system'] }}/synced
            clone=yes
 
     - name: Create a vagrant box
       shell: vagrant up
-             chdir=./vm/{{ system }}
+             chdir=./vm/{{ package['system'] }}
 
     - name: Copy vagrant user's private key
       shell: cp  ./.vagrant/machines/default/virtualbox/private_key \
              ../../files/vagrant_key/
-             chdir=./vm/{{ system }}/
+             chdir=./vm/{{ package['system'] }}/
 
     - name: Set the private_key mode to 0600
       file: path=./files/vagrant_key/private_key mode=0600

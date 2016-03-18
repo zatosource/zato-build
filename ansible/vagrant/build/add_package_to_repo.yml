@@ -2,38 +2,36 @@
 
 - hosts: localhost
   vars_files:
-    - vars/repository.yml
+    - vars/main.yml
 
   tasks:
 
     - name: Make sure a repo box is running
-      shell: vagrant up chdir=./vm/{{ repo_host }}
+      shell: vagrant up chdir=./vm/{{ repo['host'] }}
 
     - name: Copy vagrant user's private key
       shell: cp  ./.vagrant/machines/default/virtualbox/private_key \
              ../../files/vagrant_key/
-             chdir=./vm/{{ repo_host }}
+             chdir=./vm/{{ repo['host'] }}
 
-- hosts: "{{ repo_host }}"
+- hosts: "{{ repo['host'] }}"
   become: True
   vars_files:
-    - vars/repository.yml
+    - vars/main.yml
 
   tasks:
 
     - name: Fetch repo box's certificate
       fetch: dest=./roles/prepare_install_zato/files/ \
-             src=/etc/apache2/ssl/{{ repo_host }}.crt
+             src=/etc/apache2/ssl/{{ repo['host'] }}.crt
              fail_on_missing=yes
 
-- hosts: "{{ repo_host }}"
+- hosts: "{{ repo['host'] }}"
   become: True
   vars:
     repo_datetime: "{{ ansible_date_time.iso8601 }}"
   vars_files:
-    - vars/package.yml
-    - vars/build-box.yml
-    - vars/repository.yml
+    - vars/main.yml
 
   roles:
 

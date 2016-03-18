@@ -1,6 +1,6 @@
 ---
 
-- hosts: '{{ hostname }}'
+- hosts: "{{ box['hostname'] }}"
   become: True
 
   roles:

@@ -3,19 +3,19 @@ ENV["LC_ALL"] = "en_US.UTF-8"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
-  config.vm.box = "{{ box }}"
+  config.vm.box = "{{ box['base'] }}"
 
   config.vm.provider "virtualbox" do |v|
-    v.name = "{{ box_name }}"
-    v.memory = "{{ box_memory }}"
+    v.name = "{{ box['name'] }}"
+    v.memory = "{{ box['memory'] }}"
   end
-  config.vm.hostname = "{{ hostname }}"
-  config.vm.network "private_network", ip: "{{ ip }}"
+  config.vm.hostname = "{{ box['hostname'] }}"
+  config.vm.network "private_network", ip: "{{ box['ip'] }}"
 
   config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
-  config.vm.synced_folder "../../output/{{ system }}/", "/opt/output"
+  config.vm.synced_folder "../../output/{{ package['system'] }}/", "/opt/output"
 
-  {% if distribution == 'rhel' %}
+  {% if package['distro'] == 'rhel' %}
       config.vm.synced_folder "./synced/", "/opt/tmp2"
       config.vm.provision "shell", inline: "yum -y install libselinux-python"
   {% else %}
