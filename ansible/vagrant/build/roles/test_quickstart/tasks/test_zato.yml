@@ -69,7 +69,7 @@
 
 - name: Fetch certificate from repo box
   fetch: src=/opt/zato/test_results/{{ item }}
-         dest={{ root_dir }}/test_results/{{ package['system'] }}/
+         dest={{ root_dir }}/test_results/{{ package['system'] }}/{{ package['version'] }}/
          flat=yes
   with_items:
     - "{{ test_logs.stdout_lines }}"
