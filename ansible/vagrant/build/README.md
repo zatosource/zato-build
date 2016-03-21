@@ -29,11 +29,11 @@ In order to build a package, the following procedure is required:
 
 Extra vars being:
 
-- `box` - box name as it appears on `vagrant box list`
+- `base_box` - name of Vagrant base box as it appears on `vagrant box list`
 - `box_name` - custom name for local box
 - `box_memory` - amount of memory
-- `hostname` - a host specified in the project's inventory file ('hosts')
-- `ip` - IP address of the box
+- `box_hostname` - a host specified in the project's inventory file ('hosts')
+- `box_ip` - IP address of the box
 - `system` - one of:
     - debian-7-32
     - debian-7-64
@@ -45,8 +45,8 @@ Extra vars being:
     - ubuntu-12.04-64
     - ubuntu-14.04-32
     - ubuntu-14.04-64
-- `release_version` - Zato version, i.e. '2.0.x'
-- `package_version` - custom version of a Zato package, e.g. 'stable'
+- `package_version` - Zato package version, i.e. '2.0.x'
+- `package_release` - name of release, e.g. 'stable'
 - `architecture` - one of:
     - amd64
     - i368
@@ -57,15 +57,16 @@ Extra vars being:
 - `codename` - distribution codename, e.g. 'el6', 'trusty', 'jessie'
 - `branch` - a git branch the Zato package is to be build from, e.g. 'support/2.0'
 - `repo_host` - host where repo holding Zato packages is located
+- `root_dir` - project's root directory; you can use `` `echo $PWD` `` as default value
 
 The script responsible for building a Zato package, 'build.sh', needs
-more parameters and it takes them from a variable file (location of which
+more arguments and it takes them from a variable file (location of which
 may be specified in each playbook separately), not from command line.
 
 ### Box preparation
 
 ```
- $ ansible-playbook prepare_build_box.yml
+ $ ansible-playbook prepare_box.yml
 ```
 
 ### Building a package
@@ -96,14 +97,14 @@ we need to specify repo box hostname.
 ### Preparing a test box
 
 ```
- $ ansible-playbook prepare_test_box.yml
+ $ ansible-playbook prepare_box.yml
 ```
 
 ### Testing Zato
 
 There are many different testing playbooks and each is meant to test
 one of Zato's features. For example, to test Zato quickstart
-with Redis and SQLite you have to execute the following:
+environment with Redis and SQLite you have to execute the following:
 
 ```
 $ ansible-playbook quickstart_redis_sqlite.yml
