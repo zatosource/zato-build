@@ -1,6 +1,7 @@
 ---
 
 - name: Copy a Zato package to a deb repo-box
-  copy: src=../../../output/{{ system }}/zato-{{ release_version }}-{{ package_version }}_{{ architecture }}-{{ codename }}.{{ format }}
-         dest=/opt/aptly/incoming/{{ distribution }}/{{ codename }}
-  when: format == "deb"
+  copy: >
+    src=../../../output/{{ package['system'] }}/zato-{{ package['version'] }}-{{ package['release'] }}_{{ package['arch'] }}-{{ package['codename'] }}.{{ package['format'] }}
+    dest=/opt/aptly/incoming/{{ package['distro'] }}/{{ package['codename'] }}
+  when: package['format'] == "deb"

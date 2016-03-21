@@ -3,14 +3,14 @@
 - include: copy_zato_package.yml
 
 - include: add_deb_to_repo.yml
-  when: repo_host == "repo-box-ubuntu"
+  when: repo['host'] == "repo-box-ubuntu" or repo['host'] == "repo-box-ubuntu-test"
   become_user: aptly
 
 # These tasks relate exclusively to testing aptly.
 - include: add_package_test_aptly.yml
-  when: repo_host == "aptly-test-box"
+  when: repo['host'] == "aptly-test-box"
   become_user: aptly
 
 # Add rpm to repo
 - include: add_rpm_to_repo.yml
-  when: repo_host == "repo-box-centos"
+  when: repo['host'] == "repo-box-centos"

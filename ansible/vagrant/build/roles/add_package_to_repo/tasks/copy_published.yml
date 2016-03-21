@@ -1,6 +1,6 @@
 ---
 
 - name: Copy published repo to /var/www/repo directory
-  shell: cp -r /opt/aptly/.aptly/public/repo/{{ package_version }}/2.0/{{ distribution }} \
-      /var/www/repo/{{ package_version }}/2.0/
+  shell: cp -r /opt/aptly/.aptly/public/repo/{{ package['release'] }}/2.0/{{ package['distro'] }} \
+         /var/www/repo/{{ package['release'] }}/2.0/
   become_user: root

@@ -1,12 +1,14 @@
 ---
 
 - name: Add a new package to repository at repo-box-centos
-  copy: src=../../../output/{{ system }}/zato-{{ release_version }}-{{ package_version }}.{{ codename }}.{{ architecture }}.rpm
-        dest=/var/www/repo/{{ package_version }}/2.0/{{ distribution }}/{{ codename }}/{{ architecture }}
+  copy: >
+    src=../../../output/{{ package['system'] }}/zato-{{ package['version'] }}-{{ package['release'] }}.{{ package['codename'] }}.{{ package['arch'] }}.rpm
+    dest=/var/www/repo/{{ package['release'] }}/2.0/{{ package['distro'] }}/{{ package['codename'] }}/{{ package['arch'] }}
 
 - name: Sign the package using 'Expect' program
-  shell: /vagrant/files/sign_rpm_with_expect.exp {{ package_version }} {{ distribution }} {{ codename }} {{ architecture }} {{ release_version }}
+  shell: /vagrant/files/sign_rpm_with_expect.exp {{ package['release'] }} {{ package['distro'] }} \
+         {{ package['codename'] }} {{ package['arch'] }} {{ package['version'] }}
 
 - name: Update the repo (effectively add the package)
   shell: createrepo --cache ./cache --update ./
-         chdir=/var/www/repo/{{ package_version }}/2.0/{{ distribution }}/{{ codename }}/{{ architecture }}
+    chdir=/var/www/repo/{{ package['release'] }}/2.0/{{ package['distro'] }}/{{ package['codename'] }}/{{ package['arch'] }}
