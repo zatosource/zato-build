@@ -3,9 +3,7 @@
 - hosts: "{{ box['hostname'] }}"
   become: True
   vars_files:
-    - vars/package.yml
-    - vars/build-box.yml
-    - vars/repository.yml
+    - vars/main.yml
 
   roles:
 
