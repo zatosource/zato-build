@@ -1,7 +1,7 @@
 ---
 
 - name: Copy repo box's ca certificate
-  copy: src={{ repo_host }}.crt dest=/etc/pki/ca-trust/source/anchors
+  copy: src={{ repo['host'] }}.crt dest=/etc/pki/ca-trust/source/anchors
 
 - name: Enable the dynamic CA configuration
   shell: update-ca-trust enable

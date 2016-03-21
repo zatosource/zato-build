@@ -1,7 +1,7 @@
 ---
 
 - name: Copy repo box's ca certificate
-  copy: src={{ repo_host }}/etc/apache2/ssl/{{ repo_host }}.crt
+  copy: src={{ repo['host'] }}.crt
         dest=/usr/local/share/ca-certificates
   become_user: root
 
@@ -14,10 +14,10 @@
 
 # Notice that apt-key has to be performed by root
 - name: Add the package signing key
-  shell: curl -s https://{{ repo_host }}/repo/zato-deb-test.pub | apt-key add -
+  shell: curl -s https://{{ repo['host'] }}/repo/zato-deb-test.pub | apt-key add -
   become_user: root
 
 - name: Add Zato test repository
   shell: apt-add-repository \
-         https://{{ repo_host }}/repo/{{ package_version }}/2.0/{{ distribution }}
+         https://{{ repo['host'] }}/repo/{{ package['release'] }}/2.0/{{ package['distro'] }}
   become_user: root
