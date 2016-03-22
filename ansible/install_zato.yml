@@ -1,0 +1,9 @@
+---
+
+- hosts: "{{ box['hostname'] }}"
+  become: True
+
+  roles:
+
+    - prepare_install_zatoio
+    - install_zato
