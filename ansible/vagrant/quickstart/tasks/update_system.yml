@@ -1,4 +1,0 @@
----
-
-- name: update the system
-  apt: update_cache=yes upgrade=full
