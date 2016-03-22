@@ -1,0 +1,7 @@
+---
+
+- hosts: localhost
+
+  roles:
+
+    - prepare_distributed_environment

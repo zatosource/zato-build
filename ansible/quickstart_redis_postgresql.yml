@@ -1,0 +1,16 @@
+---
+
+- hosts: "{{ box['hostname'] }}"
+  become: True
+
+  roles:
+
+    - configure_sshd
+    - install_additional_soft
+    - install_redis
+    - install_postgresql
+    - configure_postgresql
+    - prepare_install_zato
+    - install_zato
+    - create_quickstart_postgresql
+    - test_quickstart

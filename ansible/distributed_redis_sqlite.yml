@@ -1,0 +1,16 @@
+---
+
+- hosts: dbservers
+  become: True
+
+  roles:
+
+    - install_redis
+
+- hosts: zato-component-hosts
+  become: True
+
+  roles:
+
+    - install_additional_soft
+    - install_zato

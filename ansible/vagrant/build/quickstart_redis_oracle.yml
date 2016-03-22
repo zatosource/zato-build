@@ -1,9 +1,0 @@
----
-
-    - hosts: oracle-box
-      become: True
-
-      roles: 
-
-          - install_oracle
-          - configure_oracle

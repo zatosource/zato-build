@@ -1,0 +1,19 @@
+---
+
+- hosts: "{{ box['hostname'] }}"
+  become: True
+  vars_files:
+    - vars/vars.yml
+    - vars/common.yml
+    - vars/build-box.yml
+
+  roles:
+
+    - install_additional_soft
+    - install_redis
+    - install_mysql
+    - configure_mysql
+    - prepare_install_zato
+    - install_zato
+    - create_quickstart_mysql
+    - test_quickstart

@@ -1,0 +1,15 @@
+---
+
+- hosts: localhost
+
+  tasks:
+
+    - name: Destroy vagrant boxes
+      shell: vagrant destroy --force chdir=./vm/distributed/{{ item }}
+      with_items: "{{ groups['zato-distributed'] }}"
+
+    - name: Remove directories and files
+      file: path=./vm/distributed/{{ item[0] }}/{{ item[1] }} state=absent
+      with_nested:
+        - "{{ groups['zato-distributed'] }}"
+        - [ '.vagrant', 'synced', 'Vagrantfile' ]
