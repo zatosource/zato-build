@@ -4,7 +4,7 @@
 
 * Vagrant
 * VirtualBox
-* Ansible
+* Ansible 2.0.1.0
 
 ## Vagrant boxes
 
