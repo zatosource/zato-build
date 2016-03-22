@@ -7,7 +7,6 @@
     - apt-transport-https
     - python-software-properties
     - software-properties-common
-    - libffi5
   when: ansible_os_family == "Debian"
 
 - name: Install libffi5 on Debian
@@ -20,5 +19,5 @@
   become_user: root
 
 - name: Add Zato test repository
-  shell: apt-add-repository https://zato.io/repo/stable/2.0/{{ package['distro'] }}
+  shell: apt-add-repository https://zato.io/repo/stable/2.0/{{ distribution }}
   become_user: root
