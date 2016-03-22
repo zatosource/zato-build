@@ -40,10 +40,10 @@ sudo mkdir /etc/apache2/ssl
 # Create a certificate and a key
 echo "Generating key and certificate..."
 sudo openssl req -x509 -nodes -days 3650 \
-                 -subj "/C=EU/ST=Someland/L=Some City/O=Sample/CN=10.2.3.89" \
+                 -subj "/C=EU/ST=Someland/L=Some City/O=Sample/CN=repo-box-ubuntu" \
                  -newkey rsa:2048 \
-                 -keyout /etc/apache2/ssl/repo.key \
-                 -out /etc/apache2/ssl/repo.crt
+                 -keyout /etc/apache2/ssl/repo-box-ubuntu.key \
+                 -out /etc/apache2/ssl/repo-box-ubuntu.crt
 echo "Done."
 
 # Enable test repo Virtual Host
