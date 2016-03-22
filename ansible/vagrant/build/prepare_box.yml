@@ -6,6 +6,9 @@
 
   tasks:
 
+    - name: Create box root directory
+      file: name=./vm/{{ package['system'] }} state=directory
+
     - name: Prepare Vagrantfile
       template: src=./templates/box.j2
                 dest=vm/{{ package['system'] }}/Vagrantfile
