@@ -1,9 +1,11 @@
 ---
 
-- hosts: "{{ box['hostname'] }}"
+- hosts: "{{ hostname }}"
   become: True
 
   roles:
 
+    - install_redis
     - prepare_install_zatoio
     - install_zato
+    - create_quickstart
