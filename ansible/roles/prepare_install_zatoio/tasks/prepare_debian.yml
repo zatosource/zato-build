@@ -1,0 +1,24 @@
+---
+
+- name: Install additional software on Debian-based systems
+  apt: name={{ item }} state=present update_cache=yes
+  with_items:
+    - curl
+    - apt-transport-https
+    - python-software-properties
+    - software-properties-common
+    - libffi5
+  when: ansible_os_family == "Debian"
+
+- name: Install libffi5 on Debian
+  apt: name=libffi5 state=present update_cache=yes
+  when: ansible_distribution == "Debian"
+
+# Notice that apt-key has to be performed by root
+- name: Add the package signing key
+  shell: curl -s https://zato.io/repo/zato-0CBD7F72.pgp.asc | apt-key add -
+  become_user: root
+
+- name: Add Zato test repository
+  shell: apt-add-repository https://zato.io/repo/stable/2.0/{{ package['distro'] }}
+  become_user: root
