@@ -38,11 +38,9 @@ ZATO_TARGET_DIR=$ZATO_ROOT_DIR/$ZATO_VERSION
 if command -v lsb_release > /dev/null; then
     release=$(lsb_release -c | cut -f2)
     if [[ "$release" == "precise" ]] || [[ "$release" == "wheezy" ]]; then
-        echo $release
         LIBUMFPACK_VERSION=5.4.0
     else
         LIBUMFPACK_VERSION=5.6.2
-        echo $release
     fi
 fi
 
