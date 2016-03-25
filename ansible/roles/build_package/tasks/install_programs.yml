@@ -7,7 +7,7 @@
 
 - name: Do 'apt-get update' on Debian
   apt: update_cache=yes
-  when: ansible_distribution == "Debian"
+  when: ansible_os_family == "Debian"
 
 - name: Install git on Debian and Ubuntu
   apt: name=git state=present
