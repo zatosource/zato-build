@@ -24,11 +24,11 @@ else
 fi
 
 # Copy gpg key config file
-cp /vagrant/key_config /opt/aptly/
+cp /vagrant/files/key_config /opt/aptly/
 chown aptly:aptly /opt/aptly/key_config
 
 # Generate Zato package signing test keys
-sudo -u aptly -H gpg --batch --gen-key /vagrant/files/key_config
+sudo -u aptly -H gpg --batch --gen-key /opt/aptly/key_config
 
 # Copy public test Zato package signing key
 if [ ! -f /var/www/repo/zato-deb-test.pub ]

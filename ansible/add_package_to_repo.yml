@@ -21,11 +21,19 @@
 
   tasks:
 
-    - name: Fetch repo box's certificate
+    - name: Fetch deb repo box's certificate
       fetch: dest=./roles/prepare_install_zato/files/ \
              src=/etc/apache2/ssl/{{ repo['host'] }}.crt
              flat=yes
              fail_on_missing=yes
+      when: ansible_os_family == "Debian"
+
+    - name: Fetch rpm repo box's certificate
+      fetch: dest=./roles/prepare_install_zato/files/ \
+             src=/etc/httpd/ssl/{{ repo['host'] }}.crt
+             flat=yes
+             fail_on_missing=yes
+      when: ansible_distribution == "CentOS"
 
 - hosts: "{{ repo['host'] }}"
   become: True
