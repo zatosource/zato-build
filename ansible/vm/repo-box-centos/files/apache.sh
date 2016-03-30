@@ -29,10 +29,10 @@ else
 fi
 
 # Copy key for our test repo
-if [ ! -f /etc/pki/tls/private/repo-box-centos.csr ] \
+if [ ! -f /etc/pki/tls/private/repo-box-centos.crt ] \
    && [ ! -f /etc/pki/tls/private/repo-box-centos.key ]
 then
-    cp -r /etc/httpd/ssl/repo-box-centos.csr \
+    cp -r /etc/httpd/ssl/repo-box-centos.crt \
           /etc/httpd/ssl/repo-box-centos.key \
           /etc/pki/tls/private
 else
