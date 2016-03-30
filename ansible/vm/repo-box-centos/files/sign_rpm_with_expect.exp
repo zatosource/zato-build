@@ -1,12 +1,12 @@
 #!/usr/bin/expect
 
-set PACKAGE_VERSION [lindex $argv 0]
+set PACKAGE_RELEASE [lindex $argv 0]
 set DISTRIBUTION [lindex $argv 1]
 set CODENAME [lindex $argv 2]
 set ARCHITECTURE [lindex $argv 3]
-set RELEASE_VERSION [lindex $argv 4]
-set PATH /var/www/repo/$PACKAGE_VERSION/2.0/$DISTRIBUTION/$CODENAME/$ARCHITECTURE
-set PACKAGE zato-$RELEASE_VERSION-$PACKAGE_VERSION.$CODENAME.$ARCHITECTURE.rpm
+set PACKAGE_VERSION [lindex $argv 4]
+set PATH /var/www/repo/$PACKAGE_RELEASE/2.0/$DISTRIBUTION/$CODENAME/$ARCHITECTURE
+set PACKAGE zato-$PACKAGE_VERSION-$PACKAGE_RELEASE.$CODENAME.$ARCHITECTURE.rpm
 
 spawn bash
 
