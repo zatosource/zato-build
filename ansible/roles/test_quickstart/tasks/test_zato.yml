@@ -1,9 +1,9 @@
 ---
 
-- name: create directory to store tests
+- name: Create directory to store tests
   file: path=/opt/zato/test_results owner=zato group=zato state=directory
 
-- name: create files to store test outputs
+- name: Create files to store test outputs
   file: path=/opt/zato/test_results/{{ item }} owner=zato group=zato state=touch
   with_items:
     - ping-load-balancer.json
@@ -19,16 +19,16 @@
 - name: Pause for 20 seconds to make sure all components are up and working
   pause: seconds=20
 
-- name: check if load balancer is alive
+- name: Check if load balancer is alive
   shell: curl -v localhost:11223/zato-lb-alive | tee /opt/zato/test_results/check-lb-alive.html
 
-- name: ping load balancer
+- name: Ping load balancer
   shell: curl localhost:11223/zato/ping | tee /opt/zato/test_results/ping-load-balancer.json
 
-- name: ping server1
+- name: Ping server1
   shell: curl -v localhost:17010/zato/ping | tee /opt/zato/test_results/ping-server1.json
 
-- name: ping server2
+- name: Ping server2
   shell: curl -v localhost:17011/zato/ping | tee /opt/zato/test_results/ping-server2.json
 
 - name: Get info on components on Debian-based systems
@@ -53,12 +53,12 @@
     - web-admin
   when: ansible_distribution == "CentOS"
 
-- name: run apitests on Debian-based systems
+- name: Run apitests on Debian-based systems
   shell: bin/py run-tests.py nosetests 2>&1 | tee /opt/zato/test_results/run-tests.txt
          chdir=/opt/zato/{{ package['version'] }}
   when: ansible_os_family == "Debian"
 
-- name: run apitests on RHEL-based systems
+- name: Run apitests on RHEL-based systems
   shell: bin/py run-tests.py nosetests 2>&1 | tee /opt/zato/test_results/run-tests.txt
          chdir=/opt/zato/{{ package['version'] }}/code
   when: ansible_distribution == "CentOS"
@@ -67,7 +67,7 @@
   shell: ls -1 /opt/zato/test_results/
   register: test_logs
 
-- name: Fetch certificate from repo box
+- name: Fetch test results from the test box
   fetch: src=/opt/zato/test_results/{{ item }}
          dest={{ root_dir }}/test_results/{{ package['system'] }}/{{ package['version'] }}/
          flat=yes
