@@ -49,7 +49,6 @@ cp /vagrant/files/key_config /opt/tmp/
 gpg --batch --gen-key /opt/tmp/key_config
 
 # Add private Zato package test signing key to the keyring
-#gpg --allow-secret-key-import --import /opt/tmp/zato-rpm-test.sec
 # Export the public key
 gpg --armor --export example@example.com > /opt/tmp/zato-rpm-test.pgp.asc
 # Import the public key to rpm
