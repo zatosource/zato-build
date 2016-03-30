@@ -2,12 +2,12 @@ VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
-    config.vm.box = "trusty64"
+    config.vm.box = "bento/ubuntu-14.04"
 
     config.vm.provider "virtualbox" do |v|
         v.name = "repo-box-ubuntu"
         #v.gui = true
-        v.memory = "256"
+        v.memory = "512"
     end
     config.vm.hostname = "repo-box-ubuntu"
 
