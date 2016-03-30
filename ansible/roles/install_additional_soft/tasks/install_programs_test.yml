@@ -13,9 +13,9 @@
 - name: Install additional software on Debian-based systems
   apt: name={{ item }} state=present update_cache=yes
   with_items:
-    - git
-    - curl
     - apt-transport-https
+    - curl
+    - git
     - python-software-properties
     - python-psycopg2 # This one is required by Ansible's postgresql_* modules
     - software-properties-common
@@ -31,5 +31,6 @@
     - epel-release
     - curl
     - git
+    - libselinux-python
     - python-psycopg2 # This one is required by Ansible's postgresql_* modules
   when: ansible_distribution == "CentOS"
