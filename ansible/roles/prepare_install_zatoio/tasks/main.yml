@@ -2,3 +2,6 @@
 
 - include: prepare_debian.yml
   when: ansible_os_family == "Debian"
+
+- include: prepare_redhat.yml
+  when: ansible_distribution == "CentOS"

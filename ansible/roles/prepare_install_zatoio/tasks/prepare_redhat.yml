@@ -1,0 +1,4 @@
+---
+
+- name: Copy repository definition
+  copy: src=zato-2.0.repo dest=/etc/yum.repos.d/

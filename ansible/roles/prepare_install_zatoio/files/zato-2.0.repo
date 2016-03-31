@@ -1,0 +1,6 @@
+[zato-2.0]
+name=zato-2.0
+baseurl=https://zato.io/repo/stable/2.0/rhel/el$releasever/$basearch
+enabled=1
+gpgcheck=1
+gpgkey=https://zato.io/repo/zato-0CBD7F72.pgp.asc
