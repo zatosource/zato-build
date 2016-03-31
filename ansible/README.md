@@ -1,6 +1,6 @@
-# Building and testing Zato packages using Ansible
+# Building and testing Zato packages using Ansible <a id="building-testing"></a>
 
-## Components
+## Components <a id="components"></a>
 
 * Vagrant
 * VirtualBox
@@ -51,7 +51,6 @@ Extra vars being:
     - amd64
     - i368
     - x86_64
-- `rpmver` - if we want to build package for the Redhat family, e.g. 'el6.x86_64'
 - `format` - package format: 'deb' or 'rpm'
 - `distribution` - distribution name, e.g. 'ubuntu' or 'rhel'
 - `codename` - distribution codename, e.g. 'el6', 'trusty', 'jessie'
