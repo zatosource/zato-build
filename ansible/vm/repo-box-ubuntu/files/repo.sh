@@ -10,7 +10,7 @@ echo 'Creating repositories...'
 
 for distribution in "${distributions[@]}"
 do
-    sudo -u aptly -H aptly repo create -distribution=$distribution zato-stable-$distribution
+    sudo su - aptly -c "aptly repo create -distribution=$distribution zato-stable-$distribution"
 done
 
 echo 'Done.'
@@ -24,19 +24,19 @@ else
 fi
 
 # Copy gpg key config file
-cp /vagrant/files/key_config /opt/aptly/
-chown aptly:aptly /opt/aptly/key_config
+sudo cp /vagrant/files/key_config /opt/aptly/
+sudo chown aptly:aptly /opt/aptly/key_config
 
 # Generate Zato package signing test keys
-sudo -u aptly -H gpg --batch --gen-key /opt/aptly/key_config
+sudo su - aptly -c "gpg --batch --gen-key /opt/aptly/key_config"
+
+# Export the public key
+sudo su - aptly -c "gpg --armor --export example@example.com > /opt/aptly/zato-deb-test.pgp.asc"
 
 # Copy public test Zato package signing key
-if [ ! -f /var/www/repo/zato-deb-test.pub ]
+if [ ! -f /var/www/repo/zato-deb-test.pgp.asc ]
 then
-    sudo cp /opt/aptly/zato-deb-test.pub /var/www/repo
+    sudo cp /opt/aptly/zato-deb-test.pgp.asc /var/www/repo
 else
     echo 'Zato repository test key already in place.'
 fi
-
-# Add private test Zato package signing key to the keyring
-sudo -u aptly -H gpg --allow-secret-key-import --import /opt/aptly/zato-deb-test.sec
