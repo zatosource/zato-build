@@ -16,10 +16,12 @@
 
 - hosts: "{{ repo['host'] }}"
   become: True
+  vars:
+    repo_datetime: "{{ ansible_date_time.iso8601 }}"
   vars_files:
     - vars/main.yml
 
-  tasks:
+  pre_tasks:
 
     - name: Fetch deb repo box's certificate
       fetch: dest=./roles/prepare_install_zato/files/ \
@@ -33,14 +35,7 @@
              src=/etc/httpd/ssl/{{ repo['host'] }}.crt
              flat=yes
              fail_on_missing=yes
-      when: ansible_distribution == "CentOS"
-
-- hosts: "{{ repo['host'] }}"
-  become: True
-  vars:
-    repo_datetime: "{{ ansible_date_time.iso8601 }}"
-  vars_files:
-    - vars/main.yml
+      when: ansible_os_family == "RedHat"
 
   roles:
 
