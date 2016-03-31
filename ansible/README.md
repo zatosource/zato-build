@@ -1,4 +1,4 @@
-# Building and testing Zato using Ansible
+# Building and testing Zato packages using Ansible
 
 ## Components
 
