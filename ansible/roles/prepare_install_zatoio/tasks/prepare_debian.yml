@@ -18,6 +18,6 @@
   shell: curl -s https://zato.io/repo/zato-0CBD7F72.pgp.asc | apt-key add -
   become_user: root
 
-- name: Add Zato test repository
+- name: Add Zato repository
   shell: apt-add-repository https://zato.io/repo/stable/2.0/{{ distribution }}
   become_user: root
