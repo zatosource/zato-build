@@ -1,0 +1,16 @@
+VAGRANTFILE_API_VERSION = "2"
+ENV["LC_ALL"] = "en_US.UTF-8"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+
+  config.vm.box = "{{ box['base'] }}"
+
+  config.vm.provider "virtualbox" do |v|
+    v.memory = "{{ box['memory'] }}"
+    v.name = "{{ item }}"
+  end
+  config.vm.hostname = "{{ item }}"
+
+  config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
+
+end

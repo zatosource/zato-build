@@ -1,7 +1,25 @@
 ---
 
 - hosts: localhost
+  vars_files:
+    - group_vars/zato-distributed.yml
 
-  roles:
+  tasks:
 
-    - prepare_distributed_environment
+    - name: Create box root directory
+      file:
+        name=./vm/distributed/{{ item }}/
+        state=directory
+      with_items:
+        - "{{ groups['zato-distributed'] }}"
+
+    - name: Prepare Vagrantfile
+      template: src=./templates/box_distributed.j2
+                dest=vm/distributed/{{ item }}/Vagrantfile
+      with_items:
+        - "{{ groups['zato-distributed'] }}"
+
+    - name: Create a vagrant box
+      shell: vagrant up chdir=./vm/distributed/{{ item }}
+      with_items:
+        - "{{ groups['zato-distributed'] }}"
