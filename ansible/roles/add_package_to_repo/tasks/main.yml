@@ -3,7 +3,7 @@
 - include: copy_zato_package.yml
 
 - include: add_deb_to_repo.yml
-  when: repo['host'] == "repo-box-ubuntu" or repo['host'] == "repo-box-ubuntu-test"
+  when: repo['host'] == "repo-box-ubuntu"
   become_user: aptly
 
 # These tasks relate exclusively to testing aptly.
