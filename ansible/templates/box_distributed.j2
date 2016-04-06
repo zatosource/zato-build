@@ -10,7 +10,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     v.name = "{{ item }}"
   end
   config.vm.hostname = "{{ item }}"
-
-  config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
+  config.vm.network "private_network", ip: "{{ hostvars[item]['ip'] }}"
 
 end
