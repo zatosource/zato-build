@@ -14,8 +14,8 @@ ubuntu-1404-64
 oracle-box
 
 [dbservers]
-postgresql1
-redis1
+postgresql
+redis
 
 [zato-components]
 zato-lb
@@ -24,8 +24,8 @@ zato-server2
 zato-wa
 
 [zato-distributed]
-postgresql1
-redis1
+postgresql
+redis
 zato-lb
 zato-server1
 zato-server2
