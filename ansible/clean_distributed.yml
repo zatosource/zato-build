@@ -16,5 +16,5 @@
         - [ '.vagrant', 'synced', 'Vagrantfile' ]
 
     - name: Remove vagrant user's private_keys
-      file: path=./files/vagrant_key/distributed/{{ item }}private_key state=absent
+      file: path=./files/vagrant_key/distributed/{{ item }}_private_key state=absent
       with_items: "{{ groups['zato-distributed'] }}"
