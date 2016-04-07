@@ -17,21 +17,18 @@
         name=./vm/distributed/{{ item }}/
         state=directory
       with_items:
-          #- "{{ groups['zato-distributed'] }}"
-        - postgresql1
+        - "{{ groups['zato-distributed'] }}"
 
     - name: Prepare Vagrantfile
       template: src=./templates/box_distributed.j2
                 dest=vm/distributed/{{ item }}/Vagrantfile
       with_items:
-          #- "{{ groups['zato-distributed'] }}"
-        - postgresql1
+        - "{{ groups['zato-distributed'] }}"
 
     - name: Create a vagrant box
       shell: vagrant up chdir=./vm/distributed/{{ item }}
       with_items:
-          #- "{{ groups['zato-distributed'] }}"
-        - postgresql1
+        - "{{ groups['zato-distributed'] }}"
 
     - name: Copy vagrant user's private keys
       shell: cp  ./.vagrant/machines/default/virtualbox/private_key \
@@ -39,12 +36,10 @@
              chdir=./vm/distributed/{{ item }}/
              creates=yes
       with_items:
-          #- "{{ groups['zato-distributed'] }}"
-        - postgresql1
+        - "{{ groups['zato-distributed'] }}"
 
     - name: Set the private_keys mode to 0600
       file: path=./files/vagrant_key/distributed/{{ item }}_private_key
             mode=0600
       with_items:
-          #- "{{ groups['zato-distributed'] }}"
-        - postgresql1
+        - "{{ groups['zato-distributed'] }}"
