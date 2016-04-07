@@ -1,0 +1,36 @@
+---
+
+- hosts: postgresql1
+  become: True
+  vars:
+    ansible_host: "{{ hostvars['postgresql1']['ip'] }}"
+    ansible_ssh_private_key_file: ./files/vagrant_key/distributed/postgresql1_private_key
+
+  roles:
+
+    - install_postgresql
+
+- hosts: redis1
+  become: True
+  vars:
+    ansible_host: "{{ hostvars['redis1']['ip'] }}"
+    ansible_ssh_private_key_file: ./files/vagrant_key/distributed/redis1_private_key
+
+  roles:
+
+    - install_redis
+
+- hosts: zato-components
+  become: True
+  vars:
+    ansible_host: "{{ hostvars[inventory_hostname]['ip'] }}"
+    ansible_ssh_private_key_file:
+      ./files/vagrant_key/distributed/{{ hostvars[inventory_hostname]['inventory_hostname'] }}_private_key
+  vars_files:
+    - vars/main.yml
+
+  roles:
+
+    - install_additional_soft
+    - prepare_install_zato
+    - install_zato
