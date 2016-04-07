@@ -2,4 +2,4 @@
 
 box:
   base: bento/ubuntu-14.04
-  memory: 512
+  memory: 256
