@@ -1,36 +1,48 @@
 ---
 
-    - name: Install PostgreSQL on Debian-based systems
-      apt: name=postgresql state=present update_cache=yes
-      when: ansible_os_family == "Debian"
+- name: Install PostgreSQL on Debian-based systems
+  apt: name=postgresql state=present update_cache=yes
+  when: ansible_os_family == "Debian"
 
-    # Installing PostgreSQL on CentOS is a bit more complicated
-    - name: Install PGDG
-      yum: name=http://yum.postgresql.org/9.4/redhat/rhel-{{ ansible_distribution_major_version }}-{{ ansible_architecture }}/pgdg-centos94-9.4-1.noarch.rpm
-           state=present
-      when: ansible_distribution == "CentOS"
+- name: Use custom configuration on Ubuntu
+  copy: "src={{ item }} dest=/etc/postgresql/9.3/main/
+         owner=postgres group=postgres mode=600"
+  with_items:
+    - pg_hba.conf
+    - postgresql.conf
+  when: ansible_distribution == "Ubuntu"
 
-    - name: Install PostgreSQL on CentOS
-      yum: name=postgresql94-server
-           state=present
-           update_cache=yes
-           disablerepo=base,updates
-      when: ansible_distribution == "CentOS"
+- name: Restart postgresql service on Ubuntu
+  service: name=postgresql state=restarted
+  when: ansible_distribution == "Ubuntu"
 
-    - name: Initialize the cluster on CentOS 6
-      command: service postgresql-9.4 initdb
-      when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "6"
+# Installing PostgreSQL on CentOS is a bit more complicated
+- name: Install PGDG
+  yum: name=http://yum.postgresql.org/9.4/redhat/rhel-{{ ansible_distribution_major_version }}-{{ ansible_architecture }}/pgdg-centos94-9.4-1.noarch.rpm
+       state=present
+  when: ansible_distribution == "CentOS"
 
-    - name: Initialize the cluster on CentOS 7
-      command: /usr/pgsql-9.4/bin/postgresql94-setup initdb
-      when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "7"
+- name: Install PostgreSQL on CentOS
+  yum: name=postgresql94-server
+       state=present
+       update_cache=yes
+       disablerepo=base,updates
+  when: ansible_distribution == "CentOS"
 
-    - name: Use custom configuration on CentOS
-      copy: src=pg_hba.conf dest=/var/lib/pgsql/9.4/data/ owner=postgres group=postgres mode=600
-      when: ansible_distribution == "CentOS"
+- name: Initialize the cluster on CentOS 6
+  command: service postgresql-9.4 initdb
+  when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "6"
 
-    - name: Start PostgreSQL on Centos
-      service: name=postgresql-9.4
-               state=started
-               enabled=yes
-      when: ansible_distribution == "CentOS"
+- name: Initialize the cluster on CentOS 7
+  command: /usr/pgsql-9.4/bin/postgresql94-setup initdb
+  when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "7"
+
+- name: Use custom configuration on CentOS
+  copy: src=pg_hba.conf dest=/var/lib/pgsql/9.4/data/ owner=postgres group=postgres mode=600
+  when: ansible_distribution == "CentOS"
+
+- name: Start PostgreSQL on Centos
+  service: name=postgresql-9.4
+           state=started
+           enabled=yes
+  when: ansible_distribution == "CentOS"
