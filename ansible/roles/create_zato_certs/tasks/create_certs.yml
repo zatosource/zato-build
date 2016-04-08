@@ -1,0 +1,9 @@
+---
+
+- name: Ensure gencert.sh is executable
+  file: "path={{ hostvars[inventory_hostname]['playbook_dir'] }}/files/zato_certs/gencert.sh
+         mode=0755"
+
+- name: Generate certificates for Zato servers
+  shell: ./gencert.sh
+         chdir={{ hostvars[inventory_hostname]['playbook_dir'] }}/files/zato_certs/
