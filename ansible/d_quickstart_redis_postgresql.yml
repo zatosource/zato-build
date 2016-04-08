@@ -1,5 +1,18 @@
 ---
 
+- hosts: zato-distributed
+  become: True
+  vars:
+    ansible_host: "{{ hostvars[inventory_hostname]['ip'] }}"
+    ansible_ssh_private_key_file:
+      ./files/vagrant_key/distributed/{{ hostvars[inventory_hostname]['inventory_hostname'] }}_private_key
+
+  roles:
+
+    - install_additional_soft
+    - prepare_install_zato
+    - install_zato
+
 - hosts: postgresql
   become: True
   vars:
@@ -9,6 +22,9 @@
   roles:
 
     - install_postgresql
+    - configure_postgresql
+    - create_zato_odb
+    - create_zato_cluster
 
 - hosts: redis
   become: True
@@ -29,8 +45,12 @@
   vars_files:
     - vars/main.yml
 
+  tasks:
+
+    - debug: msg="PLACEHOLDER"
+
+- hosts: localhost
+
   roles:
 
-    - install_additional_soft
-    - prepare_install_zato
-    - install_zato
+    - create_zato_certs
