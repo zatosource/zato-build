@@ -1,4 +1,10 @@
 ---
 
-  - name: install Redis on Ubuntu Trusty
-    apt: name=redis-server state=latest
+- name: Install Redis on Ubuntu 14.04 or Debian 8
+  apt: name=redis-server state=latest
+
+- name: Use custom Redis configuration
+  copy: src=redis.conf dest=/etc/redis/
+
+- name: Restart redis-server
+  service: name=redis-server state=restarted
