@@ -17,7 +17,14 @@
   shell: curl -s https://{{ repo['host'] }}/repo/zato-deb-test.pgp.asc | apt-key add -
   become_user: root
 
-- name: Add Zato test repository
+- name: Add Zato test repository on Debian
   shell: apt-add-repository \
-         https://{{ repo['host'] }}/repo/{{ package['release'] }}/2.0/{{ package['distro'] }}
+         https://{{ repo['host'] }}/repo/stable/2.0/debian
+  when: ansible_distribution == "Debian"
+  become_user: root
+
+- name: Add Zato test repository on Ubuntu
+  shell: apt-add-repository \
+         https://{{ repo['host'] }}/repo/stable/2.0/ubuntu
+  when: ansible_distribution == "Ubuntu"
   become_user: root
