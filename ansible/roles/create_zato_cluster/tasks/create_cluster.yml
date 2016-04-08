@@ -1,0 +1,8 @@
+---
+
+- name: Copy zato_cluster.config file
+  copy: src=zato_cluster.config dest=/opt/zato/
+
+- name: Create a Zato cluster
+  shell: current/bin/zato from-config zato_cluster.config
+         chdir=/opt/zato
