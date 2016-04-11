@@ -1,0 +1,5 @@
+---
+
+- name: Copy certs to distributing role
+  shell: cp -r ./* ../../distribute_zato_certs/files/
+    chdir={{ hostvars[inventory_hostname]['playbook_dir'] }}/roles/create_zato_certs/files/
