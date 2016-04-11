@@ -1,0 +1,11 @@
+---
+
+- name: Create a directory to store a component's certificate and keys
+  file: path=/opt/zato/ca state=directory owner=zato group=zato
+
+- name: Distribute certificates among Zato components
+  copy: "src={{ item }} dest=/opt/zato/ca owner=zato group=zato"
+  with_items:
+    - "{{ hostvars[inventory_hostname]['inventory_hostname'] }}.cert.pem"
+    - "{{ hostvars[inventory_hostname]['inventory_hostname'] }}.key.pem"
+    - "{{ hostvars[inventory_hostname]['inventory_hostname'] }}.key.pub.pem"
