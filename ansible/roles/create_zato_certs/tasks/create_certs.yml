@@ -1,9 +1,44 @@
 ---
 
-- name: Ensure gencert.sh is executable
-  file: "path={{ hostvars[inventory_hostname]['playbook_dir'] }}/files/zato_certs/gencert.sh
-         mode=0755"
+- name: Generate CA key
+  shell: openssl genrsa -out zato_ca.key.pem 2048
+    chdir={{ hostvars[inventory_hostname]['playbook_dir'] }}/roles/create_zato_certs/files/
 
-- name: Generate certificates for Zato servers
-  shell: ./gencert.sh
-         chdir={{ hostvars[inventory_hostname]['playbook_dir'] }}/files/zato_certs/
+- name: Generate CA
+  shell: openssl req -new -x509 -days 3650 -extensions v3_ca \
+         -subj "/C=EU/ST=Zatoland/L=Zato City/O=Zato/CN=Zato CA" \
+         -key zato_ca.key.pem -out ca_cert.pem
+    chdir={{ hostvars[inventory_hostname]['playbook_dir'] }}/roles/create_zato_certs/files/
+
+- name: Generate private keys for Zato components
+  shell: openssl genrsa -out {{ item }}.key.pem 2048
+    chdir={{ hostvars[inventory_hostname]['playbook_dir'] }}/roles/create_zato_certs/files/
+  with_items:
+    - "{{ hostvars[inventory_hostname]['groups']['zato-components'] }}"
+
+- name: Generate public keys for Zato components
+  shell: openssl rsa -in {{ item }}.key.pem -pubout -out {{ item }}.key.pub.pem
+    chdir={{ hostvars[inventory_hostname]['playbook_dir'] }}/roles/create_zato_certs/files/
+  with_items:
+    - "{{ hostvars[inventory_hostname]['groups']['zato-components'] }}"
+
+- name: Create certificate signing requests
+  shell: openssl req -new -key {{ item }}.key.pem -out {{ item }}.req.csr \
+         -subj "/C=EU/ST=Zatoland/L=Zato City/O=Zato/CN={{ item }}"
+    chdir={{ hostvars[inventory_hostname]['playbook_dir'] }}/roles/create_zato_certs/files/
+  with_items:
+    - "{{ hostvars[inventory_hostname]['groups']['zato-components'] }}"
+
+- name: Create certificates for Zato components
+  shell: openssl x509 -req -days 365 -in {{ item }}.req.csr -CA ca_cert.pem \
+         -CAkey zato_ca.key.pem -CAcreateserial -out {{ item }}.cert.pem
+    chdir={{ hostvars[inventory_hostname]['playbook_dir'] }}/roles/create_zato_certs/files/
+  with_items:
+    - "{{ hostvars[inventory_hostname]['groups']['zato-components'] }}"
+
+- name: Remove left-over certificate signing requests
+  file:
+    path={{ hostvars[inventory_hostname]['playbook_dir'] }}/roles/create_zato_certs/files/{{ item }}.req.csr
+    state=absent
+  with_items:
+    - "{{ hostvars[inventory_hostname]['groups']['zato-components'] }}"
