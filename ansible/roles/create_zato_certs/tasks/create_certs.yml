@@ -42,3 +42,8 @@
     state=absent
   with_items:
     - "{{ hostvars[inventory_hostname]['groups']['zato-components'] }}"
+
+- name: Remove left-over rsl file
+  file:
+    path={{ hostvars[inventory_hostname]['playbook_dir'] }}/roles/create_zato_certs/files/ca_cert.srl
+    state=absent

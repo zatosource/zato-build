@@ -1,6 +1,0 @@
----
-
-- name: Get a list of Zato components
-  shell: ls -1
-    chdir={{ hostvars[inventory_hostname]['playbook_dir'] }}/vm/distributed
-  register: zato_components
