@@ -1,0 +1,21 @@
+---
+
+- name: Copy certificates to a component's config directory
+  command: cp /opt/zato/ca/* /env/{{ item }}/config/repo/
+
+- name: Copy LB's config file
+  copy: src=zato.config dest=/opt/zato/env/zato-lb/config/repo/
+        owner=zato group=zato
+  when: {{ hostvars[inventory_hostname]['inventory_hostname'] }} == "zato-lb"
+
+- name: Copy WA's config file
+  copy: src=web-admin.config dest=/opt/zato/env/zato-wa/config/repo/
+        owner=zato group=zato
+  when: {{ hostvars[inventory_hostname]['inventory_hostname'] }} == "zato-wa"
+
+- name: Copy servers' config files
+  copy: "src={{ item }}.config dest=/opt/zato/env/{{ item }}/config/repo/
+        owner=zato group=zato"
+  when: >
+    {{ hostvars[inventory_hostname]['inventory_hostname'] }} in
+    {{ hostvars[inventory_hostname]['groups']['zato-servers'] }}
