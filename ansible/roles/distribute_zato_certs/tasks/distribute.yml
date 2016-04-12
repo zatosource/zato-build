@@ -6,6 +6,7 @@
 - name: Distribute certificates among Zato components
   copy: "src={{ item }} dest=/opt/zato/ca owner=zato group=zato"
   with_items:
+    - ca_cert.pem
     - "{{ hostvars[inventory_hostname]['cert'] }}"
     - "{{ hostvars[inventory_hostname]['private_key'] }}"
     - "{{ hostvars[inventory_hostname]['public_key'] }}"
