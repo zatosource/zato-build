@@ -1,3 +1,7 @@
 ---
 
+alias: zato_server2
 ip: 10.5.5.32
+cert: zato-server2.cert.pem
+private_key: zato-server2.key.pem
+public_key: zato-server2.key.pub.pem

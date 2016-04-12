@@ -1,3 +1,7 @@
 ---
 
+alias: zato_load_balancer
 ip: 10.5.5.11
+cert: zato-lb.cert.pem
+private_key: zato-lb.key.pem
+public_key: zato-lb.key.pub.pem
