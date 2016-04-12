@@ -1,0 +1,16 @@
+---
+
+- name: Create a directory for Zato load balancer
+  file: path=/opt/zato/env/load-balancer
+        owner=zato group=zato
+        state=directory
+  become_user: zato
+
+- name: Copy zato_load_balancer.config file
+  copy: src=zato_load_balancer.config dest=/opt/zato
+        owner=zato group=zato
+
+- name: Create Zato load balancer
+  command: ./current/bin/zato from-config zato_load_balancer.config
+    chdir=/opt/zato
+  become_user: zato
