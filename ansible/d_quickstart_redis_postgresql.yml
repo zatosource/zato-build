@@ -47,7 +47,7 @@
 
   tasks:
 
-    - debug: msg="PLACEHOLDER"
+   - debug: msg="PLACEHOLDER - create Zato components"
 
 - hosts: localhost
 
