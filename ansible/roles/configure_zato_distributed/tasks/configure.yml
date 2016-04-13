@@ -6,12 +6,12 @@
     owner=zato group=zato
   when: hostvars[inventory_hostname]['alias'] == "zato_load_balancer"
   with_items:
-    - { file: 'zato.config', regexp: '127.0.0.1:11223', replace: '0.0.0.0:11223' }
-    - { file: 'lb-agent.conf', regexp: 'localhost', replace: '0.0.0.0' }
+    - { file: 'zato.config', regexp: '127.0.0.1:11223', replace: '{{ ip }}:11223' }
+    - { file: 'lb-agent.conf', regexp: 'localhost', replace: '{{ ip }}' }
 
 - name: Set hosts and ports for Zato servers
   replace: "dest=/opt/zato/env/server/config/repo/server.conf
-    regexp='localhost:17010' replace='0.0.0.0:{{ port }}'
+    regexp='localhost:17010' replace='{{ ip }}:{{ port }}'
     owner=zato group=zato"
   when: >
     hostvars[inventory_hostname]['inventory_hostname'] in
@@ -19,7 +19,7 @@
 
 - name: Set host and port for load balancer
   replace: dest=/opt/zato/env/server/config/repo/server.conf
-      regexp='127.0.0.1:11223' replace='0.0.0.0:11223'
+      regexp='127.0.0.1:11223' replace='10.5.5.11:11223'
     owner=zato group=zato
   when: >
     hostvars[inventory_hostname]['inventory_hostname'] in
