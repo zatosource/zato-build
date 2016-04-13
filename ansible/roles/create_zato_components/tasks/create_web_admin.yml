@@ -14,3 +14,11 @@
   command: ./current/bin/zato from-config zato_web_admin.config
     chdir=/opt/zato
   become_user: zato
+
+- name: Create a symlink to Zato startup script
+  file: src=/opt/zato/env/web-admin
+        dest=/etc/zato/components-enabled/web-admin
+        state=link
+
+- name: Start Zato server as a service
+  service: name=zato state=restarted enabled=yes

@@ -14,3 +14,11 @@
   command: ./current/bin/zato from-config zato_load_balancer.config
     chdir=/opt/zato
   become_user: zato
+
+- name: Create a symlink to Zato startup script
+  file: src=/opt/zato/env/load-balancer
+        dest=/etc/zato/components-enabled/load-balancer
+        state=link
+
+- name: Start Zato load balancer as a service
+  service: name=zato state=restarted enabled=yes
