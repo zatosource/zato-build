@@ -2,6 +2,7 @@
 
 alias: zato_server1
 ip: 10.5.5.31
+port: 17010
 cert: zato-server1.cert.pem
 private_key: zato-server1.key.pem
 public_key: zato-server1.key.pub.pem
