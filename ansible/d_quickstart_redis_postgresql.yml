@@ -53,3 +53,4 @@
 
     - distribute_zato_certs
     - create_zato_components
+    - configure_zato_distributed

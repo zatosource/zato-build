@@ -1,26 +1,37 @@
 ---
 
-- name: Copy certificates to a component's config directory
-  command: cp /opt/zato/ca/* /env/{{ item }}/config/repo/
+- name: Configure load balancer
+  replace: dest=/opt/zato/env/load-balancer/config/repo/{{ item.file }}
+    regexp={{ item.regexp }} replace={{ item.replace }}
+    owner=zato group=zato
+  when: hostvars[inventory_hostname]['alias'] == "zato_load_balancer"
+  with_items:
+    - { file: 'zato.config', regexp: '127.0.0.1:11223', replace: '0.0.0.0:11223' }
+    - { file: 'lb-agent.conf', regexp: 'localhost', replace: '0.0.0.0' }
 
-- name: Copy LB's config file
-  template: src=lb-agent.conf.j2
-            dest=/opt/zato/env/zato-lb/config/repo/lb-agent.conf
-            owner=zato group=zato
-  when: {{ hostvars[inventory_hostname]['alias'] }} == "zato_load_balancer"
-
-- name: Copy WA's config file
-  template: src=web-admin.conf.j2
-            dest=/opt/zato/env/zato-wa/config/repo/web-admin.conf
-            owner=zato group=zato
-  when: {{ hostvars[inventory_hostname]['alias'] }} == "zato_web_admin"
-
-- name: Copy servers' config files
-  template: "src={{ item }}.conf.j2
-             dest=/opt/zato/env/{{ item }}/config/repo/server.conf
-             owner=zato group=zato"
-  with_items: >
-    - {{ hostvars[inventory_hostname]['groups']['zato-servers'] }}
+- name: Set hosts and ports for Zato servers
+  replace: "dest=/opt/zato/env/server/config/repo/server.conf
+    regexp='localhost:17010' replace='0.0.0.0:{{ port }}'
+    owner=zato group=zato"
   when: >
-    {{ hostvars[inventory_hostname]['inventory_hostname'] }} in
-    {{ hostvars[inventory_hostname]['groups']['zato-servers'] }}
+    hostvars[inventory_hostname]['inventory_hostname'] in
+    hostvars[inventory_hostname]['groups']['zato-servers']
+
+- name: Set host and port for load balancer
+  replace: dest=/opt/zato/env/server/config/repo/server.conf
+      regexp='127.0.0.1:11223' replace='0.0.0.0:11223'
+    owner=zato group=zato
+  when: >
+    hostvars[inventory_hostname]['inventory_hostname'] in
+    hostvars[inventory_hostname]['groups']['zato-servers']
+
+- name: Change number of gunicorn_workers
+  replace: dest=/opt/zato/env/server/config/repo/server.conf
+    regexp="gunicorn_workers=2" replace="gunicorn_workers=1"
+    owner=zato group=zato
+  when: >
+    hostvars[inventory_hostname]['inventory_hostname'] in
+    hostvars[inventory_hostname]['groups']['zato-servers']
+
+- name: Restart Zato components
+  service: name=zato state=restarted enabled=yes
