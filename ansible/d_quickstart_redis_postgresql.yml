@@ -13,6 +13,16 @@
     - prepare_install_zato
     - install_zato
 
+- hosts: redis
+  become: True
+  vars:
+    ansible_host: "{{ hostvars['redis']['ip'] }}"
+    ansible_ssh_private_key_file: ./files/vagrant_key/distributed/redis_private_key
+
+  roles:
+
+    - install_redis
+
 - hosts: postgresql
   become: True
   vars:
@@ -25,16 +35,6 @@
     - configure_postgresql
     - create_zato_odb
     - create_zato_cluster
-
-- hosts: redis
-  become: True
-  vars:
-    ansible_host: "{{ hostvars['redis']['ip'] }}"
-    ansible_ssh_private_key_file: ./files/vagrant_key/distributed/redis_private_key
-
-  roles:
-
-    - install_redis
 
 - hosts: localhost
 
