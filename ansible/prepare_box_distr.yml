@@ -2,7 +2,8 @@
 
 - hosts: localhost
   vars_files:
-    - group_vars/zato-distributed/all.yml
+    - group_vars/zato-distributed/main.yml
+    - group_vars/zato-components/main.yml
     - host_vars/postgresql.yml
     - host_vars/redis.yml
     - host_vars/zato-server1.yml
