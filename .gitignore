@@ -1,2 +1,6 @@
 *~
 ~
+*.cert.pem
+*.crt
+*.pem
+*_private_key
