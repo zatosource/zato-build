@@ -21,4 +21,4 @@
         state=link
 
 - name: Start Zato load balancer as a service
-  service: name=zato state=restarted enabled=yes
+  service: name=zato state=started enabled=yes

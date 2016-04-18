@@ -20,5 +20,7 @@
         dest=/etc/zato/components-enabled/web-admin
         state=link
 
-- name: Start Zato server as a service
-  service: name=zato state=restarted enabled=yes
+- name: Start Zato web admin as a service
+  service: name=zato state=started enabled=yes
+
+- pause: seconds=15
