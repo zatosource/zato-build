@@ -17,6 +17,11 @@ oracle-box
 postgresql
 redis
 
+[redis-ha]
+redis1
+redis2
+redis3
+
 [zato-components]
 zato-lb
 zato-server1
@@ -31,11 +36,11 @@ zato-server1
 zato-server2
 zato-wa
 
-[zato-servers]
-zato-server1
-zato-server2
-
 [zato-repos]
 repo-box-centos
 repo-box-ubuntu
 aptly-test-box
+
+[zato-servers]
+zato-server1
+zato-server2
