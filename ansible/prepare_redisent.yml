@@ -1,0 +1,42 @@
+---
+
+- hosts: localhost
+  vars_files:
+    - group_vars/zato-distributed/main.yml
+    - host_vars/redis1.yml
+    - host_vars/redis2.yml
+    - host_vars/redis3.yml
+
+  tasks:
+
+    - name: Create box root directory
+      file:
+        name=./vm/distributed/{{ item }}/
+        state=directory
+      with_items:
+        - "{{ groups['redis-ha'] }}"
+
+    - name: Prepare Vagrantfile
+      template: src=./templates/box_distributed.j2
+                dest=vm/distributed/{{ item }}/Vagrantfile
+      with_items:
+        - "{{ groups['redis-ha'] }}"
+
+    - name: Create a vagrant box
+      shell: vagrant up chdir=./vm/distributed/{{ item }}
+      with_items:
+        - "{{ groups['redis-ha'] }}"
+
+    - name: Copy vagrant user's private keys
+      shell: cp  ./.vagrant/machines/default/virtualbox/private_key \
+             ../../../files/vagrant_key/distributed/{{ item }}_private_key
+             chdir=./vm/distributed/{{ item }}/
+             creates=yes
+      with_items:
+        - "{{ groups['redis-ha'] }}"
+
+    - name: Set the private_keys mode to 0600
+      file: path=./files/vagrant_key/distributed/{{ item }}_private_key
+            mode=0600
+      with_items:
+        - "{{ groups['redis-ha'] }}"

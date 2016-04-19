@@ -1,0 +1,6 @@
+# Host and port we will listen for requests on
+bind {{ hostvars[inventory_hostname]['ip'] }}
+port {{ hostvars[inventory_hostname]['node'] }}
+
+# Database location
+dir .

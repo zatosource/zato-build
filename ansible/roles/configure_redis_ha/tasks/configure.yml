@@ -1,0 +1,9 @@
+---
+
+- name: Generate configuration files for nodes in Redis HA environment
+  template: src=node.conf.j2 dest=/etc/redis/node.conf
+    owner=root group=root mode=0644
+
+- name: Generate configuration files for sentinels in Redis HA environment
+  template: src=sentinel.conf.j2 dest=/etc/redis/sentinel.conf
+    owner=root group=root mode=0644

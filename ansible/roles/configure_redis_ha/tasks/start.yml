@@ -1,0 +1,9 @@
+---
+
+- name: Start nodes
+  shell: redis-server node.conf chdir=/etc/redis/
+  become_user: root
+
+- name: Start sentinels
+  shell: redis-server sentinel.conf --sentinel chdir=/etc/redis/
+  become_user: root

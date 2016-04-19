@@ -1,0 +1,15 @@
+# Host and port we will listen for requests on
+bind {{ hostvars[inventory_hostname]['ip'] }}
+port {{ hostvars[inventory_hostname]['node'] }}
+
+#
+# Our initial master is called redis-ha, there is a quorum of 2 sentinels
+# needed for failover, after 10 seconds we declare a node to
+# be down in our opinion, only 1 standby (slave) node can replicate with
+# new master after failover and we don't allow for the same master to be failed over
+# more often than once in 3 minutes.
+#
+sentinel monitor redis-ha {{ hostvars[inventory_hostname]['ip'] }} {{ hostvars[inventory_hostname]['node'] }} 2
+sentinel down-after-milliseconds redis-ha 10000
+sentinel parallel-syncs redis-ha 1
+sentinel failover-timeout redis-ha 180000
