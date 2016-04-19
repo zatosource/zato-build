@@ -1,0 +1,19 @@
+---
+
+# The purpose of this playbook is to install Zato in a larger group of boxes
+# specified under 'zato_hosts' variable. For example, it is possible to pass
+# 'zato-components' as the hosts pattern, but it has to be defined first
+# in the inventory file.
+
+- hosts: "{{ zato_hosts }}"
+  become: True
+  vars:
+    ansible_host: "{{ hostvars[inventory_hostname]['ip'] }}"
+    ansible_ssh_private_key_file:
+      ./files/vagrant_key/distributed/{{ hostvars[inventory_hostname]['inventory_hostname'] }}_private_key
+
+  roles:
+
+    - install_additional_soft
+    - prepare_install_zato
+    - install_zato

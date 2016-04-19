@@ -1,56 +1,7 @@
 ---
 
-- hosts: zato-distributed:!redis
-  become: True
-  vars:
-    ansible_host: "{{ hostvars[inventory_hostname]['ip'] }}"
-    ansible_ssh_private_key_file:
-      ./files/vagrant_key/distributed/{{ hostvars[inventory_hostname]['inventory_hostname'] }}_private_key
-
-  roles:
-
-    - install_additional_soft
-    - prepare_install_zato
-    - install_zato
-
-- hosts: redis
-  become: True
-  vars:
-    ansible_host: "{{ hostvars['redis']['ip'] }}"
-    ansible_ssh_private_key_file: ./files/vagrant_key/distributed/redis_private_key
-
-  roles:
-
-    - install_redis
-
-- hosts: postgresql
-  become: True
-  vars:
-    ansible_host: "{{ hostvars['postgresql']['ip'] }}"
-    ansible_ssh_private_key_file: ./files/vagrant_key/distributed/postgresql_private_key
-
-  roles:
-
-    - install_postgresql
-    - configure_postgresql
-    - create_zato_odb
-    - create_zato_cluster
-
-- hosts: localhost
-
-  roles:
-
-    - create_zato_certs
-
-- hosts: zato-components
-  become: True
-  vars:
-    ansible_host: "{{ hostvars[inventory_hostname]['ip'] }}"
-    ansible_ssh_private_key_file:
-      ./files/vagrant_key/distributed/{{ hostvars[inventory_hostname]['inventory_hostname'] }}_private_key
-
-  roles:
-
-    - distribute_zato_certs
-    - create_zato_components
-    - configure_zato_distributed
+- include: d_install_zato.yml
+- include: install_redis.yml
+- include: install_postgresql.yml
+- include: d_create_zato_certificates.yml
+- include: d_create_zato_components.yml

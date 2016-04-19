@@ -1,0 +1,14 @@
+---
+
+# This playbook is meant to be used in a distributed Zato environment
+# It simply includes a role under the same name.
+
+- hosts: "{{ redis_hosts }}"
+  become: True
+  vars:
+    ansible_host: "{{ hostvars[inventory_hostname]['ip'] }}"
+    ansible_ssh_private_key_file: ./files/vagrant_key/distributed/redis_private_key
+
+  roles:
+
+    - install_redis

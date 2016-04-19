@@ -1,0 +1,18 @@
+---
+
+# This playbook is meant to be used in a distributed Zato environment
+# to install and configure PostgreSQL, and then create Zato ODB and a cluster
+# on an independent box.
+
+- hosts: "{{ postgresql_hosts }}"
+  become: True
+  vars:
+    ansible_host: "{{ hostvars[inventory_hostname]['ip'] }}"
+    ansible_ssh_private_key_file: ./files/vagrant_key/distributed/postgresql_private_key
+
+  roles:
+
+    - install_postgresql
+    - configure_postgresql
+    - create_zato_odb
+    - create_zato_cluster

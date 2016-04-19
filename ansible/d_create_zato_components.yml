@@ -1,0 +1,17 @@
+---
+
+# This playbook distributes keys and certificates for Zato components,
+# creates those components and starts them, and then reconfigures them
+# and finally restarts them.
+- hosts: zato-components
+  become: True
+  vars:
+    ansible_host: "{{ hostvars[inventory_hostname]['ip'] }}"
+    ansible_ssh_private_key_file:
+      ./files/vagrant_key/distributed/{{ hostvars[inventory_hostname]['inventory_hostname'] }}_private_key
+
+  roles:
+
+    - distribute_zato_certs
+    - create_zato_components
+    - configure_zato_distributed

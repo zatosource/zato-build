@@ -1,0 +1,11 @@
+---
+
+# This playbook is meant to be used in a distributed Zato environment
+# to create a self-signed CA and keys and certificates for particular
+# Zato components.
+
+- hosts: localhost
+
+  roles:
+
+    - create_zato_certs
