@@ -1,0 +1,20 @@
+---
+
+- hosts: localhost
+
+  tasks:
+
+    - name: Destroy vagrant boxes
+      shell: vagrant destroy --force chdir=./vm/distributed/{{ item }}
+      with_items: "{{ groups['redis-ha'] }}"
+      ignore_errors: yes
+
+    - name: Remove directories and files
+      file: path=./vm/distributed/{{ item[0] }}/{{ item[1] }} state=absent
+      with_nested:
+        - "{{ groups['redis-ha'] }}"
+        - [ '.vagrant', 'synced', 'Vagrantfile' ]
+
+    - name: Remove vagrant user's private_keys
+      file: path=./files/vagrant_key/distributed/{{ item }}_private_key state=absent
+      with_items: "{{ groups['redis-ha'] }}"
