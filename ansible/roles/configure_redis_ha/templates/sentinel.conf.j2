@@ -9,7 +9,7 @@ port {{ hostvars[inventory_hostname]['sentinel'] }}
 # new master after failover and we don't allow for the same master to be failed over
 # more often than once in 3 minutes.
 #
-sentinel monitor redis-ha {{ hostvars[inventory_hostname]['ip'] }} {{ hostvars[inventory_hostname]['node'] }} 2
+sentinel monitor redis-ha {{ hostvars['redis1']['ip'] }} {{ hostvars['redis1']['node'] }} 2
 sentinel down-after-milliseconds redis-ha 10000
 sentinel parallel-syncs redis-ha 1
 sentinel failover-timeout redis-ha 180000
