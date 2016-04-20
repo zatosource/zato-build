@@ -15,7 +15,7 @@ oracle-box
 
 [dbservers]
 postgresql
-redis
+redis1
 
 [redis-ha]
 redis1
@@ -30,7 +30,7 @@ zato-wa
 
 [zato-distributed]
 postgresql
-redis
+redis1
 zato-lb
 zato-server1
 zato-server2
