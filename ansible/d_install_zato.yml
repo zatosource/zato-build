@@ -5,7 +5,7 @@
 # 'zato-components' as the hosts pattern, but it has to be defined first
 # in the inventory file.
 
-- hosts: "{{ zato_hosts }}"
+- hosts: zato-components, postgresql
   become: True
   vars:
     ansible_host: "{{ hostvars[inventory_hostname]['ip'] }}"

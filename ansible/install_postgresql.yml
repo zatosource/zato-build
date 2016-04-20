@@ -4,7 +4,7 @@
 # to install and configure PostgreSQL, and then create Zato ODB and a cluster
 # on an independent box.
 
-- hosts: "{{ postgresql_hosts }}"
+- hosts: postgresql
   become: True
   vars:
     ansible_host: "{{ hostvars[inventory_hostname]['ip'] }}"
