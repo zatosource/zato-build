@@ -5,7 +5,7 @@
     - group_vars/zato-distributed/main.yml
     - group_vars/zato-components/main.yml
     - host_vars/postgresql.yml
-    - host_vars/redis.yml
+    - host_vars/redis1.yml
     - host_vars/zato-server1.yml
     - host_vars/zato-server2.yml
     - host_vars/zato-lb.yml

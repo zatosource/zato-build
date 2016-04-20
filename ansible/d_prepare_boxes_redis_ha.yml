@@ -1,0 +1,58 @@
+---
+
+- hosts: localhost
+  vars_files:
+    - group_vars/zato-distributed/main.yml
+    - group_vars/zato-components/main.yml
+    - host_vars/postgresql.yml
+    - host_vars/redis1.yml
+    - host_vars/redis2.yml
+    - host_vars/redis3.yml
+    - host_vars/zato-server1.yml
+    - host_vars/zato-server2.yml
+    - host_vars/zato-lb.yml
+    - host_vars/zato-wa.yml
+
+  tasks:
+
+    - name: Create box root directory
+      file:
+        name=./vm/distributed/{{ item }}/
+        state=directory
+      with_items:
+        - postgresql
+        - "{{ groups['redis-ha'] }}"
+        - "{{ groups['zato-components'] }}"
+
+    - name: Prepare Vagrantfile
+      template: src=./templates/box_distributed.j2
+                dest=vm/distributed/{{ item }}/Vagrantfile
+      with_items:
+        - postgresql
+        - "{{ groups['redis-ha'] }}"
+        - "{{ groups['zato-components'] }}"
+
+    - name: Create a vagrant box
+      shell: vagrant up chdir=./vm/distributed/{{ item }}
+      with_items:
+        - postgresql
+        - "{{ groups['redis-ha'] }}"
+        - "{{ groups['zato-components'] }}"
+
+    - name: Copy vagrant user's private keys
+      shell: cp  ./.vagrant/machines/default/virtualbox/private_key \
+             ../../../files/vagrant_key/distributed/{{ item }}_private_key
+             chdir=./vm/distributed/{{ item }}/
+             creates=yes
+      with_items:
+        - postgresql
+        - "{{ groups['redis-ha'] }}"
+        - "{{ groups['zato-components'] }}"
+
+    - name: Set the private_keys mode to 0600
+      file: path=./files/vagrant_key/distributed/{{ item }}_private_key
+            mode=0600
+      with_items:
+        - postgresql
+        - "{{ groups['redis-ha'] }}"
+        - "{{ groups['zato-components'] }}"
