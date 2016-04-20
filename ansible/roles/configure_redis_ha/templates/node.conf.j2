@@ -4,3 +4,8 @@ port {{ hostvars[inventory_hostname]['node'] }}
 
 # Database location
 dir .
+
+{% if hostvars[inventory_hostname]['inventory_hostname'] != "redis1" %}
+# Where to replicate from
+slaveof {{ hostvars['redis1']['ip'] }} {{ hostvars['redis1']['node'] }}
+{% endif %}
