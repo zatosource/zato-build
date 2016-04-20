@@ -1,0 +1,8 @@
+---
+
+- name: Start nodes
+  shell: redis-server node.conf --daemonize yes
+    chdir=/etc/redis/
+  become_user: root
+
+- pause: seconds=10

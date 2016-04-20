@@ -1,0 +1,8 @@
+---
+
+- name: Start sentinels
+  shell: redis-server sentinel.conf --sentinel --daemonize yes
+    chdir=/etc/redis/
+  become_user: root
+
+- pause: seconds=10
