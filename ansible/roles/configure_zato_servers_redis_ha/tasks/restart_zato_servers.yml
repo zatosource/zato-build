@@ -1,0 +1,6 @@
+---
+
+- name: Restart Zato servers
+  service: name=zato state=restarted
+
+- pause: seconds=20

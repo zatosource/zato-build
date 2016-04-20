@@ -1,0 +1,7 @@
+---
+
+- include: configure_servers_redis_ha.yml
+  become_user: zato
+
+- include: restart_zato_servers.yml
+  become_user: zato
