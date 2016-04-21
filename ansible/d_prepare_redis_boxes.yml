@@ -1,5 +1,8 @@
 ---
 
+# This playbook only creates Vagrant boxes for Redis HA environment:
+# 3 servers running one node and one sentinel each.
+
 - hosts: localhost
   vars_files:
     - group_vars/zato-distributed/main.yml

@@ -1,5 +1,9 @@
 ---
 
+# This playbook creates Vagrant boxes for Zato distributed environment
+# consisting of PostgreSQL server, Redis HA (3 servers), and Zato components:
+# load balancer, web admin and two servers.
+
 - hosts: localhost
   vars_files:
     - group_vars/zato-distributed/main.yml
