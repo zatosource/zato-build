@@ -4,3 +4,4 @@
 *.crt
 *.pem
 *_private_key
+**/test_results/
