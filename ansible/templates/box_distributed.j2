@@ -6,8 +6,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = "{{ box['base'] }}"
 
   config.vm.provider "virtualbox" do |v|
-    v.memory = "{{ box['memory'] }}"
     v.name = "{{ item }}"
+    v.memory = "{{ box['memory'] }}"
   end
   config.vm.hostname = "{{ item }}"
   config.vm.network "private_network", ip: "{{ hostvars[item]['ip'] }}"
