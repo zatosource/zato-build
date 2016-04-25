@@ -7,7 +7,29 @@
   when: hostvars[inventory_hostname]['alias'] == "zato_load_balancer"
   with_items:
     - { file: 'zato.config', regexp: '127.0.0.1:11223', replace: '{{ ip }}:11223' }
+    - { file: 'zato.config', regexp: '# ZATO default_backend_empty', replace: '' }
     - { file: 'lb-agent.conf', regexp: 'localhost', replace: '{{ ip }}' }
+
+- name: Add first server entry to Zato LB's config file
+  lineinfile: "dest=/opt/zato/env/load-balancer/config/repo/zato.config
+    line='server http_plain--{{ first_server }} 
+    {{ hostvars[first_server]['ip'] }}:{{ hostvars[first_server]['port'] }} 
+    check inter 2s rise 2 fall 2 
+    # ZATO backend bck_http_plain:server--{{ first_server }}'
+    insertafter='^# ZATO begin backend bck_http_plain'"
+  when: hostvars[inventory_hostname]['alias'] == "zato_load_balancer"
+
+- name: Add other server entries to Zato LB's config
+  lineinfile: "dest=/opt/zato/env/load-balancer/config/repo/zato.config
+    line='server http_plain--{{ item }} 
+    {{ hostvars[item]['ip'] }}:{{ hostvars[item]['port'] }} 
+    check inter 2s rise 2 fall 2 
+    # ZATO backend bck_http_plain:server--{{ item }}'
+    insertbefore='^# ZATO end backend bck_http_plain'
+    state=present"
+  when: hostvars[inventory_hostname]['alias'] == "zato_load_balancer"
+  with_items:
+    - "{{ servers }}"
 
 - name: Set hosts and ports for Zato servers
   replace: "dest=/opt/zato/env/server/config/repo/server.conf
