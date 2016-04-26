@@ -10,7 +10,7 @@
 - name: create quickstart on Debian-based systems
   shell: rm -rf /opt/zato/env/qs-1 &&
          mkdir -p /opt/zato/env/qs-1 &&
-         /opt/zato/{{ release_version }}/bin/zato quickstart create \
+         /opt/zato/current/bin/zato quickstart create \
          --odb_host localhost \
          --odb_port 3306 \
          --odb_user zato1 \
@@ -25,7 +25,7 @@
 - name: create quickstart on CentOS-based systems
   shell: rm -rf /opt/zato/env/qs-1 &&
          mkdir -p /opt/zato/env/qs-1 &&
-         /opt/zato/{{ release_version }}/code/bin/zato quickstart create \
+         /opt/zato/current/code/bin/zato quickstart create \
          --odb_host localhost \
          --odb_port 3306 \
          --odb_user zato1
