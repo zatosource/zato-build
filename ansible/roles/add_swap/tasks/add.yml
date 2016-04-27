@@ -1,0 +1,17 @@
+---
+
+- name: Create storage file
+  shell: dd if=/dev/zero of=/swapfile1 bs=1024 count=1548288
+
+- name: Set up file permissions only for root
+  file: path=/swapfile1 mode=0600 owner=root group=root
+
+- name: Set up a Linux swap area
+  shell: mkswap /swapfile1
+
+- name: Enable the swap file
+  shell: swapon /swapfile1
+
+- name: Update fstab
+  lineinfile: dest=/etc/fstab line="/swapfile1 none swap sw 0 0"
+    insertafter=EOF
