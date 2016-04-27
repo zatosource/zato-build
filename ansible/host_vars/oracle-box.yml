@@ -1,0 +1,8 @@
+---
+
+box:
+  base: bento/centos-7.1
+  hostname: oracle-box
+  ip: 10.2.4.11
+  memory: 4096
+  name: oracle-box
