@@ -16,8 +16,11 @@
 - name: Copy updated sysctl.conf
   copy: src=sysctl.conf dest=/etc/ owner=root group=root
 
-- name: Apply the values set in sysctl.conf
-  shell: sysctl -a
+- name: Read and apply the values set in sysctl.conf
+  shell: "{{ item }}"
+  with_items:
+    - sysctl -p
+    - sysctl -a
 
 - name: Specify limits for oracle user
   lineinfile: "dest=/etc/security/limits.conf insertbefore='# End of file'
@@ -52,7 +55,7 @@
     - /u02
 
 - name: Install required packages
-  yum: "name={{ item }} state=present"
+  yum: name={{ item }} state=present update_cache=yes
   with_items:
     - binutils.x86_64
     - compat-libcap1.x86_64
@@ -82,7 +85,7 @@
     - sysstat.x86_64
 
 - name: Install "X Window System" package group
-  yum: name="@X Window System" state=present
+  yum: name="@X Window System" state=present update_cache=yes
 
     #- name: Copy all required files
     #copy: src=Disk1 dest=/tmp
