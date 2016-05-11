@@ -87,6 +87,14 @@
 - name: Install "X Window System" package group
   yum: name="@X Window System" state=present update_cache=yes
 
+- name: Copy the response file needed for silent installation of Oracle DB
+  copy: src=oracle_db_install.rsp dest=/stage/database/ owner=oracle
+    group=oinstall
+
+- name: Run Oracle installed in silent mode
+  shell: /stage/database/runInstaller -silent -responseFile \
+    /stage/database/oracle_db_install.rsp
+  become_user: oracle
     #- name: Copy all required files
     #copy: src=Disk1 dest=/tmp
 
