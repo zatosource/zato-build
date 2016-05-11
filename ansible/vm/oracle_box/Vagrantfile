@@ -1,0 +1,15 @@
+VAGRANTFILE_API_VERSION = "2"
+ENV["LC_ALL"] = "en_US.UTF-8"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+
+  config.vm.box = "bento/centos-7.1"
+
+  config.vm.provider "virtualbox" do |v|
+    v.name = "oracle-box"
+    v.memory = "4096"
+  end
+  config.vm.hostname = "oracle-box"
+  config.vm.network "private_network", ip: "10.2.4.11"
+
+end
