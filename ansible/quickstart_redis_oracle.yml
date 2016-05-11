@@ -1,7 +1,35 @@
 ---
 
+- hosts: localhost
+  vars_files:
+    - host_vars/oracle-box.yml
+
+  tasks:
+
+    - name: Create box root directory
+      file: name=./vm/oracle_box state=directory
+
+    - name: Prepare Vagrantfile
+      template: src=./templates/box.j2
+                dest=vm/oracle_box/Vagrantfile
+
+    - name: Create a vagrant box
+      shell: vagrant up chdir=./vm/oracle_box
+
+    - name: Copy vagrant user's private key
+      shell: cp  ./.vagrant/machines/default/virtualbox/private_key \
+             ../../files/vagrant_key/oracle_private_key
+             chdir=./vm/oracle_box/
+
+    - name: Set the private_key mode to 0600
+      file: path=./files/vagrant_key/oracle_private_key mode=0600
+
 - hosts: oracle-box
   become: True
+  vars:
+    ansible_host: "{{ hostvars[inventory_hostname]['box']['ip'] }}"
+    ansible_ssh_private_key_file:
+      ./files/vagrant_key/oracle_private_key
 
   roles:
 
