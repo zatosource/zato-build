@@ -84,8 +84,8 @@
     - make.x86_64
     - sysstat.x86_64
 
-- name: Install "X Window System" package group
-  yum: name="@X Window System" state=present update_cache=yes
+#- name: Install "X Window System" package group
+#  yum: name="@X Window System" state=present update_cache=yes
 
 - name: Copy the response file needed for silent installation of Oracle DB
   copy: src=oracle_db_install.rsp dest=/stage/database/ owner=oracle
@@ -94,6 +94,20 @@
 - name: Run Oracle installed in silent mode
   shell: /stage/database/runInstaller -silent -responseFile \
     /stage/database/oracle_db_install.rsp
+  become_user: oracle
+
+# Pause to make sure the installer finishes its job
+- pause: minutes=10
+
+- name: Run additional Oracle scripts as root user
+  shell: "{{ item }}"
+  with_items:
+    - /u01/app/oraInventory/orainstRoot.sh
+    - /u01/app/oracle/product/12.1.0/dbhome_1/root.sh
+
+- name: Run additional script to complete configuration
+  shell: /u01/app/oracle/product/12.1.0/dbhome_1/cfgtoollogs/configToolAllCommands \
+    RESPONSE_FILE=/stage/database/oracle_db_install.rsp
   become_user: oracle
     #- name: Copy all required files
     #copy: src=Disk1 dest=/tmp
