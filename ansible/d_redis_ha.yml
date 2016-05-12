@@ -6,8 +6,6 @@
   become: True
   vars:
     ansible_host: "{{ hostvars[inventory_hostname]['ip'] }}"
-    ansible_ssh_private_key_file:
-      ./files/vagrant_key/distributed/{{ hostvars[inventory_hostname]['inventory_hostname'] }}_private_key
 
   roles:
 
