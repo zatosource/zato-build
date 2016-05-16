@@ -8,7 +8,7 @@
   roles:
 
     - configure_sshd
-    - install_additional_soft
+    - install_zato_dependencies
     - install_redis
     - install_postgresql
     - configure_postgresql

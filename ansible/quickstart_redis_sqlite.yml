@@ -7,7 +7,7 @@
 
   roles:
 
-    - install_additional_soft
+    - install_zato_dependencies
     - install_redis
     - prepare_install_zato
     - install_zato
