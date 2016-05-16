@@ -6,9 +6,9 @@
   when: ansible_distribution == "Debian"
 
 # Upgrading a box has to be a separate task
-- name: upgrade Debians
-  apt: update_cache=yes upgrade=yes
-  when: ansible_os_family == "Debian"
+#- name: upgrade Debians
+#  apt: update_cache=yes upgrade=yes
+#  when: ansible_os_family == "Debian"
 
 - name: Install additional software on Debian-based systems
   apt: name={{ item }} state=present update_cache=yes
