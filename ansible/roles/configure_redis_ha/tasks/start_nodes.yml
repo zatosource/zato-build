@@ -5,4 +5,4 @@
     chdir=/etc/redis/
   become_user: root
 
-- pause: seconds=10
+- pause: seconds=20
