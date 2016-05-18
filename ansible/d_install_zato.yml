@@ -13,5 +13,7 @@
   roles:
 
     - install_zato_dependencies
-    - prepare_install_zato
+    - { role: prepare_install_zato, when: repo_host == "repo-box-ubuntu" or
+        repo_host == "repo-box-centos" }
+    - { role: prepare_install_zatoio, when: repo_host == "zato.io" }
     - install_zato
