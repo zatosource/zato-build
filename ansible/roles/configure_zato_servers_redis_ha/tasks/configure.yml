@@ -8,11 +8,11 @@
 - name: Configure Zato servers - specify Redis master
   lineinfile: "dest=/opt/zato/env/server/config/repo/server.conf
     regexp='^redis_sentinels_master='
-    line='redis_sentinels_master={{ hostvars[groups['redis-ha'][0]]['ip'] }}'"
+    line='redis_sentinels_master={{ hostvars[groups['redis-ha'][0]]['inventory_hostname'] }}'"
 
 - name: Configure Zato servers - specify Redis sentinels
   lineinfile: "dest=/opt/zato/env/server/config/repo/server.conf
     regexp='^redis_sentinels='
-    line='redis_sentinels={{ hostvars[groups['redis-ha'][0]]['ip'] }}:{{ hostvars[groups['redis-ha'][0]]['sentinel'] }},
-      {{ hostvars[groups['redis-ha'][1]]['ip'] }}:{{ hostvars[groups['redis-ha'][1]]['sentinel'] }},
-      {{ hostvars[groups['redis-ha'][2]]['ip'] }}:{{ hostvars[groups['redis-ha'][2]]['sentinel'] }}'"
+    line='redis_sentinels={{ hostvars[groups['redis-ha'][0]]['inventory_hostname'] }}:{{ hostvars[groups['redis-ha'][0]]['sentinel'] }},
+      {{ hostvars[groups['redis-ha'][1]]['inventory_hostname'] }}:{{ hostvars[groups['redis-ha'][1]]['sentinel'] }},
+      {{ hostvars[groups['redis-ha'][2]]['inventory_hostname'] }}:{{ hostvars[groups['redis-ha'][2]]['sentinel'] }}'"
