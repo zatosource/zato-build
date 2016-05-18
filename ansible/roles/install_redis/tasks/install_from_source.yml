@@ -7,19 +7,19 @@
       - tcl8.5
 
   - name: Download Redis
-    get_url: url=http://download.redis.io/releases/redis-2.8.19.tar.gz dest=./
+    get_url: url=http://download.redis.io/releases/redis-stable.tar.gz dest=./
 
   - name: Unpack Redis
-    unarchive: src=./redis-2.8.19.tar.gz dest=./ copy=no
+    unarchive: src=./redis-stable.tar.gz dest=./ copy=no
 
   - name: Compile Redis
-    shell: make chdir=./redis-2.8.19
+    shell: make chdir=./redis-stable
 
   - name: Install Redis
-    shell: make install chdir=./redis-2.8.19
+    shell: make install chdir=./redis-stable
 
   - name: Configure Redis to run in the background
-    shell: echo -n | ./install_server.sh chdir=./redis-2.8.19/utils
+    shell: echo -n | ./install_server.sh chdir=./redis-stable/utils
 
   - name: Run Redis
     service: name=redis_6379 state=started
