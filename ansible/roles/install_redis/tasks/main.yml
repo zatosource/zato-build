@@ -1,10 +1,10 @@
 ---
 
-  - include: install_redis.yml
+  - include: install.yml
     when: ansible_distribution_version == "14.04" or ansible_distribution_version == "8.1"
 
-  - include: install_redis_from_source.yml
+  - include: install_from_source.yml
     when: ansible_distribution == "Debian" or ansible_distribution_version == "12.04"
 
-  - include: install_redis_on_redhat.yml
+  - include: install_on_redhat.yml
     when: ansible_distribution == "CentOS"
