@@ -1,5 +1,12 @@
 ---
 
+- name: Add Redis sentinels to /etc/hosts
+  lineinfile: "dest=/etc/hosts
+    line='{{ hostvars[item]['ip'] }} {{ item }}'"
+  with_items:
+    - "{{ groups['redis-ha'] }}"
+  become_user: root
+
 - name: Configure Zato servers - use Redis sentinels
   lineinfile: dest=/opt/zato/env/server/config/repo/server.conf
     regexp='^use_redis_sentinels=False'
