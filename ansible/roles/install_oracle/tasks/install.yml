@@ -91,19 +91,21 @@
   copy: src=oracle_db_install.rsp dest=/stage/database/ owner=oracle
     group=oinstall
 
-- name: Run Oracle installed in silent mode
-  shell: /stage/database/runInstaller -silent -responseFile \
+- name: Run Oracle installer in silent mode
+  shell: /stage/database/runInstaller -silent -waitforcompletion \
+    -ignorePrereq -ignoreSysPrereqs -responseFile \
     /stage/database/oracle_db_install.rsp
   become_user: oracle
 
 # Pause to make sure the installer finishes its job
-- pause: minutes=10
+#- pause: minutes=10
 
 - name: Run additional Oracle scripts as root user
   shell: "{{ item }}"
   with_items:
     - /u01/app/oraInventory/orainstRoot.sh
     - /u01/app/oracle/product/12.1.0/dbhome_1/root.sh
+  become_user: root
 
 - name: Run additional script to complete configuration
   shell: /u01/app/oracle/product/12.1.0/dbhome_1/cfgtoollogs/configToolAllCommands \
