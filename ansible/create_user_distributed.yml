@@ -4,15 +4,13 @@
 # a new user and enables SSH connection with a box by adding user's SSH keys
 # to authorized_keys file in the box.
 
-- hosts: "{{ box['hostname'] }}"
+- hosts: postgresql, redis-ha, zato-components
   become: True
   remote_user: vagrant
-  vars_files:
-    - ./vars/main.yml
   vars:
-    ansible_host: "{{ box['ip'] }}"
+    ansible_host: "{{ hostvars[inventory_hostname]['ip'] }}"
     ansible_ssh_private_key_file:
-      ./files/vagrant_key/private_key
+      ./files/vagrant_key/distributed/{{ hostvars[inventory_hostname]['inventory_hostname'] }}_private_key
 
   tasks:
 
