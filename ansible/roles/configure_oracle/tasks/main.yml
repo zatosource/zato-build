@@ -1,3 +1,4 @@
 ---
 
-    - include: configure_oracle.yml
+- include: firewall.yml
+- include: configure.yml
