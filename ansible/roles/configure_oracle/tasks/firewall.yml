@@ -1,0 +1,11 @@
+---
+
+- name: Start firewalld
+  service: name=firewalld state=started
+
+- name: Open all related ports
+  shell: firewall-cmd --zone=public --add-port=1521/tcp --add-port=5500/tcp \
+    --add-port=5520/tcp --add-port=3938/tcp --permanent
+
+- name: Reload firewalld
+  shell: firewall-cmd --reload
