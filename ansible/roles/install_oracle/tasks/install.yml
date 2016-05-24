@@ -88,17 +88,17 @@
 #  yum: name="@X Window System" state=present update_cache=yes
 
 - name: Copy the response file needed for silent installation of Oracle DB
-  copy: src=oracle_db_install.rsp dest=/stage/database/ owner=oracle
+  copy: src={{ item }} dest=/stage/database/ owner=oracle
     group=oinstall
+  with_items:
+    - oracle_db_install.rsp
+    - cfgrsp.properties
 
 - name: Run Oracle installer in silent mode
   shell: /stage/database/runInstaller -silent -waitforcompletion \
     -ignorePrereq -ignoreSysPrereqs -responseFile \
     /stage/database/oracle_db_install.rsp
   become_user: oracle
-
-# Pause to make sure the installer finishes its job
-#- pause: minutes=10
 
 - name: Run additional Oracle scripts as root user
   shell: "{{ item }}"
@@ -109,19 +109,5 @@
 
 - name: Run additional script to complete configuration
   shell: /u01/app/oracle/product/12.1.0/dbhome_1/cfgtoollogs/configToolAllCommands \
-    RESPONSE_FILE=/stage/database/oracle_db_install.rsp
+    RESPONSE_FILE=/stage/database/cfgrsp.properties
   become_user: oracle
-    #- name: Copy all required files
-    #copy: src=Disk1 dest=/tmp
-
-    #- name: Install Oracle Database XE from package
-    #yum: name=/tmp/Disk1/oracle-xe-11.2.0-1.0.x86_64.rpm
-
-    #- name: Create xe_logs directory
-    #file: path=/xe_logs state=directory
-
-    # Now we need to configure Oracle in silent mode
-    #- name: Configure Oracle Database XE in silent mode
-    #shell: /etc/init.d/oracle-xe configure \
-    #responseFile=/tmp/Disk1/response/xe.rsp > \
-    #/xe_logs/XEsilentinstall.log
