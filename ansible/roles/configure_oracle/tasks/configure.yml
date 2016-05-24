@@ -1,0 +1,29 @@
+---
+
+- name: Copy oracle's user .bash_profile file with Oracle env variables
+  copy: src=.bash_profile dest=/home/oracle owner=oracle group=oinstall
+
+- name: Reload oracle's user .bash_profile
+  shell: source /home/oracle/.bash_profile
+  become_user: oracle
+
+- name: Create a log file
+  file: path=/u01/app/oracle/oracle.log owner=oracle group=oinstall state=touch
+  become_user: oracle
+
+- name: Copy sql scripts
+  copy: src={{ item }} dest=/u01/app/oracle owner=oracle group=oinstall
+  with_items:
+    - set_access.sql
+    - create_zato_user.sql
+
+- name: Make Oracle Database available to remote clients
+  shell: sqlplus system/password@localhost/orcl @/u01/app/oracle/set_access.sql \
+    >> oracle.log 2>&1
+  become_user: oracle
+
+- name: Create zato user
+  shell: sqlplus system/password@localhost/orcl @./create_zato_user.sql \
+    >> oracle.log 2>&1
+  become_user: oracle
+
