@@ -16,14 +16,14 @@
   with_items:
     - set_access.sql
     - create_zato_user.sql
+    - create_zato_db.sql
 
 #- name: Make Oracle Database available to remote clients
-#shell: sqlplus / as sysdba @/u01/app/oracle/set_access.sql \
-#>> oracle.log 2>&1
+#shell: sqlplus / as sysdba @/u01/app/oracle/set_access.sql
 #become_user: oracle
 
 - name: Create zato user
-  shell: sqlplus / as sysdba @/u01/app/oracle/create_zato_user.sql \
-    >> oracle.log 2>&1
-  become_user: oracle
+  script: create_zato_user.sh
 
+- name: Create zato database
+  script: create_zato_db.sh
