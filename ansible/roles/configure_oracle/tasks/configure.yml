@@ -17,13 +17,13 @@
     - set_access.sql
     - create_zato_user.sql
 
-- name: Make Oracle Database available to remote clients
-  shell: sqlplus system/password@localhost/orcl @/u01/app/oracle/set_access.sql \
-    >> oracle.log 2>&1
-  become_user: oracle
+#- name: Make Oracle Database available to remote clients
+#shell: sqlplus / as sysdba @/u01/app/oracle/set_access.sql \
+#>> oracle.log 2>&1
+#become_user: oracle
 
 - name: Create zato user
-  shell: sqlplus system/password@localhost/orcl @./create_zato_user.sql \
+  shell: sqlplus / as sysdba @/u01/app/oracle/create_zato_user.sql \
     >> oracle.log 2>&1
   become_user: oracle
 
