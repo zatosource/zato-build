@@ -9,3 +9,6 @@
 
 - name: Reload firewalld
   shell: firewall-cmd --reload
+
+- name: wait for firewalld to reload
+  pause: seconds=20
