@@ -5,5 +5,4 @@
 *.pem
 *_private_key
 **/test_results/
-ansible/roles/install_oracle/files/linuxamd64_12102_database_1of2.zip
-ansible/roles/install_oracle/files/linuxamd64_12102_database_2of2.zip
+**/files/**
