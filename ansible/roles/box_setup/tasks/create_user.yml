@@ -1,0 +1,37 @@
+---
+
+- name: Generate a password for a user
+  shell: openssl passwd -1 {{ user }}
+  register: password
+
+- name: Create a custom group
+  group: name={{ user }} state=present
+
+- name: Create a custom user on Debian-based systems
+  user: name={{ user }} comment="Builds and tests Zato packages"
+    state=present
+    group={{ user }}
+    groups="{{ user }},sudo"
+    password={{ password.stderr }}
+    shell=/bin/bash
+  when: ansible_os_family == "Debian"
+
+- name: Create a custom user on RedHat-based systems
+  user: name={{ user }} comment="Builds and tests Zato packages"
+    state=present
+    group={{ user }}
+    groups={{ user }}
+    password={{ password.stderr }}
+    shell=/bin/bash
+  when: ansible_os_family == "RedHat"
+
+- name: Enable su privileges for a user
+  lineinfile: "dest=/etc/sudoers line='{{ user }}    ALL=(ALL)    NOPASSWD: ALL'
+    insertafter='^root    ALL=(All)    ALL'
+    state=present"
+  when: ansible_os_family == "RedHat"
+
+- name: Add the user's SSH pub key to authorized keys
+  authorized_key:
+    user: "{{ user }}"
+    key: "{{ lookup('file', '/home/{{ user }}/.ssh/id_rsa.pub') }}"

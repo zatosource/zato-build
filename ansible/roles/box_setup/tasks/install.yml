@@ -1,0 +1,9 @@
+---
+
+- name: Install acl package on Debian-based systems
+  apt: name=acl state=present
+  when: ansible_os_family == "Debian"
+
+- name: Install acl package on RedHat-based systems
+  yum: name=acl state=present
+  when: ansible_os_family == "RedHat"

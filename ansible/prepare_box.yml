@@ -23,3 +23,17 @@
 
     - name: Set the private_key mode to 0600
       file: path=./files/vagrant_key/private_key mode=0600
+
+- hosts: "{{ box['hostname'] }}"
+  become: True
+  remote_user: vagrant
+  vars:
+    ansible_host: "{{ box['ip'] }}"
+    ansible_ssh_private_key_file:
+      ./files/vagrant_key/private_key
+  vars_files:
+    - vars/main.yml
+
+  roles:
+
+    - box_setup
