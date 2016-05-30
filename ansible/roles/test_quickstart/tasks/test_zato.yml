@@ -32,7 +32,7 @@
   shell: curl -v localhost:17011/zato/ping | tee /opt/zato/test_results/ping-server2.json
 
 - name: Get info on components on Debian-based systems
-  shell: /opt/zato/{{ package['version'] }}/bin/zato info \
+  shell: /opt/zato/current/bin/zato info \
          --format json {{ item }} 2>&1 | tee /opt/zato/test_results/info-{{ item }}.json
          chdir=/opt/zato/env/qs-1
   with_items:
@@ -43,7 +43,7 @@
   when: ansible_os_family == "Debian"
 
 - name: Get info on components on RHEL-based systems
-  shell: /opt/zato/{{ package['version'] }}/code/bin/zato info \
+  shell: /opt/zato/current/code/bin/zato info \
          --format json {{ item }} 2>&1 | tee /opt/zato/test_results/info-{{ item }}.json
          chdir=/opt/zato/env/qs-1
   with_items:
@@ -55,12 +55,12 @@
 
 - name: Run apitests on Debian-based systems
   shell: bin/py run-tests.py nosetests 2>&1 | tee /opt/zato/test_results/run-tests.txt
-         chdir=/opt/zato/{{ package['version'] }}
+         chdir=/opt/zato/current
   when: ansible_os_family == "Debian"
 
 - name: Run apitests on RHEL-based systems
   shell: bin/py run-tests.py nosetests 2>&1 | tee /opt/zato/test_results/run-tests.txt
-         chdir=/opt/zato/{{ package['version'] }}/code
+      chdir=/opt/zato/current/code
   when: ansible_distribution == "CentOS"
 
 - name: List all test logs
