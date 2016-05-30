@@ -1,0 +1,4 @@
+---
+
+- include: install_oracle_client.yml
+- include: create_quickstart.yml
