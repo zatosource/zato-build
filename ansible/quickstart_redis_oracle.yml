@@ -26,6 +26,7 @@
 
 - hosts: oracle-box
   become: True
+  remote_user: vagrant
   vars:
     ansible_host: "{{ hostvars[inventory_hostname]['box']['ip'] }}"
     ansible_ssh_private_key_file:
@@ -35,3 +36,19 @@
 
     - install_oracle
     - configure_oracle
+
+- hosts: "{{ box['hostname'] }}"
+  become: True
+  vars_files:
+    - vars/main.yml
+  vars:
+    - oracle_box: "{{ hostvars['oracle-box']['box']['ip'] }}"
+
+  roles:
+
+    - install_zato_dependencies
+    - install_redis
+    - prepare_install_zato
+    - install_zato
+    - create_quickstart_oracle
+    - test_quickstart
