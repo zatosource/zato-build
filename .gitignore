@@ -5,4 +5,5 @@
 *.pem
 *_private_key
 **/test_results/
-**/files/**
+**/files/*.zip
+**/files/*.rpm
