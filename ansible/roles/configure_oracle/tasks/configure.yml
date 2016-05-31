@@ -17,10 +17,13 @@
     - set_access.sql
     - create_zato_user.sql
     - create_zato_db.sql
+    - create_srv_param_file.sql
 
-#- name: Make Oracle Database available to remote clients
-#shell: sqlplus / as sysdba @/u01/app/oracle/set_access.sql
-#become_user: oracle
+- name: Create a Server Parameter File
+  script: create_srv_param_file.sh
+
+- name: Start the instance
+  script: start_instance.sh
 
 - name: Create zato user
   script: create_zato_user.sh
