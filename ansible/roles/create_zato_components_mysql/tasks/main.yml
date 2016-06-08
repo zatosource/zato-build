@@ -1,0 +1,10 @@
+---
+
+- include: create_load_balancer.yml
+  when: hostvars[inventory_hostname]['alias'] == "zato_load_balancer"
+- include: create_web_admin.yml
+  when: hostvars[inventory_hostname]['alias'] == "zato_web_admin"
+- include: create_server.yml
+  when: >
+    hostvars[inventory_hostname]['inventory_hostname'] in
+    hostvars[inventory_hostname]['groups']['zato-servers']

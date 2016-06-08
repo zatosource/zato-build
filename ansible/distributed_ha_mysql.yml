@@ -1,0 +1,8 @@
+---
+
+- include: d_install_zato.yml
+- include: d_redis_ha.yml
+- include: install_mysql.yml
+- include: d_create_zato_certificates.yml
+- include: d_create_zato_components.yml
+- include: d_configure_zato_servers_redis_ha.yml

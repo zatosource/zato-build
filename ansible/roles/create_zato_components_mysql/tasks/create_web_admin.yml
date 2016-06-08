@@ -1,0 +1,26 @@
+---
+
+- name: Create a directory for Zato web admin
+  file: path=/opt/zato/env/web-admin
+        owner=zato group=zato
+        state=directory
+  become_user: zato
+
+- name: Copy zato_web_admin.config file
+  copy: src=zato_web_admin.config dest=/opt/zato
+        owner=zato group=zato
+
+- name: Create Zato web admin
+  command: ./current/bin/zato from-config zato_web_admin.config
+    chdir=/opt/zato
+  become_user: zato
+
+- name: Create a symlink to Zato startup script
+  file: src=/opt/zato/env/web-admin
+        dest=/etc/zato/components-enabled/web-admin
+        state=link
+
+- name: Start Zato web admin as a service
+  service: name=zato state=started enabled=yes
+
+- pause: seconds=15
