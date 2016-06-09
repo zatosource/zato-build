@@ -8,4 +8,4 @@
 
   roles:
 
-    - configure_zato_servers_redis_ha
+    - configure_zato_servers_ha

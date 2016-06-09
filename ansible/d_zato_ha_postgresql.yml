@@ -5,4 +5,4 @@
 - include: install_postgresql.yml
 - include: d_create_zato_certificates.yml
 - include: d_create_zato_components.yml
-- include: d_configure_zato_servers_redis_ha.yml
+- include: d_configure_zato_servers_ha.yml

@@ -4,7 +4,7 @@
 # a new user and enables SSH connection with a box by adding user's SSH keys
 # to authorized_keys file in the box.
 
-- hosts: postgresql, redis-ha, zato-components
+- hosts: zato-odb, redis-ha, zato-components
   become: True
   remote_user: vagrant
   vars:
