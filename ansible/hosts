@@ -14,7 +14,7 @@ ubuntu-1404-64
 oracle-box
 
 [dbservers]
-postgresql
+zato-odb
 redis1
 
 [redis-ha]
@@ -23,13 +23,14 @@ redis2
 redis3
 
 [zato-components]
+zato-odb
 zato-lb
 zato-server1
 zato-server2
 zato-wa
 
 [zato-distributed]
-postgresql
+zato-odb
 redis1
 zato-lb
 zato-server1
