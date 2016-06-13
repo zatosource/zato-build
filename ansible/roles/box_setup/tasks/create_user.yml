@@ -29,7 +29,7 @@
   lineinfile: "dest=/etc/sudoers line='{{ user }}    ALL=(ALL)    NOPASSWD: ALL'
     insertafter='^root    ALL=(All)    ALL'
     state=present"
-  when: ansible_os_family == "RedHat"
+  when: ansible_os_family == "RedHat" or ansible_distribution == "Debian"
 
 - name: Add the user's SSH pub key to authorized keys
   authorized_key:
