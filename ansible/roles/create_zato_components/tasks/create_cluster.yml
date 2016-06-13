@@ -1,0 +1,10 @@
+---
+
+- name: Copy zato_cluster.config file
+  template: src={{ role_path }}/templates/zato_cluster.j2 dest=/opt/zato/zato_cluster.config
+    owner=zato group=zato
+
+- name: Create a Zato cluster
+  shell: current/bin/zato from-config zato_cluster.config
+         chdir=/opt/zato
+  become_user: zato

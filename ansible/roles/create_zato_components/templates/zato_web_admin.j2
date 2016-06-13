@@ -1,0 +1,28 @@
+# zato create web admin config
+ca_certs_path=/opt/zato/ca/ca_cert.pem
+cert_path=/opt/zato/ca/zato-wa.cert.pem
+command=create_web_admin
+odb_db_name={{ odb['name'] }}
+odb_user={{ odb['user'] }}
+odb_password={{ odb['pass'] }}
+{% if odb_type == "postgresql" %}
+odb_host={{ odb['host'] }}
+odb_port={{ odb['postgresql']['port'] }}
+odb_type=postgresql
+postgresql_schema={{ odb['postgresql']['schema'] }}
+{% elif odb_type == "mysql" %}
+odb_host={{ odb['host'] }}
+odb_port={{ odb['mysql']['port'] }}
+odb_type=mysql
+{% elif odb_type == "oracle" %}
+odb_host={{ odb['host'] }}
+odb_port={{ odb['oracle']['port'] }}
+odb_type=oracle
+{% endif %}
+path=/opt/zato/env/web-admin
+postgresql_schema=zato
+priv_key_path=/opt/zato/ca/zato-wa.key.pem
+pub_key_path=/opt/zato/ca/zato-wa.key.pub.pem
+store_config=False
+tech_account_name={{ tech_account['name'] }}
+tech_account_password={{ tech_account['pass'] }}

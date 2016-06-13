@@ -1,5 +1,9 @@
 ---
 
+- include: create_odb.yml
+  when: hostvars[inventory_hostname]['alias'] == "zato_odb"
+- include: create_cluster.yml
+  when: hostvars[inventory_hostname]['alias'] == "zato_odb"
 - include: create_load_balancer.yml
   when: hostvars[inventory_hostname]['alias'] == "zato_load_balancer"
 - include: create_web_admin.yml

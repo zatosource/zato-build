@@ -1,0 +1,10 @@
+---
+
+- name: Copy zato_odb.config file
+  template: src={{ role_path }}/templates/zato_odb.j2 dest=/opt/zato/zato_odb.config
+    owner=zato group=zato
+
+- name: Create ODB
+  shell: ./current/bin/zato from-config zato_odb.config
+    chdir=/opt/zato
+  become_user: zato
