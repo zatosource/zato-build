@@ -10,11 +10,3 @@
 
     - install_{{ odb_type }}
     - configure_{{ odb_type }}
-    - create_zato_odb
-    - create_zato_cluster
-
-          #    - install_oracle
-          #when: "{{ odb_type }}" == "oracle"
-          #
-          #- install_postgresql
-          #when: "{{ odb_type }}" == "postgresql"
