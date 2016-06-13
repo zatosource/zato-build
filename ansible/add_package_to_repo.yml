@@ -11,30 +11,36 @@
 
     - name: Copy vagrant user's private key
       shell: cp  ./.vagrant/machines/default/virtualbox/private_key \
-             ../../files/vagrant_key/
-             chdir=./vm/{{ repo['host'] }}
+        ../../files/vagrant_key/repo-box-ubuntu_private_key
+        chdir=./vm/{{ repo['host'] }}
 
 - hosts: "{{ repo['host'] }}"
   become: True
+  remote_user: vagrant
   vars:
     repo_datetime: "{{ ansible_date_time.iso8601 }}"
+    ansible_ssh_private_key_file:
+      ./files/vagrant_key/repo-box-ubuntu_private_key
   vars_files:
     - vars/main.yml
 
   pre_tasks:
 
+    - name: Install acl package
+      apt: name=acl state=present
+
     - name: Fetch deb repo box's certificate
       fetch: dest=./roles/prepare_install_zato/files/ \
-             src=/etc/apache2/ssl/{{ repo['host'] }}.crt
-             flat=yes
-             fail_on_missing=yes
+        src=/etc/apache2/ssl/{{ repo['host'] }}.crt
+        flat=yes
+        fail_on_missing=yes
       when: ansible_os_family == "Debian"
 
     - name: Fetch rpm repo box's certificate
       fetch: dest=./roles/prepare_install_zato/files/ \
-             src=/etc/httpd/ssl/{{ repo['host'] }}.crt
-             flat=yes
-             fail_on_missing=yes
+        src=/etc/httpd/ssl/{{ repo['host'] }}.crt
+        flat=yes
+        fail_on_missing=yes
       when: ansible_os_family == "RedHat"
 
   roles:
