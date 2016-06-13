@@ -2,13 +2,14 @@
 
 - name: Create a directory for Zato server
   file: path=/opt/zato/env/server
-        owner=zato group=zato
-        state=directory
+    owner=zato group=zato
+    state=directory
   become_user: zato
 
 - name: Generate zato_server.config file
-  template: src=zato_server.config.j2 dest=/opt/zato/zato_server.config
-        owner=zato group=zato
+  template: src={{ role_path }}/templates/zato_server.j2 \
+    dest=/opt/zato/zato_server.config
+    owner=zato group=zato
 
 - name: Create Zato server
   command: ./current/bin/zato from-config zato_server.config
@@ -17,8 +18,8 @@
 
 - name: Create a symlink to Zato startup script
   file: src=/opt/zato/env/server
-        dest=/etc/zato/components-enabled/server
-        state=link
+    dest=/etc/zato/components-enabled/server
+    state=link
 
 - name: Start a Zato server as a service
   service: name=zato state=started enabled=yes

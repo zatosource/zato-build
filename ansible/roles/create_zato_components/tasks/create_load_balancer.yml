@@ -2,13 +2,14 @@
 
 - name: Create a directory for Zato load balancer
   file: path=/opt/zato/env/load-balancer
-        owner=zato group=zato
-        state=directory
+    owner=zato group=zato
+    state=directory
   become_user: zato
 
 - name: Copy zato_load_balancer.config file
-  copy: src=zato_load_balancer.config dest=/opt/zato
-        owner=zato group=zato
+  copy: src=zato_load_balancer.config \
+    dest=/opt/zato/zato_load_balancer.config
+    owner=zato group=zato
 
 - name: Create Zato load balancer
   command: ./current/bin/zato from-config zato_load_balancer.config
@@ -17,8 +18,8 @@
 
 - name: Create a symlink to Zato startup script
   file: src=/opt/zato/env/load-balancer
-        dest=/etc/zato/components-enabled/load-balancer
-        state=link
+    dest=/etc/zato/components-enabled/load-balancer
+    state=link
 
 - name: Start Zato load balancer as a service
   service: name=zato state=started enabled=yes
