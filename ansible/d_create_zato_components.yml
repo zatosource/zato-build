@@ -1,8 +1,8 @@
 ---
 
-# This playbook distributes keys and certificates for Zato components,
-# creates those components and starts them, and then reconfigures them
-# and finally restarts them.
+# This playbook creates Zato components, starts them, then reconfigures them
+# and finally restarts the components.
+
 - hosts: zato-components
   become: True
   vars:
@@ -12,6 +12,5 @@
 
   roles:
 
-    - distribute_zato_certs
     - create_zato_components
     - configure_zato_distributed
