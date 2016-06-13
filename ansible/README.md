@@ -8,7 +8,7 @@
 
 ## Vagrant boxes
 
-Ansible creates local Vagrant machines using boxes pulled from a public
+Optionally, Ansible creates local Vagrant machines using boxes pulled from a public
 catalog of Vagrant images (mainly from Bento project:
 https://github.com/chef/bento). The local boxes have to be installed
 into Vagrant in a separate step.
@@ -65,7 +65,7 @@ may be specified in each playbook separately), not from command line.
 ### Box preparation
 
 ```
- $ ansible-playbook prepare_box.yml
+ $ ansible-playbook prepare_box.yml --extra-vars "user=[USER]"
 ```
 
 ### Building a package
@@ -88,15 +88,12 @@ may be specified in each playbook separately), not from command line.
  $ ansible-playbook add_package_to_repo.yml
 ```
 
-Since this playbook's purpose is to add a package to a test repo,
-we need to specify repo box hostname.
-
 ## Testing Zato
 
 ### Preparing a test box
 
 ```
- $ ansible-playbook prepare_box.yml
+ $ ansible-playbook prepare_box.yml --extra-vars "user=[USER]"
 ```
 
 ### Testing Zato
