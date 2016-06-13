@@ -1,0 +1,28 @@
+#zato create cluster config
+cluster_name=ZATO_TEST_1
+command=create_cluster
+broker_host=10.5.5.61
+broker_port=6379
+odb_db_name=zato
+odb_user=zato
+odb_password=zato
+{% if odb_type == "postgresql" %}
+odb_host={{ odb_host }}
+odb_port={{ odb_port }}
+odb_type=postgresql
+postgresql_schema=zato
+{% elif odb_type == "mysql" %}
+odb_host={{ odb_host }}
+odb_port={{ odb_port }}
+odb_type=mysql
+{% elif odb_type == "oracle" %}
+odb_host={{ odb_host }}
+odb_port={{ odb_port }}
+odb_type=oracle
+{% endif %}
+lb_host=10.5.5.11
+lb_port=11223
+lb_agent_port=20151
+store_config=False
+tech_account_name=techacc1
+tech_account_password=""
