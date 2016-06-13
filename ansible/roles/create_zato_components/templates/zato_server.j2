@@ -1,0 +1,30 @@
+# zato create server config
+ca_certs_path=/opt/zato/ca/{{ hostvars[inventory_hostname]['ca_cert'] }}
+cert_path=/opt/zato/ca/{{ hostvars[inventory_hostname]['cert'] }}
+cluster_name={{ cluster_name }}
+command=create_server
+kvdb_host={{ broker['host'] }}
+kvdb_port={{ broker['port'] }}
+kvdb_password=
+odb_db_name={{ odb['name'] }}
+odb_user={{ odb['user'] }}
+odb_password={{ odb['pass'] }}
+{% if odb_type == "postgresql" %}
+odb_host={{ odb['host'] }}
+odb_port={{ odb['postgresql']['port'] }}
+odb_type=postgresql
+postgresql_schema={{ odb['postgresql']['schema'] }}
+{% elif odb_type == "mysql" %}
+odb_host={{ odb['host'] }}
+odb_port={{ odb['mysql']['port'] }}
+odb_type=mysql
+{% elif odb_type == "oracle" %}
+odb_host={{ odb['host'] }}
+odb_port={{ odb['oracle']['port'] }}
+odb_type=oracle
+{% endif %}
+path=/opt/zato/env/server
+priv_key_path=/opt/zato/ca/{{ hostvars[inventory_hostname]['private_key'] }}
+pub_key_path=/opt/zato/ca/{{ hostvars[inventory_hostname]['public_key'] }}
+server_name={{ hostvars[inventory_hostname]['inventory_hostname'] }}
+store_config=False
