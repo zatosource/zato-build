@@ -33,13 +33,21 @@ RELEASE_NAME=`lsb_release -cs`
 ZATO_ROOT_DIR=/opt/zato
 ZATO_TARGET_DIR=$ZATO_ROOT_DIR/$ZATO_VERSION
 
-# Ubuntu 12.04 and Debian 7 require different versions
+# Ubuntus >= 12.04 and Debian 7 require different versions
 # of libumfpack package
 if command -v lsb_release > /dev/null; then
     release=$(lsb_release -c | cut -f2)
     if [[ "$release" == "precise" ]] || [[ "$release" == "wheezy" ]]; then
         LIBUMFPACK_VERSION=5.4.0
+    elif [[ "$release" == "xenial" ]]; then
+        LIBATLAS3BASE=libatlas3-base
+        LIBBLAS3=libblas3
+        LIBLAPACK3=liblapack3
+        LIBUMFPACK_VERSION=5.7.1
     else
+        LIBATLAS3BASE=libatlas3gf-base
+        LIBBLAS3=libblas3gf
+        LIBLAPACK3=liblapack3gf
         LIBUMFPACK_VERSION=5.6.2
     fi
 fi
@@ -110,6 +118,9 @@ function build_deb {
     SIZE=`du -sk $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/opt |awk '{print $1}'`
 
     sed "s/Version: VER/Version: $ZATO_VERSION-$PACKAGE_VERSION/g" $SOURCE_DIR/DEBIAN/control | sed "s/Architecture: ARCH/Architecture: $ARCH/g" | sed "s/Installed-Size: SIZE/Installed-Size: $SIZE/g" > $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/control
+    sed -i "s/LIBATLAS3BASE/$LIBATLAS3BASE/g" $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/control
+    sed -i "s/LIBBLAS3/$LIBBLAS3/g" $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/control
+    sed -i "s/LIBLAPACK3/$LIBLAPACK3/g" $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/control
     sed -i "s/LIBUMFPACK_VERSION/$LIBUMFPACK_VERSION/g" $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/control
     sed -i "s/RELEASE_NAME/$RELEASE_NAME/g" $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/control
     sed -i "s/ZATO_VERSION/$ZATO_VERSION/g" $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/postinst
