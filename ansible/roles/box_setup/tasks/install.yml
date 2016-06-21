@@ -1,9 +1,17 @@
 ---
 
-- name: Install acl package on Debian-based systems
-  apt: name=acl state=present
+- name: Install additional packages on Debian-based systems
+  apt: name={{ item }} state=present update_cache=yes
   when: ansible_os_family == "Debian"
+  with_items:
+    - acl
+    - htop
+    - ranger
+    - vim
 
-- name: Install acl package on RedHat-based systems
-  yum: name=acl state=present
+- name: Install additional packages on RedHat-based systems
+  yum: name={{ item }} state=present
   when: ansible_os_family == "RedHat"
+  with_items:
+    - acl
+    - vim
