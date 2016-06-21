@@ -4,7 +4,7 @@
 sudo apt-get install rng-tools
 
 # Create Zato test repository
-distributions=( wheezy jessie precise trusty )
+distributions=( wheezy jessie precise trusty xenial )
 
 echo 'Creating repositories...'
 
