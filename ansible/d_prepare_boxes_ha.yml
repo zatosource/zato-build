@@ -6,7 +6,6 @@
 
 - hosts: localhost
   vars_files:
-    - group_vars/zato-distributed/main.yml
     - group_vars/zato-components/main.yml
     - host_vars/zato-odb.yml
     - host_vars/redis1.yml
