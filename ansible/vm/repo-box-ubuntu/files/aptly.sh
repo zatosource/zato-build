@@ -30,6 +30,6 @@ fi
 
 # Create incoming directory to store copied Zato packages
 mkdir -p /opt/aptly/incoming/ubuntu/precise /opt/aptly/incoming/ubuntu/trusty \
-         /opt/aptly/incoming/debian/xenial /opt/aptly/incoming/debian/wheezy \
+         /opt/aptly/incoming/ubuntu/xenial /opt/aptly/incoming/debian/wheezy \
          /opt/aptly/incoming/debian/jessie
 chown -R aptly:aptly /opt/aptly/incoming
