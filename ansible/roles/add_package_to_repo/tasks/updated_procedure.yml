@@ -1,0 +1,47 @@
+---
+
+- name: Get snapshot list
+  shell: aptly snapshot list -raw -sort='time'
+  register: snap_list
+
+- name: Get package list
+  shell: aptly repo search \
+    zato-{{ package['release'] }}-{{ package['codename'] }} \
+    zato_{{ package['version'] }}-{{ package['release'] }}-{{ package['codename'] }}_{{ package['arch'] }}
+  register: pack_list
+
+- name: Create main snapshot if it doesn't exist yet
+  shell: aptly snapshot create \
+    snap-zato-{{ package['release'] }}-{{ package['codename'] }} \
+    from repo zato-{{ package['release'] }}-{{ package['codename'] }}
+  vars:
+    - zato_snap: snap-zato-{{ package['release'] }}-{{ package['codename'] }}
+  when: "zato_snap not in snap_list.stdout_lines"
+  register: first_snap
+
+- name: Create backup snapshot
+  shell: aptly snapshot create \
+    snap-zato-{{ package['release'] }}-{{ package['codename'] }}-{{ repo_datetime }} \
+    from repo zato-{{ package['release'] }}-{{ package['codename'] }}
+
+- name: Publish the main snapshot, if it hasn't been yet
+  shell: aptly publish snapshot \
+    snap-zato-{{ package['release'] }}-{{ package['codename'] }}
+  when: first_snap
+
+- name: Switch to an updated main snapshot
+
+- debug: var=snap_list
+
+- debug: var=pack_list
+
+- shell: echo "snapshot exists"
+  vars:
+    - zato_snap: snap-zato-{{ package['release'] }}-{{ package['codename'] }}
+  when: "zato_snap not in snap_list.stdout_lines"
+
+- shell: echo "package exists"
+  vars:
+    - zato_pkg: zato_{{ package['version'] }}-{{ package['release'] }}-{{ package['codename'] }}_{{ package['arch'] }}
+  when: "zato_pkg in pack_list.stdout_lines"
+
