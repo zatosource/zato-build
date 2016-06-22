@@ -3,5 +3,6 @@
 - name: Copy a Zato package to a deb repo-box
   copy: >
     src=../../../output/{{ package['system'] }}/zato-{{ package['version'] }}-{{ package['release'] }}_{{ package['arch'] }}-{{ package['codename'] }}.{{ package['format'] }}
-    dest=/opt/aptly/incoming/{{ package['distro'] }}/{{ package['codename'] }}
+    dest=/opt/aptly/incoming/{{ package['distro'] }}/{{ package['codename'] }}/
+    force=yes
   when: package['format'] == "deb"
