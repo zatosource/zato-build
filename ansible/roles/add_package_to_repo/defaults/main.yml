@@ -1,0 +1,8 @@
+---
+
+zato_package: zato-{{ package['version'] }}-{{ package['release'] }}_{{ package['arch'] }}-{{ package['codename'] }}.{{ package['format'] }}
+repository: zato-{{ package['release'] }}-{{ package['codename'] }}
+snapshot: snap-zato-{{ package['release'] }}-{{ package['codename'] }}-{{ repo_datetime }}
+prefix: repo/{{ package['release'] }}/2.0/{{ package['distro'] }}
+incoming: /opt/aptly/incoming/{{ package['distro'] }}/{{ package['codename'] }}
+source_dir: /opt/aptly/.aptly/public/repo/{{ package['release'] }}/2.0/{{ package['distro'] }}/

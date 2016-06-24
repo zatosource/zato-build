@@ -1,40 +1,46 @@
 ---
 
+- name: Get repo list
+  shell: aptly publish list -raw
+  register: published_list
+
+- debug: var=published_list
+
 - name: Get snapshot list
   shell: aptly snapshot list -raw -sort='time'
   register: snap_list
 
 - name: Get package list
-  shell: aptly repo search \
-    zato-{{ package['release'] }}-{{ package['codename'] }} \
-    zato_{{ package['version'] }}-{{ package['release'] }}-{{ package['codename'] }}_{{ package['arch'] }}
+  shell: aptly repo search {{ repository }} {{ zato_package }}
   register: pack_list
   ignore_errors: true
 
 - name: Add the package to aptly repository
-  shell: aptly repo add zato-{{ package['release'] }}-{{ package['codename'] }} \
-    /opt/aptly/incoming/{{ package['distro'] }}/{{ package['codename'] }}/zato-{{ package['version'] }}-{{ package['release'] }}_{{ package['arch'] }}-{{ package['codename'] }}.{{ package['format'] }}
+  shell: aptly repo add {{ repository }} {{ incoming }}/{{ zato_package }}
   when:
-    "'zato_{{ package['version'] }}-{{ package['release'] }}-{{ package['codename'] }}_{{ package['arch'] }}' not in pack_list.stdout"
+    "'{{ zato_package }}' not in pack_list.stdout"
+  register: add_pkg
 
 - name: Create a snapshot of a repo
-  shell: aptly snapshot create \
-    snap-zato-{{ package['release'] }}-{{ package['codename'] }}-{{ repo_datetime }} \
-    from repo zato-{{ package['release'] }}-{{ package['codename'] }}
+  shell: aptly snapshot create {{ snapshot }} from repo {{ repository }}
+  when: add_pkg.changed
+  register: create_snap
 
 - name: Publish the snapshot
-  shell: aptly publish snapshot \
-    snap-zato-{{ package['release'] }}-{{ package['codename'] }}-{{ repo_datetime }} \
-    repo/{{ package['release'] }}/2.0/{{ package['distro'] }}
+  shell: aptly publish repo {{ repository }} {{ prefix }}
+  when:
+    "'{{ prefix }}' not in published_list.stdout"
+  register: publish_starter
 
 - name: Switch to the snapshot
-  shell: aptly publish switch \
-    {{ package['codename'] }} \
-    repo/{{ package['release'] }}/2.0/{{ package['distro'] }} \
-    snap-zato-{{ package['release'] }}-{{ package['codename'] }}-{{ repo_datetime }}
+  shell: aptly publish switch {{ package['codename'] }} {{ prefix }} {{ snapshot }}
+  register: switch_repo
+  when: >
+    create_snap.changed and
+    not publish_starter.changed
+    and "'{{ prefix }}' in published_list.stdout"
 
 - name: Copy published repo to /var/www/repo directory
-  shell: cp -r \
-    /opt/aptly/.aptly/public/repo/{{ package['release'] }}/2.0/{{ package['distro'] }}/ \
-    /var/www/repo/{{ package['release'] }}/2.0/
+  shell: cp -r {{ source_dir }} /var/www/repo/{{ package['release'] }}/2.0/
   become_user: root
+  when: switch_repo.changed
