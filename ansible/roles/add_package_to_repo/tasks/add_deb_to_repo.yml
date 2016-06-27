@@ -27,9 +27,9 @@
   register: create_snap
 
 - name: Publish the snapshot
-  shell: aptly publish repo {{ repository }} {{ prefix }}
+  shell: aptly publish snapshot {{ snapshot }} {{ prefix }}
   when:
-    "'{{ prefix }}' not in published_list.stdout"
+    "'{{ prefix }} {{ package['codename'] }}' not in published_list.stdout"
   register: publish_starter
 
 - name: Switch to the snapshot
@@ -43,4 +43,3 @@
 - name: Copy published repo to /var/www/repo directory
   shell: cp -r {{ source_dir }} /var/www/repo/{{ package['release'] }}/2.0/
   become_user: root
-  when: switch_repo.changed
