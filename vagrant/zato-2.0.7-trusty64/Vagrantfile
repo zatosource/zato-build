@@ -6,6 +6,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     config.vm.network "private_network", ip: "10.77.77.77"
 
-    config.vm.provision "shell", path: "./create_quickstart.sh"
+    config.vm.provision "shell", path: "./setup-quickstart.sh"
 
 end
