@@ -2,7 +2,7 @@
 
 - name: Copy a Zato package to a deb repo-box
   copy: >
-    src=../../../output/{{ package['system'] }}/{{ zato_package }}
+    src=./output/{{ package['system'] }}/{{ zato_package }}
     dest=/opt/aptly/incoming/{{ package['distro'] }}/{{ package['codename'] }}/
     force=yes
   when: package['format'] == "deb"
