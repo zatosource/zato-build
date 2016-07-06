@@ -4,8 +4,6 @@
   shell: aptly publish list -raw
   register: published_list
 
-- debug: var=published_list
-
 - name: Get snapshot list
   shell: aptly snapshot list -raw -sort='time'
   register: snap_list
