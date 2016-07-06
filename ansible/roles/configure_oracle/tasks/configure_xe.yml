@@ -1,0 +1,19 @@
+---
+
+- name: Set Oracle DB XE environment variables
+  shell: /u01/app/oracle/product/11.2.0/xe/bin/oracle_env.sh
+  become_user: oracle
+
+- name: Set Oracle DB XE environment variables on each login and a new shell
+  lineinfile: dest=/home/oracle/{{ item }}
+    line='. /u01/app/oracle/product/11.2.0/xe/bin/oracle_env.sh'
+  become_user: oracle
+  with_items:
+    - .bashrc
+    - .bash_profile
+
+- name: Copy sql script which sets access to Oracle DB for remote clients
+  copy: src=set_access.sql dest=/u01/app/oracle owner=oracle group=oinstall
+
+- name: Set access to Oracle DB for remote clients
+  script: set_access.sh
