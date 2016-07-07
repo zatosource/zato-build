@@ -8,28 +8,31 @@
   apt: name=libaio1 state=present
   when: ansible_os_family == "Debian"
 
-- name: Copy Oracle Instant Client packages to a box on x86_64 systems
-  copy: "src=oracle-instantclient12.1-{{ item }}-12.1.0.2.0-1.x86_64.rpm
+- name: Copy Oracle Instant Client packages to x86_64 systems
+  copy: "src={{ item }}
     dest=/home/{{ user }} owner={{ user }} group={{ user }}"
   when: ansible_architecture == "x86_64"
   with_items:
-    - basiclite
-    - devel
+    - "{{ db_client['pkg'] }}"
+    - "{{ db_client['devel'] }}"
+    - "{{ db_client['sqlplus'] }}"
 
-- name: Copy Oracle Instant Client on i386 systems
-  copy: "src=oracle-instantclient12.1-{{ item }}-12.1.0.2.0-1.i386.rpm
+- name: Copy Oracle Instant Client packages to i386 systems
+  copy: "src={{ item }}
     dest=/home/{{ user }} owner={{ user }} group={{ user }}"
   when: ansible_architecture == "i386"
   with_items:
-    - basiclite
-    - devel
+    - "{{ db_client['pkg32'] }}"
+    - "{{ db_client['devel32'] }}"
+    - "{{ db_client['sqlplus32'] }}"
 
 - name: Convert OIC rpm packages to debs
   shell: alien -i "{{ item }}"
   when: ansible_os_family == "Debian"
   with_items:
-    - oracle-instantclient12.1-basiclite-12.1.0.2.0-1.x86_64.rpm
-    - oracle-instantclient12.1-devel-12.1.0.2.0-1.x86_64.rpm
+    - "{{ db_client['pkg'] }}"
+    - "{{ db_client['devel'] }}"
+    - "{{ db_client['sqlplus'] }}"
   become_user: root
 
 - name: Install cx_Oracle pip package
