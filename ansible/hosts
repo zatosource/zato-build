@@ -1,6 +1,7 @@
 [vm-hosts]
 debian-7-32
 debian-7-64
+debian-8-32
 debian-8-64
 centos-6-32
 centos-6-64
