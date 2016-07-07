@@ -1,19 +1,22 @@
 ---
 
-- name: Set Oracle DB XE environment variables
-  shell: /u01/app/oracle/product/11.2.0/xe/bin/oracle_env.sh
-  become_user: oracle
+- name: Configure Oracle 11g
+  shell: /etc/init.d/oracle-xe configure responseFile=/stage/xe.rsp
+  become_user: root
 
-- name: Set Oracle DB XE environment variables on each login and a new shell
-  lineinfile: dest=/home/oracle/{{ item }}
-    line='. /u01/app/oracle/product/11.2.0/xe/bin/oracle_env.sh'
-  become_user: oracle
+- name: Copy sql scripts
+  copy: src={{ item }} dest=/u01/app/oracle owner=oracle group=oinstall
   with_items:
-    - .bashrc
-    - .bash_profile
+    - set_access.sql
+    - create_zato_user.sql
+    - create_zato_db.sql
+    - startup.sql
 
-- name: Copy sql script which sets access to Oracle DB for remote clients
-  copy: src=set_access.sql dest=/u01/app/oracle owner=oracle group=oinstall
+- name: Create zato user
+  script: create_zato_user.sh
+
+- name: Create zato database
+  script: create_zato_db.sh
 
 - name: Set access to Oracle DB for remote clients
   script: set_access.sh

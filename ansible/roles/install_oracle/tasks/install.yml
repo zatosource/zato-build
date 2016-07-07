@@ -45,9 +45,10 @@
   unarchive: src=oracle-xe-11.2.0-1.0.x86_64.rpm.zip dest=/stage/ copy=yes
     owner=oracle group=oinstall
 
- name: Install required packages
+- name: Install required packages
   yum: name={{ item }} state=present update_cache=yes
   with_items:
+    - bc.x86_64
     - binutils.x86_64
     - gcc.x86_64
     - gcc-c++.x86_64
@@ -66,11 +67,23 @@
 - name: Create log file
   file: path=/xe_logs/XEsilentinstall.log state=touch owner=oracle group=oinstall
 
-- name: Install Oracle 11g from package
+- name: Install Oracle XE 11g from package
   shell: rpm -ivh /stage/Disk1/oracle-xe-11.2.0-1.0.x86_64.rpm > \
     /xe_logs/XEsilentinstall.log
   become_user: root
 
-- name: Configure Oracle 11g
-  shell: /etc/init.d/oracle-xe configure responseFile=/stage/xe.rsp
+- name: Set Oracle DB XE environment variables
+  shell: /u01/app/oracle/product/11.2.0/xe/bin/oracle_env.sh
+  become_user: oracle
+
+- name: Set Oracle DB XE environment variables on each login and in a new shell
+  lineinfile: dest=/home/oracle/{{ item }}
+    line='. /u01/app/oracle/product/11.2.0/xe/bin/oracle_env.sh'
+  become_user: oracle
+  with_items:
+    - .bashrc
+    - .bash_profile
+
+- name: Start Oracle XE database
+  shell: /etc/init.d/oracle-xe start
   become_user: root
