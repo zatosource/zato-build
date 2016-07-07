@@ -6,13 +6,6 @@
 
   tasks:
 
-    - name: Create box root directory
-      file: name=./vm/oracle_box state=directory
-
-    - name: Prepare Vagrantfile
-      template: src=./templates/box.j2
-                dest=vm/oracle_box/Vagrantfile
-
     - name: Create a vagrant box
       shell: vagrant up chdir=./vm/oracle_box
 
@@ -34,6 +27,7 @@
 
   roles:
 
+    - add_swap
     - install_oracle
     - configure_oracle
 
@@ -42,7 +36,10 @@
   vars_files:
     - vars/main.yml
   vars:
-    - oracle_box: "{{ hostvars['oracle-box']['box']['ip'] }}"
+    - db_client:
+        pkg: oracle-instantclient12.1-basiclite-12.1.0.2.0-1.x86_64.rpm
+        devel: oracle-instantclient12.1-devel-12.1.0.2.0-1.x86_64.rpm
+        sqlplus: oracle-instantclient12.1-sqlplus-12.1.0.2.0-1.x86_64.rpm
 
   roles:
 
