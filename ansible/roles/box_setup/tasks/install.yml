@@ -15,3 +15,4 @@
   with_items:
     - acl
     - vim
+    - libselinux-python
