@@ -26,6 +26,33 @@
 
     - distribute_zato_certs
 
+- hosts: aws-zato-lb
+  become: True
+  vars:
+    ansible_host: "{{ hostvars[inventory_hostname]['ip'] }}"
+
+  roles:
+
+    - create_zato_lb
+
+- hosts: aws-zato-wa
+  become: True
+  vars:
+    ansible_host: "{{ hostvars[inventory_hostname]['ip'] }}"
+
+  roles:
+
+    - create_zato_wa
+
+- hosts: aws-zato-servers
+  become: True
+  vars:
+    ansible_host: "{{ hostvars[inventory_hostname]['ip'] }}"
+
+  roles:
+
+    - create_zato_server
+
 - hosts: aws-zato-components
   become: True
   vars:
@@ -35,5 +62,4 @@
 
   roles:
 
-    - create_zato_components
     - configure_zato_distributed
