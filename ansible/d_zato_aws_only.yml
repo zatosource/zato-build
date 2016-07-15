@@ -1,0 +1,39 @@
+---
+
+- hosts: aws-zato-components
+  become: True
+  vars:
+    ansible_host: "{{ hostvars[inventory_hostname]['ip'] }}"
+
+  roles:
+
+    - install_zato_dependencies
+    - prepare_install_zatoio
+    - install_zato
+
+- hosts: localhost
+
+  roles:
+
+    - create_zato_certs
+
+- hosts: aws-zato-components:!aws-zato-odb
+  become: True
+  vars:
+    ansible_host: "{{ hostvars[inventory_hostname]['ip'] }}"
+
+  roles:
+
+    - distribute_zato_certs
+
+- hosts: aws-zato-components
+  become: True
+  vars:
+    ansible_host: "{{ hostvars[inventory_hostname]['ip'] }}"
+    servers: "{{ hostvars[inventory_hostname]['groups']['zato-servers'] }}"
+    first_server: "{{ hostvars[inventory_hostname]['groups']['zato-servers'][0] }}"
+
+  roles:
+
+    - create_zato_components
+    - configure_zato_distributed
