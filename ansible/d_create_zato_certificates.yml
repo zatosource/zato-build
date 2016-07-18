@@ -13,8 +13,6 @@
   become: True
   vars:
     ansible_host: "{{ hostvars[inventory_hostname]['ip'] }}"
-    servers: "{{ hostvars[inventory_hostname]['groups']['zato-servers'] }}"
-    first_server: "{{ hostvars[inventory_hostname]['groups']['zato-servers'][0] }}"
 
   roles:
 
