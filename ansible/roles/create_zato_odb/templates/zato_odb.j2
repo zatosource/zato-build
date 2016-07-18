@@ -1,20 +1,20 @@
 # zato create odb config
 command=create_odb
-odb_db_name=zato
-odb_user=zato
-odb_password=zato
+odb_db_name={{ odb['name'] }}
+odb_user={{ odb['user'] }}
+odb_password={{ odb['pass'] }}
 {% if odb_type == 'postgresql' %}
-odb_host={{ postgresql['host'] }}
-odb_port={{ postgresql['port'] }}
+odb_host={{ odb['host'] }}
+odb_port={{ odb['postgresql']['port'] }}
 odb_type=postgresql
-postgresql_schema=zato
+postgresql_schema={{ odb['postgresql']['schema'] }}
 {% elif odb_type == 'mysql' %}
-odb_host={{ mysql['host'] }}
-odb_port={{ mysql['port'] }}
+odb_host={{ odb['host'] }}
+odb_port={{ odb['mysql']['port'] }}
 odb_type=mysql
 {% elif odb_type == 'oracle' %}
-odb_host={{ oracle['host'] }}
-odb_port={{ oracle['port'] }}
+odb_host={{ odb['host'] }}
+odb_port={{ odb['oracle']['port'] }}
 odb_type=oracle
 {% endif %}
 store_config=False

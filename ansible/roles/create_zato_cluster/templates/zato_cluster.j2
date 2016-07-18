@@ -1,28 +1,28 @@
 #zato create cluster config
-cluster_name=ZATO_TEST_1
+cluster_name={{ cluster_name }}
 command=create_cluster
-broker_host=10.5.5.61
-broker_port=6379
-odb_db_name=zato
-odb_user=zato
-odb_password=zato
+broker_host={[ broker['host'] ]}
+broker_port={{ broker['port'] }}
+odb_db_name={{ odb['name'] }}
+odb_user={{ odb['user'] }}
+odb_password={{ odb['pass'] }}
 {% if odb_type == "postgresql" %}
-odb_host={{ odb_host }}
-odb_port={{ odb_port }}
+odb_host={{ odb['host'] }}
+odb_port={{ odb['postgresql']['port'] }}
 odb_type=postgresql
-postgresql_schema=zato
+postgresql_schema={{ odb['postgresql']['schema'] }}
 {% elif odb_type == "mysql" %}
-odb_host={{ odb_host }}
-odb_port={{ odb_port }}
+odb_host={{ odb['host'] }}
+odb_port={{ odb['mysql']['port'] }}
 odb_type=mysql
 {% elif odb_type == "oracle" %}
-odb_host={{ odb_host }}
-odb_port={{ odb_port }}
+odb_host={{ odb['host'] }}
+odb_port={{ odb['oracle']['port'] }}
 odb_type=oracle
 {% endif %}
-lb_host=10.5.5.11
-lb_port=11223
-lb_agent_port=20151
+lb_host={{ lb['host'] }}
+lb_port={{ lb['port'] }}
+lb_agent_port={{ lb['agent_port'] }}
 store_config=False
-tech_account_name=techacc1
-tech_account_password=""
+tech_account_name={{ tech_account['name'] }}
+tech_account_password={{ tech_account['pass'] }}

@@ -1,7 +1,7 @@
 ---
 
-- name: Copy zato_cluster.config file
-  copy: src=zato_cluster.config dest=/opt/zato/
+- name: Generate zato_cluster.config file
+  template: src=zato_cluster.j2 dest=/opt/zato/zato_cluster.config
     owner=zato group=zato
 
 - name: Create a Zato cluster

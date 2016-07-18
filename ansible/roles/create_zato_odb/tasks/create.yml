@@ -1,6 +1,6 @@
 ---
 
-- name: Copy zato_odb.config file
+- name: Generate zato_odb.config file
   template: src=zato_odb.j2 dest=/opt/zato/zato_odb.config
     owner=zato group=zato
 
