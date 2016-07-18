@@ -1,0 +1,11 @@
+---
+
+- name: Create a user
+  postgresql_user: name={{ odb_user }}
+                   role_attr_flags=NOSUPERUSER,NOCREATEDB,NOCREATEROLE
+
+- name: Create a database
+  postgresql_db: name={{ odb_name }} owner={{ odb_user }}
+
+- name: Add a password for the user
+  shell: psql --dbname {{ odb_name }} --command="ALTER ROLE {{ odb_user }} WITH PASSWORD '{{ odb_pass }}'"
