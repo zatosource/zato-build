@@ -1,0 +1,11 @@
+---
+
+- name: Generate CA key
+  shell: openssl genrsa -out zato_ca.key.pem 2048
+    chdir={{ hostvars[inventory_hostname]['playbook_dir'] }}/roles/generate_ca/files/
+
+- name: Generate CA
+  shell: openssl req -new -x509 -days 3650 -extensions v3_ca \
+         -subj "/C=EU/ST=Zatoland/L=Zato City/O=Zato/CN=Zato CA" \
+         -key zato_ca.key.pem -out ca_cert.pem
+    chdir={{ hostvars[inventory_hostname]['playbook_dir'] }}/roles/generate_ca/files/

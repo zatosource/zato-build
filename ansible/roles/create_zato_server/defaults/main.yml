@@ -1,0 +1,8 @@
+---
+
+component: zato-server
+ca_certs_path: /opt/zato/ca/ca_cert.pem
+cert_path: /opt/zato/ca/zato-server.cert.pem
+path: /opt/zato/env/server
+priv_key_path: /opt/zato/ca/zato-server.key.pem
+pub_key_path: /opt/zato/ca/zato-server.key.pub.pem
