@@ -1,6 +1,6 @@
 ---
 
-- hosts: aws-zato-components
+- hosts: zato-components, zato-odb
   become: True
   vars:
     ansible_host: "{{ hostvars[inventory_hostname]['ip'] }}"
@@ -8,25 +8,41 @@
   roles:
 
     - install_zato_dependencies
-    - prepare_install_zatoio
+    - { role: prepare_install_zato, when: repo.host == "repo-box-ubuntu" or
+        repo.host == "repo-box-centos" }
+    - { role: prepare_install_zatoio, when: repo.host == "zato.io"  }
     - install_zato
 
-- hosts: localhost
-
-  roles:
-
-    - create_zato_certs
-
-- hosts: aws-zato-components:!aws-zato-odb
+- hosts: redis-ha
   become: True
   vars:
     ansible_host: "{{ hostvars[inventory_hostname]['ip'] }}"
 
   roles:
 
-    - distribute_zato_certs
+    - install_redis
+    - configure_redis_ha
 
-- hosts: aws-zato-lb
+- hosts: zato-odb
+  become: True
+  vars:
+    ansible_host: "{{ hostvars[inventory_hostname]['ip'] }}"
+    odb_type: "{{ odb_type }}"
+
+  roles:
+
+    - install_{{ odb_type }}
+    - configure_{{ odb_type }}
+    - create_zato_odb
+    - create_zato_cluster
+
+- hosts: localhost
+
+  roles:
+
+    - generate_ca
+
+- hosts: zato-lb
   become: True
   vars:
     ansible_host: "{{ hostvars[inventory_hostname]['ip'] }}"
@@ -35,7 +51,7 @@
 
     - create_zato_lb
 
-- hosts: aws-zato-wa
+- hosts: zato-wa
   become: True
   vars:
     ansible_host: "{{ hostvars[inventory_hostname]['ip'] }}"
@@ -43,8 +59,9 @@
   roles:
 
     - create_zato_wa
+    - create_zato_server
 
-- hosts: aws-zato-servers
+- hosts: zato-server1
   become: True
   vars:
     ansible_host: "{{ hostvars[inventory_hostname]['ip'] }}"
@@ -53,7 +70,7 @@
 
     - create_zato_server
 
-- hosts: aws-zato-components
+- hosts: zato-components
   become: True
   vars:
     ansible_host: "{{ hostvars[inventory_hostname]['ip'] }}"
