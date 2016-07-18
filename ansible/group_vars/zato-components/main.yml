@@ -1,8 +1,0 @@
----
-
-ca_cert: ca_cert.pem
-box:
-  base: bento/debian-8.2
-  memory: 256
-repo:
-  host: repo-box-ubuntu

@@ -1,0 +1,31 @@
+---
+
+ca_cert: ca_cert.pem
+box:
+  base: bento/ubuntu-14.04
+  memory: 256
+repo:
+  host: repo-box-ubuntu
+broker:
+    host: 10.5.5.61
+    port: 6379
+cluster_name: zato_test
+lb:
+    host: 10.5.5.11
+    port: 11223
+    agent_port: 20151
+odb:
+    name: zato1
+    user: zato1
+    pass: zato1
+    host: 10.5.5.71
+    mysql:
+        port: 3306
+    postgresql:
+        port: 5432
+        schema: zato1
+    oracle:
+        port: 1521
+tech_account:
+    name: techacc1
+    pass: \"\"
