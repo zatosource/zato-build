@@ -14,6 +14,11 @@ lb:
     host: 10.5.5.11
     port: 11223
     agent_port: 20151
+    component_path: /opt/zato/env/load-balancer
+server:
+    component_path: /opt/zato/env/server
+wa:
+    component_path: /opt/zato/env/web-admin
 odb:
     name: zato1
     user: zato1
