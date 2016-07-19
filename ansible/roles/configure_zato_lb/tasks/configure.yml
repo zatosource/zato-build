@@ -1,0 +1,35 @@
+---
+
+- name: Configure load balancer
+  replace: dest={{ lb['component_path'] }}/config/repo/{{ item.file }}
+    regexp={{ item.regexp }} replace={{ item.replace }}
+    owner=zato group=zato
+  with_items:
+    - { file: 'zato.config', regexp: '    bind 127.0.0.1:11223',
+        replace: '    bind {{ lb["host"] }}:{{ lb["port"] }}' }
+    - { file: 'zato.config', regexp: '# ZATO default_backend_empty', replace: '' }
+    - { file: 'lb-agent.conf', regexp: 'localhost', replace: '{{ lb["host"] }}' }
+
+- name: Add first server entry to Zato LB's config file
+  lineinfile: "dest={{ lb['component_path'] }}/config/repo/zato.config
+    line='server http_plain--{{ first_server }} 
+    {{ hostvars[first_server]['ip'] }}:{{ hostvars[first_server]['port'] }} 
+    check inter 2s rise 2 fall 2 
+    # ZATO backend bck_http_plain:server--{{ first_server }}'
+    insertafter='^# ZATO begin backend bck_http_plain'"
+
+- name: Add other server entries to Zato LB's config
+  lineinfile: "dest={{ lb['component_path'] }}/config/repo/zato.config
+    line='server http_plain--{{ item }} 
+    {{ hostvars[item]['ip'] }}:{{ hostvars[item]['port'] }} 
+    check inter 2s rise 2 fall 2 
+    # ZATO backend bck_http_plain:server--{{ item }}'
+    insertbefore='^# ZATO end backend bck_http_plain'
+    state=present"
+  with_items:
+    - "{{ servers }}"
+
+- name: Restart Zato components
+  service: name=zato state=restarted enabled=yes
+
+- pause: seconds=30
