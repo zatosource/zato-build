@@ -1,0 +1,15 @@
+---
+
+box:
+  base: bento/centos-7.1
+  hostname: oracle-box
+  ip: 10.2.4.11
+  memory: 4096
+  name: oracle-box
+db_client:
+  pkg: oracle-instantclient12.1-basiclite-12.1.0.2.0-1.x86_64.rpm
+  devel: oracle-instantclient12.1-devel-12.1.0.2.0-1.x86_64.rpm
+  sqlplus: oracle-instantclient12.1-sqlplus-12.1.0.2.0-1.x86_64.rpm
+  pkg32: oracle-instantclient12.1-basiclite-12.1.0.2.0-1.i386.rpm
+  devel32: oracle-instantclient12.1-devel-12.1.0.2.0-1.i386.rpm
+  sqlplus32: oracle-instantclient12.1-sqlplus-12.1.0.2.0-1.i386.rpm

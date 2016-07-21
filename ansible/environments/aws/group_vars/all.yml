@@ -1,0 +1,39 @@
+---
+
+repo:
+  host: zato.io
+broker:
+    host:
+    port: 6379
+cluster_name: zato_test
+lb:
+    host: 
+    port: 11223
+    agent_port: 20151
+    component_path: /opt/zato/env/load-balancer
+server:
+    component_path: /opt/zato/env/server
+wa:
+    component_path: /opt/zato/env/web-admin
+odb:
+    name: initial_db
+    user: postgres
+    pass: password
+    host: 
+    mysql:
+        port: 3306
+    postgresql:
+        port: 5432
+        schema: zato1
+    oracle:
+        port: 1521
+tech_account:
+    name: techacc1
+    pass: \"\"
+servers:
+    aws-zato-wa:
+        ip: 
+        port: 17010
+    aws-zato-server:
+        ip: 
+        port: 17011

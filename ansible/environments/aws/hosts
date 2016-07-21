@@ -1,0 +1,4 @@
+[aws-zato-components]
+aws-zato-lb ansible_host= ansible_user=ubuntu
+aws-zato-wa ansible_host= ansible_user=ubuntu
+aws-zato-server ansible_host= ansible_user=ubuntu

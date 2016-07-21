@@ -47,20 +47,7 @@ aptly-test-box
 
 [zato-servers]
 zato-server1
-zato-server2
+zato-wa
 
 [testing]
 test-debian-8-32
-
-[aws-zato-odb]
-
-[aws-zato-components]
-aws-zato-servers
-aws-zato-lb
-aws-zato-wa
-
-[aws-zato-servers]
-
-[aws-zato-lb]
-
-[aws-zato-wa]
