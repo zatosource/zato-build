@@ -1,7 +1,7 @@
 #zato create cluster config
 cluster_name={{ cluster_name }}
 command=create_cluster
-broker_host={[ broker['host'] ]}
+broker_host={{ broker['host'] }}
 broker_port={{ broker['port'] }}
 odb_db_name={{ odb['name'] }}
 odb_user={{ odb['user'] }}
