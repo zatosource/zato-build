@@ -2,7 +2,8 @@
 
 - name: Set hosts and ports for Zato servers
   replace: "dest={{ server['component_path'] }}/config/repo/server.conf
-    regexp='localhost:17010' replace='{{ ip }}:{{ port }}'
+    regexp='localhost:17010'
+    replace='{{ hostvars[inventory_hostname]['ip'] }}:{{ hostvars[inventory_hostname]['port'] }}'
     owner=zato group=zato"
 
 - name: Set host and port for load balancer
