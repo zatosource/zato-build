@@ -11,9 +11,7 @@
   roles:
 
     - install_zato_dependencies
-    - { role: prepare_install_zato, when: repo.host == "repo-box-ubuntu" or
-        repo.host == "repo-box-centos" }
-    - { role: prepare_install_zatoio, when: repo.host == "zato.io"  }
+    - prepare_install_zatoio
     - install_zato
 
 - hosts: aws-zato-lb
