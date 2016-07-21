@@ -1,3 +1,0 @@
-db_name='zato'
-memory_target=1G
-control_files = (ora_control1, ora_control2)
