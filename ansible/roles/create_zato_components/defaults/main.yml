@@ -12,15 +12,15 @@ lb:
     agent_port: 20151
 
 odb:
-    name: zato
-    user: zato
-    pass: zato
+    name: zatodb1
+    user: zato1
+    pass: zato1
     host: 10.5.5.71
     mysql:
         port: 3306
     postgresql:
         port: 5432
-        schema: zato
+        schema: zato1
     oracle:
         port: 1521
 
