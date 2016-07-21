@@ -4,7 +4,6 @@
   file: path={{ path }}
     owner=zato group=zato
     state=directory
-  become_user: zato
 
 - name: Generate zato_load_balancer.config file
   template: src=zato_load_balancer.j2 dest=/opt/zato/zato_load_balancer.config

@@ -1,5 +1,4 @@
 ---
 
 - include: generate_certs.yml
-  become_user: zato
 - include: create.yml

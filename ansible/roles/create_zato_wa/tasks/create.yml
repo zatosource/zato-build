@@ -4,7 +4,6 @@
   file: path={{ path }}
     owner=zato group=zato
     state=directory
-  become_user: zato
 
 - name: Generate zato_web_admin.config file
   template: src=zato_web_admin.j2 dest=/opt/zato/zato_web_admin.config

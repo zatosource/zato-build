@@ -4,7 +4,6 @@
   file: path={{ path }}
     owner=zato group=zato
     state=directory
-  become_user: zato
 
 - name: Generate zato_server.config file
   template: src={{ role_path }}/templates/zato_server.j2 \
