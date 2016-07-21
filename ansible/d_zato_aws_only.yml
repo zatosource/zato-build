@@ -1,9 +1,12 @@
 ---
 
-- hosts: zato-lb, zato-wa, zato-server1, zato-odb
+- hosts: aws-zato-lb, aws-zato-wa, aws-zato-server
   become: True
-  vars:
-    ansible_host: "{{ hostvars[inventory_hostname]['ip'] }}"
+
+  tasks:
+
+    - name: Install acl package
+      apt: name=acl state=present update_cache=yes
 
   roles:
 
@@ -13,25 +16,12 @@
     - { role: prepare_install_zatoio, when: repo.host == "zato.io"  }
     - install_zato
 
-- hosts: redis1
+- hosts: aws-zato-lb
   become: True
-  vars:
-    ansible_host: "{{ hostvars[inventory_hostname]['ip'] }}"
 
   roles:
 
     - install_redis
-
-- hosts: zato-odb
-  become: True
-  vars:
-    ansible_host: "{{ hostvars[inventory_hostname]['ip'] }}"
-    odb_type: "{{ odb_type }}"
-
-  roles:
-
-    - install_{{ odb_type }}
-    - configure_{{ odb_type }}
     - create_zato_odb
     - create_zato_cluster
 
@@ -41,49 +31,37 @@
 
     - generate_ca
 
-- hosts: zato-lb
+- hosts: aws-zato-lb
   become: True
-  vars:
-    ansible_host: "{{ hostvars[inventory_hostname]['ip'] }}"
 
   roles:
 
     - create_zato_lb
 
-- hosts: zato-wa
+- hosts: aws-zato-wa
   become: True
-  vars:
-    ansible_host: "{{ hostvars[inventory_hostname]['ip'] }}"
 
   roles:
 
     - create_zato_wa
     - create_zato_server
 
-- hosts: zato-server1
+- hosts: aws-zato-server
   become: True
-  vars:
-    ansible_host: "{{ hostvars[inventory_hostname]['ip'] }}"
 
   roles:
 
     - create_zato_server
 
-- hosts: zato-lb
+- hosts: aws-zato-lb
   become: True
-  vars:
-    ansible_host: "{{ hostvars[inventory_hostname]['ip'] }}"
-    servers: "{{ hostvars[inventory_hostname]['groups']['zato-servers'] }}"
-    first_server: "{{ hostvars[inventory_hostname]['groups']['zato-servers'][0] }}"
 
   roles:
 
     - configure_zato_lb
 
-- hosts: zato-wa, zato-server1
+- hosts: aws-zato-wa, aws-zato-server
   become: True
-  vars:
-    ansible_host: "{{ hostvars[inventory_hostname]['ip'] }}"
 
   roles:
 
