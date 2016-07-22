@@ -10,7 +10,6 @@
 
   roles:
 
-    - install_zato_dependencies
     - prepare_install_zatoio
     - install_zato
 
