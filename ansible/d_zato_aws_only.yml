@@ -18,7 +18,6 @@
 
   roles:
 
-    - install_redis
     - create_zato_odb
     - create_zato_cluster
 
