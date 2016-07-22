@@ -3,15 +3,15 @@
 - hosts: aws-zato-lb, aws-zato-wa, aws-zato-server
   become: True
 
-  tasks:
-
-    - name: Install acl package
-      apt: name=acl state=present update_cache=yes
-
   roles:
 
     - prepare_install_zatoio
     - install_zato
+
+  tasks:
+
+    - name: Install acl package
+      apt: name=acl state=present update_cache=yes
 
 - hosts: aws-zato-lb
   become: True
