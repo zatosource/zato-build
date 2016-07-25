@@ -1,6 +1,6 @@
 ---
 
-- hosts: aws-zato-wa, aws-zato-server
+- hosts: aws-zato-lb, aws-zato-wa, aws-zato-server
   become: True
 
   roles:
