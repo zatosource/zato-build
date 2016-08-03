@@ -28,6 +28,7 @@
         - paramiko
         - enum
         - pysnmp
+        - pycrypto
       become_user: zato
 
     - name: Upgrade Python modules
