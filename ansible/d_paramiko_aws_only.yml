@@ -1,0 +1,38 @@
+---
+
+- hosts: aws-zato-wa, aws-zato-server
+  become: True
+
+  tasks:
+
+    - name: Install libffi-dev and libssl-dev
+      apt: name={{ item }} state=present update_cache=yes
+      with_items:
+        - libffi-dev
+        - libssl-dev
+      become_user: root
+
+    - name: Copy easy_install.pth
+      shell: cp /opt/zato/current/lib/python2.7/site-packages/easy-install.pth \
+        /opt/zato/current/eggs/
+      become_user: zato
+
+    - name: Upgrade pip
+      pip: name=pip executable=/opt/zato/current/bin/pip
+        extra_args='--upgrade'
+      become_user: zato
+
+    - name: Install additional Python modules
+      pip: name={{ item }} executable=/opt/zato/current/bin/pip
+      with_items:
+        - paramiko
+        - enum
+        - pysnmp
+      become_user: zato
+
+    - name: Upgrade Python modules
+      pip: name={{ item }} executable=/opt/zato/current/bin/pip
+        extra_args='--upgrade'
+      with_items:
+        - six
+        - pyasn1
