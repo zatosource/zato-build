@@ -20,6 +20,9 @@ echo "Unpacking Zato..."
 tar -xzf zato-2.0.7.tar
 check_exit_code
 
+# Add local libs to PATH
+$ZATO_TARGET_DIR/set-env-variables.sh
+check_exit_code
 source $HOME/.bashrc
 source $HOME/.bash_profile
 
@@ -43,12 +46,19 @@ check_exit_code
 
 echo "Start Zato components."
 cd $HOME/env/qs-1
-declare -a components=( load-balancer server1 server2 web-admin )
+declare -a components=( server1 server2 web-admin )
+
+# First, start haproxy with Zato LB's configuration
+echo "Starting haproxy..."
+haproxy -D -f $HOME/zato.config
+check_exit_code
+
+# Next, start the other components
 for component in ${components[@]}
 do
     echo "Starting $component"
     zato start $component
-    if [ ! $component = "load-balancer" ] && [ ! $component = "web-admin" ]
+    if [ ! $component = "web-admin" ]
     then
         waiting_time=20
     fi
