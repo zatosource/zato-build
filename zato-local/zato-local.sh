@@ -56,10 +56,10 @@ do
     sleep $waiting_time
 done
 
-echo "Hot deploying services."
+echo "Hot-deploying services."
 echo "Copying..."
 cp $HOME/services/*.py $HOME/env/qs-1/server1/pickup-dir/
-if [ $? == 0 ]
+if [ $? -eq 0 ]
 then
     echo "The services have been copied over."
     echo "Wait $waiting_time seconds..."
@@ -69,3 +69,9 @@ then
 else
     exit 1
 fi
+
+echo "Exporting server objects..."
+cd $HOME/server-objects
+zato enmasse $HOME/env/qs-1/server1 --input ./odb_config.json --export-local
+zato enmasse $HOME/env/qs-1/server1 --input ./zato-export-*.json \
+    --import --replace-odb-objects
