@@ -17,7 +17,7 @@ function check_exit_code
 
 # Install Zato locally
 echo "Unpacking Zato..."
-tar -xzf zato-2.0.7.tar
+tar -xzf zato-2.0.7.tar.gz
 check_exit_code
 
 # Add local libs to PATH
@@ -50,8 +50,10 @@ declare -a components=( server1 server2 web-admin )
 
 # First, start haproxy with Zato LB's configuration
 echo "Starting haproxy..."
-haproxy -D -f $HOME/zato.config
+haproxy -D -f $ZATO_TARGET_DIR/zato.config
 check_exit_code
+echo "Wait $waiting_time seconds..."
+sleep $waiting_time
 
 # Next, start the other components
 for component in ${components[@]}
