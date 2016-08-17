@@ -64,7 +64,7 @@ do
     then
         waiting_time=20
     fi
-    echo "Wait $waiting_time seconds for the component to start..."
+    echo "Wait $waiting_time seconds for $component to start..."
     sleep $waiting_time
 done
 
@@ -87,3 +87,9 @@ cd $HOME/server-objects
 zato enmasse $HOME/env/qs-1/server1 --input ./odb_config.json --export-local
 zato enmasse $HOME/env/qs-1/server1 --input ./zato-export-*.json \
     --import --replace-odb-objects
+check_exit_code
+
+echo "Starting gunicorn..."
+cd $HOME/foxway.foxwayops
+gunicorn foxwayid:app --daemon --log-file=portal.log --log-level DEBUG
+check_exit_code
