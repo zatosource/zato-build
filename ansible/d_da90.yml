@@ -1,0 +1,60 @@
+---
+
+- hosts: cluster-mng-server, wa-server, worker-server
+  become: True
+
+  roles:
+
+    - prepare_install_zatoio
+    - install_zato
+
+  tasks:
+
+    - name: Install acl package
+      apt: name=acl state=present update_cache=yes
+
+- hosts: cluster-mng-server
+  become: True
+
+  roles:
+
+    - install_redis
+    - install_postgresql
+    - configure_postgresql
+    - create_zato_odb
+    - create_zato_cluster
+
+- hosts: localhost
+
+  roles:
+
+    - generate_ca
+
+- hosts: cluster-mng-server
+  become: True
+
+  roles:
+
+    - create_zato_lb
+
+- hosts: wa-server
+  become: True
+
+  roles:
+
+    - create_zato_wa
+
+- hosts: cluster-mng-server
+  become: True
+
+  roles:
+
+    - configure_zato_lb
+
+- hosts: worker-server
+  become: True
+
+  roles:
+
+    - create_zato_server
+    - configure_zato_server
