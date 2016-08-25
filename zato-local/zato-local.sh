@@ -44,6 +44,15 @@ mkdir $ZATO_TARGET_DIR/zato_extra_paths
 cp $HOME/extra-libs/config_db.py $ZATO_TARGET_DIR/zato_extra_paths
 check_exit_code
 
+echo "Disabling stats..."
+declare -a servers=( server1 server2 )
+for server in ${servers[@]}
+do
+    sed -i "s/stats=True/stats=False/" \
+        $HOME/env/qs-1/$server/config/repo/server.conf
+done
+check_exit_code
+
 echo "Start Zato components."
 cd $HOME/env/qs-1
 declare -a components=( server1 server2 web-admin )
