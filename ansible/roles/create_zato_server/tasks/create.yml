@@ -1,24 +1,28 @@
 ---
 
 - name: Create a directory for Zato server
-  file: path={{ path }}
+  file: path={{ item.value.component_path }}
     owner=zato group=zato
     state=directory
+  with_dict: "{{ servers }}"
 
 - name: Generate zato_server.config file
   template: src={{ role_path }}/templates/zato_server.j2 \
-    dest=/opt/zato/zato_server.config
+    dest=/opt/zato/zato_{{ item.key }}.config
     owner=zato group=zato
+  with_dict: "{{ servers }}"
 
 - name: Create Zato server
-  command: ./current/bin/zato from-config zato_server.config
+  command: ./current/bin/zato from-config zato_{{ item.key }}.config
     chdir=/opt/zato
   become_user: zato
+  with_dict: "{{ servers }}"
 
 - name: Create a symlink to Zato startup script
-  file: src={{ path }}
-    dest=/etc/zato/components-enabled/server
+  file: src={{ item.value.component_path }}
+    dest=/etc/zato/components-enabled/{{ item.key }}
     state=link
+  with_dict: "{{ servers }}"
 
 - name: Start a Zato server as a service
   service: name=zato state=started enabled=yes

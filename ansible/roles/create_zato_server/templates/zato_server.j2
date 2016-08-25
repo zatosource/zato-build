@@ -1,6 +1,6 @@
 # zato create server config
 ca_certs_path={{ ca_certs_path }}
-cert_path={{ cert_path }}
+cert_path={{ cert_path }}/{{ item.key }}.cert.pem
 cluster_name={{ cluster_name }}
 command=create_server
 kvdb_host={{ broker['host'] }}
@@ -23,8 +23,8 @@ odb_host={{ odb['host'] }}
 odb_port={{ odb['oracle']['port'] }}
 odb_type=oracle
 {% endif %}
-path={{ path }}
-priv_key_path={{ priv_key_path }}
-pub_key_path={{ pub_key_path }}
-server_name={{ hostvars[inventory_hostname]['inventory_hostname'] }}
+path={{ item.value.component_path }}
+priv_key_path={{ priv_key_path }}/{{ item.key }}.key.pem
+pub_key_path={{ pub_key_path }}/{{ item.key }}.key.pub.pem
+server_name={{ item.key }}
 store_config=False

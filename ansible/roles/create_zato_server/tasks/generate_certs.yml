@@ -10,26 +10,26 @@
     - zato_ca.key.pem
 
 - name: Generate private keys for a Zato component
-  command: openssl genrsa -out {{ component }}.key.pem 2048
+  command: openssl genrsa -out {{ item }}.key.pem 2048
     chdir=/opt/zato/ca
 
 - name: Generate public keys for a Zato component
-  command: openssl rsa -in {{ component }}.key.pem -pubout -out {{ component }}.key.pub.pem
+  command: openssl rsa -in {{ item }}.key.pem -pubout -out {{ item }}.key.pub.pem
     chdir=/opt/zato/ca
 
 - name: Create certificate signing request
-  command: openssl req -new -key {{ component }}.key.pem -out {{ component }}.req.csr \
-         -subj "/C=EU/ST=Zatoland/L=Zato City/O=Zato/CN={{ component }}"
+  command: openssl req -new -key {{ item }}.key.pem -out {{ item }}.req.csr \
+        -subj "/C=EU/ST=Zatoland/L=Zato City/O=Zato/CN={{ item }}"
     chdir=/opt/zato/ca
 
 - name: Create certificates for a Zato component
-  command: openssl x509 -req -days 365 -in {{ component }}.req.csr -CA ca_cert.pem \
-         -CAkey zato_ca.key.pem -CAcreateserial -out {{ component }}.cert.pem
+  command: openssl x509 -req -days 365 -in {{ item }}.req.csr -CA ca_cert.pem \
+        -CAkey zato_ca.key.pem -CAcreateserial -out {{ item }}.cert.pem
     chdir=/opt/zato/ca
 
 - name: Remove left-over certificate signing request
   file:
-    path=/opt/zato/ca/{{ component }}.req.csr
+    path=/opt/zato/ca/{{ item }}.req.csr
     state=absent
 
 - name: Remove left-over rsl file
