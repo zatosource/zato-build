@@ -1,20 +1,20 @@
 ---
 
 - name: Set hosts and ports for Zato servers
-  replace: "dest={{ server['component_path'] }}/config/repo/server.conf
+  replace: "dest={{ server.value.component_path }}/config/repo/server.conf
     regexp='localhost:17010'
-    replace='{{ hostvars[inventory_hostname]['ip'] }}:{{ hostvars[inventory_hostname]['port'] }}'
+    replace='{{ ip }}:{{ server.value.port }}'
     owner=zato group=zato"
 
 - name: Set host and port for load balancer
-  replace: "dest={{ server['component_path'] }}/config/repo/server.conf
+  replace: "dest={{ server.value.component_path }}/config/repo/server.conf
     regexp='127.0.0.1:11223' replace='{{ lb['host'] }}:{{ lb['port'] }}'
     owner=zato group=zato"
 
 - name: Change number of gunicorn_workers
-  replace: dest={{ server['component_path'] }}/config/repo/server.conf
-    regexp="gunicorn_workers=2" replace="gunicorn_workers=1"
-    owner=zato group=zato
+  replace: "dest={{ server.value.component_path }}/config/repo/server.conf
+    regexp='gunicorn_workers=2' replace='gunicorn_workers={{ server.value.workers }}'
+    owner=zato group=zato"
 
 - name: Restart Zato components
   service: name=zato state=restarted enabled=yes

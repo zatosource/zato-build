@@ -1,4 +1,10 @@
 ---
 
 - include: generate_certs.yml
+  with_dict: "{{ servers }}"
+  loop_control:
+    loop_var: server
 - include: create.yml
+  with_dict: "{{ servers }}"
+  loop_control:
+    loop_var: server
