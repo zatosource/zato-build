@@ -1,0 +1,4 @@
+[aws-zato-components]
+cluster-mng-server ansible_host=
+wa-server ansible_host=
+worker-server ansible_host=

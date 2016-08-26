@@ -1,0 +1,49 @@
+---
+
+repo:
+  host: zato.io
+broker:
+    host: 
+    port: 6379
+cluster_name: 
+lb:
+    component_path: /opt/zato/env/load-balancer
+    host: 
+    port: 11223
+    agent_port: 20151
+odb:
+    name: 
+    user: 
+    pass: 
+    host: 
+    mysql:
+        port: 3306
+    postgresql:
+        port: 5432
+        schema: 
+    oracle:
+        port: 1521
+tech_account:
+    name: 
+    pass: 
+servers:
+    server1:
+        component_path: /opt/zato/env/server1
+        ip: 
+        port: 17010
+        workers: 1
+    server2:
+        component_path: /opt/zato/env/server2
+        ip: 
+        port: 17011
+        workers: 1
+    server3:
+        component_path: /opt/zato/env/server3
+        ip: 
+        port: 17012
+        workers: 1
+    server4:
+        component_path: /opt/zato/env/server4
+        ip: 
+        port: 17013
+        workers: 1
