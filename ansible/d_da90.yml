@@ -1,6 +1,6 @@
 ---
 
-- hosts: cluster-mng-server, wa-server, worker-server
+- hosts: load-balancer, web-admin, zato-servers
   become: True
 
   roles:
@@ -14,14 +14,11 @@
     - name: Install acl package
       apt: name=acl state=present update_cache=yes
 
-- hosts: cluster-mng-server
+- hosts: load-balancer
   become: True
 
   roles:
 
-    - install_redis
-    - install_postgresql
-    - configure_postgresql
     - create_zato_odb
     - create_zato_cluster
 
@@ -31,31 +28,31 @@
 
     - generate_ca
 
-- hosts: cluster-mng-server
+- hosts: load-balancer
   become: True
 
   roles:
 
     - create_zato_lb
 
-- hosts: wa-server
+- hosts: web-admin
   become: True
 
   roles:
 
     - create_zato_wa
 
-- hosts: cluster-mng-server
-  become: True
-
-  roles:
-
-    - configure_zato_lb
-
-- hosts: worker-server
+- hosts: zato-servers
   become: True
 
   roles:
 
     - create_zato_server
     - configure_zato_server
+
+- hosts: load-balancer
+  become: True
+
+  roles:
+
+    - configure_zato_lb
