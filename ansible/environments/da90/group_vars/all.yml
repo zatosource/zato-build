@@ -3,19 +3,19 @@
 repo:
   host: zato.io
 broker:
-    host: 
+    host: # private IP address or endpoint
     port: 6379
-cluster_name: 
+cluster_name: zato_test
 lb:
     component_path: /opt/zato/env/load-balancer
-    host: 
+    host: # private IP address
     port: 11223
     agent_port: 20151
 odb:
     name: 
     user: 
     pass: 
-    host: 
+    host: # private IP address or endpoint
     mysql:
         port: 3306
     postgresql:
@@ -26,24 +26,3 @@ odb:
 tech_account:
     name: 
     pass: 
-servers:
-    server1:
-        component_path: /opt/zato/env/server1
-        ip: 
-        port: 17010
-        workers: 1
-    server2:
-        component_path: /opt/zato/env/server2
-        ip: 
-        port: 17011
-        workers: 1
-    server3:
-        component_path: /opt/zato/env/server3
-        ip: 
-        port: 17012
-        workers: 1
-    server4:
-        component_path: /opt/zato/env/server4
-        ip: 
-        port: 17013
-        workers: 1
