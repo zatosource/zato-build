@@ -1,0 +1,12 @@
+---
+
+ip: # private IP address
+servers:
+  server3:
+    component_path: /opt/zato/env/server3
+    port: 17012
+    workers: 1
+  server4:
+    component_path: /opt/zato/env/server4
+    port: 17013
+    workers: 1
