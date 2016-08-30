@@ -1,4 +1,9 @@
-[aws-zato-components]
-cluster-mng-server ansible_host=
-wa-server ansible_host=
-worker-server ansible_host=
+[zato-components]
+load-balancer ansible_host= ansible_user=ubuntu
+web-admin ansible_host= ansible_user=ubuntu
+worker-server1 ansible_host= ansible_user=ubuntu
+worker-server2 ansible_host= ansible_user=ubuntu
+
+[zato-servers]
+worker-server1 ansible_host= ansible_user=ubuntu
+worker-server2 ansible_host= ansible_user=ubuntu
