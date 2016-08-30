@@ -6,7 +6,7 @@
        clone=yes
   when: ansible_os_family == "Debian"
 
-- name: Clone zato-build repository on Debian-based systems
+- name: Clone zato-build repository on REDHAT-based systems
   git: repo=https://github.com/zatosource/zato-build.git
        dest=/opt/tmp2/
        clone=yes
