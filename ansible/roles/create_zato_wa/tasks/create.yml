@@ -23,3 +23,22 @@
   service: name=zato state=started enabled=yes
 
 - pause: seconds=15
+
+- name: Generate uuid to be used as a password
+  shell: uuidgen > web_admin_password.txt chdir=/opt/zato
+  become_user: zato
+
+- name: Generate a config file to update web-admin password from
+  template: src=update_password.config dest=/opt/zato/update_password.config
+    owner=zato group=zato
+
+- name: Append a new password to update_password.config
+  shell: echo 'password'=$(cat /opt/zato/web_admin_password.txt) \
+    >> /opt/zato/update_password.config
+    chdir=/opt/zato
+  become_user: zato
+
+- name: Update web-admin password
+  shell: /opt/zato/current/bin/zato from-config /opt/zato/update_password.config
+    chdir={{ env_path }}
+  become_user: zato
