@@ -1,0 +1,14 @@
+---
+
+odb:
+  host: localhost
+  name: zato1
+  user: zato1
+  pass: zato1
+  mysql:
+    port: 3306
+  postgresql:
+    port: 5432
+    schema: zato1
+  oracle:
+    port: 1521

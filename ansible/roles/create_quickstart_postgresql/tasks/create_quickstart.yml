@@ -9,11 +9,11 @@
   shell: rm -rf /opt/zato/env/qs-1 &&
          mkdir -p /opt/zato/env/qs-1 &&
          /opt/zato/{{ package['version'] }}/bin/zato quickstart create \
-         --odb_host localhost \
-         --odb_port 5432 \
-         --odb_user zato \
-         --odb_db_name zato \
-         --odb_password 'zato' \
+         --odb_host "{{ odb['host'] }}" \
+         --odb_port "{{ odb['postgresql']['port'] }}" \
+         --odb_user "{{ odb['user'] }}" \
+         --odb_db_name "{{ odb['name'] }}" \
+         --odb_password "{{ odb['pass'] }}" \
          --kvdb_password '' \
          /opt/zato/env/qs-1 postgresql localhost 6379
          --verbose
@@ -24,11 +24,11 @@
   shell: rm -rf /opt/zato/env/qs-1 &&
          mkdir -p /opt/zato/env/qs-1 &&
          /opt/zato/{{ package['version'] }}/code/bin/zato quickstart create \
-         --odb_host localhost \
-         --odb_port 5432
-         --odb_user zato \
-         --odb_db_name zato \
-         --odb_password 'zato' \
+         --odb_host "{{ odb['host'] }}" \
+         --odb_port "{{ odb['postgresql']['port'] }}" \
+         --odb_user "{{ odb['user'] }}" \
+         --odb_db_name "{{ odb['name'] }}" \
+         --odb_password "{{ odb['pass'] }}" \
          --kvdb_password '' \
          /opt/zato/env/qs-1 postgresql localhost 6379 \
          --verbose
