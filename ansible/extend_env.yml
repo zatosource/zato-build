@@ -1,0 +1,8 @@
+---
+
+- hosts: zato-servers
+  become: True
+
+  roles:
+
+    - add_zato_servers
