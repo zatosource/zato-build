@@ -1,0 +1,26 @@
+---
+
+- name: Create a directory for {{ server.key }}
+  file: path={{ server.value.component_path }}
+    owner=zato group=zato
+    state=directory
+
+- name: Generate config file for {{ server.key }}
+  template: src={{ role_path }}/templates/zato_server.j2 \
+    dest=/opt/zato/zato_{{ server.key }}.config
+    owner=zato group=zato
+
+- name: Create {{ server.key }}
+  command: ./current/bin/zato from-config zato_{{ server.key }}.config
+    chdir=/opt/zato
+  become_user: zato
+
+- name: Create a symlink for {{ server.key }} to Zato startup script
+  file: src={{ server.value.component_path }}
+    dest=/etc/zato/components-enabled/{{ server.key }}
+    state=link
+
+- name: Start {{ server.key }} as a service
+  service: name=zato state=started enabled=yes
+
+- pause: seconds=10

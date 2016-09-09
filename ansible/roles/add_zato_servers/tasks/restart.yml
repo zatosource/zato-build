@@ -1,0 +1,6 @@
+---
+
+- name: Restart Zato components
+  service: name=zato state=restarted enabled=yes
+
+- pause: seconds=60
