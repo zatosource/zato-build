@@ -6,3 +6,10 @@
   roles:
 
     - add_zato_servers
+
+- hosts: load-balancer
+  become: True
+
+  roles:
+
+    - configure_zato_lb

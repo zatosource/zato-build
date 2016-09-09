@@ -6,7 +6,9 @@ servers:
     component_path: /opt/zato/env/server1
     port: 17010
     workers: 1
+    created: false
   server2:
     component_path: /opt/zato/env/server2
     port: 17011
     workers: 1
+    created: false

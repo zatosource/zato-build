@@ -1,3 +1,21 @@
 ---
 
-- include: add.yml
+- include: generate_certs.yml
+  when: not server.value.created
+  with_dict: "{{ servers }}"
+  loop_control:
+    loop_var: server
+
+- include: create.yml
+  when: not server.value.created
+  with_dict: "{{ servers }}"
+  loop_control:
+    loop_var: server
+
+- include: configure.yml
+  when: not server.value.created
+  with_dict: "{{ servers }}"
+  loop_control:
+    loop_var: server
+
+- include: restart.yml

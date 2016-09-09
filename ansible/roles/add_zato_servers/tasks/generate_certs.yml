@@ -1,0 +1,40 @@
+---
+
+- name: Create a directory to store a component's certificate and keys
+  file: path=/opt/zato/ca state=directory owner=zato group=zato
+
+- name: Copy CA to a Zato host
+  copy: src={{ cert_file }} dest=/opt/zato/ca owner=zato group=zato
+  with_items:
+    - ca_cert.pem
+    - zato_ca.key.pem
+  loop_control:
+    loop_var: cert_file
+
+- name: Generate private keys for {{ server.key }}
+  command: openssl genrsa -out {{ server.key }}.key.pem 2048
+    chdir=/opt/zato/ca
+
+- name: Generate public keys for {{ server.key }}
+  command: openssl rsa -in {{ server.key }}.key.pem -pubout -out {{ server.key }}.key.pub.pem
+    chdir=/opt/zato/ca
+
+- name: Create certificate signing request for {{ server.key }}
+  command: openssl req -new -key {{ server.key }}.key.pem -out {{ server.key }}.req.csr \
+        -subj "/C=EU/ST=Zatoland/L=Zato City/O=Zato/CN={{ server.key }}"
+    chdir=/opt/zato/ca
+
+- name: Create certificates for {{ server.key }}
+  command: openssl x509 -req -days 365 -in {{ server.key }}.req.csr -CA ca_cert.pem \
+        -CAkey zato_ca.key.pem -CAcreateserial -out {{ server.key }}.cert.pem
+    chdir=/opt/zato/ca
+
+- name: Remove left-over certificate signing request
+  file:
+    path=/opt/zato/ca/{{ server.key }}.req.csr
+    state=absent
+
+- name: Remove left-over rsl file
+  file:
+    path=/opt/zato/ca/ca_cert.srl
+    state=absent
