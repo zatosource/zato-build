@@ -3,8 +3,19 @@
 - hosts: zato-servers
   become: True
 
+  tasks:
+
+    - name: Install acl package
+      apt: name=acl state=present update_cache=yes
+
+- hosts: zato-servers
+  become: True
+
   roles:
 
+    - install_zato_dependencies
+    - prepare_install_zatoio
+    - install_zato
     - add_zato_servers
 
 - hosts: load-balancer
