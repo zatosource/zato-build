@@ -1,16 +1,5 @@
 ---
 
-- hosts: localhost
-
-  tasks:
-
-    - name: Copy CA so that it is available for add_zato_servers role
-      shell: cp ./roles/create_zato_server/files/{{ item }} \
-        ./roles/add_zato_servers/files
-      with_items:
-        - ca_cert.pem
-        - zato_ca.key.pem
-
 - hosts: zato-servers
   become: True
 
