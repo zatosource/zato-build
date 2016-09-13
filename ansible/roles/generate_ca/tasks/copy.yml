@@ -1,9 +1,10 @@
 ---
 
-- name: Copy CA to another role's files directory
+- name: Copy CA to a directory of another role
   shell: cp -r ./* ../../{{ item }}/files/
     chdir={{ hostvars[inventory_hostname]['playbook_dir'] }}/roles/generate_ca/files/
   with_items:
     - create_zato_lb
     - create_zato_server
     - create_zato_wa
+    - add_zato_servers
