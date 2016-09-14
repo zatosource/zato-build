@@ -6,14 +6,13 @@
 
 - hosts: localhost
   vars_files:
-    - group_vars/zato-distributed/main.yml
-    - group_vars/zato-components/all.yml
-    - host_vars/zato-odb.yml
-    - host_vars/redis1.yml
-    - host_vars/zato-server1.yml
-    - host_vars/zato-server2.yml
-    - host_vars/zato-lb.yml
-    - host_vars/zato-wa.yml
+    - environments/testing/group_vars/all.yml
+    - environments/testing/host_vars/zato-odb.yml
+    - environments/testing/host_vars/redis1.yml
+    - environments/testing/host_vars/zato-server1.yml
+    - environments/testing/host_vars/zato-server2.yml
+    - environments/testing/host_vars/zato-lb.yml
+    - environments/testing/host_vars/zato-wa.yml
 
   tasks:
 
