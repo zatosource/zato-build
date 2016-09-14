@@ -1,25 +1,27 @@
 ---
 
-- name: Create database 'zato' user
-  mysql_user: name=zato
-              password=zato
-              priv=zato.*:ALL,GRANT
-              state=present
+- name: Create {{ odb['user'] }} user
+  mysql_user: >
+    name={{ odb['name'] }}
+    password={{ odb['pass'] }}
+    priv={{ odb['user'] }}.*:ALL,GRANT
+    state=present
 
-- name: Create 'zato' database
-  mysql_db: name=zato
-            state=present
-            login_user=zato
-            login_password=zato
+- name: Create 'zato1' database
+  mysql_db: >
+    name={{ odb['name'] }}
+    state=present
+    login_user={{ odb['user'] }}
+    login_password={{ odb['pass'] }}
 
 - name: Set bind-address in MySQL config file
-  lineinfile: "dest=/etc/mysql/my.cnf line='bind-address = 10.5.5.71'
+  lineinfile: "dest=/etc/mysql/my.cnf line='bind-address = localhost'
     regexp='bind-address'
     state=present"
 
 - name: Restart mysql service
   service: name=mysql state=restarted
 
-- name: Allow access to 'zato' DB from remote hosts
-  shell: mysql -u root -e "GRANT ALL ON zato.* TO 'zato'@'10.5.5.%'
-    IDENTIFIED BY 'zato';"
+- name: Allow access to {{ odb['user'] }} DB from remote hosts
+  shell: mysql -u root -e "GRANT ALL ON {{ odb['name'] }}.* TO '{{ odb['user'] }}'@'localhost'
+    IDENTIFIED BY '{{ odb['pass'] }}';"
