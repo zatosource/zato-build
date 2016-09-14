@@ -1,0 +1,11 @@
+---
+
+- hosts: zato-servers
+  become: True
+
+  vars:
+    ansible_host: "{{ hostvars[inventory_hostname]['ip'] }}"
+
+  roles:
+
+    - configure_zato_server
