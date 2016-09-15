@@ -1,0 +1,24 @@
+---
+
+- hosts: aws-zato-quickstart
+  become: True
+  vars:
+    ansible_user: ubuntu
+
+  tasks:
+
+    - name: Install acl package
+      apt: name=acl state=present update_cache=yes
+
+- hosts: aws-zato-quickstart
+  become: True
+  vars:
+    ansible_user: ubuntu
+
+  roles:
+
+    - install_zato_dependencies
+    - install_redis
+    - prepare_install_zatoio
+    - install_zato
+    - create_quickstart
