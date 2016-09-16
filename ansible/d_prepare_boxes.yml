@@ -25,7 +25,7 @@
 
     - name: Prepare Vagrantfile
       template: src=./templates/box_distributed.j2
-                dest=vm/distributed/{{ item }}/Vagrantfile
+        dest=vm/distributed/{{ item }}/Vagrantfile
       with_items:
         - "{{ groups['zato-distributed'] }}"
 
@@ -36,23 +36,22 @@
 
     - name: Copy vagrant user's private keys
       shell: cp  ./.vagrant/machines/default/virtualbox/private_key \
-             ../../../files/vagrant_key/distributed/{{ item }}_private_key
-             chdir=./vm/distributed/{{ item }}/
-             creates=yes
+        ../../../files/vagrant_key/distributed/{{ item }}_private_key
+        chdir=./vm/distributed/{{ item }}/
+        creates=yes
       with_items:
         - "{{ groups['zato-distributed'] }}"
 
     - name: Set the private_keys mode to 0600
       file: path=./files/vagrant_key/distributed/{{ item }}_private_key
-            mode=0600
+        mode=0600
       with_items:
         - "{{ groups['zato-distributed'] }}"
 
-- hosts: zato-components, zato-odb
+- hosts: zato-distributed
   become: True
-  remote_user: vagrant
   vars:
-    ansible_host: "{{ ip }}"
+    ansible_user: vagrant
     ansible_ssh_private_key_file:
       ./files/vagrant_key/distributed/{{ hostvars[inventory_hostname]['inventory_hostname'] }}_private_key
 
