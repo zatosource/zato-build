@@ -47,3 +47,27 @@
             mode=0600
       with_items:
         - "{{ groups['zato-distributed'] }}"
+
+- hosts: zato-components, zato-odb
+  become: True
+  remote_user: vagrant
+  vars:
+    ansible_host: "{{ ip }}"
+    ansible_ssh_private_key_file:
+      ./files/vagrant_key/distributed/{{ hostvars[inventory_hostname]['inventory_hostname'] }}_private_key
+
+  pre_tasks:
+
+    # Disable unattended upgrades on Ubuntu 16.04, because they lock apt
+    # and prevent box_setup role from running
+    - name: Disable unattended upgrades
+      lineinfile: "dest=/etc/apt/apt.conf.d/50unattended-upgrades
+        backrefs=yes
+        regexp='}-security'
+        line='//    '${distro_id}:${distro_codename}-security''
+        state=present"
+      when: ansible_distribution_version == "16.04"
+
+  roles:
+
+    - box_setup
