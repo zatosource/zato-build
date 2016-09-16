@@ -33,21 +33,18 @@ zato-server2
 zato-wa
 
 [zato-distributed]
-zato-odb
-redis1
-zato-lb
-zato-server1
-zato-server2
-zato-wa
+zato-odb ansible_host= ansible_user=
+redis1 ansible_host= ansible_user=
+zato-lb ansible_host= ansible_user=
+zato-server1 ansible_host= ansible_user=
+zato-server2 ansible_host= ansible_user=
+zato-wa ansible_host= ansible_user=
+
+[zato-servers]
+zato-server1 ansible_host= ansible_user=
+zato-server2 ansible_host= ansible_user=
 
 [zato-repos]
 repo-box-centos
 repo-box-ubuntu
 aptly-test-box
-
-[zato-servers]
-zato-server1
-zato-wa
-
-[testing]
-test-debian-8-32
