@@ -13,7 +13,7 @@
       file: path=./vm/distributed/{{ item[0] }}/{{ item[1] }} state=absent
       with_nested:
         - "{{ groups['zato-distributed'] }}"
-        - [ '.vagrant', 'synced', 'Vagrantfile' ]
+        - [ '.vagrant', 'Vagrantfile' ]
 
     - name: Remove vagrant user's private_keys
       file: path=./files/vagrant_key/distributed/{{ item }}_private_key state=absent
