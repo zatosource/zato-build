@@ -1,0 +1,78 @@
+---
+
+- hosts: zato-distributed
+  become: True
+
+  roles:
+
+    - install_zato_dependencies
+    - { role: prepare_install_zato, when: repo.host == "repo-box-ubuntu" or
+        repo.host == "repo-box-centos" }
+    - { role: prepare_install_zatoio, when: repo.host == "zato.io" }
+    - prepare_install_zato
+    - install_zato
+
+- hosts: redis1
+  become: True
+
+  roles:
+
+    - install_redis
+
+- hosts: zato-odb
+  become: True
+
+  roles:
+
+    - install_{{ odb_type }}
+    - configure_{{ odb_type }}
+
+- hosts: localhost
+
+  roles:
+
+    - create_zato_certs
+
+- hosts: zato-components:!zato-odb
+  become: True
+
+  roles:
+
+    - distribute_zato_certs
+
+- hosts: zato-lb
+  become: True
+
+  roles:
+
+    - create_zato_odb
+    - create_zato_cluster
+    - create_zato_lb
+
+- hosts: zato-wa
+  become: True
+
+  roles:
+
+    - create_zato_wa
+
+- hosts: zato-servers
+  become: True
+
+  roles:
+
+    - create_zato_server
+
+- hosts: zato-servers
+  become: True
+
+  roles:
+
+    - configure_zato_server
+
+- hosts: zato-lb
+  become: True
+
+  roles:
+
+    - configure_zato_lb
