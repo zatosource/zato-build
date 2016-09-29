@@ -31,14 +31,7 @@
 
   roles:
 
-    - create_zato_certs
-
-- hosts: zato-components:!zato-odb
-  become: True
-
-  roles:
-
-    - distribute_zato_certs
+    - generate_ca
 
 - hosts: zato-lb
   become: True
@@ -62,12 +55,6 @@
   roles:
 
     - create_zato_server
-
-- hosts: zato-servers
-  become: True
-
-  roles:
-
     - configure_zato_server
 
 - hosts: zato-lb
