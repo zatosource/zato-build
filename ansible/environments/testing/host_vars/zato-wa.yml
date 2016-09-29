@@ -1,7 +1,3 @@
 ---
 
-alias: zato_web_admin
 ip: 10.5.5.12
-cert: zato-wa.cert.pem
-private_key: zato-wa.key.pem
-public_key: zato-wa.key.pub.pem
