@@ -4,6 +4,15 @@
   shell: aptly publish list -raw
   register: published_list
 
+- name: Create a repository, if package version is not 'stable'
+  shell: aptly repo create -distribution={{ package['codename'] }} \
+    zato-{{ package['release'] }}-{{ package['codename'] }}
+  when: not "'zato-{{ package['release'] }}-{{ package['codename'] }}' in published_list.stdout_lines"
+
+- name: Create a root directory for the new custom repository
+  file: path=/var/www/repo/{{ package['release'] }} state=directory
+  become_user: root
+
 - name: Get snapshot list
   shell: aptly snapshot list -raw -sort='time'
   register: snap_list
@@ -41,3 +50,9 @@
 - name: Copy published repo to /var/www/repo directory
   shell: cp -r {{ source_dir }} /var/www/repo/{{ package['release'] }}/2.0/
   become_user: root
+  when: package['release'] == "stable"
+
+- name: Copy published custom repo to /var/www/repo directory
+  shell: cp -r {{ source_dir }} /var/www/repo/{{ package['release'] }}/
+  become_user: root
+  when: package['release'] != "stable"
