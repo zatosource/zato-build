@@ -1,13 +1,17 @@
 ---
 
-- name: Get repo list
+- name: Get a list of repos
+  shell: aptly repo list -raw
+  register: repo_list
+
+- name: Get a list of published repos
   shell: aptly publish list -raw
   register: published_list
 
-- name: Create a repository, if package version is not 'stable'
+- name: Create a repository, if it doesn't exist
   shell: aptly repo create -distribution={{ package['codename'] }} \
     zato-{{ package['release'] }}-{{ package['codename'] }}
-  when: not "'zato-{{ package['release'] }}-{{ package['codename'] }}' in published_list.stdout_lines"
+  when: repository not in repo_list.stdout_lines
 
 - name: Create a root directory for the new custom repository
   file: path=/var/www/repo/{{ package['release'] }} state=directory
@@ -19,13 +23,13 @@
 
 - name: Get package list
   shell: aptly repo search {{ repository }} {{ zato_package }}
-  register: pack_list
+  register: package_list
   ignore_errors: true
 
 - name: Add the package to aptly repository
   shell: aptly repo add {{ repository }} {{ incoming }}/{{ zato_package }}
   when:
-    "'{{ zato_package }}' not in pack_list.stdout"
+    "'{{ zato_package }}' not in package_list.stdout"
   register: add_pkg
 
 - name: Create a snapshot of a repo
