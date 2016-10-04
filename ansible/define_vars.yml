@@ -5,5 +5,20 @@
   tasks:
 
     - name: Prepare variable file
-      template: src=./templates/main.j2
-                dest=./vars/main.yml
+      template: src=./templates/main.j2 dest=./vars/main.yml
+
+- hosts: localhost
+  vars:
+    repo_datetime: "{{ ansible_date_time.iso8601 }}"
+  vars_files:
+    - ./vars/main.yml
+
+  tasks:
+
+    # This task won't work on localhost without become: no/False
+    - name: Generate variables for a template
+      template:
+        src={{ playbook_dir }}/roles/add_package_to_repo/templates/main.j2
+        dest={{ playbook_dir }}/roles/add_package_to_repo/defaults/main.yml
+      delegate_to: localhost
+      become: False
