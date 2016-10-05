@@ -1,6 +1,7 @@
 ---
 
 - include: copy_zato_package.yml
+  when: package['format'] == "deb"
 
 - include: add_deb_to_repo.yml
   when: repo['host'] == "repo-box-ubuntu"

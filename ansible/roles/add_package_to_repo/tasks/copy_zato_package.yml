@@ -5,4 +5,3 @@
     src=./output/{{ package['system'] }}/{{ zato_package }}
     dest=/opt/aptly/incoming/{{ package['distro'] }}/{{ package['codename'] }}/
     force=yes
-  when: package['format'] == "deb"
