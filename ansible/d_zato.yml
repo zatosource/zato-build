@@ -1,6 +1,8 @@
 ---
 
 - hosts: zato-distributed
+  vars_files:
+    - vars/main.yml
   become: True
 
   roles:
