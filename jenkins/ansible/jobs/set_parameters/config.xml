@@ -14,7 +14,7 @@
         <hudson.model.StringParameterDefinition>
           <name>package_version</name>
           <description>Define a Zato package version, e.g. 3.0.0.</description>
-          <defaultValue>3.0.0</defaultValue>
+          <defaultValue>2.0.7</defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>package_release</name>
@@ -163,10 +163,10 @@ format=deb</propertiesContent>
         <EnvInjectBuilder plugin="envinject@1.92.1">
           <info>
             <propertiesContent>base_box=bento/centos-6.7-i386
-box_name=redhat-6-32
-box_hostname=redhat-6-32
+box_name=centos-6-32
+box_hostname=centos-6-32
 box_ip=10.2.3.15
-distribution=redhat
+distribution=rhel
 codename=el6
 architecture=i386
 format=rpm</propertiesContent>
@@ -185,10 +185,10 @@ format=rpm</propertiesContent>
         <EnvInjectBuilder plugin="envinject@1.92.1">
           <info>
             <propertiesContent>base_box=bento/centos-6.7
-box_name=redhat-6-64
-box_hostname=redhat-6-64
+box_name=centos-6-64
+box_hostname=centos-6-64
 box_ip=10.2.3.16
-distribution=redhat
+distribution=rhel
 codename=el6
 architecture=x86_64
 format=rpm</propertiesContent>
@@ -207,10 +207,10 @@ format=rpm</propertiesContent>
         <EnvInjectBuilder plugin="envinject@1.92.1">
           <info>
             <propertiesContent>base_box=bento/centos-7.1
-box_name=redhat-7-64
-box_hostname=redhat-7-64
+box_name=centos-7-64
+box_hostname=centos-7-64
 box_ip=10.2.3.17
-distribution=redhat
+distribution=rhel
 codename=el7
 architecture=x86_64
 format=rpm</propertiesContent>
