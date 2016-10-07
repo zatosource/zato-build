@@ -49,7 +49,9 @@ done
 # Setup test repo boxes
 for box in ${REPO_BOXES[@]}
 do
-    su - jenkins -c 'cd $ANSIBLE_ROOT/vm/$box && vagrant up && vagrant halt'
+    cd $ANSIBLE_ROOT/vm/$box
+    pwd
+    vagrant up && vagrant halt
 done
 
 # Get jenkins-cli client
