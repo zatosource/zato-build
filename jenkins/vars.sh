@@ -28,6 +28,8 @@ VAGRANT_BOXES=(
 
 REPO_BOXES=( repo-box-ubuntu repo-box-centos )
 
+JENKINS_CLI_PREFIX='java -jar jenkins-cli.jar -s http://localhost:8080/'
+
 JENKINS_PLUGINS=(
     http://updates.jenkins-ci.org/latest/conditional-buildstep.hpi
     http://updates.jenkins-ci.org/latest/email-ext.hpi
