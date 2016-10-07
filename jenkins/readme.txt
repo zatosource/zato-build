@@ -5,4 +5,4 @@ Email Extension Plugin
 Environment Injector Plugin
 Paramterized Trigger plugin
 Run Condition Plugin
-TokenMacro Plugin
+Timestamper
