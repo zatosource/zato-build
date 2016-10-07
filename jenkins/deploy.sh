@@ -1,13 +1,10 @@
 #!/bin/bash
 
-ZATO_BUILD_ROOT=/opt/zato-build
-ANSIBLE_ROOT=$ZATO_BUILD_ROOT/ansible
-JENKINS_ROOT=/var/lib/jenkins
-VAGRANT_VERSION=1.8.6
-VB_VERSION=5.1
+# Load the library of variables
+. $PWD/vars.sh
 
 # Install VirtualBox
-echo "deb http://download.virtualbox.org/virtualbox/debian xenial contrib" \
+echo 'deb http://download.virtualbox.org/virtualbox/debian xenial contrib' \
     >> /etc/apt//sources.list
 wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | \
     sudo apt-key add -
@@ -44,31 +41,16 @@ chown -R jenkins:jenkins $JENKINS_ROOT/jobs/*
 chown -R jenkins:jenkins $ANSIBLE_ROOT
 
 # Download Vagrant boxes
-VAGRANT_BOXES=(
-    bento/centos-6.7
-    bento/centos-6.7-i386
-    bento/debian-7.8
-    bento/debian-7.8-i386
-    bento/debian-7.9
-    bento/debian-7.9-i386
-    bento/debian-8.4
-    bento/debian-8.4-i386
-    bento/ubuntu-12.04
-    bento/ubuntu-12.04-i386
-    bento/ubuntu-14.04
-    bento/ubuntu-14.04-i386
-    bento/ubuntu-16.04
-    bento/ubuntu-16.04-i386
-)
-
 for box in ${VAGRANT_BOXES[@]}
 do
     vagrant box add $box --provider virtualbox
 done
 
 # Setup test repo boxes
-REPO_BOXES=( repo-box-ubuntu repo-box-centos )
 for box in ${REPO_BOXES[@]}
 do
-    su - jenkins -c "cd $ANSIBLE_ROOT/vm/$box && vagrant up && vagrant halt"
+    su - jenkins -c 'cd $ANSIBLE_ROOT/vm/$box && vagrant up && vagrant halt'
 done
+
+# Get jenkins-cli client
+su - jenkins -c 'wget http://localhost:8080/jnlpJars/jenkins-cli.jar'
