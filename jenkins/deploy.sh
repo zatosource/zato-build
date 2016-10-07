@@ -56,3 +56,17 @@ done
 
 # Get jenkins-cli client
 su - jenkins -c 'wget http://localhost:8080/jnlpJars/jenkins-cli.jar'
+
+# Save Jenkins credentials for this session
+cd $JENKINS_ROOT
+$JENKINS_CLI_PREFIX login
+
+# Install required Jenkins plugins
+for plugin in ${JENKINS_PLUGINS[@]}
+do
+    $JENKINS_CLI_PREFIX install-plugin $plugin
+done
+
+# Restart Jenkins
+$JENKINS_CLI_PREFIX restart
+
