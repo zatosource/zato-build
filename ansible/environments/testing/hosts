@@ -1,17 +1,17 @@
 [vm-hosts]
-debian-7-32
-debian-7-64
-debian-8-32
-debian-8-64
-centos-6-32
-centos-6-64
-centos-7-64
-ubuntu-1204-32
-ubuntu-1204-64
-ubuntu-1404-32
-ubuntu-1404-64
-ubuntu-1604-32
-ubuntu-1604-64
+debian-7-32 ansible_host=10.2.3.11
+debian-7-64 ansible_host=10.2.3.12
+debian-8-32 ansible_host=10.2.3.13
+debian-8-64 ansible_host=10.2.3.14
+centos-6-32 ansible_host=10.2.3.15
+centos-6-64 ansible_host=10.2.3.16
+centos-7-64 ansible_host=10.2.3.17
+ubuntu-1204-32 ansible_host=10.2.3.18
+ubuntu-1204-64 ansible_host=10.2.3.19
+ubuntu-1404-32 ansible_host=10.2.3.20
+ubuntu-1404-64 ansible_host=10.2.3.21
+ubuntu-1604-32 ansible_host=10.2.3.22
+ubuntu-1604-64 ansible_host=10.2.3.23
 
 [oracle-host]
 oracle-box
