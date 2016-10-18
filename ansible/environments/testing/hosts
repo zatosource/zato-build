@@ -45,6 +45,6 @@ zato-server1
 zato-server2
 
 [zato-repos]
-repo-box-centos
-repo-box-ubuntu
+repo-box-centos ansible_host=10.2.3.88
+repo-box-ubuntu ansible_host=10.2.3.89
 aptly-test-box
