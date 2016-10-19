@@ -38,6 +38,9 @@ ZATO_TARGET_DIR=$ZATO_ROOT_DIR/$ZATO_VERSION
 if command -v lsb_release > /dev/null; then
     release=$(lsb_release -c | cut -f2)
     if [[ "$release" == "precise" ]] || [[ "$release" == "wheezy" ]]; then
+        LIBATLAS3BASE=libatlas3gf-base
+        LIBBLAS3=libblas3gf
+        LIBLAPACK3=liblapack3gf
         LIBUMFPACK_VERSION=5.4.0
     elif [[ "$release" == "xenial" ]]; then
         LIBATLAS3BASE=libatlas3-base
