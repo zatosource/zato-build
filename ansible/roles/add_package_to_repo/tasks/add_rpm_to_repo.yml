@@ -1,5 +1,9 @@
 ---
 
+- name: Create a root repo directory for a custom (not 'stable') Zato package
+  file: name=/var/www/repo/{{ repository }} state=directory
+  when: not package['release'] == 'stable'
+
 - name: Add a new package to a repository at repo-box-centos
   copy: >
     src=../../../output/{{ package['system'] }}/{{ zato_package }}
