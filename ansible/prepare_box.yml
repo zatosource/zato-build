@@ -44,7 +44,9 @@
         regexp='}-security'
         line='//    '${distro_id}:${distro_codename}-security''
         state=present"
-      when: ansible_distribution_version == "16.04"
+      when:
+        ansible_distribution_version == "16.04" and
+        ansible_machine == "x86_64"
 
   roles:
 
