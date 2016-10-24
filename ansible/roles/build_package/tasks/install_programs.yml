@@ -7,7 +7,7 @@
 
 - name: Do 'apt-get update' on Debian
   apt: update_cache=yes
-  when: ansible_os_family == "Debian"
+  when: ansible_distribution == "Debian"
 
 - name: Install git on Debian and Ubuntu
   apt: name=git state=present
@@ -48,4 +48,8 @@
 
 - name: Install pip on Centos
   easy_install: name=pip
-  when: ansible_distribution == "CentOS"
+  when: ansible_distribution == "CentOS" and ansible_distribution_version.split('.')[0]|int == 6
+
+- name: Install pip on CentOS 7
+  yum: name=python-pip state=present
+  when: ansible_distribution == "CentOS" and ansible_distribution_version.split('.')[0]|int == 7
