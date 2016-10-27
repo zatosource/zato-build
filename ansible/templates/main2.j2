@@ -1,0 +1,163 @@
+---
+
+root_dir: {{ root_dir }}
+version: {{ package_version }}
+release: {{ package_release }}
+branch: {{ branch }}
+system: {{ system }}
+
+
+{% if 'debian' in system or 'ubuntu' in system %}
+repo:
+  host: repo-box-ubuntu
+format: deb
+{% endif %}
+
+{% if 'debian' in system and '7' in system %}
+distro: debian
+codename: wheezy
+{% elif 'debian' in system and '8' in system %}
+distro: debian
+codename: jessie
+{% elif 'ubuntu' in system and '12.04' in system %}
+distro: ubuntu
+codename: precise
+{% elif 'ubuntu' in system and '14.04' in system %}
+distro: ubuntu
+codename: trusty
+{% elif 'ubuntu' in system and '16.04' in system %}
+distro: ubuntu
+codename: xenial
+{% elif 'redhat' in system and '6' in system %}
+distro: rhel
+codename: el6
+{% elif 'redhat' in system and '7' in system %}
+distro: rhel
+codename: el7
+{% endif %}
+
+{% if system == 'debian-7-32' %}
+distro: debian
+codename: wheezy
+arch: i386
+box:
+  base: bento/debian-7.9-i386
+  name: debian7-32_zato
+  memory: 512
+  hostname: wheezy32_zato
+{% elif system == 'debian-7-64' %}
+distro: debian
+codename: wheezy
+arch: amd64
+box:
+  base: bento/debian-7.9
+  name: debian7-64_zato
+  memory: 512
+  hostname: wheezy64_zato
+{% elif system == 'debian-8-32' %}
+distro: debian
+codename: jessie
+arch: i386
+box:
+  base: bento/debian-8.4-i386
+  name: debian8-32_zato
+  memory: 512
+  hostname: jessie32_zato
+{% elif system == 'debian-8-64' %}
+distro: debian
+codename: jessie
+arch: amd64
+box:
+  base: bento/debian-8.4
+  name: debian8-64_zato
+  memory: 512
+  hostname: jessie64_zato
+{% elif system == 'redhat-6-32' %}
+distro: rhel
+codename: el6
+arch: i386
+box:
+  base: bento/centos-6.7-i386
+  name: centos6-32_zato
+  memory: 512
+  hostname: centos6-32_zato
+{% elif system == 'redhat-6-64' %}
+distro: rhel
+codename: el6
+arch: x86_64
+box:
+  base: bento/centos-6.7
+  name: centos6-64_zato
+  memory: 512
+  hostname: centos6-64_zato
+{% elif system == 'redhat-7-64' %}
+distro: rhel
+codename: el7
+arch: x86_64
+box:
+  base: bento/centos-7.1
+  name: centos7-64_zato
+  memory: 512
+  hostname: centos7-64_zato
+{% elif system == 'ubuntu-12.04-32' %}
+distro: ubuntu
+codename: precise
+arch: i386
+box:
+  base: bento/ubuntu-12.04-i386
+  name: precise32_zato
+  memory: 512
+  hostname: precise32_zato
+{% elif system == 'ubuntu-12.04-64' %}
+distro: ubuntu
+codename: precise
+arch: amd64
+box:
+  base: bento/ubuntu-12.04
+  name: precise64_zato
+  memory: 512
+  hostname: precise64_zato
+{% elif system == 'ubuntu-14.04-32' %}
+distro: ubuntu
+codename: trusty
+arch: i386
+box:
+  base: bento/ubuntu-14.04-i386
+  name: trusty32_zato
+  memory: 512
+  hostname: trusty32_zato
+{% elif system == 'ubuntu-14.04-64' %}
+distro: ubuntu
+codename: trusty
+arch: amd64
+box:
+  base: bento/ubuntu-14.04-i386
+  name: trusty64_zato
+  memory: 512
+  hostname: trusty64_zato
+{% elif system == 'ubuntu-16.04-32' %}
+distro: ubuntu
+codename: xenial
+arch: i386
+box:
+  base: bento/ubuntu-16.04-i386
+  name: xenial32_zato
+  memory: 512
+  hostname: xenial32_zato
+{% elif system == 'ubuntu-16.04-64' %}
+distro: ubuntu
+codename: xenial
+arch: amd64
+box:
+  base: bento/ubuntu-16.04
+  name: xenial64_zato
+  memory: 512
+  hostname: xenial64_zato
+
+{% if '32' in system %}
+arch: i386
+{% elif '64' in system and 'debian' in system or 'ubuntu' in system %}
+arch: amd64
+{% elif '64' in system and 'redhat' in system %}
+arch: x86_64
+{% endif %}
