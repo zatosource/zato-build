@@ -1,20 +1,120 @@
 ---
 
 root_dir: {{ root_dir }}
-box:
-  base: {{ base_box }}
-  name: {{ box_name }}
-  memory: {{ box_memory }}
-  hostname: {{ box_hostname }}
-  ip: {{ box_ip }}
-package:
-  version: {{ package_version }}
-  release: {{ package_release }}
-  system: {{ system }}
-  distro: {{ distribution }}
-  codename: {{ codename }}
-  arch: {{ architecture }}
-  format: {{ format }}
-  branch: {{ branch }}
+version: {{ package_version }}
+release: {{ package_release }}
+branch: {{ branch }}
+system: {{ system }}
+
+{% if 'debian' in system or 'ubuntu' in system %}
 repo:
-  host: {{ repo_host }}
+  host: repo-box-ubuntu
+format: deb
+{% else %}
+repo:
+  host: repo-box-centos
+{% endif %}
+
+{% if 'debian' in system and '7' in system %}
+distro: debian
+codename: wheezy
+{% if '32' in system %}
+box:
+  base: bento/debian-7.9-i386
+  name: debian-7-32
+  hostname: debian-7-32
+{% elif '64' in system %}
+box:
+  base: bento/debian-7.9
+  name: debian-7-64
+  hostname: debian-7-64
+{% endif %}
+{% elif 'debian' in system and '8' in system %}
+distro: debian
+codename: jessie
+{% if '32' in system %}
+box:
+  base: bento/debian-8.4-i386
+  name: debian-8-32
+  hostname: debian-8-32
+{% elif '64' in system %}
+box:
+  base: bento/debian-8.4
+  name: debian-8-64
+  hostname: debian-8-64
+{% endif %}
+{% elif 'ubuntu' in system and '12.04' in system %}
+distro: ubuntu
+codename: precise
+{% if '32' in system %}
+box:
+  base: bento/ubuntu-12.04-i386
+  name: ubuntu-1204-32
+  hostname: ubuntu-1204-32
+{% elif '64' in system %}
+box:
+  base: bento/ubuntu-12.04
+  name: ubuntu-1204-64
+  hostname: ubuntu-1204-64
+{% endif %}
+{% elif 'ubuntu' in system and '14.04' in system %}
+distro: ubuntu
+codename: trusty
+{% if '32' in system %}
+box:
+  base: bento/ubuntu-14.04-i386
+  name: ubuntu-1404-32
+  hostname: ubuntu-1404-32
+{% elif '64' in system %}
+box:
+  base: bento/ubuntu-14.04
+  name: ubuntu-1404-64
+  hostname: ubuntu-1404-64
+{% endif %}
+{% elif 'ubuntu' in system and '16.04' in system %}
+distro: ubuntu
+codename: xenial
+{% if '32' in system %}
+box:
+  base: bento/ubuntu-16.04-i386
+  name: ubuntu-1604-32
+  hostname: ubuntu-1604-32
+{% elif '64' in system %}
+box:
+  base: bento/ubuntu-16.04
+  name: ubuntu-1604-64
+  hostname: ubuntu-1604-64
+{% endif %}
+{% elif 'redhat' in system and '6' in system %}
+distro: rhel
+codename: el6
+{% if '32' in system %}
+box:
+  base: bento/centos-6.7-i386
+  name: redhat-6-32
+  hostname: redhat-6-32
+{% elif '64' in system %}
+box:
+  base: bento/centos-6.7
+  name: redhat-6-64
+  hostname: redhat-6-64
+{% endif %}
+{% elif 'redhat' in system and '7' in system %}
+distro: rhel
+codename: el7
+{% if '32' in system %}
+{% elif '64' in system %}
+box:
+  base: bento/centos-7.1
+  name: redhat-7-64
+  hostname: redhat-6-64
+{% endif %}
+{% endif %}
+
+{% if '32' in system %}
+arch: i386
+{% elif '64' in system and 'debian' in system or 'ubuntu' in system %}
+arch: amd64
+{% elif '64' in system and 'redhat' in system %}
+arch: x86_64
+{% endif %}
