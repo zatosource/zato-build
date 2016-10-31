@@ -6,6 +6,8 @@
 
     - name: Prepare variable file
       template: src=./templates/main.j2 dest=./vars/main.yml
+      delegate_to: localhost
+      become: False
 
 - hosts: localhost
   vars:
@@ -25,7 +27,7 @@
 
     - name: Generate repository definition for Centos
       template:
-          src={{ playbook_dir }}/roles/prepare_install_zato/templates/zato-2.0.repo.j2
+        src={{ playbook_dir }}/roles/prepare_install_zato/templates/zato-2.0.repo.j2
         dest={{ playbook_dir }}/roles/prepare_install_zato/files/zato-2.0.repo
       delegate_to: localhost
       become: False
