@@ -1,12 +1,12 @@
 ---
 
 - name: Add the packages to test the aptly repository
-  shell: aptly repo add zato-{{ package['release'] }}-{{ package['codename'] }} \
+  shell: aptly repo add zato-{{ release }}-{{ codename }} \
     /vagrant/files/test_packages
   register: package_added
 
 - name: Get a list of Zato packages
-  shell: aptly repo search zato-{{ package['release'] }}-{{ package['codename'] }} zato
+  shell: aptly repo search zato-{{ release }}-{{ codename }} zato
   register: zato_package_list
 
 - name: Write the list to a file
@@ -17,8 +17,8 @@
 
 - name: Create a snapshot of the repository
   shell: aptly snapshot create \
-    snap-zato-{{ package['release'] }}-{{ package['codename'] }}-{{ repo_datetime }} \
-    from repo zato-{{ package['release'] }}-{{ package['codename'] }}
+    snap-zato-{{ release }}-{{ codename }}-{{ repo_datetime }} \
+    from repo zato-{{ release }}-{{ codename }}
   when: package_added.changed == True
   register: snapshot_created
 
@@ -31,20 +31,20 @@
   register: repo_list
 
 - name: Drop the previous published repo (if it exists)
-  shell: aptly publish drop {{ package['codename'] }} \
-         repo/{{ package['release'] }}/2.0/{{ package['distro'] }}
+  shell: aptly publish drop {{ codename }} \
+         repo/{{ release }}/2.0/{{ distro }}
   when:
-    "'repo/{{ package['release'] }}/2.0/{{ package['distro'] }}/{{ package['codename'] }}' in repo_list.stdout"
+    "'repo/{{ release }}/2.0/{{ distro }}/{{ codename }}' in repo_list.stdout"
 
 - name: Publish the snapshot
   shell: aptly publish snapshot \
-    snap-zato-{{ package['release'] }}-{{ package['codename'] }}-{{ repo_datetime }} \
-    repo/{{ package['release'] }}/2.0/{{ package['distro'] }}
+    snap-zato-{{ release }}-{{ codename }}-{{ repo_datetime }} \
+    repo/{{ release }}/2.0/{{ distro }}
   register: snapshot_published
   when: snapshot_created.changed == True
 
 - name: Copy published repo to /var/www/repo directory
-  shell: cp -r /opt/aptly/.aptly/public/repo/{{ package['release'] }}/2.0/{{ package['distro'] }} \
-    /var/www/repo/{{ package['release'] }}/2.0/
+  shell: cp -r /opt/aptly/.aptly/public/repo/{{ release }}/2.0/{{ distro }} \
+    /var/www/repo/{{ release }}/2.0/
   become_user: root
   when: snapshot_published.changed == True

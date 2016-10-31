@@ -8,10 +8,10 @@
   tasks:
 
     - name: Destroy vagrant box
-      shell: vagrant destroy --force chdir=./vm/{{ package['system'] }}
+      shell: vagrant destroy --force chdir=./vm/{{ system }}
 
     - name: Remove directories and files
-      file: path=./vm/{{ package['system'] }}/{{ item }} state=absent
+      file: path=./vm/{{ system }}/{{ item }} state=absent
       with_items:
         - .vagrant
         - synced

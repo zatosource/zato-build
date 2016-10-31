@@ -10,6 +10,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     v.memory = "{{ box['memory'] }}"
   end
   config.vm.hostname = "{{ box['hostname'] }}"
-  config.vm.network "private_network", ip: "{{ box['ip'] }}"
+  config.vm.network "private_network", ip: "{{ hostvars[box['hostname']]['ansible_host'] }}"
 
 end

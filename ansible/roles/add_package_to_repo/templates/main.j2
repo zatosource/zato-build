@@ -1,22 +1,22 @@
 ---
 
-{% if package['format'] == 'deb' %}
-zato_package: zato-{{ package['version'] }}-{{ package['release'] }}_{{ package['arch'] }}-{{ package['codename'] }}.{{ package['format'] }}
-repository: zato-{{ package['release'] }}-{{ package['codename'] }}
-snapshot: snap-zato-{{ package['release'] }}-{{ package['codename'] }}-{{ repo_datetime }}
-{% if package['release'] == 'stable' %}
-prefix: repo/{{ package['release'] }}/2.0/{{ package['distro'] }}
-source_dir: /opt/aptly/.aptly/public/repo/{{ package['release'] }}/2.0/{{ package['distro'] }}/
+{% if format == 'deb' %}
+zato_package: zato-{{ version }}-{{ release }}_{{ arch }}-{{ codename }}.{{ format }}
+repository: zato-{{ release }}-{{ codename }}
+snapshot: snap-zato-{{ release }}-{{ codename }}-{{ repo_datetime }}
+{% if release == 'stable' %}
+prefix: repo/{{ release }}/2.0/{{ distro }}
+source_dir: /opt/aptly/.aptly/public/repo/{{ release }}/2.0/{{ distro }}/
 {% else %}
-prefix: repo/{{ package['release'] }}/{{ package['distro'] }}
-source_dir: /opt/aptly/.aptly/public/repo/{{ package['release'] }}/{{ package['distro'] }}/
+prefix: repo/{{ release }}/{{ distro }}
+source_dir: /opt/aptly/.aptly/public/repo/{{ release }}/{{ distro }}/
 {% endif %}
-incoming: /opt/aptly/incoming/{{ package['distro'] }}/{{ package['codename'] }}
-{% elif package['format'] == 'rpm' %}
-zato_package: zato-{{ package['version'] }}-{{ package['release'] }}.{{ package['codename'] }}.{{ package['arch'] }}.{{ package['format'] }}
-{% if package['release'] == 'stable' %}
-repository: {{ package['release'] }}/2.0/{{ package['distro'] }}/{{ package['codename'] }}/{{ package['arch'] }}
+incoming: /opt/aptly/incoming/{{ distro }}/{{ codename }}
+{% elif format == 'rpm' %}
+zato_package: zato-{{ version }}-{{ release }}.{{ codename }}.{{ arch }}.{{ format }}
+{% if release == 'stable' %}
+repository: {{ release }}/2.0/{{ distro }}/{{ codename }}/{{ arch }}
 {% else %}
-repository: {{ package['release'] }}/{{ package['distro'] }}/{{ package['codename'] }}/{{ package['arch'] }}
+repository: {{ release }}/{{ distro }}/{{ codename }}/{{ arch }}
 {% endif %}
 {% endif %}

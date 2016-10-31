@@ -9,12 +9,12 @@
   register: published_list
 
 - name: Create a repository, if it doesn't exist
-  shell: aptly repo create -distribution={{ package['codename'] }} \
-    zato-{{ package['release'] }}-{{ package['codename'] }}
+  shell: aptly repo create -distribution={{ codename }} \
+    zato-{{ release }}-{{ codename }}
   when: repository not in repo_list.stdout_lines
 
 - name: Create a root directory for the new custom repository
-  file: path=/var/www/repo/{{ package['release'] }} state=directory
+  file: path=/var/www/repo/{{ release }} state=directory
   become_user: root
 
 - name: Get snapshot list
@@ -40,11 +40,11 @@
 - name: Publish the snapshot
   shell: aptly publish snapshot {{ snapshot }} {{ prefix }}
   when:
-    "'{{ prefix }} {{ package['codename'] }}' not in published_list.stdout"
+    "'{{ prefix }} {{ codename }}' not in published_list.stdout"
   register: publish_starter
 
 - name: Switch to the snapshot
-  shell: aptly publish switch {{ package['codename'] }} {{ prefix }} {{ snapshot }}
+  shell: aptly publish switch {{ codename }} {{ prefix }} {{ snapshot }}
   register: switch_repo
   when: >
     create_snap.changed and
@@ -52,11 +52,11 @@
     and "'{{ prefix }}' in published_list.stdout"
 
 - name: Copy published repo to /var/www/repo directory
-  shell: cp -r {{ source_dir }} /var/www/repo/{{ package['release'] }}/2.0/
+  shell: cp -r {{ source_dir }} /var/www/repo/{{ release }}/2.0/
   become_user: root
-  when: package['release'] == "stable"
+  when: release == "stable"
 
 - name: Copy published custom repo to /var/www/repo directory
-  shell: cp -r {{ source_dir }} /var/www/repo/{{ package['release'] }}/
+  shell: cp -r {{ source_dir }} /var/www/repo/{{ release }}/
   become_user: root
-  when: package['release'] != "stable"
+  when: release != "stable"

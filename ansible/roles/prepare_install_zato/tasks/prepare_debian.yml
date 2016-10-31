@@ -20,12 +20,12 @@
 
 - name: Add Zato test repository on Debian-based systems
   shell: apt-add-repository \
-    https://{{ repo['host'] }}/repo/stable/2.0/{{ package['distro'] }}
+    https://{{ repo['host'] }}/repo/stable/2.0/{{ distro }}
   become_user: root
-  when: package['release'] == "stable"
+  when: release == "stable"
 
 - name: Add Zato custom test repository on Debian-based systems
   shell: apt-add-repository \
-    https://{{ repo['host'] }}/repo/{{ package['release'] }}/{{ package['distro'] }}
+    https://{{ repo['host'] }}/repo/{{ release }}/{{ distro }}
   become_user: root
-  when: package['release'] != "stable"
+  when: release != "stable"
