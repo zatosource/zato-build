@@ -13,9 +13,10 @@ format: deb
 {% else %}
 repo:
   host: repo-box-centos
+format: rpm
 {% endif %}
 
-{% if 'debian' in system and '7' in system %}
+{% if 'debian' in system and '-7-' in system %}
 distro: debian
 codename: wheezy
 {% if '32' in system %}
@@ -29,7 +30,7 @@ box:
   name: debian-7-64
   hostname: debian-7-64
 {% endif %}
-{% elif 'debian' in system and '8' in system %}
+{% elif 'debian' in system and '-8-' in system %}
 distro: debian
 codename: jessie
 {% if '32' in system %}
@@ -85,30 +86,27 @@ box:
   name: ubuntu-1604-64
   hostname: ubuntu-1604-64
 {% endif %}
-{% elif 'redhat' in system and '6' in system %}
+{% elif 'redhat' in system and '-6-' in system %}
 distro: rhel
 codename: el6
 {% if '32' in system %}
 box:
   base: bento/centos-6.7-i386
-  name: redhat-6-32
-  hostname: redhat-6-32
+  name: centos-6-32
+  hostname: centos-6-32
 {% elif '64' in system %}
 box:
   base: bento/centos-6.7
-  name: redhat-6-64
-  hostname: redhat-6-64
+  name: centos-6-64
+  hostname: centos-6-64
 {% endif %}
-{% elif 'redhat' in system and '7' in system %}
+{% elif 'redhat' in system and '-7-' in system %}
 distro: rhel
 codename: el7
-{% if '32' in system %}
-{% elif '64' in system %}
 box:
   base: bento/centos-7.1
-  name: redhat-7-64
-  hostname: redhat-6-64
-{% endif %}
+  name: centos-7-64
+  hostname: centos-7-64
 {% endif %}
 
 {% if '32' in system %}
