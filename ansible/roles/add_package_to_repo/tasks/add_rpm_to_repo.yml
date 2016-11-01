@@ -1,13 +1,13 @@
 ---
 
 - name: Create a root repo directory for a custom (not 'stable') Zato package
-  file: name=/var/www/repo/{{ repo['host'] }} state=directory
+  file: name=/var/www/repo/{{ repository }} state=directory
   when: release != 'stable'
 
 - name: Add a new package to a repository at repo-box-centos
   copy: >
     src=./output/{{ system }}/{{ zato_package }}
-    dest=/var/www/repo/{{ repo['host'] }}
+    dest=/var/www/repo/{{ repository }}
 
 - name: Sign the package using 'Expect' program
   shell: /vagrant/files/sign_rpm_with_expect.exp {{ release }} {{ distro }} \
