@@ -1,0 +1,12 @@
+---
+
+- name: Generate variables for test repository
+  hosts: localhost
+  vars:
+    repo_datetime: "{{ ansible_date_time.iso8601 }}"
+  vars_files:
+    - environments/testing/host_vars/{{ host }}.yml
+
+  roles:
+
+    - generate_repo_vars
