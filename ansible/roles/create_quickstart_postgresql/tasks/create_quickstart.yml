@@ -8,7 +8,7 @@
 - name: create quickstart on Debian-based systems
   shell: rm -rf /opt/zato/env/qs-1 &&
          mkdir -p /opt/zato/env/qs-1 &&
-         /opt/zato/{{ package['version'] }}/bin/zato quickstart create \
+         /opt/zato/current/bin/zato quickstart create \
          --odb_host {{ odb['host'] }} \
          --odb_port {{ odb['postgresql']['port'] }} \
          --odb_user "{{ odb['user'] }}" \
@@ -23,7 +23,7 @@
 - name: create quickstart on RHEL-based systems
   shell: rm -rf /opt/zato/env/qs-1 &&
          mkdir -p /opt/zato/env/qs-1 &&
-         /opt/zato/{{ package['version'] }}/code/bin/zato quickstart create \
+         /opt/zato/current/code/bin/zato quickstart create \
          --odb_host "{{ odb['host'] }}" \
          --odb_port "{{ odb['postgresql']['port'] }}" \
          --odb_user "{{ odb['user'] }}" \
