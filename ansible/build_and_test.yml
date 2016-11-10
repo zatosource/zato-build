@@ -1,20 +1,33 @@
 ---
 
-- hosts: localhost
+- name: Prepare a Vagrant box
+  hosts: localhost
 - include: prepare_box.yml
 
-- hosts: "{{ host }}"
+- name: Build a Zato package
+  hosts: "{{ host }}"
   become: True
+  vars_files:
+    - environments/testing/host_vars/{{ host }}.yml
   roles:
-    - build_package.yml
+    - build_package
 
-- hosts: localhost
+- name: Clean up the build environment
+  hosts: localhost
 - include: clean.yml
+
+- name: Add a new Zato package to a test repository
+  hosts: localhost
 - include: add_package_to_repo.yml
+
+- name: Prepare a test environment
+  hosts: localhost
 - include: prepare_box.yml
 
-- hosts: "{{ host }}"
+- name: Test a Zato quickstart environment
+  hosts: "{{ host }}"
 - include: quickstart_redis_sqlite.yml
 
-- hosts: localhost
+- name: Clean up
+  hosts: localhost
 - include: clean.yml
