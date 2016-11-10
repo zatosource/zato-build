@@ -1,0 +1,8 @@
+---
+
+# These tasks won't work on localhost without become: no/False
+- name: Prepare a host_vars file
+  template: src=./templates/system.j2
+    dest=./environments/testing/host_vars/{{ host }}.yml
+  delegate_to: localhost
+  become: False

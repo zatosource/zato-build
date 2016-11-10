@@ -1,0 +1,16 @@
+---
+
+# The sole purpose of this playbook is to execute two roles together
+- name: Generate a host_vars file
+  hosts: localhost
+  roles:
+    - generate_host_vars
+
+- name: Generate variables for a repo host
+  hosts: localhost
+  vars:
+    repo_datetime: "{{ ansible_date_time.iso8601 }}"
+  vars_files:
+    - environments/testing/host_vars/{{ host }}.yml
+  roles:
+    - generate_repo_vars

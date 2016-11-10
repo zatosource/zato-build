@@ -1,0 +1,20 @@
+---
+
+- hosts: localhost
+- include: prepare_box.yml
+
+- hosts: "{{ host }}"
+  become: True
+  roles:
+    - build_package.yml
+
+- hosts: localhost
+- include: clean.yml
+- include: add_package_to_repo.yml
+- include: prepare_box.yml
+
+- hosts: "{{ host }}"
+- include: quickstart_redis_sqlite.yml
+
+- hosts: localhost
+- include: clean.yml
