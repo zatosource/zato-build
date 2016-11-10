@@ -1,8 +1,6 @@
 ---
 
 - hosts: localhost
-  vars_files:
-    - vars/main.yml
   ignore_errors: yes
 
   tasks:

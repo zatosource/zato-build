@@ -1,9 +1,7 @@
 ---
 
-- hosts: "{{ box['hostname'] }}"
+- hosts: "{{ host }}"
   become: True
-  vars_files:
-    - vars/main.yml
 
   roles:
 

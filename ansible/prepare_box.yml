@@ -2,7 +2,7 @@
 
 - hosts: localhost
   vars_files:
-      - vars/main.yml
+    - environments/testing/host_vars/{{ host }}.yml
 
   tasks:
 
@@ -31,7 +31,7 @@
     ansible_ssh_private_key_file:
       ./files/vagrant_key/private_key
   vars_files:
-    - vars/main.yml
+    - environments/testing/host_vars/{{ host }}.yml
 
   pre_tasks:
 
