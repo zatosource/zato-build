@@ -46,3 +46,4 @@
     dest=./output/{{ system }}/
     flat=yes
   when: ansible_distribution == "CentOS"
+  become: root
