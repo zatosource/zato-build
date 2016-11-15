@@ -69,7 +69,7 @@
 
 - name: Fetch test results from the test box
   fetch: src=/opt/zato/test_results/{{ item }}
-         dest={{ root_dir }}/test_results/{{ system }}/{{ version }}/
+         dest={{ playbook_dir }}/test_results/{{ system }}/{{ version }}/
          flat=yes
   with_items:
     - "{{ test_logs.stdout_lines }}"
