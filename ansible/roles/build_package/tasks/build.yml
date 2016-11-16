@@ -32,6 +32,7 @@
     dest=./output/{{ system }}/
     flat=yes
   when: ansible_os_family == "Debian" and ansible_userspace_architecture == "i386"
+  become: no
 
 - name: Copy Zato package on Debian-based amd64 systems
   fetch: >
@@ -39,6 +40,7 @@
     dest=./output/{{ system }}/
     flat=yes
   when: ansible_os_family == "Debian" and ansible_userspace_architecture == "x86_64"
+  become: no
 
 - name: Copy Zato package on CentOS
   fetch: >
@@ -46,3 +48,4 @@
     dest=./output/{{ system }}/
     flat=yes
   when: ansible_distribution == "CentOS"
+  become: no
