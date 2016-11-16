@@ -42,8 +42,7 @@
 
 - name: Copy Zato package on CentOS
   fetch: >
-    src=/root/rpmbuild/RPMS/{{ ansible_userspace_architecture }}/zato-{{ version }}-{{ release }}.el{{ ansible_distribution_major_version }}.{{ ansible_userspace_architecture }}.rpm 
+    src=/root/rpmbuild/RPMS/{{ ansible_userspace_architecture }}/zato-{{ version }}-{{ release }}.el{{ ansible_distribution_major_version }}.{{ ansible_userspace_architecture }}.rpm
     dest=./output/{{ system }}/
     flat=yes
   when: ansible_distribution == "CentOS"
-  become: root
