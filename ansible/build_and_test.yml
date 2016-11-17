@@ -7,10 +7,14 @@
 - name: Build a Zato package
   hosts: "{{ host }}"
   become: True
-  vars_files:
-    - environments/testing/host_vars/{{ host }}.yml
   roles:
     - build_package
+
+- name: Fetch a Zato package
+  hosts: "{{ host }}"
+  become: False
+  roles:
+    - fetch_package
 
 - name: Clean up the build environment
   hosts: localhost
