@@ -12,7 +12,7 @@
 
 - name: Fetch a Zato package
   hosts: "{{ host }}"
-  become: False
+  become: True
   roles:
     - fetch_package
 
