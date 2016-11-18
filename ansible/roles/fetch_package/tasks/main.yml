@@ -1,3 +1,5 @@
 ---
 
 - include: fetch.yml
+  register: fetched_package
+  failed_when: not fetched_package.changed
