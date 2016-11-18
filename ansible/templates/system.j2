@@ -93,7 +93,7 @@ box:
   base: bento/ubuntu-16.04
   name: ubuntu-1604-64
   hostname: ubuntu-1604-64
-  memory: 10242
+  memory: 1024
 {% endif %}
 {% elif 'redhat' in system and '-6-' in system %}
 distro: rhel
@@ -103,13 +103,13 @@ box:
   base: bento/centos-6.7-i386
   name: centos-6-32
   hostname: centos-6-32
-  memory: 512
+  memory: 1024
 {% elif '64' in system %}
 box:
   base: bento/centos-6.7
   name: centos-6-64
   hostname: centos-6-64
-  memory: 512
+  memory: 1024
 {% endif %}
 {% elif 'redhat' in system and '-7-' in system %}
 distro: rhel
@@ -118,7 +118,7 @@ box:
   base: bento/centos-7.1
   name: centos-7-64
   hostname: centos-7-64
-  memory: 512
+  memory: 1024
 {% endif %}
 
 {% if '32' in system %}
