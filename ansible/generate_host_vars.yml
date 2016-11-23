@@ -1,6 +1,6 @@
 ---
 
-- name: Generate variables for a build/test box
+- name: Generate variables for {{ system }} box
   hosts: localhost
 
   roles:

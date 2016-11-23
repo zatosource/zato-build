@@ -1,6 +1,6 @@
 ---
 
-- name: add Debian backports repository
+- name: Add Debian backports repository
   apt_repository: repo="deb http://ftp.is.debian.org/debian wheezy-backports main"
                   state=present
   when: ansible_distribution == "Debian"

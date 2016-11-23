@@ -1,6 +1,7 @@
 ---
 
-- hosts: localhost
+- name: Prepare {{ system }} box
+  hosts: localhost
   vars_files:
     - environments/testing/host_vars/{{ host }}.yml
 
@@ -24,7 +25,8 @@
     - name: Set the private_key mode to 0600
       file: path=./files/vagrant_key/private_key mode=0600
 
-- hosts: "{{ box['hostname'] }}"
+- name: Setup required functionality in {{ system }} box
+  hosts: "{{ box['hostname'] }}"
   become: True
   remote_user: vagrant
   vars:
