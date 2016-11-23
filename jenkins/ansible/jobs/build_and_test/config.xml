@@ -346,10 +346,15 @@ systems=(
 for system in ${!systems[@]}
 do
   cd $ansible_root_path
-  ansible-playbook -i environments/testing generate_host_vars.yml --extra-vars &quot;host=${systems[$system]} package_version=$package_version \
-    package_release=$package_release branch=$branch system=$system&quot; -vvvv
-  ansible-playbook -i environments/testing generate_repo_vars.yml --extra-vars &quot;host=${systems[$system]} system=$system&quot; -vvvv
-  ansible-playbook -i environments/testing build_and_test.yml --extra-vars &quot;host=${systems[$system]} system=$system user=$ansible_user&quot; -vvvv
+  if [ ! -f ./output/$system/zato-$package_version-$package_release* ];
+  then
+    ansible-playbook -i environments/testing generate_host_vars.yml --extra-vars &quot;host=${systems[$system]} package_version=$package_version \
+      package_release=$package_release branch=$branch system=$system&quot;
+    ansible-playbook -i environments/testing generate_repo_vars.yml --extra-vars &quot;host=${systems[$system]} system=$system&quot;
+    ansible-playbook -i environments/testing build_and_test.yml --extra-vars &quot;host=${systems[$system]} system=$system user=$ansible_user&quot;
+  else
+    echo &quot;**** Package zato-$package_version-$package_release for $system has been build already. Skipping. ****&quot;
+  fi  
 done
 </command>
       </buildStep>
