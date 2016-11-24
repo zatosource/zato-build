@@ -1,0 +1,26 @@
+---
+
+- name: Create a directory for Zato scheduler
+  file: path={{ path }}
+    owner=zato group=zato
+    state=directory
+
+- name: Generate zato_scheduler.config file
+  template: src=zato_scheduler.j2 dest=/opt/zato/zato_scheduler.config
+    owner=zato group=zato
+    mode=0600
+
+- name: Create Zato load balancer
+  command: ./current/bin/zato from-config zato_scheduler.config
+    chdir=/opt/zato
+  become_user: zato
+
+- name: Create a symlink to Zato startup script
+  file: src={{ path }}
+    dest=/etc/zato/components-enabled/scheduler
+    state=link
+
+- name: Start Zato scheduler as a service
+  service: name=zato state=started enabled=yes
+
+- pause: seconds=15
