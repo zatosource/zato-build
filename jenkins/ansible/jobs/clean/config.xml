@@ -91,10 +91,10 @@ systems=(
 for system in ${systems[@]}
 do
   cd $ansible_root_path/vm/$system
-  if [[ $(vagrant status | awk &apos;/^default/ { print $2 }&apos;) == &quot;running&quot; ]];
+  if [[ $(vagrant status | awk &apos;/^default/ { print $2 }&apos;) == &quot;running&quot; ]] || [[ $(vagrant status | awk &apos;/^default/ { print $2 }&apos;) == &quot;aborted&quot; ]];
   then
     cd $ansible_root_path
-    ansible-playbook -i environments/testing clean.yml --extra-vars &quot;system=$system&quot;
+    ansible-playbook -i environments/testing clean.yml --extra-vars &quot;system=$system&quot; -vvvv
   fi  
 done</command>
       </buildStep>
