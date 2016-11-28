@@ -7,6 +7,7 @@
 
     - name: Destroy vagrant box
       shell: vagrant destroy --force chdir=./vm/{{ system }}
+      register: box_destroyed
 
     - name: Remove directories and files
       file: path=./vm/{{ system }}/{{ item }} state=absent
@@ -14,6 +15,12 @@
         - .vagrant
         - synced
         - Vagrantfile
+      when:
+        - box_destroyed.changed
+        - box_destroyed.rc == 0
 
     - name: Remove vagrant user's private_key
       file: path=./files/vagrant_key/private_key state=absent
+      when:
+        - box_destroyed.changed
+        - box_destroyed.rc == 0
