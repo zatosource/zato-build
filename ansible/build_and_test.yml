@@ -21,33 +21,33 @@
   hosts: localhost
 - include: clean.yml
   when:
-    - hostvars.{{ host }}.package_build.changed
-    - hostvars.{{ host }}.package_build.rc == 0
+    - hostvars[host].package_build.changed
+    - hostvars[host].package_build.rc == 0
 
 - name: Add a new Zato package to a test repository
   hosts: localhost
 - include: add_package_to_repo.yml
   when:
-    - hostvars.{{ host }}.package_build.changed
-    - hostvars.{{ host }}.package_build.rc == 0
+    - hostvars[host].package_build.changed
+    - hostvars[host].package_build.rc == 0
 
 - name: Prepare a test environment
   hosts: localhost
 - include: prepare_box.yml
   when:
-    - hostvars.{{ host }}.package_build.changed
-    - hostvars.{{ host }}.package_build.rc == 0
+    - hostvars[host].package_build.changed
+    - hostvars[host].package_build.rc == 0
 
 - name: Test a Zato quickstart environment
   hosts: "{{ host }}"
 - include: quickstart_redis_sqlite.yml
   when:
-    - hostvars.{{ host }}.package_build.changed
-    - hostvars.{{ host }}.package_build.rc == 0
+    - hostvars[host].package_build.changed
+    - hostvars[host].package_build.rc == 0
 
 - name: Clean up
   hosts: localhost
 - include: clean.yml
   when:
-    - hostvars.{{ host }}.package_build.changed
-    - hostvars.{{ host }}.package_build.rc == 0
+    - hostvars[host].package_build.changed
+    - hostvars[host].package_build.rc == 0
