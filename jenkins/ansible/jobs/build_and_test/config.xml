@@ -342,26 +342,76 @@ systems=(
   [ubuntu-16.04-32]=ubuntu-1604-32
   [ubuntu-16.04-64]=ubuntu-1604-64
 )
-  
+REPORT_FILE=zato-${package_version}-${package_release}_build_and_test_report-${BUILD_ID}.txt
+
+cd ${ansible_root_path}
+echo &quot;*** START BUILD ***&quot; &gt;&gt; ./files/${REPORT_FILE}
 for system in ${!systems[@]}
 do
-  cd $ansible_root_path
-  if [ ! -f ./output/$system/zato-$package_version-$package_release* ];
+  cd ${ansible_root_path}  
+  if [ ! -f ./output/${system}/zato-${package_version}-${package_release}* ];  
   then
-    ansible-playbook -i environments/testing generate_host_vars.yml --extra-vars &quot;host=${systems[$system]} package_version=$package_version \
-      package_release=$package_release branch=$branch system=$system&quot;
-    ansible-playbook -i environments/testing generate_repo_vars.yml --extra-vars &quot;host=${systems[$system]} system=$system&quot;
-    ansible-playbook -i environments/testing build_and_test.yml --extra-vars &quot;host=${systems[$system]} system=$system user=$ansible_user&quot;
+    ansible-playbook -i environments/testing generate_host_vars.yml \
+    	--extra-vars &quot;host=${systems[$system]} package_version=${package_version} \
+        package_release=${package_release} branch=${branch} system=${system}&quot; -vvvv
+    ansible-playbook -i environments/testing generate_repo_vars.yml \
+    	--extra-vars &quot;host=${systems[$system]} system=${system}&quot; -vvvv
+    ansible-playbook -i environments/testing build_and_test.yml \
+    	--extra-vars &quot;host=${systems[$system]} system=${system} user=${ansible_user}&quot; -vvvv
+    if [ -f ./output/${system}/zato-${package_version}-${package_release}* ];
+    then
+      echo &quot;zato-${package_version}-${package_release} package for ${system} has been built&quot; &gt;&gt; \
+        ./files/${REPORT_FILE}
+    else
+      echo &quot;zato-${package_version}-${package_release} package for ${system} has NOT been built&quot; &gt;&gt; \
+        ./files/${REPORT_FILE}
+    fi    
   else
-    echo &quot;**** Package zato-$package_version-$package_release for $system has been build already. Skipping. ****&quot;
+    echo &quot;zato-${package_version}-${package_release} package for ${system} already exists - skipping this build.&quot; &gt;&gt; \
+      ./files/${REPORT_FILE}
   fi  
 done
+cd ${ansible_root_path}
+echo &quot;*** END BUILD ***&quot; &gt;&gt; ./files/${REPORT_FILE}
+cp ./files/${REPORT_FILE} ${WORKSPACE}
 </command>
       </buildStep>
       <runner class="org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail" plugin="run-condition@1.0"/>
     </org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder>
   </builders>
-  <publishers/>
+  <publishers>
+    <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.47">
+      <recipientList>$DEFAULT_RECIPIENTS</recipientList>
+      <configuredTriggers>
+        <hudson.plugins.emailext.plugins.trigger.AlwaysTrigger>
+          <email>
+            <subject>$PROJECT_DEFAULT_SUBJECT</subject>
+            <body>$PROJECT_DEFAULT_CONTENT</body>
+            <recipientProviders>
+              <hudson.plugins.emailext.plugins.recipients.DevelopersRecipientProvider/>
+              <hudson.plugins.emailext.plugins.recipients.ListRecipientProvider/>
+            </recipientProviders>
+            <attachmentsPattern></attachmentsPattern>
+            <attachBuildLog>false</attachBuildLog>
+            <compressBuildLog>false</compressBuildLog>
+            <replyTo>$PROJECT_DEFAULT_REPLYTO</replyTo>
+            <contentType>project</contentType>
+          </email>
+        </hudson.plugins.emailext.plugins.trigger.AlwaysTrigger>
+      </configuredTriggers>
+      <contentType>default</contentType>
+      <defaultSubject>$DEFAULT_SUBJECT</defaultSubject>
+      <defaultContent>$DEFAULT_CONTENT</defaultContent>
+      <attachmentsPattern>**/zato-${package_version}-${package_release}_build_and_test_report-${BUILD_ID}.txt</attachmentsPattern>
+      <presendScript>$DEFAULT_PRESEND_SCRIPT</presendScript>
+      <postsendScript>$DEFAULT_POSTSEND_SCRIPT</postsendScript>
+      <attachBuildLog>false</attachBuildLog>
+      <compressBuildLog>false</compressBuildLog>
+      <replyTo>$DEFAULT_REPLYTO</replyTo>
+      <saveOutput>false</saveOutput>
+      <disabled>false</disabled>
+    </hudson.plugins.emailext.ExtendedEmailPublisher>
+  </publishers>
   <buildWrappers>
     <hudson.plugins.timestamper.TimestamperBuildWrapper plugin="timestamper@1.8.5"/>
     <EnvInjectBuildWrapper plugin="envinject@1.92.1">
