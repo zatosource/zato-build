@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description>This job removes a Zato environment in which a Zato package was build or tested.</description>
+  <description>This job removes a Zato environment or a set of Zato environments in which a Zato package was build or tested.</description>
   <keepDependencies>false</keepDependencies>
   <properties>
     <hudson.model.ParametersDefinitionProperty>
@@ -58,7 +58,7 @@
       </condition>
       <buildStep class="hudson.tasks.Shell">
         <command>cd $ansible_root_path
-ansible-playbook -i environments/testing clean.yml --extra-vars &quot;system=$system&quot;</command>
+ansible-playbook -i environments/testing clean.yml --extra-vars &quot;system=$system&quot; -vvvv</command>
       </buildStep>
       <runner class="org.jenkins_ci.plugins.run_condition.BuildStepRunner$DontRun" plugin="run-condition@1.0"/>
     </org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder>
