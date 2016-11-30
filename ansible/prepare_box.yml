@@ -25,6 +25,12 @@
     - name: Set the private_key mode to 0600
       file: path=./files/vagrant_key/private_key mode=0600
 
+    # CentOS 7 box has a problem with accepting a custom private
+    # IP address, so we reload it as a workaround.
+    - name: Reload Centos 7 box
+      shell: vagrant reload chdir=./vm/{{ system }}
+      when: system == "redhat-7-64"
+
 - name: Setup required functionality in {{ system }} box
   hosts: "{{ box['hostname'] }}"
   become: True
