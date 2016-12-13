@@ -287,11 +287,11 @@
       <buildStep class="hudson.tasks.Shell">
         <command>#!/bin/bash
 
-cd $ansible_root_path
-ansible-playbook -i environments/testing generate_host_vars.yml --extra-vars &quot;host=$host package_version=$package_version \
-    package_release=$package_release branch=$branch system=$system&quot; -vvvv
-ansible-playbook -i environments/testing generate_repo_vars.yml --extra-vars &quot;host=$host system=$system&quot; -vvvv
-ansible-playbook -i environments/testing build_and_test.yml --extra-vars &quot;host=$host system=$system user=$ansible_user&quot; -vvvv</command>
+cd ${ansible_root_path}
+ansible-playbook -i environments/testing generate_host_vars.yml --extra-vars &quot;host=${host} package_version=${package_version} \
+    package_release=${package_release} branch=${branch} system=${system}&quot; -vvvv
+ansible-playbook -i environments/testing generate_repo_vars.yml --extra-vars &quot;host=${host} system=${system}&quot; -vvvv
+ansible-playbook -i environments/testing build_and_test.yml --extra-vars &quot;host=${host} system=${system} user=${ansible_user}&quot; -vvvv</command>
       </buildStep>
       <runner class="org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail" plugin="run-condition@1.0"/>
     </org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder>
