@@ -115,6 +115,10 @@ else
     ln -s /opt/zato/ZATO_VERSION /opt/zato/current
 fi
 
+if [ ! -d $HOME/nltk_data ]; then
+    ln -s /opt/zato/ZATO_VERSION $HOME/nltk_data
+fi
+
 source /opt/zato/.bashrc
 
 

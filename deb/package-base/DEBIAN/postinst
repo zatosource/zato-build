@@ -24,6 +24,9 @@ PATH="/opt/zato/current/bin:$PATH"">>/opt/zato/.profile
 	else
 	    ln -s /opt/zato/ZATO_VERSION /opt/zato/current
 	fi
+    if [ ! -d $HOME/nltk_data ]; then
+        ln -s /opt/zato/ZATO_VERSION/nltk_data $HOME/nltk_data
+    fi
     ;;
 
     abort-upgrade | abort-remove | abort-deconfigure)

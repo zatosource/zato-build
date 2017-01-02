@@ -112,6 +112,10 @@ else
     ln -s /opt/zato/ZATO_VERSION /opt/zato/current
 fi
 
+if [ ! -d $HOME/nltk_data ]; then
+    ln -s /opt/zato/ZATO_VERSION $HOME/nltk_data
+fi
+
 if ! grep -q bash_completion /opt/zato/.bashrc; then
 echo ". /etc/bash_completion.d/zato">>/opt/zato/.bashrc
 fi
