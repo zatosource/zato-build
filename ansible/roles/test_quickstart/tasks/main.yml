@@ -1,3 +1,4 @@
 ---
 
+- include: install_zato_apitests.yml
 - include: test_zato.yml

@@ -9,12 +9,13 @@
     - ping-load-balancer.json
     - check-lb-alive.html
     - ping-server1.json
-    - ping-server2.json
+    #- ping-server2.json
     - run-tests.txt
     - info-load-balancer.json
     - info-server1.json
-    - info-server2.json
+    #- info-server2.json
     - info-web-admin.json
+    - run-tests-apitests.txt
 
 - name: Pause for 20 seconds to make sure all components are up and working
   pause: seconds=20
@@ -28,8 +29,8 @@
 - name: Ping server1
   shell: curl -v localhost:17010/zato/ping | tee /opt/zato/test_results/ping-server1.json
 
-- name: Ping server2
-  shell: curl -v localhost:17011/zato/ping | tee /opt/zato/test_results/ping-server2.json
+#- name: Ping server2
+#shell: curl -v localhost:17011/zato/ping | tee /opt/zato/test_results/ping-server2.json
 
 - name: Get info on components on Debian-based systems
   shell: /opt/zato/current/bin/zato info \
@@ -38,7 +39,7 @@
   with_items:
     - load-balancer
     - server1
-    - server2
+    #- server2
     - web-admin
   when: ansible_os_family == "Debian"
 
@@ -49,16 +50,16 @@
   with_items:
     - load-balancer
     - server1
-    - server2
+    #- server2
     - web-admin
   when: ansible_distribution == "CentOS"
 
-- name: Run apitests on Debian-based systems
+- name: Run nosetests on Debian-based systems
   shell: bin/py run-tests.py nosetests 2>&1 | tee /opt/zato/test_results/run-tests.txt
          chdir=/opt/zato/current
   when: ansible_os_family == "Debian"
 
-- name: Run apitests on RHEL-based systems
+- name: Run nosetests on RHEL-based systems
   shell: bin/py run-tests.py nosetests 2>&1 | tee /opt/zato/test_results/run-tests.txt
       chdir=/opt/zato/current/code
   when: ansible_distribution == "CentOS"
@@ -73,3 +74,7 @@
          flat=yes
   with_items:
     - "{{ test_logs.stdout_lines }}"
+
+- name: Run API tests on Debian-based systems
+  shell: ./bin/py ./run-tests.py apitests | tee /opt/zato/test_results/run-tests-apitests.txt
+    chdir=/opt/zato/current/
