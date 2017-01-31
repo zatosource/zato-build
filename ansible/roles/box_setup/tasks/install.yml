@@ -1,5 +1,7 @@
 ---
 
+# Some packages installed here are required by zato-apitest package
+
 - name: Install additional packages on Debian-based systems
   apt: name={{ item }} state=present update_cache=yes
   when: ansible_os_family == "Debian"
@@ -8,6 +10,11 @@
     - htop
     - ranger
     - vim
+    - libpq-dev
+    - python-dev
+    - libxml2-dev
+    - libxslt1-dev
+    - libyaml-dev
 
 - name: Install additional packages on RedHat-based systems
   yum: name={{ item }} state=present
@@ -16,3 +23,8 @@
     - acl
     - vim
     - libselinux-python
+    - libpqxx-devel
+    - libxml2-devel
+    - libxslt-devel
+    - python-devel
+    - libyaml-devel
