@@ -1,0 +1,8 @@
+---
+
+- name: Upgrade pip
+  shell: pip install --upgrade pip
+
+- name: Install zato-apitests
+  pip:
+    name: zato-apitest
