@@ -33,7 +33,7 @@
   with_items:
     - load-balancer
     - server1
-    - server2
+    #- server2
     - web-admin
 
 - name: start Zato components as services
