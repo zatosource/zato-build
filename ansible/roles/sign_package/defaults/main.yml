@@ -1,0 +1,8 @@
+---
+
+zato_package: zato-3.0.0-custom1_amd64-xenial.deb
+repository: zato-custom1-xenial
+snapshot: snap-zato-custom1-xenial-2017-02-01T16:53:58Z
+prefix: repo/custom1/ubuntu
+source_dir: /opt/aptly/.aptly/public/repo/custom1/ubuntu/
+incoming: /opt/aptly/incoming/ubuntu/xenial

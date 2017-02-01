@@ -1,0 +1,37 @@
+---
+
+- name: Get a list of repos
+  shell: aptly repo list -raw
+  register: repo_list
+
+- name: Get a list of published repos
+  shell: aptly publish list -raw
+  register: published_list
+
+- name: Create a repository, if it doesn't exist
+  shell: aptly repo create -distribution={{ codename }} \
+    zato-{{ release }}-{{ codename }}
+  when: repository not in repo_list.stdout_lines
+
+- name: Add the package to aptly repository
+  shell: aptly repo add {{ repository }} {{ incoming }}/{{ zato_package }}
+  when:
+    "'{{ zato_package }}' not in package_list.stdout"
+  register: add_pkg
+
+- name: Create a snapshot of a repo
+  shell: aptly snapshot create {{ snapshot }} from repo {{ repository }}
+  when: add_pkg.changed
+  register: create_snap
+
+- name: Publish the snapshot
+  shell: aptly publish snapshot {{ snapshot }} {{ prefix }}
+  register: publish_starter
+
+- name: Switch to the snapshot
+  shell: aptly publish switch {{ codename }} {{ prefix }} {{ snapshot }}
+  register: switch_repo
+  when: >
+    create_snap.changed and
+    not publish_starter.changed
+    and "'{{ prefix }}' in published_list.stdout"
