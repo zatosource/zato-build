@@ -1,0 +1,34 @@
+---
+
+- hosts: localhost
+  vars_files:
+    - environments/testing/host_vars/{{ host }}.yml
+
+  tasks:
+
+    - name: Make sure the signbox is running
+      shell: vagrant up chdir=./vm/sign-deb/
+
+    - name: Copy vagrant user's private key
+      shell: cp  ./.vagrant/machines/default/virtualbox/private_key \
+        ../../files/vagrant_key/sign-deb_private_key
+        chdir=./vm/sign-deb/
+
+- hosts: sign-deb
+  become: True
+  remote_user: vagrant
+  vars:
+    ansible_ssh_private_key_file:
+      ./files/vagrant_key/sign-deb_private_key
+  vars_files:
+    - environments/testing/host_vars/{{ host }}.yml
+
+  pre_tasks:
+
+    - name: Install acl package
+      apt: name=acl state=present
+      when: ansible_os_family == "Debian"
+
+  roles:
+
+    - sign_package
