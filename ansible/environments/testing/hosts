@@ -48,3 +48,5 @@ zato-server2
 repo-box-centos ansible_host=10.2.3.88
 repo-box-ubuntu ansible_host=10.2.3.89
 aptly-test-box
+sign-deb ansible_host=10.2.3.100
+sign-rpm ansible_host=10.2.3.101
