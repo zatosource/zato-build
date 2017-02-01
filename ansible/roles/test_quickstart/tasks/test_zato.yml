@@ -58,11 +58,18 @@
   shell: bin/py run-tests.py nosetests 2>&1 | tee /opt/zato/test_results/run-tests.txt
          chdir=/opt/zato/current
   when: ansible_os_family == "Debian"
+  register: nosetest_result_debian
 
 - name: Run nosetests on RHEL-based systems
   shell: bin/py run-tests.py nosetests 2>&1 | tee /opt/zato/test_results/run-tests.txt
       chdir=/opt/zato/current/code
   when: ansible_distribution == "CentOS"
+  register: nosetest_result_centos
+
+- name: Run API tests on Debian-based systems
+  shell: ./bin/py ./run-tests.py apitests | tee /opt/zato/test_results/run-tests-apitests.txt
+    chdir=/opt/zato/current/
+  register: apitest_result_debian
 
 - name: List all test logs
   shell: ls -1 /opt/zato/test_results/
@@ -74,7 +81,3 @@
          flat=yes
   with_items:
     - "{{ test_logs.stdout_lines }}"
-
-- name: Run API tests on Debian-based systems
-  shell: ./bin/py ./run-tests.py apitests | tee /opt/zato/test_results/run-tests-apitests.txt
-    chdir=/opt/zato/current/
