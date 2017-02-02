@@ -1,7 +1,12 @@
 ---
 
 - include: copy.yml
+  when: format == 'deb'
+
 - include: sign_deb.yml
+  when: format == 'deb'
   become_user: aptly
+
 - include: sign_rpm.yml
+  when: format == 'rpm'
   become_user: root
