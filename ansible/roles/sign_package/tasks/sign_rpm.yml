@@ -1,0 +1,17 @@
+---
+
+- name: Create a root repo directory for a custom (not 'stable') Zato package
+  file: name=/var/www/repo/{{ repository }} state=directory
+  when: release != 'stable'
+
+- name: Add a new package to a repository at repo-box-centos
+  copy: >
+    src=./output/{{ system }}/{{ zato_package }}
+    dest=/var/www/repo/{{ repository }}
+
+- name: Sign the package
+  shell: rpm --addsign {{ zato_package }} chdir=/var/www/repo/{{ repository }}
+
+- name: Update the repo (effectively add the package)
+  shell: createrepo --cache ./cache --update ./
+    chdir=/var/www/repo/{{ repository }}

@@ -13,6 +13,15 @@
     zato-{{ release }}-{{ codename }}
   when: repository not in repo_list.stdout_lines
 
+- name: Get snapshot list
+  shell: aptly snapshot list -raw -sort='time'
+  register: snap_list
+
+- name: Get package list
+  shell: aptly repo search {{ repository }} {{ zato_package }}
+  register: package_list
+  ignore_errors: true
+
 - name: Add the package to aptly repository
   shell: aptly repo add {{ repository }} {{ incoming }}/{{ zato_package }}
   when:

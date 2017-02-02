@@ -1,5 +1,7 @@
 ---
 
 - include: copy.yml
-- include: sign.yml
+- include: sign_deb.yml
   become_user: aptly
+- include: sign_rpm.yml
+  become_user: root
