@@ -28,22 +28,22 @@
 - name: Add a new Zato package to a test repository
   hosts: localhost
 - include: add_package_to_repo.yml
-  when: hostvars[host].package_fetched_debian-i386.changed or
-    hostvars[host].package_fetched_debian-amd64.changed or
+  when: hostvars[host].package_fetched_debian_i386.changed or
+    hostvars[host].package_fetched_debian_amd64.changed or
     hostvars[host].package_fetched_centos.changed
 
 - name: Prepare a test environment
   hosts: localhost
 - include: prepare_box.yml
-  when: hostvars[host].package_fetched_debian-i386.changed or
-    hostvars[host].package_fetched_debian-amd64.changed or
+  when: hostvars[host].package_fetched_debian_i386.changed or
+    hostvars[host].package_fetched_debian_amd64.changed or
     hostvars[host].package_fetched_centos.changed
 
 - name: Test a Zato quickstart environment
   hosts: "{{ host }}"
 - include: quickstart_redis_sqlite.yml
-  when: hostvars[host].package_fetched_debian-i386.changed or
-    hostvars[host].package_fetched_debian-amd64.changed or
+  when: hostvars[host].package_fetched_debian_i386.changed or
+    hostvars[host].package_fetched_debian_amd64.changed or
     hostvars[host].package_fetched_centos.changed
 
 - name: Sign Zato package

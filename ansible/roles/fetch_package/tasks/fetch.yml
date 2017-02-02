@@ -6,7 +6,7 @@
     dest=./output/{{ system }}/
     flat=yes
   when: ansible_os_family == "Debian" and ansible_userspace_architecture == "i386"
-  register: package_fetched_debian-i368
+  register: package_fetched_debian_i368
 
 - name: Fetch Zato package from Debian-based amd64 systems
   fetch: >
@@ -14,7 +14,7 @@
     dest=./output/{{ system }}/
     flat=yes
   when: ansible_os_family == "Debian" and ansible_userspace_architecture == "x86_64"
-  register: package_fetched_debian-amd64
+  register: package_fetched_debian_amd64
 
 - name: Fetch Zato package on CentOS
   fetch: >
