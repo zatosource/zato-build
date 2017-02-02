@@ -17,7 +17,7 @@
                                     {{ version }} \
                                     {{ release }}
   when: ansible_os_family == "Debian"
-  register: package_build
+  register: package_build_deb
 
 - name: Run build-zato.sh script on CentOS
   shell: >
@@ -26,4 +26,4 @@
     {{ version }} 
     {{ release }} 
   when: ansible_distribution == "CentOS"
-  register: package_build
+  register: package_build_rpm
