@@ -15,7 +15,8 @@
   become: True
   roles:
     - { role: fetch_package,
-        when: package_build.changed and package_build.rc == 0 }
+        when: ( package_build_deb.changed and package_build_deb.rc == 0 )
+           or ( package_build_rpm.changed and package_build_rpm.rc == 0 ) }
 
 - name: Clean up the build environment
   hosts: localhost
@@ -40,6 +41,12 @@
 - include: quickstart_redis_sqlite.yml
   when:
     - hostvars[host].package_fetched.changed
+
+- name: Sign Zato package
+  hosts: localhost
+- include: test_signing.yml
+  when: ( nosetest_result_debian.rc == 0 and apitest_result_debian.rc == 0 ) or
+    ( nosetest_result_centos.rc == 0 and apitest_result_centos.rc == 1 )
 
 - name: Clean up
   hosts: localhost
