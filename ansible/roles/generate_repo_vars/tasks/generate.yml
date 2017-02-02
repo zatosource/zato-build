@@ -4,7 +4,10 @@
 - name: Generate variables from a template
   template:
     src={{ playbook_dir }}/roles/add_package_to_repo/templates/main.j2
-    dest={{ playbook_dir }}/roles/add_package_to_repo/defaults/main.yml
+    dest={{ playbook_dir }}/roles/{{ item }}
+  with_items:
+    - add_package_to_repo/defaults/main.yml
+    - sign_package/defaults/main.yml
   delegate_to: localhost
   become: False
 
