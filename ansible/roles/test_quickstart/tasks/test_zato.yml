@@ -1,5 +1,11 @@
 ---
 
+# Pre-set some facts
+- set_fact: nosetest_result_debian=""
+- set_fact: nosetest_result_centos=""
+- set_fact: apitest_result_debian=""
+- set_fact: apitest_result_centos=""
+
 - name: Create directory to store tests
   file: path=/opt/zato/test_results owner=zato group=zato state=directory
 
@@ -81,3 +87,8 @@
          flat=yes
   with_items:
     - "{{ test_logs.stdout_lines }}"
+
+- set_fact: nosetest_result_debian={{ nosetest_result_debian }}
+- set_fact: nosetest_result_centos={{ nosetest_result_centos }}
+- set_fact: apitest_result_debian={{ apitest_result_debian }}
+- set_fact: apitest_result_centos={{ apitest_result_centos }}
