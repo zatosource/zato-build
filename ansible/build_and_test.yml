@@ -21,8 +21,8 @@
 - name: Clean up the build environment
   hosts: localhost
 - include: clean.yml
-  when: hostvars[host].package_fetched_debian-i386.changed or
-    hostvars[host].package_fetched_debian-amd64.changed or
+  when: hostvars[host].package_fetched_debian_i386.changed or
+    hostvars[host].package_fetched_debian_amd64.changed or
     hostvars[host].package_fetched_centos.changed
 
 - name: Add a new Zato package to a test repository
@@ -49,11 +49,13 @@
 - name: Sign Zato package
   hosts: localhost
 - include: test_signing.yml
-  when: ( nosetest_result_debian.rc == 0 and apitest_result_debian.rc == 0 ) or
-    ( nosetest_result_centos.rc == 0 and apitest_result_centos.rc == 1 )
+  when: ( hostvars[host].nosetest_result_debian.rc == 0 and
+    hostvars[host].apitest_result_debian.rc == 0 ) or
+    ( hostvars[host].nosetest_result_centos.rc == 0 and
+    hostvars[host].apitest_result_centos.rc == 0 )
 
 - name: Clean up
   hosts: localhost
 - include: clean.yml
-  when:
-    - hostvars[host].package_fetched.changed
+  when: hostvars[host].package_debian_sent.changed or
+    hostvars[host].package_centos_sent.changed
