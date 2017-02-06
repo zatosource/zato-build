@@ -16,8 +16,12 @@
     - libxslt1-dev
     - libyaml-dev
 
+- name: Install epel-release
+  yum: name=epel-release state=present
+  when: ansible_os_family == "RedHat"
+
 - name: Install additional packages on RedHat-based systems
-  yum: name={{ item }} state=present
+  yum: name={{ item }} state=present enablerepo=epel
   when: ansible_os_family == "RedHat"
   with_items:
     - acl
