@@ -1,0 +1,25 @@
+#!/usr/bin/expect
+
+set PACKAGE_RELEASE [lindex $argv 0]
+set DISTRIBUTION [lindex $argv 1]
+set CODENAME [lindex $argv 2]
+set ARCHITECTURE [lindex $argv 3]
+set PACKAGE_VERSION [lindex $argv 4]
+set PACKAGE zato-$PACKAGE_VERSION-$PACKAGE_RELEASE.$CODENAME.$ARCHITECTURE.rpm
+if { "$PACKAGE_RELEASE" == "stable" } {
+    set REPO_PATH /var/www/repo/$PACKAGE_RELEASE/2.0/$DISTRIBUTION/$CODENAME/$ARCHITECTURE;
+} else {
+    set REPO_PATH /var/www/repo/$PACKAGE_RELEASE/$DISTRIBUTION/$CODENAME/$ARCHITECTURE;
+}
+
+spawn bash
+
+exp_send "rpm --addsign $REPO_PATH/$PACKAGE\n"
+
+expect {
+
+    "Enter pass phrase:" {
+        send "\r"
+        exp_continue
+    }
+}
