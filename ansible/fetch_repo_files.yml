@@ -1,0 +1,20 @@
+---
+
+- hosts: "{{ sign_host }}"
+  become: True
+  remote_user: vagrant
+  vars:
+    ansible_ssh_private_key_file:
+      ./files/vagrant_key/{{ sign_host }}_private_key
+
+  tasks:
+
+    - name: Copy deb repository files to 'vagrant' directory
+      shell: cp -r /opt/aptly/.aptly/public/repo /vagrant/
+      when: sign_host == "sign-deb"
+
+    - name: Copy rpm repository files to 'vagrant' directory
+      shell: cp -r /var/www/repo /vagrant/
+      when: sign_host == "sign-rpm"
+
+# Add a timestamp when creating new directories for updated repos.
