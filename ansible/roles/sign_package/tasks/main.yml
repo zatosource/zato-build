@@ -10,5 +10,3 @@
 - include: sign_rpm.yml
   when: format == 'rpm'
   become_user: root
-
-- include: send.yml
