@@ -8,10 +8,12 @@ system: {{ system }}
 {% if 'debian' in system or 'ubuntu' in system %}
 repo:
   host: repo-box-ubuntu
+sign_host: sign-deb
 format: deb
 {% else %}
 repo:
   host: repo-box-centos
+sign_host: sign-rpm
 format: rpm
 {% endif %}
 
