@@ -35,6 +35,8 @@
 
 - name: Publish the snapshot
   shell: aptly publish snapshot {{ snapshot }} {{ prefix }}
+  when:
+    "'{{ prefix }} {{ codename }}' not in published_list.stdout"
   register: publish_starter
 
 - name: Switch to the snapshot
