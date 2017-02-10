@@ -1,8 +1,35 @@
 ---
 
-- name: Upgrade pip
-  shell: pip install --upgrade pip
+- name: Make sure easy-install.pth is on its place
+  shell: cp /opt/zato/current/lib/python2.7/site-packages/easy-install.pth \
+    /opt/zato/current/eggs/
+  when: ansible_os_family == "Debian"
 
-- name: Install zato-apitests
+- name: Make sure easy-install.pth is on its place
+  shell: cp /opt/zato/current/code/lib/python2.7/site-packages/easy-install.pth \
+    /opt/zato/current/code/eggs/
+  when: ansible_os_family == "RedHat"
+
+- name: Upgrade pip on Debian-based systems
+  shell: ./bin/pip install --upgrade pip
+  args:
+    chdir: /opt/zato/current/
+  when: ansible_os_family == "Debian"
+
+- name: Upgrade pip
+  shell: ./bin/pip install --upgrade pip
+  args:
+    chdir: /opt/zato/current/code
+  when: ansible_os_family == "RedHat"
+
+- name: Install zato-apitests on Debian-based systems
   pip:
     name: zato-apitest
+    executable: /opt/zato/current/bin/pip
+  when: ansible_os_family == "Debian"
+
+- name: Install zato-apitests on RedHat-based systems
+  pip:
+    name: zato-apitest
+    executable: /opt/zato/current/code/bin/pip
+  when: ansible_os_family == "RedHat"
