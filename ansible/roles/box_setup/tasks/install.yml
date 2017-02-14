@@ -4,7 +4,6 @@
 
 - name: Install additional packages on Debian-based systems
   apt: name={{ item }} state=present update_cache=yes
-  when: ansible_os_family == "Debian"
   with_items:
     - acl
     - htop
@@ -15,6 +14,7 @@
     - libxml2-dev
     - libxslt1-dev
     - libyaml-dev
+  when: ansible_os_family == "Debian"
 
 - name: Install epel-release
   yum: name=epel-release state=present
@@ -22,9 +22,9 @@
 
 - name: Install additional packages on RedHat-based systems
   yum: name={{ item }} state=present enablerepo=epel
-  when: ansible_os_family == "RedHat"
   with_items:
     - acl
+    - gcc
     - vim
     - libselinux-python
     - libpqxx-devel
@@ -32,3 +32,10 @@
     - libxslt-devel
     - python-devel
     - libyaml-devel
+  when: ansible_os_family == "RedHat"
+
+- name: Install pip on CentOS
+  yum:
+    name: python-pip
+    state: present
+  when: ansible_os_family == "RedHat"
