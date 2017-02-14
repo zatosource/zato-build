@@ -7,20 +7,28 @@
 - set_fact: apitest_result_centos=""
 
 - name: Create directory to store tests
-  file: path=/opt/zato/test_results owner=zato group=zato state=directory
+  file:
+    path: /opt/zato/test_results
+    owner: zato
+    group: zato
+    state: directory
 
 - name: Create files to store test outputs
-  file: path=/opt/zato/test_results/{{ item }} owner=zato group=zato state=touch
+  file:
+    path: /opt/zato/test_results/{{ item }}
+    owner: zato
+    group: zato
+    state: touch
   with_items:
     - ping-load-balancer.json
     - check-lb-alive.html
     - ping-server1.json
-    #- ping-server2.json
-    - run-tests.txt
+    - ping-server2.json
     - info-load-balancer.json
     - info-server1.json
-    #- info-server2.json
+    - info-server2.json
     - info-web-admin.json
+    - run-tests-nosetests.txt
     - run-tests-apitests.txt
 
 - name: Pause for 20 seconds to make sure all components are up and working
@@ -35,55 +43,59 @@
 - name: Ping server1
   shell: curl -v localhost:17010/zato/ping | tee /opt/zato/test_results/ping-server1.json
 
-#- name: Ping server2
-#shell: curl -v localhost:17011/zato/ping | tee /opt/zato/test_results/ping-server2.json
+- name: Ping server2
+  shell: curl -v localhost:17011/zato/ping | tee /opt/zato/test_results/ping-server2.json
 
 - name: Get info on components on Debian-based systems
-  shell: /opt/zato/current/bin/zato info \
-         --format json {{ item }} 2>&1 | tee /opt/zato/test_results/info-{{ item }}.json
-         chdir=/opt/zato/env/qs-1
+  shell: /opt/zato/current/bin/zato info --format json {{ item }} 2>&1 | \
+    tee /opt/zato/test_results/info-{{ item }}.json
+  args:
+    chdir: /opt/zato/env/qs-1
   with_items:
     - load-balancer
     - server1
-    #- server2
+    - server2
     - web-admin
   when: ansible_os_family == "Debian"
 
 - name: Get info on components on RHEL-based systems
-  shell: /opt/zato/current/code/bin/zato info \
-         --format json {{ item }} 2>&1 | tee /opt/zato/test_results/info-{{ item }}.json
-         chdir=/opt/zato/env/qs-1
+  shell: /opt/zato/current/code/bin/zato info --format json {{ item }} 2>&1 | \
+    tee /opt/zato/test_results/info-{{ item }}.json
+  args:
+    chdir: /opt/zato/env/qs-1
   with_items:
     - load-balancer
     - server1
-    #- server2
+    - server2
     - web-admin
   when: ansible_distribution == "CentOS"
 
 - name: Run nosetests on Debian-based systems
-  shell: bin/py run-tests.py nosetests 2>&1 | tee /opt/zato/test_results/run-tests.txt
-         chdir=/opt/zato/current
+  shell: bin/py run-tests.py nosetests 2>&1 | tee /opt/zato/test_results/run-tests-nosetests.txt
+  args:
+    chdir: /opt/zato/current
   when: ansible_os_family == "Debian"
   register: nosetest_result_debian
 
 - name: Run nosetests on RHEL-based systems
-  shell: bin/py run-tests.py nosetests 2>&1 | tee /opt/zato/test_results/run-tests.txt
-      chdir=/opt/zato/current/code
+  shell: bin/py run-tests.py nosetests 2>&1 | tee /opt/zato/test_results/run-tests-nosetests.txt
+  args:
+    chdir: /opt/zato/current/code
   when: ansible_distribution == "CentOS"
   register: nosetest_result_centos
 
 - name: Run API tests on Debian-based systems
-  shell: ./bin/apitest run ./apitest | tee /opt/zato/test_results/run-tests-apitests.txt
+  shell: bin/py run-tests.py apitests 2>&1 | tee /opt/zato/test_results/run-tests-apitests.txt
   args:
-    chdir: /opt/zato/current/
+    chdir: /opt/zato/current
   when: ansible_os_family == "Debian"
   register: apitest_result_debian
 
 - name: Run API tests on RedHat-based systems
-  shell: ./bin/apitest run ./apitest | tee /opt/zato/test_results/run-tests-apitests.txt
+  shell: bin/py run-tests.py apitests 2>&1 | tee /opt/zato/test_results/run-tests-apitests.txt
   args:
     chdir: /opt/zato/current/code
-  when: ansible_os_family == "RedHat"
+  when: ansible_os_family == "RedHat" and ansible_distribution_major_version != "6"
   register: apitest_result_centos
 
 - name: List all test logs
@@ -91,9 +103,10 @@
   register: test_logs
 
 - name: Fetch test results from the test box
-  fetch: src=/opt/zato/test_results/{{ item }}
-         dest={{ playbook_dir }}/test_results/{{ system }}/{{ version }}/
-         flat=yes
+  fetch:
+    src: /opt/zato/test_results/{{ item }}
+    dest: "{{ playbook_dir }}/test_results/{{ system }}/{{ version }}/"
+    flat: yes
   with_items:
     - "{{ test_logs.stdout_lines }}"
 
