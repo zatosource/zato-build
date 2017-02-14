@@ -1,5 +1,4 @@
 ---
 
 - include: install_zato_apitests.yml
-  become_user: zato
 - include: test_zato.yml
