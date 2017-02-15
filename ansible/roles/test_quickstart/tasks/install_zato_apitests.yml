@@ -14,9 +14,17 @@
     - ansible_os_family == "RedHat"
     - ansible_distribution_major_version == "7"
 
+- name: Downgrade six to 1.6.1
+  pip:
+    name: six
+    version: 1.6.1
+  become_user: root
+  when: ansible_distribution == "Debian"
+
 - name: Install zato-apitests on Debian-based systems
   pip:
     name: zato-apitest
+  become_user: root
   when: ansible_os_family == "Debian"
 
 - name: Upgrade setuptools on CentOS 7
@@ -29,6 +37,7 @@
 - name: Install zato-apitests on RedHat-based systems
   pip:
     name: zato-apitest
+  become_user: root
   when:
     - ansible_os_family == "RedHat"
     - ansible_distribution_major_version == "7"
