@@ -2,8 +2,18 @@
 
 # Some packages installed here are required by zato-apitest package
 
+- name: Update and upgrade Debians
+  apt:
+    update_cache: yes
+    upgrade: full
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+  when: ansible_distribution == "Debian"
+
 - name: Install additional packages on Debian-based systems
-  apt: name={{ item }} state=present update_cache=yes
+  apt:
+    name: "{{ item }}"
+    state: present
   with_items:
     - acl
     - htop
@@ -17,11 +27,16 @@
   when: ansible_os_family == "Debian"
 
 - name: Install epel-release
-  yum: name=epel-release state=present
+  yum:
+    name: epel-release
+    state: present
   when: ansible_os_family == "RedHat"
 
 - name: Install additional packages on RedHat-based systems
-  yum: name={{ item }} state=present enablerepo=epel
+  yum:
+    name: "{{ item }}"
+    state: present
+    enablerepo: epel
   with_items:
     - acl
     - gcc
@@ -33,6 +48,20 @@
     - python-devel
     - libyaml-devel
   when: ansible_os_family == "RedHat"
+
+- name: Get get-pip on Debian
+  get_url:
+    url: https://bootstrap.pypa.io/get-pip.py
+    dest: /root
+  become_user: root
+  when: ansible_distribution == "Debian"
+
+- name: Install pip on Debian
+  shell: python get-pip.py
+  args:
+    chdir: /root
+  become_user: root
+  when: ansible_distribution == "Debian"
 
 - name: Install pip on CentOS
   yum:
