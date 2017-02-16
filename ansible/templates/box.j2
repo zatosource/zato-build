@@ -11,5 +11,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
   config.vm.hostname = "{{ box['hostname'] }}"
   config.vm.network "private_network", ip: "{{ hostvars[box['hostname']]['ansible_host'] }}"
+  {% if system == 'redhat-7-64' %}
+  {{ inline_provision }}
+  {% endif %}
 
 end

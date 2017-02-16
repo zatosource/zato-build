@@ -117,10 +117,11 @@ box:
 distro: rhel
 codename: el7
 box:
-  base: bento/centos-7.1
+  base: geerlingguy/centos7
   name: centos-7-64
   hostname: centos-7-64
   memory: 1024
+inline_provision: "config.vm.provision 'shell',\n\tinline: 'systemctl restart network.service'"
 {% endif %}
 
 {% if '32' in system %}
