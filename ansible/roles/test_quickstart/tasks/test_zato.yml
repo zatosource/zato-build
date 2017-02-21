@@ -88,7 +88,9 @@
   shell: bin/py run-tests.py apitests 2>&1 | tee /opt/zato/test_results/run-tests-apitests.txt
   args:
     chdir: /opt/zato/current
-  when: ansible_os_family == "Debian"
+  when:
+    - ansible_os_family == "Debian"
+    - ansible_distribution_major_version != "8"
   register: apitest_result_debian
 
 - name: Run API tests on RedHat-based systems
