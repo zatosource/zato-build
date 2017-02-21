@@ -1,0 +1,18 @@
+---
+
+- name: Make sure easy-install.pth is on its place
+  shell: cp /opt/zato/current/lib/python2.7/site-packages/easy-install.pth \
+    /opt/zato/current/eggs/
+  become_user: zato
+
+- name: Downgrade six to 1.6.1
+  pip:
+    name: six
+    version: 1.6.1
+  become_user: root
+  when: ansible_distribution == "Debian"
+
+- name: Install zato-apitests on Debian-based systems
+  pip:
+    name: zato-apitest
+  become_user: root

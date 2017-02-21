@@ -1,0 +1,15 @@
+---
+
+- name: Make sure easy-install.pth is on its place
+  shell: cp /opt/zato/current/code/lib/python2.7/site-packages/easy-install.pth \
+    /opt/zato/current/code/eggs/
+  become_user: zato
+
+- name: Upgrade setuptools on CentOS 7
+  shell: easy_install setuptools==1.1.6
+  become_user: root
+
+- name: Install zato-apitests on RedHat-based systems
+  pip:
+    name: zato-apitest
+  become_user: root

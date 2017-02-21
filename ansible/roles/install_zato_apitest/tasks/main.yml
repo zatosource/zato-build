@@ -1,3 +1,9 @@
 ---
 
-- include: install_zato_apitest.yml
+- include: debian_install.yml
+  when: ansible_os_family == "Debian"
+
+- include: centos_install.yml
+  when:
+    - ansible_os_family == "RedHat"
+    - ansible_distribution_major_version == "7"
