@@ -7,21 +7,21 @@
   tasks:
 
     - name: Make sure the signbox is running
-      shell: vagrant up chdir=./vm/sign-deb/
+      shell: vagrant up chdir=./vm/{{ sign_host }}/
 
     - name: Copy vagrant user's private key
       shell: cp  ./.vagrant/machines/default/virtualbox/private_key \
-        ../../files/vagrant_key/sign-deb_private_key
+        ../../files/vagrant_key/{{ sign_host }}_private_key
         chdir=./vm/sign-deb/
 
-- hosts: sign-deb
+- hosts: "{{ sign_host }}"
   become: True
   remote_user: vagrant
-  vars:
-    ansible_ssh_private_key_file:
-      ./files/vagrant_key/sign-deb_private_key
   vars_files:
     - environments/testing/host_vars/{{ host }}.yml
+  vars:
+    ansible_ssh_private_key_file:
+      ./files/vagrant_key/{{ sign_host }}_private_key
 
   pre_tasks:
 
