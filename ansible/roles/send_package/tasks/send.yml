@@ -1,0 +1,6 @@
+---
+
+- name: Send a deb package to a remote
+  synchronize:
+    src: "{{ playbook_dir }}/vm/{{ sign_host }}/repo-{{ timestamp }}/repo"
+    dest: /home/rafal/deb/
