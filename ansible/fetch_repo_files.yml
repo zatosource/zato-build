@@ -1,10 +1,7 @@
 ---
 
 - hosts: "{{ sign_host }}"
-  become: True
   remote_user: vagrant
-  vars_files:
-    - environments/testing/host_vars/{{ host }}.yml
   vars:
     ansible_ssh_private_key_file:
       ./files/vagrant_key/{{ sign_host }}_private_key
