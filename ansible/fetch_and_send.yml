@@ -1,0 +1,16 @@
+---
+
+- hosts: localhost
+
+  tasks:
+
+    - name: Set a timestamp
+      set_fact:
+        timestamp: "{{ ansible_date_time.date }}_{{ ansible_date_time.time }}"
+
+- include: fetch_repo_files.yml
+  vars:
+    timestamp: hostvars[localhost].timestamp
+- include: test_sending.yml
+  vars:
+    timestamp: hostvars[localhost].timestamp
