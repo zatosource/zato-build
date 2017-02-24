@@ -12,7 +12,7 @@
     - name: Copy vagrant user's private key
       shell: cp  ./.vagrant/machines/default/virtualbox/private_key \
         ../../files/vagrant_key/{{ sign_host }}_private_key
-        chdir=./vm/sign-deb/
+        chdir=./vm/{{ sign_host }}/
 
 - hosts: "{{ sign_host }}"
   become: True
