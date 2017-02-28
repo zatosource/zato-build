@@ -1,6 +1,36 @@
 ---
 
-- name: Send a deb package to a remote
+- set_fact:
+    deb_src: "{{ playbook_dir }}/vm/sign-deb/repo-{{ timestamp }}/repo"
+    rpm_src: "{{ playbook_dir }}/vm/sign-rpm/repo-{{ timestamp }}/repo"
+  delegate_to: localhost
+
+- name: Create a directory to store the new repo
+  file:
+    name: /home/${USER}/repo-{{ timestamp }}
+    state: directory
+  delegate_to: localhost
+
+- name: Check if deb source directory exists
+  stat:
+    path: "{{ playbook_dir }}/vm/sign-deb/repo-{{ timestamp }}/repo"
+  register: deb_src_exists
+  delegate_to: localhost
+
+- name: Check if rpm source directory exists
+  stat:
+    path: "{{ playbook_dir }}/vm/sign-rpm/repo-{{ timestamp }}/repo"
+  register: rpm_src_exists
+  delegate_to: localhost
+
+- name: Send a signed deb repo to a remote
   synchronize:
-    src: "{{ playbook_dir }}/vm/{{ sign_host }}/repo-{{ timestamp }}/repo"
-    dest: /home/rafal/deb/
+    src: "{{ deb_src }}"
+    dest: /home/${USER}/repo-{{ timestamp }}
+  when: deb_src_exists.stat.isdir is defined and deb_src_exists.stat.isdir
+
+- name: Send a signed rpm repo to a remote
+  synchronize:
+    src: "{{ rpm_src }}"
+    dest: /home/${USER}/repo-{{ timestamp }}
+  when: rpm_src_exists.stat.isdir is defined and rpm_src_exists.stat.isdir
