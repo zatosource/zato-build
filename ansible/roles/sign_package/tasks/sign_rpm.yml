@@ -1,5 +1,7 @@
 ---
 
+# Create a custom repo directory. Non-custom directories are created
+# by Vagrant provision when rpm repo box is created.
 - name: Create a root repo directory for a custom (not 'stable') Zato package
   file:
     name: /var/www/repo/{{ repository }}
