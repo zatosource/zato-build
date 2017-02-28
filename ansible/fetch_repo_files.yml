@@ -1,10 +1,7 @@
 ---
 
-- hosts: "{{ sign_host }}"
+- hosts: sign-deb, sign-rpm
   remote_user: vagrant
-  vars:
-    ansible_ssh_private_key_file:
-      ./files/vagrant_key/{{ sign_host }}_private_key
 
   tasks:
 
@@ -16,8 +13,8 @@
 
     - name: Copy deb repository files to 'vagrant' directory
       shell: cp -r /opt/aptly/.aptly/public/repo /vagrant/repo-{{ timestamp }}
-      when: sign_host == "sign-deb"
+      when: ansible_hostname == "sign-deb"
 
     - name: Copy rpm repository files to 'vagrant' directory
       shell: cp -r /var/www/repo /vagrant/repo-{{ timestamp }}
-      when: sign_host == "sign-rpm"
+      when: ansible_hostname == "sign-rpm"
