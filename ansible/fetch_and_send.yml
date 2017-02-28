@@ -10,7 +10,7 @@
 
 - include: fetch_repo_files.yml
   vars:
-    timestamp: hostvars[localhost].timestamp
+    timestamp: "{{ hostvars['localhost'].timestamp }}"
 - include: test_sending.yml
   vars:
-    timestamp: hostvars[localhost].timestamp
+    timestamp: "{{ hostvars['localhost'].timestamp }}"
