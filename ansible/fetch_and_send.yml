@@ -11,6 +11,6 @@
 - include: fetch_repo_files.yml
   vars:
     timestamp: "{{ hostvars['localhost'].timestamp }}"
-- include: test_sending.yml
+- include: send_repo_files.yml
   vars:
     timestamp: "{{ hostvars['localhost'].timestamp }}"
