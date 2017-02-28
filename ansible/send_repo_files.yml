@@ -1,0 +1,7 @@
+---
+
+- hosts: zato_io
+
+  roles:
+
+    - send_package
