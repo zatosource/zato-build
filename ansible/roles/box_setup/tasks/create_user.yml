@@ -34,4 +34,4 @@
 - name: Add the user's SSH pub key to authorized keys
   authorized_key:
     user: "{{ user }}"
-    key: "{{ lookup('file', '/home/{{ user }}/.ssh/id_rsa.pub') }}"
+    key: "{{ lookup('file', lookup('env', 'HOME') + '/.ssh/id_rsa.pub') }}"
