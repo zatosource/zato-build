@@ -14,7 +14,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.network "private_network", ip: "10.2.3.100"
 
     config.vm.provision "shell", 
-        inline: "apt-get -y install vim ranger"
+        inline: "apt-get update && apt-get -y install vim ranger"
     config.vm.provision "shell", path: "files/aptly.sh"
     config.vm.provision "shell", path: "files/repo.sh", privileged: false
 
