@@ -4,7 +4,10 @@
 zato_package: zato-{{ version }}-{{ release }}_{{ arch }}-{{ codename }}.{{ format }}
 repository: zato-{{ release }}-{{ codename }}
 snapshot: snap-zato-{{ release }}-{{ codename }}-{{ repo_datetime }}
-{% if release == 'stable' %}
+{% if release == 'stable' and '3' in version %}
+prefix: repo/{{ release }}/3.0/{{ distro }}
+source_dir: /opt/aptly/.aptly/public/repo/{{ release }}/3.0/{{ distro }}/
+{% elif release == 'stable' and '2' in version %}
 prefix: repo/{{ release }}/2.0/{{ distro }}
 source_dir: /opt/aptly/.aptly/public/repo/{{ release }}/2.0/{{ distro }}/
 {% else %}
@@ -14,8 +17,10 @@ source_dir: /opt/aptly/.aptly/public/repo/{{ release }}/{{ distro }}/
 incoming: /opt/aptly/incoming/{{ distro }}/{{ codename }}
 {% elif format == 'rpm' %}
 zato_package: zato-{{ version }}-{{ release }}.{{ codename }}.{{ arch }}.{{ format }}
-{% if release == 'stable' %}
+{% if release == 'stable' and '2' in version %}
 repository: {{ release }}/2.0/{{ distro }}/{{ codename }}/{{ arch }}
+{% elif release == 'stable' and '3' in version %}
+repository: {{ release }}/3.0/{{ distro }}/{{ codename }}/{{ arch }}
 {% else %}
 repository: {{ release }}/{{ distro }}/{{ codename }}/{{ arch }}
 {% endif %}
