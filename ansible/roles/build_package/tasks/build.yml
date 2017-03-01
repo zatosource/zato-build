@@ -1,5 +1,9 @@
 ---
 
+- set_fact:
+    package_build_deb: ""
+    package_build_rpm: ""
+
 - name: Clone zato-build repository on Debian-based systems
   git: repo=https://github.com/zatosource/zato-build.git
        dest=/opt/tmp/
@@ -27,3 +31,8 @@
     {{ release }} 
   when: ansible_distribution == "CentOS"
   register: package_build_rpm
+
+- set_fact: package_build_deb={{ package_build_deb }}
+  when: package_build_deb|success
+- set_fact: package_build_rpm={{ package_build_rpm }}
+  when: package_build_rpm|success
