@@ -7,9 +7,8 @@
 
 - name: Create a directory to store the new repo
   file:
-    name: /home/${USER}/repo-{{ timestamp }}
+    name: ${HOME}/repos/repo-{{ timestamp }}
     state: directory
-  delegate_to: localhost
 
 - name: Check if deb source directory exists
   stat:
