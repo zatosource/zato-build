@@ -26,11 +26,11 @@
 - name: Send a signed deb repo to a remote
   synchronize:
     src: "{{ deb_src }}"
-    dest: /home/${USER}/repo-{{ timestamp }}
+    dest: "{{ repo_dest_path }}"
   when: deb_src_exists.stat.isdir is defined and deb_src_exists.stat.isdir
 
 - name: Send a signed rpm repo to a remote
   synchronize:
     src: "{{ rpm_src }}"
-    dest: /home/${USER}/repo-{{ timestamp }}
+    dest: "{{ repo_dest_path }}"
   when: rpm_src_exists.stat.isdir is defined and rpm_src_exists.stat.isdir

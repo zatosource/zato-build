@@ -1,6 +1,9 @@
 ---
 
 - hosts: zato_io
+  vars:
+    # Define a path on a remote host to which repo files will be send
+    repo_dest_path: /home/jenkins/repo-{{ timestamp }}
 
   roles:
 
