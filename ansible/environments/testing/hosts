@@ -50,3 +50,4 @@ repo-box-ubuntu ansible_host=10.2.3.89
 aptly-test-box
 sign-deb ansible_host=10.2.3.100
 sign-rpm ansible_host=10.2.3.101
+zato_io ansible_host=192.168.103.103
