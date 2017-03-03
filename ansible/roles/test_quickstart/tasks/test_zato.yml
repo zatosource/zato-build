@@ -71,34 +71,38 @@
   when: ansible_distribution == "CentOS"
 
 - name: Run nosetests on Debian-based systems
-  shell: bin/py run-tests.py nosetests 2>&1 | tee /opt/zato/test_results/run-tests-nosetests.txt
+  shell: bin/py run-tests.py nosetests > /opt/zato/test_results/run-tests-nosetests.txt
   args:
     chdir: /opt/zato/current
   when: ansible_os_family == "Debian"
   register: nosetest_result_debian
+  ignore_errors: yes
 
 - name: Run nosetests on RHEL-based systems
-  shell: bin/py run-tests.py nosetests 2>&1 | tee /opt/zato/test_results/run-tests-nosetests.txt
+  shell: bin/py run-tests.py nosetests > /opt/zato/test_results/run-tests-nosetests.txt
   args:
     chdir: /opt/zato/current/code
   when: ansible_distribution == "CentOS"
   register: nosetest_result_centos
+  ignore_errors: yes
 
 - name: Run API tests on Debian-based systems
-  shell: bin/py run-tests.py apitests 2>&1 | tee /opt/zato/test_results/run-tests-apitests.txt
+  shell: bin/py run-tests.py apitests > /opt/zato/test_results/run-tests-apitests.txt
   args:
     chdir: /opt/zato/current
   when:
     - ansible_os_family == "Debian"
     - ansible_distribution_major_version != "8"
   register: apitest_result_debian
+  ignore_errors: yes
 
 - name: Run API tests on RedHat-based systems
-  shell: bin/py run-tests.py apitests 2>&1 | tee /opt/zato/test_results/run-tests-apitests.txt
+  shell: bin/py run-tests.py apitests > /opt/zato/test_results/run-tests-apitests.txt
   args:
     chdir: /opt/zato/current/code
   when: ansible_os_family == "RedHat" and ansible_distribution_major_version != "6"
   register: apitest_result_centos
+  ignore_errors: yes
 
 - name: List all test logs
   shell: ls -1 /opt/zato/test_results/
