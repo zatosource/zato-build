@@ -37,16 +37,18 @@ aborted_vms = []
 idx = 1
 for box in box_list:
     box = box.split()
-    box_name = box[0][1:-1]
-    if len(box) > 2:
-        box_name = " ".join(box[0:-1])
+    box_name = box[0].strip('"')
     box_id = box[-1].strip("{}")
     box_info = check_box_info(box_id).split('\n')
     box_state = get_box_state(box_info)
-    if box_state == "running":
+
+    if len(box) > 2:
+        box_name = " ".join(box[0:-1])
+    if "running" in box_state:
         running_vms.append([box_name, box_id])
-    elif box_state == "aborted":
+    elif "aborted" in box_state:
         aborted_vms.append([box_name, box_id])
+
     info = format_info(box_name, box_id, box_state)
     print(info)
 
