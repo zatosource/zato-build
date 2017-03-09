@@ -2,6 +2,9 @@
 
 - hosts: "{{ host }}"
   become: True
+  vars:
+    require_apitests: true
+    require_nosetests: true
 
   roles:
 

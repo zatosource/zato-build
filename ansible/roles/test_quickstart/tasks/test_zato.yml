@@ -74,7 +74,9 @@
   shell: bin/py run-tests.py nosetests > /opt/zato/test_results/run-tests-nosetests.txt
   args:
     chdir: /opt/zato/current
-  when: ansible_os_family == "Debian"
+  when:
+    - ansible_os_family == "Debian"
+    - require_nosetests
   register: nosetest_result_debian
   ignore_errors: yes
 
@@ -82,7 +84,9 @@
   shell: bin/py run-tests.py nosetests > /opt/zato/test_results/run-tests-nosetests.txt
   args:
     chdir: /opt/zato/current/code
-  when: ansible_distribution == "CentOS"
+  when:
+    - ansible_distribution == "CentOS"
+    - require_nosetests
   register: nosetest_result_centos
   ignore_errors: yes
 
@@ -93,6 +97,7 @@
   when:
     - ansible_os_family == "Debian"
     - ansible_distribution_major_version != "8"
+    - require_apitests
   register: apitest_result_debian
   ignore_errors: yes
 
@@ -100,7 +105,10 @@
   shell: bin/py run-tests.py apitests > /opt/zato/test_results/run-tests-apitests.txt
   args:
     chdir: /opt/zato/current/code
-  when: ansible_os_family == "RedHat" and ansible_distribution_major_version != "6"
+  when:
+    - ansible_os_family == "RedHat"
+    - ansible_distribution_major_version != "6"
+    - require_apitests
   register: apitest_result_centos
   ignore_errors: yes
 
@@ -117,10 +125,10 @@
     - "{{ test_logs.stdout_lines }}"
 
 - set_fact: nosetest_debian_positive={{ nosetest_result_debian }}
-  when: nosetest_result_debian|success
+  when: nosetest_result_debian.changed or require_nosetests == "false"
 - set_fact: nosetest_centos_positive={{ nosetest_result_centos }}
-  when: nosetest_result_centos|success
+  when: nosetest_result_centos.changed or require_nosetests == "false"
 - set_fact: apitest_debian_positive={{ apitest_result_debian }}
-  when: apitest_result_debian|success
+  when: apitest_result_debian.changed or require_apitests == "false"
 - set_fact: apitest_centos_positive={{ apitest_result_centos }}
-  when: apitest_result_debian|success
+  when: apitest_result_centos.changed or require_apitests == "false"
