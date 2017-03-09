@@ -13,9 +13,24 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     config.vm.network "private_network", ip: "10.2.3.100"
 
+    config.vm.synced_folder "files", "/vagrant/files"
     config.vm.provision "shell", 
         inline: "apt-get update && apt-get -y install vim ranger"
     config.vm.provision "shell", path: "files/aptly.sh"
     config.vm.provision "shell", path: "files/repo.sh", privileged: false
+#    config.vm.provision "shell",
+#        inline: "mkdir /opt/aptly/.ssh && chown aptly:aptly /opt/aptly/.ssh"
+    config.vm.provision "file",
+        source: "~/.ssh/id_rsa.pub", destination: "/vagrant/files/"
+    config.vm.provision "shell",
+        inline: "cat /vagrant/files/id_rsa.pub >> /home/vagrant/.ssh/authorized_keys"
+    config.vm.provision "shell",
+        inline: "cp /vagrant/files/zato-repo-signing-key.gpg \
+                    /vagrant/files/zato-repo-signing-key_sec.gpg \
+                    /opt/aptly/"
+    config.vm.provision "shell",
+        inline: "sudo su - aptly -c 'gpg --import /opt/aptly/zato-repo-signing-key.gpg'"
+    config.vm.provision "shell",
+        inline: "sudo su - aptly -c 'gpg --import /opt/aptly/zato-repo-signing-key_sec.gpg'"
 
 end
