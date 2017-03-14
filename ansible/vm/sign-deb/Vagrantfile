@@ -29,6 +29,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
                     /vagrant/files/zato-repo-signing-key_sec.gpg \
                     /opt/aptly/"
     config.vm.provision "shell",
+        inline: "chown aptly:aptly /opt/aptly/zato-repo-signing-key.gpg \
+                                   /opt/aptly/zato-repo-signing-key_sec.gpg"
+    config.vm.provision "shell",
         inline: "sudo su - aptly -c 'gpg --import /opt/aptly/zato-repo-signing-key.gpg'"
     config.vm.provision "shell",
         inline: "sudo su - aptly -c 'gpg --import /opt/aptly/zato-repo-signing-key_sec.gpg'"
