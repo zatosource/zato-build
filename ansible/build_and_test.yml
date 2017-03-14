@@ -45,20 +45,3 @@
   when: hostvars[host].package_fetched_debian_i386.changed or
     hostvars[host].package_fetched_debian_amd64.changed or
     hostvars[host].package_fetched_centos.changed
-
-- name: Sign Zato package
-  hosts: localhost
-- include: sign_package.yml
-  when:
-    - ansible_distribution_major_version != "8"
-    - ( hostvars[host].nosetest_debian_positive and
-      hostvars[host].apitest_debian_positive ) or
-      ( hostvars[host].nosetest_centos_positive and
-      hostvars[host].apitest_centos_positive )
-
-- name: Sign Zato package on Debian 8
-  hosts: localhost
-- include: sign_package.yml
-  when:
-    - ansible_distribution_major_version == "8"
-    - hostvars[host].nosetest_debian_positive
