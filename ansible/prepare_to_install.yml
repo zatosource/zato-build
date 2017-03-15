@@ -1,0 +1,57 @@
+---
+
+- name: Prepare {{ system }} box
+  hosts: localhost
+  vars_files:
+    - environments/testing/host_vars/{{ host }}.yml
+
+  tasks:
+
+    - debug: var=host
+
+    - name: Create box root directory
+      file: name=./vm/{{ system }} state=directory
+
+    - name: Prepare Vagrantfile
+      template: src=./templates/box.j2
+                dest=vm/{{ system }}/Vagrantfile
+
+    - name: Create a vagrant box
+      shell: vagrant up chdir=./vm/{{ system }}
+
+    - name: Copy vagrant user's private key
+      shell: cp  ./.vagrant/machines/default/virtualbox/private_key \
+             ../../files/vagrant_key/
+             chdir=./vm/{{ system }}/
+
+    - name: Set the private_key mode to 0600
+      file: path=./files/vagrant_key/private_key mode=0600
+
+- name: Setup required functionality in {{ system }} box
+  hosts: "{{ box['hostname'] }}"
+  become: True
+  remote_user: vagrant
+  vars:
+    ansible_ssh_private_key_file:
+      ./files/vagrant_key/private_key
+  vars_files:
+    - environments/testing/host_vars/{{ host }}.yml
+
+  pre_tasks:
+
+    # Disable unattended upgrades on Ubuntu 16.04, because they lock apt
+    # and prevent box_setup role from running
+    - name: Disable unattended upgrades
+      lineinfile: "dest=/etc/apt/apt.conf.d/50unattended-upgrades
+        backrefs=yes
+        regexp='}-security'
+        line='//    '${distro_id}:${distro_codename}-security''
+        state=present"
+      when:
+        ansible_distribution_version == "16.04" and
+        ansible_machine == "x86_64"
+
+  roles:
+
+    - box_setup
+    - prepare_install_zatoio
