@@ -27,3 +27,7 @@
   shell: apt-add-repository https://zato.io/repo/stable/2.0/ubuntu
   become_user: root
   when: ansible_distribution == "Ubuntu"
+
+- name: Update apt
+  apt:
+    update_cache: yes
