@@ -14,5 +14,17 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.network "private_network", ip: "10.2.3.101"
 
     config.vm.provision "shell", path: "files/repo.sh"
+    config.vm.provision "file",
+        source: "~/.ssh/id_rsa.pub", destination: "/vagrant/files/id_rsa.pub"
+    config.vm.provision "shell",
+        inline: "cat /vagrant/files/id_rsa.pub >> /home/vagrant/.ssh/authorized_keys"
+    config.vm.provision "shell",
+        inline: "cp /vagrant/files/zato-repo-signing-key.gpg \
+                    /vagrant/files/zato-repo-signing-key_sec.gpg \
+                    /home/vagrant/"
+    config.vm.provision "shell",
+        inline: "gpg --import /home/vagrant/zato-repo-signing-key.gpg"
+    config.vm.provision "shell",
+        inline: "gpg --import /home/vagrant/zato-repo-signing-key_sec.gpg"
 
 end
