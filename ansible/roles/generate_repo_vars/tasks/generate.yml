@@ -34,3 +34,11 @@
   delegate_to: localhost
   become: False
   when: '"redhat" in system'
+
+- name: Write repo_version to vars file
+  template:
+    src: "{{ playbook_dir }}/roles/prepare_install_zato/templates/main.j2"
+    dest: "{{ playbook_dir }}/roles/prepare_install_zato/files/main.yml"
+  delegate_to: localhost
+  become: False
+  when: '"redhat" in system'
