@@ -9,12 +9,14 @@
        dest=/opt/tmp/
        clone=yes
   when: ansible_os_family == "Debian"
+  tags: clone_repo
 
 - name: Clone zato-build repository on CentOS-based systems
   git: repo=https://github.com/zatosource/zato-build.git
        dest=/opt/tmp2/
        clone=yes
   when: ansible_distribution == "CentOS"
+  tags: clone_repo
 
 - name: Run build-zato.sh script on Debian-based systems
   shell: /opt/tmp/deb/build-zato.sh {{ branch }} \
@@ -22,6 +24,7 @@
                                     {{ release }}
   when: ansible_os_family == "Debian"
   register: package_build_deb
+  tags: run_build_script
 
 - name: Run build-zato.sh script on CentOS
   shell: >
@@ -31,6 +34,7 @@
     {{ release }} 
   when: ansible_distribution == "CentOS"
   register: package_build_rpm
+  tags: run_build_script
 
 - set_fact: package_build_deb={{ package_build_deb }}
   when: package_build_deb|success

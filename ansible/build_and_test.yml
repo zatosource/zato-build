@@ -3,12 +3,13 @@
 - name: Prepare a Vagrant box
   hosts: localhost
 - include: prepare_box.yml
+  tags: prepare_build_box
 
 - name: Build a Zato package
   hosts: "{{ host }}"
   become: True
   roles:
-    - build_package
+    - { role: build_package, tags: build_package }
 
 - name: Fetch a Zato package
   hosts: "{{ host }}"
@@ -16,11 +17,13 @@
   roles:
     - { role: fetch_package,
         when: ( package_build_deb.changed and package_build_deb.rc == 0 )
-           or ( package_build_rpm.changed and package_build_rpm.rc == 0 ) }
+           or ( package_build_rpm.changed and package_build_rpm.rc == 0 ),
+        tags: fetch_package }
 
 - name: Clean up the build environment
   hosts: localhost
 - include: clean.yml
+  tags: clean_build_env
   when: hostvars[host].package_fetched_debian_i386.changed or
     hostvars[host].package_fetched_debian_amd64.changed or
     hostvars[host].package_fetched_centos.changed
@@ -28,6 +31,7 @@
 - name: Add a new Zato package to a test repository
   hosts: localhost
 - include: add_package_to_repo.yml
+  tags: add_package_to_repo
   when: hostvars[host].package_fetched_debian_i386.changed or
     hostvars[host].package_fetched_debian_amd64.changed or
     hostvars[host].package_fetched_centos.changed
@@ -35,6 +39,7 @@
 - name: Prepare a test environment
   hosts: localhost
 - include: prepare_box.yml
+  tags: prepare_test_box
   when: hostvars[host].package_fetched_debian_i386.changed or
     hostvars[host].package_fetched_debian_amd64.changed or
     hostvars[host].package_fetched_centos.changed
@@ -42,6 +47,7 @@
 - name: Test a Zato quickstart environment
   hosts: "{{ host }}"
 - include: quickstart_redis_sqlite.yml
+  tags: test_zato
   when: hostvars[host].package_fetched_debian_i386.changed or
     hostvars[host].package_fetched_debian_amd64.changed or
     hostvars[host].package_fetched_centos.changed
