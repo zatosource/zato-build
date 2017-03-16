@@ -14,8 +14,8 @@
     dest: /var/www/repo/{{ repository }}
 
 - name: Sign the package using 'Expect' program
-  shell: /vagrant/files/sign_rpm_with_expect.exp {{ release }} {{ repo_version  }} \
-    {{ distro }} {{ codename }} {{ arch }} {{ version }}
+  shell: /vagrant/files/sign_rpm_with_expect.exp {{ release }} {{ distro }} \
+    {{ codename }} {{ arch }} {{ version }} {{ repo_version }}
   args:
     chdir: /var/www/repo/{{ repository }}
 
