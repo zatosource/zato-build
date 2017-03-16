@@ -11,3 +11,4 @@ incoming: /opt/aptly/incoming/{{ distro }}/{{ codename }}
 zato_package: zato-{{ version }}-{{ release }}.{{ codename }}.{{ arch }}.{{ format }}
 repository: {{ release }}/{{ repo_version }}/{{ distro }}/{{ codename }}/{{ arch }}
 {% endif %}
+repo_version: {{ repo_version }}
