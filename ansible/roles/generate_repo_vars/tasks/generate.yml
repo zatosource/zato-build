@@ -29,8 +29,8 @@
 
 - name: Generate repository definition for Centos
   template:
-    src={{ playbook_dir }}/roles/prepare_install_zato/templates/zato-2.0.repo.j2
-    dest={{ playbook_dir }}/roles/prepare_install_zato/files/zato-2.0.repo
+    src={{ playbook_dir }}/roles/prepare_install_zato/templates/zato-{{ repo_version }}.repo.j2
+    dest={{ playbook_dir }}/roles/prepare_install_zato/files/zato.repo
   delegate_to: localhost
   become: False
   when: '"redhat" in system'
