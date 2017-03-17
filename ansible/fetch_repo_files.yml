@@ -1,6 +1,6 @@
 ---
 
-- hosts: sign-deb, sign-rpm
+- hosts: "{{ sign_host }}"
   remote_user: vagrant
 
   tasks:
