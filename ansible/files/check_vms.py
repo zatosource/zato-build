@@ -7,7 +7,7 @@ import subprocess
 
 parser = argparse.ArgumentParser()
 parser.add_argument("list")
-parser.add_argument("state", default="all")
+parser.add_argument("state", nargs="?", default="all")
 args = parser.parse_args()
 
 box_list = subprocess.check_output(["vboxmanage", "list", "vms"]).split("\n")
