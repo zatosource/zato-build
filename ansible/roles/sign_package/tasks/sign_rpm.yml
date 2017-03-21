@@ -10,7 +10,7 @@
 
 - name: Add a new package to a repository at repo-box-centos
   copy:
-    src: ./output/{{ system }}/{{ zato_package }}
+    src: "{{ playbook_dir }}/output/{{ system }}/{{ zato_package }}"
     dest: /var/www/repo/{{ repository }}
 
 - name: Sign the package using 'Expect' program
