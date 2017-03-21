@@ -26,13 +26,21 @@ def get_box_state(box_info):
             box_state = item.replace(m, '')
     return box_state
 
-def format_info(box_name, box_id, box_state):
+def get_info(vms, state):
+    header = (70 * "=") + "\n\n" + (4 * " ") + \
+        ("List of %s VirtualBox VMs:\n" % (state))
+    print(header)
     delimiter = 70 * "-"
-    info = """%s\n
+    for i in vms:
+        name = vms[i]['name']
+        id = vms[i]['id']
+        state = vms[i]['state']
+        info = """%s\n
     box name: %s\n
     box id: %s\n
-    box state: %s\n""" % (delimiter, box_name, box_id, box_state)
-    return info
+    box state: %s\n""" % (delimiter, name, id, state)
+        print(info)
+
 
 def main():
     vms = {}
@@ -59,40 +67,13 @@ def main():
         idx += 1
 
     if args.state == "all":
-        header = (70 * "=") + "\n\n" + (4 * " ") + "List of VirtualBox VMs:\n"
-        print(header)
-        for i in vms:
-            name = vms[i]['name']
-            id = vms[i]['id']
-            state = vms[i]['state']
-            info = format_info(name, id, state)
-            print(info)
+        get_info(vms, args.state)
 
     elif args.state == "running":
-        header = (70 * "=") + "\n\n" + (4 * " ") + "List of running VirtualBox VMs:\n"
-        print(header)
-        if len(running_vms) == 0:
-            print(4 * " " + "No running VMs." + "\n")
-        else:
-            for i in running_vms:
-                name = running_vms[i]['name']
-                id = running_vms[i]['id']
-                state = running_vms[i]['state']
-                info = format_info(name, id, state)
-                print(info)
+        get_info(running_vms, args.state)
 
     elif args.state == "aborted":
-        header = (70 * "=") + "\n\n" + (4 * " ") + "List of aborted VirtualBox VMs:\n"
-        print(header)
-        if len(aborted_vms) == 0:
-            print(4 * " " + "No aborted VMs." + "\n")
-        else:
-            for i in aborted_vms:
-                name = aborted_vms[i]['name']
-                id = aborted_vms[i]['id']
-                state = aborted_vms[i]['state']
-                info = format_info(name, id, state)
-                print(info)
+        get_info(aborted_vms, args.state)
 
     vms_qty = len(vms)
     running_qty = len(running_vms)
@@ -106,8 +87,5 @@ def main():
     print(4 * " " + "Number of aborted VMs: %s" % aborted_qty)
     print("")
     print(footer)
-
-def running():
-    pass
 
 main()
