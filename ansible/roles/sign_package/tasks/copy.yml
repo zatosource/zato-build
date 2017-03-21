@@ -4,4 +4,4 @@
   copy:
     src: "{{ playbook_dir }}/output/{{ system }}/{{ zato_package }}"
     dest: /opt/aptly/incoming/{{ distro }}/{{ codename }}/
-    force=yes
+    force: yes
