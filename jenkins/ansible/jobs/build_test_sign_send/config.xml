@@ -9,17 +9,17 @@
         <hudson.model.StringParameterDefinition>
           <name>branch</name>
           <description>Define a git branch to build a Zato package from.</description>
-          <defaultValue>support/2.0</defaultValue>
+          <defaultValue>main</defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>package_version</name>
           <description>Define a Zato package version, e.g. 3.0.0.</description>
-          <defaultValue>2.0.7</defaultValue>
+          <defaultValue>3.0.0</defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>package_release</name>
           <description>Define a Zato package release, e.g. &apos;stable&apos; or &apos;custom-xx1&apos;.</description>
-          <defaultValue>custom.test5</defaultValue>
+          <defaultValue></defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.ChoiceParameterDefinition>
           <name>system</name>
@@ -369,36 +369,61 @@ cd ${ansible_root_path}
 echo &quot;*** START BUILD ***&quot; &gt;&gt; ./files/${REPORT_FILE}
 for system in ${!systems[@]}
 do
-  cd ${ansible_root_path}  
-  if [ ! -f ./output/${system}/zato-${package_version}-${package_release}* ];  
+  cd ${ansible_root_path}
+  zato_package=`find ./output/${system}/ -name zato-${package_version}-${package_release}*`
+  echo ${zato_package}
+
+  ansible-playbook -i environments/testing generate_host_vars.yml \
+    --extra-vars &quot;host=${systems[$system]} package_version=${package_version} \
+      package_release=${package_release} branch=${branch} system=${system}&quot; -vvvv
+  ansible-playbook -i environments/testing generate_repo_vars.yml \
+    --extra-vars &quot;host=${systems[$system]} system=${system}&quot; -vvvv
+
+  if [ -z ${zato_package} ];
   then
-    ansible-playbook -i environments/testing generate_host_vars.yml \
-    	--extra-vars &quot;host=${systems[$system]} package_version=${package_version} \
-        package_release=${package_release} branch=${branch} system=${system}&quot; -vvvv
-    ansible-playbook -i environments/testing generate_repo_vars.yml \
-    	--extra-vars &quot;host=${systems[$system]} system=${system}&quot; -vvvv
+
     ansible-playbook -i environments/testing build_and_test.yml \
-    	--extra-vars &quot;host=${systems[$system]} system=${system} user=${ansible_user} require_nosetests=${require_nosetests} \
-        require_apitests=${require_apitests}&quot; -vvvv
-    
-    if [ -f ./output/${system}/zato-${package_version}-${package_release}* ];
+      --extra-vars &quot;host=${systems[$system]} system=${system} user=${ansible_user} require_nosetests=${require_nosetests} \
+      require_apitests=${require_apitests}&quot; -vvvv
+
+    zato_package=`find ./output/${system}/ -name zato-${package_version}-${package_release}*`
+
+    if [ ! -z ${zato_package} ];
     then
-      echo &quot;zato-${package_version}-${package_release} package for ${system} has been built&quot; &gt;&gt; \
+      echo &quot;${zato_package} package for ${system} has been built&quot; &gt;&gt; \
         ./files/${REPORT_FILE}
     else
-      echo &quot;zato-${package_version}-${package_release} package for ${system} has NOT been built&quot; &gt;&gt; \
+      echo &quot;${zato_package} package for ${system} has NOT been built&quot; &gt;&gt; \
         ./files/${REPORT_FILE}
     fi
-    ansible-playbook -i environments/testing sign_package --extra-vars &quot;host=${systems[$system]} sign_host=${sign_host}&quot; -vvvv
+
   else
-    echo &quot;zato-${package_version}-${package_release} package for ${system} already exists - skipping this build.&quot; &gt;&gt; \
-      ./files/${REPORT_FILE}
-  fi  
+    echo &quot;${zato_package} package for ${system} already exists - skipping this build.&quot;
+
+  fi
+
+  if [[ ! -z ${zato_package} &amp;&amp; ${zato_package} =~ .*deb.* ]];
+  then
+    ansible-playbook -i environments/testing sign_package.yml --extra-vars &quot;host=${systems[$system]} system=${system} \
+      sign_host=sign-deb user=${ansible_user}&quot; -vvvv
+  elif [[ ! -z ${zato_package} &amp;&amp; ${zato_package} =~ .*rpm.* ]];
+  then
+    #echo &quot;RPM package exists.&quot;
+    ansible-playbook -i environments/testing sign_package.yml --extra-vars &quot;host=${systems[$system]} system=${system} \
+      sign_host=sign-rpm user=${ansible_user}&quot; -vvvv
+  else
+    echo &quot;There is no package ./output/${system}/${zato_package} to be signed!&quot;
+  fi
+
 done
-ansible-playbook -i environments/testing fetch_and_send.yml --extra-vars &quot;sign_host=sign-deb,sign-rpm&quot; -vvvv
+
 cd ${ansible_root_path}
 echo &quot;*** END BUILD ***&quot; &gt;&gt; ./files/${REPORT_FILE}
 cp ./files/${REPORT_FILE} ${WORKSPACE}
+
+ansible-playbook -i environments/testing fetch_and_send.yml --extra-vars &quot;sign_host=sign-deb,sign-rpm&quot; -vvvv
+
+
 
 </command>
       </buildStep>
