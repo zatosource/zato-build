@@ -1,21 +1,28 @@
 #!/bin/py
 # check_vms.py - Lists all VirtualBox's Virtual Machines and checks their status
 #
-# TODO: check if there is vboxmanage available at all on current machine
 # TODO: add help comments to argparse arguments
 
 import argparse
 import re
 import subprocess
+import sys
 
 parser = argparse.ArgumentParser()
 parser.add_argument("list")
 parser.add_argument("state", nargs="?", default="all")
 args = parser.parse_args()
 
-vm_list = subprocess.check_output(["vboxmanage", "list", "vms"]).split("\n")
-# Remove exit code from vm_list
-del vm_list[-1]
+try:
+    vm_list = subprocess.check_output(["vboxmanage", "list", "vms"]).split("\n")
+    # Remove exit code from vm_list
+    del vm_list[-1]
+except OSError:
+    print("ERROR!")
+    print("There is no VBoxManage CLI available on this machine.")
+    print("There is nothing for this program to do.")
+    print("Exiting.")
+    sys.exit(1)
 
 def check_vm_info(box):
     vm_info = subprocess.check_output(["vboxmanage", "showvminfo", box,])
