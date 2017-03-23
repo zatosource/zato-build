@@ -1,5 +1,8 @@
 #!/bin/py
 # check_vms.py - Lists all VirtualBox's Virtual Machines and checks their status
+#
+# TODO: check if there is vboxmanage available at all on current machine
+# TODO: add help comments to argparse arguments
 
 import argparse
 import re
@@ -39,7 +42,7 @@ def get_info(*args):
     header = (70 * "=") + "\n\n" + (4 * " ") + \
         ("List of %s VirtualBox VMs:\n" % (state))
     delimiter = 70 * "-"
-    footer = (70 * "=") + '\n'
+    footer = (70 * "=")
 
     print(header)
 
@@ -51,7 +54,7 @@ def get_info(*args):
         current_vms = aborted_vms
 
     if len(current_vms) == 0:
-        print("    There are %s VMs on this machine.\n" % (state))
+        print("    There are no %s VMs on this machine.\n" % (state))
     elif len(current_vms) == 0 and state == "all":
         print("    There are no VMs created on this machine.\n")
 
