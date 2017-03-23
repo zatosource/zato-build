@@ -22,7 +22,7 @@ except OSError:
     print("There is no VBoxManage CLI available on this machine.")
     print("There is nothing for this program to do.")
     print("Exiting.")
-    sys.exit(1)
+    sys.exit(0)
 
 def check_vm_info(box):
     vm_info = subprocess.check_output(["vboxmanage", "showvminfo", box,])
