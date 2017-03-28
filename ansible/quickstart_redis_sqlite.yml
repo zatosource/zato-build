@@ -8,10 +8,17 @@
 
   roles:
 
-    - install_zato_dependencies
-    - install_redis
-    - prepare_install_zato
-    - install_zato
-    - install_zato_apitest
-    - create_quickstart
-    - test_quickstart
+    - role: install_zato_dependencies
+      tags: install_zato_dependencies
+    - role: install_redis
+      tags: install_redis
+    - role: prepare_install_zato
+      tags: prepare_install_zato
+    - role: install_zato
+      tags: install_zato
+    - role: install_zato_apitest
+      tags: install_zato_apitest
+    - role: create_quickstart
+      tags: create_quickstart
+    - role: test_quickstart
+      tags: test_quickstart
