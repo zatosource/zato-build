@@ -1,4 +1,4 @@
-#!/usr/bin/expect
+#!/usr/bin/expect -f
 
 set PACKAGE_RELEASE [lindex $argv 0]
 set DISTRIBUTION [lindex $argv 1]
@@ -11,7 +11,7 @@ set REPO_PATH /var/www/repo/$PACKAGE_RELEASE/$REPO_VERSION/$DISTRIBUTION/$CODENA
 
 spawn bash
 
-exp_send "rpmsign -D '_gpg_name Zato test signing key' --addsign $REPO_PATH/$PACKAGE\n"
+send "rpmsign -D '_gpg_name Zato test signing key' --addsign $REPO_PATH/$PACKAGE\n"
 
 expect {
 
@@ -20,3 +20,5 @@ expect {
         exp_continue
     }
 }
+
+expect eof
