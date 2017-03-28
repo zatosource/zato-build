@@ -369,25 +369,24 @@ cd ${ansible_root_path}
 echo &quot;*** START BUILD ***&quot; &gt;&gt; ./files/${REPORT_FILE}
 for system in ${!systems[@]}
 do
-  cd ${ansible_root_path}
+  cd ${ansible_root_path} 
   zato_package=`find ./output/${system}/ -name zato-${package_version}-${package_release}*`
-  echo ${zato_package}
-
+  
   ansible-playbook -i environments/testing generate_host_vars.yml \
     --extra-vars &quot;host=${systems[$system]} package_version=${package_version} \
       package_release=${package_release} branch=${branch} system=${system}&quot; -vvvv
   ansible-playbook -i environments/testing generate_repo_vars.yml \
     --extra-vars &quot;host=${systems[$system]} system=${system}&quot; -vvvv
-
-  if [ -z ${zato_package} ];
+    
+  if [ -z ${zato_package} ];  
   then
-
+  
     ansible-playbook -i environments/testing build_and_test.yml \
       --extra-vars &quot;host=${systems[$system]} system=${system} user=${ansible_user} require_nosetests=${require_nosetests} \
       require_apitests=${require_apitests}&quot; -vvvv
-
+        
     zato_package=`find ./output/${system}/ -name zato-${package_version}-${package_release}*`
-
+    
     if [ ! -z ${zato_package} ];
     then
       echo &quot;${zato_package} package for ${system} has been built&quot; &gt;&gt; \
@@ -396,13 +395,13 @@ do
       echo &quot;${zato_package} package for ${system} has NOT been built&quot; &gt;&gt; \
         ./files/${REPORT_FILE}
     fi
-
+      
   else
     echo &quot;${zato_package} package for ${system} already exists - skipping this build.&quot;
-
+    
   fi
 
-  if [[ ! -z ${zato_package} &amp;&amp; ${zato_package} =~ .*deb.* ]];
+  if [[ ! -z ${zato_package} &amp;&amp; ${zato_package} =~ .*deb.* ]];  
   then
     ansible-playbook -i environments/testing sign_package.yml --extra-vars &quot;host=${systems[$system]} system=${system} \
       sign_host=sign-deb user=${ansible_user}&quot; -vvvv
@@ -414,7 +413,7 @@ do
   else
     echo &quot;There is no package ./output/${system}/${zato_package} to be signed!&quot;
   fi
-
+ 
 done
 
 cd ${ansible_root_path}

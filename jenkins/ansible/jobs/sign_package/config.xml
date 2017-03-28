@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description>Use this job to build and test a Zato package or Zato packages for all supported systems. </description>
+  <description>Use this job to sign a Zato package or Zato packages for all supported systems. </description>
   <keepDependencies>false</keepDependencies>
   <properties>
     <hudson.model.ParametersDefinitionProperty>
@@ -9,17 +9,17 @@
         <hudson.model.StringParameterDefinition>
           <name>branch</name>
           <description>Define a git branch to build a Zato package from.</description>
-          <defaultValue>support/2.0</defaultValue>
+          <defaultValue>main</defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>package_version</name>
           <description>Define a Zato package version, e.g. 3.0.0.</description>
-          <defaultValue>2.0.7</defaultValue>
+          <defaultValue>3.0.6</defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>package_release</name>
           <description>Define a Zato package release, e.g. &apos;stable&apos; or &apos;custom-xx1&apos;.</description>
-          <defaultValue>custom.test5</defaultValue>
+          <defaultValue>testlkh9985985asf</defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.ChoiceParameterDefinition>
           <name>system</name>
@@ -43,16 +43,6 @@
             </a>
           </choices>
         </hudson.model.ChoiceParameterDefinition>
-        <hudson.model.BooleanParameterDefinition>
-          <name>require_nosetests</name>
-          <description>Run nosetests?</description>
-          <defaultValue>true</defaultValue>
-        </hudson.model.BooleanParameterDefinition>
-        <hudson.model.BooleanParameterDefinition>
-          <name>require_apitests</name>
-          <description>Run API tests?</description>
-          <defaultValue>true</defaultValue>
-        </hudson.model.BooleanParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
   </properties>
@@ -75,6 +65,7 @@
         <EnvInjectBuilder plugin="envinject@1.93.1">
           <info>
             <propertiesContent>host=debian-7-32
+sign_host=sign-deb
 </propertiesContent>
           </info>
         </EnvInjectBuilder>
@@ -91,6 +82,7 @@
         <EnvInjectBuilder plugin="envinject@1.93.1">
           <info>
             <propertiesContent>host=debian-7-64
+sign_host=sign-deb
 </propertiesContent>
           </info>
         </EnvInjectBuilder>
@@ -107,7 +99,7 @@
         <EnvInjectBuilder plugin="envinject@1.93.1">
           <info>
             <propertiesContent>host=debian-8-32
-</propertiesContent>
+sign_host=sign-deb</propertiesContent>
           </info>
         </EnvInjectBuilder>
       </conditionalbuilders>
@@ -123,7 +115,7 @@
         <EnvInjectBuilder plugin="envinject@1.93.1">
           <info>
             <propertiesContent>host=debian-8-64
-</propertiesContent>
+sign_host=sign-deb</propertiesContent>
           </info>
         </EnvInjectBuilder>
       </conditionalbuilders>
@@ -139,7 +131,7 @@
         <EnvInjectBuilder plugin="envinject@1.93.1">
           <info>
             <propertiesContent>host=centos-6-32
-</propertiesContent>
+sign_host=sign-rpm</propertiesContent>
           </info>
         </EnvInjectBuilder>
       </conditionalbuilders>
@@ -154,7 +146,8 @@
       <conditionalbuilders>
         <EnvInjectBuilder plugin="envinject@1.93.1">
           <info>
-            <propertiesContent>host=centos-6-64</propertiesContent>
+            <propertiesContent>host=centos-6-64
+sign_host=sign-rpm</propertiesContent>
           </info>
         </EnvInjectBuilder>
       </conditionalbuilders>
@@ -169,7 +162,8 @@
       <conditionalbuilders>
         <EnvInjectBuilder plugin="envinject@1.93.1">
           <info>
-            <propertiesContent>host=centos-7-64</propertiesContent>
+            <propertiesContent>host=centos-7-64
+sign_host=sign-rpm</propertiesContent>
           </info>
         </EnvInjectBuilder>
       </conditionalbuilders>
@@ -184,7 +178,8 @@
       <conditionalbuilders>
         <EnvInjectBuilder plugin="envinject@1.93.1">
           <info>
-            <propertiesContent>host=ubuntu-1204-32</propertiesContent>
+            <propertiesContent>host=ubuntu-1204-32
+sign_host=sign-deb</propertiesContent>
           </info>
         </EnvInjectBuilder>
       </conditionalbuilders>
@@ -199,7 +194,8 @@
       <conditionalbuilders>
         <EnvInjectBuilder plugin="envinject@1.93.1">
           <info>
-            <propertiesContent>host=ubuntu-1204-64</propertiesContent>
+            <propertiesContent>host=ubuntu-1204-64
+sign_host=sign-deb</propertiesContent>
           </info>
         </EnvInjectBuilder>
       </conditionalbuilders>
@@ -214,7 +210,8 @@
       <conditionalbuilders>
         <EnvInjectBuilder plugin="envinject@1.93.1">
           <info>
-            <propertiesContent>host=ubuntu-1404-32</propertiesContent>
+            <propertiesContent>host=ubuntu-1404-32
+sign_host=sign-deb</propertiesContent>
           </info>
         </EnvInjectBuilder>
       </conditionalbuilders>
@@ -229,7 +226,8 @@
       <conditionalbuilders>
         <EnvInjectBuilder plugin="envinject@1.93.1">
           <info>
-            <propertiesContent>host=ubuntu-1404-64</propertiesContent>
+            <propertiesContent>host=ubuntu-1404-64
+sign_host=sign-deb</propertiesContent>
           </info>
         </EnvInjectBuilder>
       </conditionalbuilders>
@@ -244,7 +242,8 @@
       <conditionalbuilders>
         <EnvInjectBuilder plugin="envinject@1.93.1">
           <info>
-            <propertiesContent>host=ubuntu-1604-32</propertiesContent>
+            <propertiesContent>host=ubuntu-1604-32
+sign_host=sign-deb</propertiesContent>
           </info>
         </EnvInjectBuilder>
       </conditionalbuilders>
@@ -259,7 +258,8 @@
       <conditionalbuilders>
         <EnvInjectBuilder plugin="envinject@1.93.1">
           <info>
-            <propertiesContent>host=ubuntu-1604-64</propertiesContent>
+            <propertiesContent>host=ubuntu-1604-64
+sign_host=sign-deb</propertiesContent>
           </info>
         </EnvInjectBuilder>
       </conditionalbuilders>
@@ -298,11 +298,8 @@
         <command>#!/bin/bash
 
 cd ${ansible_root_path}
-ansible-playbook -i environments/testing generate_host_vars.yml --extra-vars &quot;host=${host} package_version=${package_version} \
-    package_release=${package_release} branch=${branch} system=${system}&quot; -vvvv
-ansible-playbook -i environments/testing generate_repo_vars.yml --extra-vars &quot;host=${host} system=${system}&quot; -vvvv
-ansible-playbook -i environments/testing build_and_test.yml --extra-vars &quot;host=${host} system=${system} user=${ansible_user} require_nosetests=${require_nosetests} \
-	require_apitests=${require_apitests}&quot; -vvvv</command>
+ansible-playbook -i environments/testing sign_package.yml --extra-vars &quot;host=${host} system=${system} user=${ansible_user} \
+	sign_host=${sign_host}&quot; -vvvv</command>
       </buildStep>
       <runner class="org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail" plugin="run-condition@1.0"/>
     </org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder>
@@ -339,61 +336,46 @@ ansible-playbook -i environments/testing build_and_test.yml --extra-vars &quot;h
 
 declare -A systems
 systems=(
-  [debian-7-32]=debian-7-32
+  #[debian-7-32]=debian-7-32
   [debian-7-64]=debian-7-64
-  [debian-8-32]=debian-8-32
-  [debian-8-64]=debian-8-64
-  [redhat-6-32]=centos-6-32
+  #[debian-8-32]=debian-8-32
+  #[debian-8-64]=debian-8-64
+  #[redhat-6-32]=centos-6-32
   [redhat-6-64]=centos-6-64
-  [redhat-7-64]=centos-7-64
-  [ubuntu-12.04-32]=ubuntu-1204-32
-  [ubuntu-12.04-64]=ubuntu-1204-64
-  [ubuntu-14.04-32]=ubuntu-1404-32
+  #[redhat-7-64]=centos-7-64
+  #[ubuntu-12.04-32]=ubuntu-1204-32
+  #[ubuntu-12.04-64]=ubuntu-1204-64
+  #[ubuntu-14.04-32]=ubuntu-1404-32
   [ubuntu-14.04-64]=ubuntu-1404-64
-  [ubuntu-16.04-32]=ubuntu-1604-32
-  [ubuntu-16.04-64]=ubuntu-1604-64
+  #[ubuntu-16.04-32]=ubuntu-1604-32
+  #[ubuntu-16.04-64]=ubuntu-1604-64
 )
-REPORT_FILE=zato-${package_version}-${package_release}_build_and_test_report-${BUILD_ID}.txt
 
 cd ${ansible_root_path}
-echo &quot;*** START BUILD ***&quot; &gt;&gt; ./files/${REPORT_FILE}
 for system in ${!systems[@]}
 do
-  cd ${ansible_root_path}  
+  cd ${ansible_root_path}
   zato_package=`find ./output/${system}/ -name zato-${package_version}-${package_release}*`
-  
+
   ansible-playbook -i environments/testing generate_host_vars.yml \
     --extra-vars &quot;host=${systems[$system]} package_version=${package_version} \
       package_release=${package_release} branch=${branch} system=${system}&quot; -vvvv
   ansible-playbook -i environments/testing generate_repo_vars.yml \
     --extra-vars &quot;host=${systems[$system]} system=${system}&quot; -vvvv
     
-  if [ -z ${zato_package} ];  
+  if [[ ! -z ${zato_package} &amp;&amp; ${zato_package} =~ .*deb.* ]];
   then
-  
-    ansible-playbook -i environments/testing build_and_test.yml \
-      --extra-vars &quot;host=${systems[$system]} system=${system} user=${ansible_user} require_nosetests=${require_nosetests} \
-      require_apitests=${require_apitests}&quot; -vvvv
-        
-    zato_package=`find ./output/${system}/ -name zato-${package_version}-${package_release}*`
-    
-    if [ ! -z ${zato_package} ];
-    then
-      echo &quot;${zato_package} package for ${system} has been built&quot; &gt;&gt; \
-        ./files/${REPORT_FILE}
-    else
-      echo &quot;${zato_package} package for ${system} has NOT been built&quot; &gt;&gt; \
-        ./files/${REPORT_FILE}
-    fi
-      
+    echo &quot;PACKAGE ${zato_package} !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!&quot;
+    ansible-playbook -i environments/testing sign_package.yml --extra-vars &quot;host=${systems[$system]} system=${system} \
+      sign_host=sign-deb user=${ansible_user}&quot; -vvvv
+  elif [[ ! -z ${zato_package} &amp;&amp; ${zato_package} =~ .*rpm.* ]];
+  then
+    ansible-playbook -i environments/testing sign_package.yml --extra-vars &quot;host=${systems[$system]} system=${system} \
+      sign_host=sign-rpm user=${ansible_user}&quot; -vvvv
   else
-    echo &quot;${zato_package} package for ${system} already exists - skipping this build.&quot;
-    
+    echo &quot;There is no package ./output/${system}/zato-${package_version}-${package_release} to be signed!&quot;
   fi  
 done
-cd ${ansible_root_path}
-echo &quot;*** END BUILD ***&quot; &gt;&gt; ./files/${REPORT_FILE}
-cp ./files/${REPORT_FILE} ${WORKSPACE}
 
 </command>
       </buildStep>
@@ -441,8 +423,6 @@ cp ./files/${REPORT_FILE} ${WORKSPACE}
 package_release=$package_release
 branch=$branch
 system=$system
-require_nosetests=$require_nosetest
-require_apitests=$require_apitests
 
 
 

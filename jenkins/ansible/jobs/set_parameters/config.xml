@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description>Use this job to define a type of Zato environment you want Jenkins to create in order to build and/or test a Zato package. After providing parameters you can execute further jobs, like building or testing a Zato package.</description>
+  <description>Use this job to define a type of Zato environment that you want Jenkins to create in order to build and/or test a Zato package. After providing parameters you can execute further jobs, like building or testing a Zato package.</description>
   <keepDependencies>false</keepDependencies>
   <properties>
     <hudson.model.ParametersDefinitionProperty>
@@ -18,7 +18,7 @@
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>package_release</name>
-          <description>Define a Zato package release, e.g. &apos;stable&apos; or &apos;custom-xx1&apos;.</description>
+          <description>Define a Zato package release, e.g. &apos;stable&apos; or &apos;custom.xx1&apos;. Keep in mind that naming conventions for rpm packages do not allow &apos;-&apos;.</description>
           <defaultValue>custom.test5</defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.ChoiceParameterDefinition>
@@ -62,7 +62,7 @@
         <ignoreCase>false</ignoreCase>
       </runCondition>
       <conditionalbuilders>
-        <EnvInjectBuilder plugin="envinject@1.92.1">
+        <EnvInjectBuilder plugin="envinject@1.93.1">
           <info>
             <propertiesContent>host=debian-7-32
 </propertiesContent>
@@ -78,7 +78,7 @@
         <ignoreCase>false</ignoreCase>
       </runCondition>
       <conditionalbuilders>
-        <EnvInjectBuilder plugin="envinject@1.92.1">
+        <EnvInjectBuilder plugin="envinject@1.93.1">
           <info>
             <propertiesContent>host=debian-7-64
 </propertiesContent>
@@ -94,7 +94,7 @@
         <ignoreCase>false</ignoreCase>
       </runCondition>
       <conditionalbuilders>
-        <EnvInjectBuilder plugin="envinject@1.92.1">
+        <EnvInjectBuilder plugin="envinject@1.93.1">
           <info>
             <propertiesContent>host=debian-8-32
 </propertiesContent>
@@ -110,7 +110,7 @@
         <ignoreCase>false</ignoreCase>
       </runCondition>
       <conditionalbuilders>
-        <EnvInjectBuilder plugin="envinject@1.92.1">
+        <EnvInjectBuilder plugin="envinject@1.93.1">
           <info>
             <propertiesContent>host=debian-8-64
 </propertiesContent>
@@ -126,7 +126,7 @@
         <ignoreCase>false</ignoreCase>
       </runCondition>
       <conditionalbuilders>
-        <EnvInjectBuilder plugin="envinject@1.92.1">
+        <EnvInjectBuilder plugin="envinject@1.93.1">
           <info>
             <propertiesContent>host=centos-6-32
 </propertiesContent>
@@ -142,7 +142,7 @@
         <ignoreCase>false</ignoreCase>
       </runCondition>
       <conditionalbuilders>
-        <EnvInjectBuilder plugin="envinject@1.92.1">
+        <EnvInjectBuilder plugin="envinject@1.93.1">
           <info>
             <propertiesContent>host=centos-6-64</propertiesContent>
           </info>
@@ -157,7 +157,7 @@
         <ignoreCase>false</ignoreCase>
       </runCondition>
       <conditionalbuilders>
-        <EnvInjectBuilder plugin="envinject@1.92.1">
+        <EnvInjectBuilder plugin="envinject@1.93.1">
           <info>
             <propertiesContent>host=centos-7-64</propertiesContent>
           </info>
@@ -172,7 +172,7 @@
         <ignoreCase>false</ignoreCase>
       </runCondition>
       <conditionalbuilders>
-        <EnvInjectBuilder plugin="envinject@1.92.1">
+        <EnvInjectBuilder plugin="envinject@1.93.1">
           <info>
             <propertiesContent>host=ubuntu-1204-32</propertiesContent>
           </info>
@@ -187,7 +187,7 @@
         <ignoreCase>false</ignoreCase>
       </runCondition>
       <conditionalbuilders>
-        <EnvInjectBuilder plugin="envinject@1.92.1">
+        <EnvInjectBuilder plugin="envinject@1.93.1">
           <info>
             <propertiesContent>host=ubuntu-1204-64</propertiesContent>
           </info>
@@ -202,7 +202,7 @@
         <ignoreCase>false</ignoreCase>
       </runCondition>
       <conditionalbuilders>
-        <EnvInjectBuilder plugin="envinject@1.92.1">
+        <EnvInjectBuilder plugin="envinject@1.93.1">
           <info>
             <propertiesContent>host=ubuntu-1404-32</propertiesContent>
           </info>
@@ -217,7 +217,7 @@
         <ignoreCase>false</ignoreCase>
       </runCondition>
       <conditionalbuilders>
-        <EnvInjectBuilder plugin="envinject@1.92.1">
+        <EnvInjectBuilder plugin="envinject@1.93.1">
           <info>
             <propertiesContent>host=ubuntu-1404-64</propertiesContent>
           </info>
@@ -232,7 +232,7 @@
         <ignoreCase>false</ignoreCase>
       </runCondition>
       <conditionalbuilders>
-        <EnvInjectBuilder plugin="envinject@1.92.1">
+        <EnvInjectBuilder plugin="envinject@1.93.1">
           <info>
             <propertiesContent>host=ubuntu-1604-32</propertiesContent>
           </info>
@@ -247,7 +247,7 @@
         <ignoreCase>false</ignoreCase>
       </runCondition>
       <conditionalbuilders>
-        <EnvInjectBuilder plugin="envinject@1.92.1">
+        <EnvInjectBuilder plugin="envinject@1.93.1">
           <info>
             <propertiesContent>host=ubuntu-1604-64</propertiesContent>
           </info>
@@ -288,9 +288,10 @@
         <command>#!/bin/bash
 
 cd $ansible_root_path
-ansible-playbook -i environments/testing generate_host_vars.yml --extra-vars &quot;host=$host package_version=$package_version \
-    package_release=$package_release branch=$branch system=$system&quot;
-ansible-playbook -i environments/testing generate_repo_vars.yml --extra-vars &quot;host=$host&quot;</command>
+ansible-playbook -i environments/testing generate_host_vars.yml --extra-vars &quot;host=${host} package_version=${package_version} \
+    package_release=${package_release} branch=${branch} system=${system}&quot; -vvvv
+ansible-playbook -i environments/testing generate_repo_vars.yml --extra-vars &quot;host=${host} system=${system}&quot; -vvvv
+</command>
       </buildStep>
       <runner class="org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail" plugin="run-condition@1.0"/>
     </org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder>
@@ -344,10 +345,10 @@ systems=(
   
 for system in ${!systems[@]}
 do
-  cd $ansible_root_path
-  ansible-playbook -i environments/testing generate_vars.yml --extra-vars &quot;host=${systems[$system]} package_version=$package_version \
-    package_release=$package_release branch=$branch system=$system&quot;
-  ansible-playbook -i environments/testing build_and_test.yml --extra-vars &quot;host=${systems[$system]} system=$system user=rafal&quot;
+  cd ${ansible_root_path}
+  ansible-playbook -i environments/testing generate_host_vars.yml --extra-vars &quot;package_version=${package_version} \
+    package_release=${package_release} branch=${branch} system=${system} host=${systems[$system]}&quot; -vvvv
+  ansible-playbook -i environments/testing generate_repo_vars.yml --extra-vars &quot;host=${systems[$system]}&quot; -vvvv
 done
 </command>
       </buildStep>
@@ -356,8 +357,8 @@ done
   </builders>
   <publishers/>
   <buildWrappers>
-    <hudson.plugins.timestamper.TimestamperBuildWrapper plugin="timestamper@1.8.5"/>
-    <EnvInjectBuildWrapper plugin="envinject@1.92.1">
+    <hudson.plugins.timestamper.TimestamperBuildWrapper plugin="timestamper@1.8.8"/>
+    <EnvInjectBuildWrapper plugin="envinject@1.93.1">
       <info>
         <propertiesContent>package_version=$package_version
 package_release=$package_release
