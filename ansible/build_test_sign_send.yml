@@ -3,6 +3,7 @@
 - name: Build, test, sign and send a Zato package/packages
   hosts: localhost
 - include: build_and_test.yml
+  tags: build_and_test
 - include: sign_package.yml
   when:
     - ansible_distribution_major_version != "8"
@@ -10,10 +11,13 @@
       hostvars[host].apitest_debian_positive ) or
       ( hostvars[host].nosetest_centos_positive and
       hostvars[host].apitest_centos_positive )
+  tags: sign_deb_not_jessie
 # Sign package on Debian 8; there are different conditions for this play
 # to work, because API tests don't work as expected on that system
 - include: sign_package.yml
   when:
     - ansible_distribution_major_version == "8"
     - hostvars[host].nosetest_debian_positive
+  tags: sign_deb_jessie
 - include: fetch_and_send.yml
+  tags: fetch_and_send
