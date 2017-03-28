@@ -11,7 +11,7 @@ set REPO_PATH /var/www/repo/$PACKAGE_RELEASE/$REPO_VERSION/$DISTRIBUTION/$CODENA
 
 spawn bash
 
-exp_send "rpmsign '_gpg_name Zato test signing key' --addsign $REPO_PATH/$PACKAGE\n"
+exp_send "rpmsign -D '_gpg_name Zato test signing key' --addsign $REPO_PATH/$PACKAGE\n"
 
 expect {
 
