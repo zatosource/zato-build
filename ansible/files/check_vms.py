@@ -2,6 +2,8 @@
 # check_vms.py - Lists all VirtualBox's Virtual Machines and checks their status
 #
 # TODO: add help comments to argparse arguments
+# TODO: add argument validation
+# TODO: separate vms listing and vms stats
 
 import argparse
 import re
@@ -51,14 +53,18 @@ def get_info(*args):
     delimiter = 70 * "-"
     footer = (70 * "=")
 
-    print(header)
-
     if state == "all":
         current_vms = vms
     elif state == "running":
         current_vms = running_vms
     elif state == "aborted":
         current_vms = aborted_vms
+    else:
+        print("Invalid [state] argument.")
+        print("Pass 'all', 'running' or 'aborted' as argument.")
+        sys.exit(0)
+
+    print(header)
 
     if len(current_vms) == 0:
         print("    There are no %s VMs on this machine.\n" % (state))
