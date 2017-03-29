@@ -1,8 +1,6 @@
 #!/bin/py
 # check_vms.py - Lists all VirtualBox's Virtual Machines and checks their status
 #
-# TODO: add help comments to argparse arguments
-# TODO: add argument validation
 # TODO: separate vms listing and vms stats
 
 import argparse
@@ -11,8 +9,10 @@ import subprocess
 import sys
 
 parser = argparse.ArgumentParser()
-parser.add_argument("list")
-parser.add_argument("state", nargs="?", default="all")
+parser.add_argument("list", help="list all virtual machines")
+parser.add_argument("state", nargs="?", default="all",
+                    help="""list virtual machines depending on their status
+                    (default: all, other options: running, aborted)""")
 args = parser.parse_args()
 
 try:
