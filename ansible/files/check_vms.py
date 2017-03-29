@@ -40,6 +40,14 @@ def get_vm_state(vm_info):
             vm_state = item.replace(m, '')
     return vm_state
 
+def summary(vms_qty, running_qty, aborted_qty):
+    print(35 * "=" + "\n")
+    print("    SUMMARY:")
+    print("    Total number of VMs: %s" % (vms_qty))
+    print("    Number of running VMs: %s" % running_qty)
+    print("    Number of aborted VMs: %s" % aborted_qty)
+    print("")
+
 def get_info(*args):
     vms = args[0]
     running_vms = args[1]
@@ -51,10 +59,10 @@ def get_info(*args):
     running_qty = len(running_vms)
     aborted_qty = len(aborted_vms)
 
-    header = (70 * "=") + "\n\n" + (4 * " ") + \
+    header = (35 * "=") + "\n\n" + (4 * " ") + \
         ("List of %s VirtualBox VMs:\n" % (state))
-    delimiter = 70 * "-"
-    footer = (70 * "=")
+    delimiter = (35 * "-")
+    footer = (35 * "=")
 
     if state == "all":
         current_vms = vms
@@ -67,19 +75,15 @@ def get_info(*args):
         print("Pass 'all', 'running' or 'aborted' as argument.")
         sys.exit(0)
 
-    print(header)
-
     if len(current_vms) == 0:
+        print(header)
         print("    There are no %s VMs on this machine.\n" % (state))
     elif len(current_vms) == 0 and state == "all":
+        print(header)
         print("    There are no VMs created on this machine.\n")
 
     if stats:
-        print(70 * "-" + "\n")
-        print(4 * " " + "Total number of VMs: %s" % (vms_qty))
-        print(4 * " " + "Number of running VMs: %s" % running_qty)
-        print(4 * " " + "Number of aborted VMs: %s" % aborted_qty)
-        print("")
+        summary(vms_qty, running_qty, aborted_qty)
         print(footer)
     else:
         for vm in current_vms:
@@ -87,10 +91,11 @@ def get_info(*args):
             id = current_vms[vm]['id']
             state = current_vms[vm]['state']
             info = """%s\n
-        box name: %s\n
-        box id: %s\n
-        box state: %s\n""" % (delimiter, name, id, state)
+    box name: %s\n
+    box id: %s\n
+    box state: %s\n""" % (delimiter, name, id, state)
             print(info)
+        summary(vms_qty, running_qty, aborted_qty)
         print(footer)
 
 def main():
