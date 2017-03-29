@@ -13,6 +13,8 @@ parser.add_argument("list", help="list all virtual machines")
 parser.add_argument("state", nargs="?", default="all",
                     help="""list virtual machines depending on their status
                     (default: all, other options: running, aborted)""")
+parser.add_argument("-s", "--stats", help="show only a summary",
+                    action="store_true")
 args = parser.parse_args()
 
 try:
@@ -43,6 +45,7 @@ def get_info(*args):
     running_vms = args[1]
     aborted_vms = args[2]
     state = args[3]
+    stats = args[4]
 
     vms_qty = len(vms)
     running_qty = len(running_vms)
@@ -71,22 +74,24 @@ def get_info(*args):
     elif len(current_vms) == 0 and state == "all":
         print("    There are no VMs created on this machine.\n")
 
-    for vm in current_vms:
-        name = current_vms[vm]['name']
-        id = current_vms[vm]['id']
-        state = current_vms[vm]['state']
-        info = """%s\n
-    box name: %s\n
-    box id: %s\n
-    box state: %s\n""" % (delimiter, name, id, state)
-        print(info)
-
-    print(70 * "-" + "\n")
-    print(4 * " " + "Total number of VMs: %s" % (vms_qty))
-    print(4 * " " + "Number of running VMs: %s" % running_qty)
-    print(4 * " " + "Number of aborted VMs: %s" % aborted_qty)
-    print("")
-    print(footer)
+    if stats:
+        print(70 * "-" + "\n")
+        print(4 * " " + "Total number of VMs: %s" % (vms_qty))
+        print(4 * " " + "Number of running VMs: %s" % running_qty)
+        print(4 * " " + "Number of aborted VMs: %s" % aborted_qty)
+        print("")
+        print(footer)
+    else:
+        for vm in current_vms:
+            name = current_vms[vm]['name']
+            id = current_vms[vm]['id']
+            state = current_vms[vm]['state']
+            info = """%s\n
+        box name: %s\n
+        box id: %s\n
+        box state: %s\n""" % (delimiter, name, id, state)
+            print(info)
+        print(footer)
 
 def main():
     vms = {}
@@ -112,6 +117,6 @@ def main():
         vms[idx] = {'name': vm_name, 'id': vm_id, 'state': vm_state}
         idx += 1
 
-    get_info(vms, running_vms, aborted_vms, args.state)
+    get_info(vms, running_vms, aborted_vms, args.state, args.stats)
 
 main()
