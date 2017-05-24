@@ -33,8 +33,7 @@ RELEASE_NAME=`lsb_release -cs`
 ZATO_ROOT_DIR=/opt/zato
 ZATO_TARGET_DIR=$ZATO_ROOT_DIR/$ZATO_VERSION
 
-# Ubuntus >= 12.04 and Debian 7 require different versions
-# of libumfpack package
+# Ubuntu and Debian require different versions of packages.
 if command -v lsb_release > /dev/null; then
     release=$(lsb_release -c | cut -f2)
     if [[ "$release" == "precise" ]] || [[ "$release" == "wheezy" ]]; then
@@ -52,6 +51,13 @@ if command -v lsb_release > /dev/null; then
         LIBBLAS3=libblas3gf
         LIBLAPACK3=liblapack3gf
         LIBUMFPACK_VERSION=5.6.2
+    fi
+
+    # Add Debian-specific dependencies
+    if [[ "$release" == "wheezy" ]]; then
+        apt-get install apt-transport-https python-software-properties
+        apt-add-repository 'deb http://ftp.is.debian.org/debian wheezy-backports main'
+        apt-get install --reinstall libffi5
     fi
 fi
 
