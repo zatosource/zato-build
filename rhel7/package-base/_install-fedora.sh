@@ -11,15 +11,6 @@ function symlink_py {
     ln -s `python -c 'import '${1}', os.path, sys; sys.stdout.write(os.path.dirname('${1}'.__file__))'` $CURDIR/zato_extra_paths
 }
 
-RELEASE=`rpm -qa |grep release | cut -f3 -d-`
-if [ "$RELEASE" = "6" ]; then
-    pip_command=pip-python
-else
-    pip_command=pip
-fi
-
-bash $CURDIR/clean.sh
-
 sudo yum -y install git bzr gcc-gfortran haproxy \
     gcc-c++ atlas-devel atlas blas-devel  \
     bzip2 bzip2-devel libev libev-devel libffi libffi-devel \
@@ -28,6 +19,9 @@ sudo yum -y install git bzr gcc-gfortran haproxy \
     openssl openssl-devel python-devel numpy python-pip \
     scipy python-zdaemon swig uuid-devel uuid
 
+curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py"
+sudo python get-pip.py
+
 mkdir $CURDIR/zato_extra_paths
 
 symlink_py 'numpy'
@@ -35,15 +29,16 @@ symlink_py 'scipy'
 
 export CYTHON=$CURDIR/bin/cython
 
-sudo $pip_command install --upgrade pip
-sudo $pip_command install distribute==0.6.49
-sudo $pip_command install virtualenv==1.9.1
-sudo $pip_command install zato-apitest
+sudo pip install --upgrade pip
+sudo pip install setuptools==35.0.1
+sudo pip install virtualenv==1.9.1
+sudo pip install zato-apitest
 
 virtualenv .
 
-$CURDIR/bin/python bootstrap.py -v 1.7.0
+$CURDIR/bin/python bootstrap.py
 $CURDIR/bin/buildout
 
 echo
 echo OK
+
