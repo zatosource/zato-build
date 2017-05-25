@@ -55,9 +55,9 @@ if command -v lsb_release > /dev/null; then
 
     # Add Debian-specific dependencies
     if [[ "$release" == "wheezy" ]]; then
-        apt-get install apt-transport-https python-software-properties
-        apt-add-repository 'deb http://ftp.is.debian.org/debian wheezy-backports main'
-        apt-get install --reinstall libffi5
+        sudo apt-get install apt-transport-https python-software-properties
+        sudo apt-add-repository 'deb http://ftp.is.debian.org/debian wheezy-backports main'
+        sudo apt-get install --reinstall libffi5
     fi
 fi
 
