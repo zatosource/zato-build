@@ -1,0 +1,75 @@
+# Maintainer: Darius Suchojad <dsuch@zato.io>
+# Contributor: Laurent Bercot <ska-devel@skarnet.org>
+
+pkgname=zato
+pkgver=@@ZATO_VERSION@@
+pkgrel=@@PACKAGE_VERSION@@
+pkgdesc="An open source ESB and application server, in Python"
+url="https://zato.io/"
+arch="all"
+license="LGPL"
+options=
+makedepends="findutils gcc g++ git gfortran haproxy libbz2 libev libev-dev libevent libevent-dev libgfortran libffi-dev libldap libpq libsasl libuuid libxml2-dev libxslt-dev linux-headers musl-dev openldap-dev openssl postgresql-dev py2-pip python2-dev swig yaml-dev"
+subpackages=
+sources="zato-archive.tar bash-completion"
+builddir="$srcdir/$pkgname-$pkgver"
+ZATO_ROOT_DIR=@@ZATO_ROOT_DIR@@
+ZATO_TARGET_DIR=@@ZATO_TARGET_DIR@@
+
+
+build() {
+  sudo rm -rf "$ZATO_TARGET_DIR"
+
+  # Zato builds in-place, so we move everything to ZATO_TARGET_DIR
+  sudo mkdir -p "$ZATO_ROOT_DIR"
+  sudo mv -f "$builddir/zato-$ZATO_VERSION" "$ZATO_TARGET_DIR"
+
+  # Distro-agnostic build prep
+  cd $ZATO_TARGET_DIR/code
+  cp ../LICENSE.txt .
+  cp ../licenses_3rd_party.txt .
+  cd ..
+  mv `ls -a -1 code | grep -vFx -e . -e ..` .
+  rmdir code
+
+  # Everything is in place in $ZATO_TARGET_DIR, we just call install.sh
+  RUNNING_FROM_ABUILD=1
+  export RUNNING_FROM_ABUILD
+  ./install.sh
+
+  # And we move the result back
+  sudo mv -f "$ZATO_TARGET_DIR" "$builddir/zato-$ZATO_VERSION"
+}
+
+
+check() {
+  # We move everything...
+  sudo mkdir -p "$ZATO_ROOT_DIR"
+  sudo mv -f "$builddir/zato-$ZATO_VERSION" "$ZATO_TARGET_DIR"
+
+  # We run the tests...  
+  dir=`pwd`
+  cd "$ZATO_TARGET_DIR"
+  ./run-tests.py unittests
+  cd "$dir"
+
+  # ... We move everything back
+  sudo mv -f "$ZATO_TARGET_DIR" "$builddir/zato-$ZATO_VERSION"
+}
+
+
+package() {
+  # Distro-agnostic build cleanup
+  find $builddir/zato-$ZATO_VERSION -name *.pyc -exec rm -f {} \;
+  find $builddir/zato-$ZATO_VERSION ! -perm /004 -exec chmod 644 {} \;
+  rm -rf $builddir/zato-$ZATO_VERSION/hotfixman.sh $builddir/zato-$ZATO_VERSION/hotfixes
+
+  # Move everything to $pkgdir/ for staging
+  mkdir -p "$pkgdir/$ZATO_ROOT_DIR"
+  mv -f $builddir/zato-$ZATO_VERSION "$pkgdir/$ZATO_TARGET_DIR"
+
+  # copy additional files
+  mkdir -p "$pkgdir/etc/bash-completion.d"
+  cp -f "$builddir/bash-completion" "$pkgdir/etc/bash-completion.d/zato"
+}
+
