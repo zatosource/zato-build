@@ -9,9 +9,13 @@ url="https://zato.io/"
 arch="all"
 license="LGPL"
 options=
-makedepends="findutils gcc g++ git gfortran haproxy libbz2 libev libev-dev libevent libevent-dev libgfortran libffi-dev libldap libpq libsasl libuuid libxml2-dev libxslt-dev linux-headers musl-dev openldap-dev openssl postgresql-dev py2-pip python2-dev swig yaml-dev"
+makedepends="findutils gcc g++ git gfortran haproxy libbz2 libev \
+libev-dev libevent libevent-dev libgfortran libffi-dev libldap \
+libpq libsasl libuuid libxml2-dev libxslt-dev linux-headers musl-dev \
+openldap-dev openssl postgresql-dev py2-pip python2-dev swig yaml-dev \
+py-numpy py-numpy-f2py py-scipy"
 subpackages=
-sources="zato-archive.tar bash-completion"
+sources="zato-archive.tar bash-completion zato.initd"
 builddir="$srcdir/$pkgname-$pkgver"
 ZATO_ROOT_DIR=@@ZATO_ROOT_DIR@@
 ZATO_TARGET_DIR=@@ZATO_TARGET_DIR@@
@@ -29,7 +33,7 @@ build() {
   cp ../LICENSE.txt .
   cp ../licenses_3rd_party.txt .
   cd ..
-  mv `ls -a -1 code | grep -vFx -e . -e ..` .
+  mv -f `ls -a -1 code | grep -vFx -e . -e ..` .
   rmdir code
 
   # Everything is in place in $ZATO_TARGET_DIR, we just call install.sh
@@ -53,7 +57,7 @@ check() {
   ./run-tests.py unittests
   cd "$dir"
 
-  # ... We move everything back
+  # ... We move everything back.
   sudo mv -f "$ZATO_TARGET_DIR" "$builddir/zato-$ZATO_VERSION"
 }
 
@@ -70,6 +74,8 @@ package() {
 
   # copy additional files
   mkdir -p "$pkgdir/etc/bash-completion.d"
-  cp -f "$builddir/bash-completion" "$pkgdir/etc/bash-completion.d/zato"
+  cp -f "$srcdir/bash-completion" "$pkgdir/etc/bash-completion.d/zato"
+  cp -f "$srcdir/zato.initd" "$pkgdir/etc/init.d/zato"
+  chmod 0755 "$pkgdir/etc/init.d/zato"
 }
 

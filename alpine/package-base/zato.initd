@@ -1,0 +1,69 @@
+#!/sbin/openrc-run
+# OpenRC script to start and stop Zato components
+
+depend() {
+  need logger net
+  after firewall
+}
+
+component_all()
+{
+for link in $ENV/*
+  do
+    component=`readlink $link`
+    if test -n $component ; then
+        x=${link#"$ENV/"}
+        if test "$1" = "start" ; then
+            echo "Starting $x from $component..."
+            if [ -f "$component/pidfile" ]; then
+             pid=`cat $component/pidfile`
+             pidstatus=`ps -ef|grep $pid |grep "[z]ato"`
+             if [ -z "$pidstatus" ]; then
+              rm -f $component/pidfile
+              if [ -f "$component/zato-lb-agent.pid" ]; then
+               rm -f $component/zato-lb-agent.pid
+              fi
+             fi
+            fi
+            su - zato -c "zato $1 $component"
+        fi
+        if test "$1" = "stop" ; then
+            su - zato -c "zato $1 $component"
+        fi
+        if test "$1" = "info" ; then
+            status=`su - zato -c "zato $1 $component | grep component_running | sed 's/|//g' | sed 's/component_running//' | sed 's/ //g'"`
+            if test "$status" = "True" ; then
+             echo "Component $x ($component) running"
+            elif "$status" = "False" ; then
+             echo "Component $x ($component) not running"
+            else
+             echo "Component $x ($component) failed"
+            fi
+        fi
+    fi
+done
+}
+
+start() {
+  ebegin "Starting Zato components"
+  component_all start
+  eend $?
+}
+
+stop() {
+  ebegin "Stopping Zato components"
+  component_all stop
+  eend $?
+}
+
+status() {
+  echo "Status of Zato components"
+  component_all info
+}
+
+restart() {
+  ebegin "Restarting Zato components"
+  component_all stop
+  component_all start
+  eend $?
+}

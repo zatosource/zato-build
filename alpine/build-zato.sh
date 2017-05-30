@@ -1,32 +1,41 @@
 #!/bin/sh -e
 
 test "$#" -lt 3 && { echo "build-zato.sh: usage: ./build-zato.sh branch-name zato-version package-version" 1&>2 ; exit 100 ; }
+test -n "$HOME" && { echo "HOME not set; abuild needs to run as a user with a home directory!" 1&>2 ; exit 100 ; }
 
 BRANCH_NAME="$1"
 ZATO_VERSION="$2"
 PACKAGE_VERSION="$3"
 
-CURDIR=`readlink -f .`
+# This is the file where the packager's private key (to sign the apk)
+# is stored. The public key must be in the same place, with a ".rsa.pub"
+# suffix.
+PACKAGER_PRIVKEY="$HOME/.abuild/dsuch@zato.io-XXXXXXXX.rsa"
 
+PREFERRED_REPOSITORY=http://dl-5.alpinelinux.org/alpine
+ALPINE_FLAVOUR=v3.6
 ZATO_ROOT_DIR=/pkg/zato
 ZATO_TARGET_DIR=$ZATO_ROOT_DIR/$ZATO_VERSION
+
+CURDIR=`readlink -f .`
 
 echo Building APK zato-$ZATO_VERSION-$PACKAGE_VERSION
 
 
-prepare_build() {
-  sudo apk update
-  sudo apk add tar alpine-sdk py-numpy
+prepare_abuild() {
 
-# We want to let abuild manage as many dependencies as possible itself,
-# but it cannot handle dependencies from stable to edge. So we just
-# pre-install the edge packages by hand.
+# Ensure abuild can access the packager's key
+  mkdir -p "$HOME/.abuild"
+  echo "PACKAGER_PRIVKEY=$PACKAGER_PRIVKEY" > "$HOME/.abuild/abuild.conf"
 
-  sudo apk add py-numpy-f2py --update-cache --repository http://dl-5.alpinelinux.org/alpine/edge/community
-  sudo apk add py-scipy --update-cache --repository http://dl-5.alpinelinux.org/alpine/edge/testing
-
-  # TODO: Edit a suitable /etc/abuild.conf and/or $HOME/.abuild/abuild.conf
-  # We need developer contact and keypair.
+# We need to pull py-numpy and py-numpy-f2py from community, and py-scipy
+# from testing. Testing is only available from edge. It's simpler to
+# rewrite our /etc/apk/repositories entirely and let abuild handle this.
+sudo sh -c "cat >> /etc/apk/repositories && apk update && apk add tar alpine-sdk" <<EOF
+$PREFERRED_REPOSITORY/$ALPINE_FLAVOUR/main
+$PREFERRED_REPOSITORY/$ALPINE_FLAVOUR/community
+$PREFERRED_REPOSITORY/edge/testing
+EOF
 }
 
 
@@ -70,7 +79,7 @@ call_abuild() {
 }
 
 
-prepare_build
+prepare_abuild
 cleanup
 checkout_and_make_archive
 make_apkbuild_dir
