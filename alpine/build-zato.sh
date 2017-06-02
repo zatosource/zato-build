@@ -16,13 +16,18 @@ PACKAGER_PRIVKEY="$HOME/.abuild/ska-devel@skarnet.org-56139463.rsa"
 PREFERRED_REPOSITORY=http://dl-cdn.alpinelinux.org/alpine
 ALPINE_FLAVOUR=v3.6
 
-# Those directories MUST be absolute
+# These directories must be absolute.
+# DO NOT use /opt/zato for ZATO_ROOT_DIR. /opt is supposed to be
+# software that is NOT installed by a distribution's packaging system,
+# and abuild will refuse to create a package in /opt.
+# /pkg is Alpine's choice for software that installs into its own directory.
+
 ZATO_ROOT_DIR=/pkg/zato
 ZATO_TARGET_DIR=$ZATO_ROOT_DIR/$ZATO_VERSION
 
 CURDIR=`readlink -f .`
 
-echo Building APK zato-$ZATO_VERSION-$PACKAGE_VERSION
+echo "Building zato-$ZATO_VERSION-r$PACKAGE_VERSION.apk"
 
 
 prepare_abuild() {
@@ -87,9 +92,14 @@ call_abuild() {
   cd ..
 }
 
+isolate_package() {
+  mv "$CURDIR/alpine/x86_64/zato-$ZATO_VERSION-r$PACKAGE_VERSION.apk" "$CURDIR"
+  rm -rf "$CURDIR/alpine"
+}
 
 prepare_abuild
 cleanup
 checkout_and_make_archive
 make_apkbuild_dir
 call_abuild
+isolate_package

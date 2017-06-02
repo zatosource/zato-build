@@ -19,7 +19,7 @@ subpackages=
 source="zato-$pkgver.tar bash-completion zato.initd"
 ZATO_ROOT_DIR=@@ZATO_ROOT_DIR@@
 ZATO_TARGET_DIR=@@ZATO_TARGET_DIR@@
-REPODEST="$srcdir/.."
+REPODEST="$srcdir/../.."
 
 build() {
   sudo rm -rf "$ZATO_TARGET_DIR"
