@@ -79,7 +79,7 @@ checkout_and_make_archive() {
 
 make_apkbuild_dir() {
   for i in APKBUILD zato.post-deinstall zato.post-install zato.post-upgrade zato.pre-install zato.pre-upgrade ; do
-    sed -e "s|@@ZATO_ROOT_DIR@@|$ZATO_ROOT_DIR|g;s|@@ZATO_TARGET_DIR@@|$ZATO_TARGET_DIR|g;s|@@ZATO_VERSION@@|$ZATO_VERSION|g;s|@@PACKAGE_VERSION@@|$PACKAGE_VERSION|g;" < "$CURDIR/package-base/$i.in > "$CURDIR/package-base/$i"
+    sed -e "s|@@ZATO_ROOT_DIR@@|$ZATO_ROOT_DIR|g;s|@@ZATO_TARGET_DIR@@|$ZATO_TARGET_DIR|g;s|@@ZATO_VERSION@@|$ZATO_VERSION|g;s|@@PACKAGE_VERSION@@|$PACKAGE_VERSION|g;" < "$CURDIR/package-base/$i.in" > "$CURDIR/package-base/$i"
   cp $CURDIR/../bash_completion/zato $CURDIR/package-base/bash-completion
   cd package-base
   abuild checksum
