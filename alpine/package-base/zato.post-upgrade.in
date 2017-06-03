@@ -1,0 +1,3 @@
+#!/bin/sh -e
+
+exec ln -nsf @@ZATO_VERSION@@ @@ZATO_ROOT_DIR@@/current

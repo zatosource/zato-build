@@ -1,0 +1,15 @@
+#!/bin/sh
+
+addgroup -S zato 2>/dev/null
+adduser -S -D -h @@ZATO_ROOT_DIR@@ -s /bin/bash -g "Zato ESB" zato 2>/dev/null
+
+ZATO_BACKUP_DIR=@@ZATO_ROOT_DIR@@/backup
+ZATO_DATE=`date +%Y%m%d_%H%M%S`
+ZATO_PATTERNS="@@ZATO_ROOT_DIR@@/[2-9].*"
+
+su - zato -c mkdir -p "$ZATO_BACKUP_DIR"
+for directory in $ZATO_PATTERNS ; do
+  if [ -d "$directory" ] ; then
+    su - zato -c "cp -R $directory $ZATO_BACKUP_DIR/${directory##*/}_$ZATO_DATE"
+  fi
+done
