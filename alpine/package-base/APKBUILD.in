@@ -11,7 +11,7 @@ license="LGPL"
 options=
 depends="bash-completion gcc g++ gfortran haproxy libbz2 \
 libgfortran libsasl libuuid \
-swig py2-pip py-numpy py-numpy-f2py py2-numpy p2-numpy-f2py py-scipy"
+swig py2-pip py-numpy py-numpy-f2py py2-numpy py2-numpy-f2py py-scipy"
 makedepends="findutils git libev-dev libevent-dev libffi-dev \
 libxml2-dev libxslt-dev linux-headers musl-dev openldap-dev postgresql-dev \
 python2-dev yaml-dev"
