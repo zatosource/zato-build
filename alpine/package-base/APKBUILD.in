@@ -16,7 +16,7 @@ makedepends="findutils git libev-dev libevent-dev libffi-dev \
 libxml2-dev libxslt-dev linux-headers musl-dev openldap-dev postgresql-dev \
 python2-dev yaml-dev"
 subpackages=
-source="zato-$pkgver.tar bash-completion zato.initd zato.post-deinstall zato.post-install zato.post-upgrade zato.pre-install zato.pre-upgrade"
+source="zato-$pkgver.tar bash-completion zato.initd"
 install="zato.post-deinstall zato.post-install zato.post-upgrade zato.pre-install zato.pre-upgrade"
 ZATO_ROOT_DIR=@@ZATO_ROOT_DIR@@
 ZATO_TARGET_DIR=@@ZATO_TARGET_DIR@@

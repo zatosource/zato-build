@@ -29,6 +29,7 @@ CURDIR=`readlink -f .`
 
 echo "Building zato-$ZATO_VERSION-r$PACKAGE_VERSION.apk"
 
+TARGETS="zato-$ZATO_VERSION.tar APKBUILD bash-completion zato.post-deinstall zato.post-install zato.post-upgrade zato.pre-install zato.pre-upgrade"
 
 prepare_abuild() {
 
@@ -54,7 +55,9 @@ EOF
 
 
 cleanup() {
-  rm -rf "$CURDIR/package-base/srcdir" "$CURDIR/package-base/zato-$ZATO_VERSION.tar" "$CURDIR/package-base/APKBUILD" "$CURDIR/zato-$ZATO_VERSION" "$CURDIR/package-base/bash-completion"
+  for i in $TARGETS ; do
+    rm -f "$CURDIR/package-base/$i"
+  done
 }
 
 
@@ -105,3 +108,4 @@ checkout_and_make_archive
 make_apkbuild_dir
 call_abuild
 isolate_package
+cleanup
