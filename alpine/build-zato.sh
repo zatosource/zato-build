@@ -1,7 +1,7 @@
 #!/bin/sh -e
 
 test "$#" -lt 3 && { echo "build-zato.sh: usage: ./build-zato.sh branch-name zato-version package-version" 1>&2 ; exit 100 ; }
-test -z "$HOME" && { echo "HOME not set; abuild needs to run as a user with a home directory!" 1>&2 ; exit 100 ; }
+test -z "$HOME" && { echo "build-zato.sh: HOME not set; abuild needs to run as a user with a home directory!" 1>&2 ; exit 100 ; }
 
 BRANCH_NAME="$1"
 ZATO_VERSION="$2"
@@ -26,6 +26,9 @@ ZATO_ROOT_DIR=/pkg/zato
 ZATO_TARGET_DIR=$ZATO_ROOT_DIR/$ZATO_VERSION
 
 CURDIR=`readlink -f .`
+
+sudo mkdir -p "$ZATO_TARGET_DIR"
+test "$ZATO_TARGET_DIR" != `readlink -f "$ZATO_TARGET_DIR"` && { echo "build-zato.sh: $ZATO_TARGET_DIR must be a fully resolved path!" 1>&2 ; exit 100 ; }
 
 echo "Building zato-$ZATO_VERSION-r$PACKAGE_VERSION.apk"
 

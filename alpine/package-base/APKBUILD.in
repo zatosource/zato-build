@@ -39,7 +39,8 @@ build() {
 
   # Everything is in place in $ZATO_TARGET_DIR, we just call install.sh
   RUNNING_FROM_ABUILD=1
-  export RUNNING_FROM_ABUILD
+  CURDIR="$ZATO_TARGET_DIR"
+  export RUNNING_FROM_ABUILD CURDIR
   ./install.sh
 
   # And we move the result back
