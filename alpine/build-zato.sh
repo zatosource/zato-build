@@ -23,16 +23,18 @@ ALPINE_FLAVOUR=v3.6
 # /pkg is Alpine's choice for software that installs into its own directory.
 
 ZATO_ROOT_DIR=/pkg/zato
-ZATO_TARGET_DIR=$ZATO_ROOT_DIR/$ZATO_VERSION
+ZATO_TARGET_DIR="$ZATO_ROOT_DIR/$ZATO_VERSION"
+COMPLETE_VERSION="${ZATO_VERSION}_${PACKAGE_VERSION}"
 
 CURDIR=`readlink -f .`
 
 sudo mkdir -p "$ZATO_TARGET_DIR"
 test "$ZATO_TARGET_DIR" != `readlink -f "$ZATO_TARGET_DIR"` && { echo "build-zato.sh: $ZATO_TARGET_DIR must be a fully resolved path!" 1>&2 ; exit 100 ; }
 
-echo "Building zato-$ZATO_VERSION-r$PACKAGE_VERSION.apk"
+echo "Building zato-$COMPLETE_VERSION-r0.apk"
 
-TARGETS="zato-$ZATO_VERSION.tar APKBUILD bash-completion zato.post-deinstall zato.post-install zato.post-upgrade zato.pre-install zato.pre-upgrade"
+ABUILD_FILES="APKBUILD zato.post-deinstall zato.post-install zato.post-upgrade zato.pre-install zato.pre-upgrade"
+TARGETS="zato-$COMPLETE_VERSION.tar bash-completion $ABUILD_FILES"
 
 prepare_abuild() {
 
@@ -70,22 +72,22 @@ checkout_and_make_archive() {
 # We fetch here, and prepare the clone, then archive it into a
 # local file. The APKBUILD uses that file as its main source.
 
-  rm -rf "zato-$ZATO_VERSION"
-  git clone https://github.com/zatosource/zato.git "zato-$ZATO_VERSION"
-  cd "zato-$ZATO_VERSION"
+  rm -rf "zato-$COMPLETE_VERSION"
+  git clone https://github.com/zatosource/zato.git "zato-$COMPLETE_VERSION"
+  cd "zato-$COMPLETE_VERSION"
   for branch in `git branch -a | grep -F remotes/ | grep -vF -e HEAD -e master -e main` ; do
     git branch --track "${branch#remotes/origin/}" "$branch"
   done
   git checkout "$BRANCH_NAME"
   cd ..
-  tar -cf "package-base/zato-$ZATO_VERSION.tar" "zato-$ZATO_VERSION"
-  rm -rf "zato-$ZATO_VERSION"
+  tar -cf "package-base/zato-$COMPLETE_VERSION.tar" "zato-$COMPLETE_VERSION"
+  rm -rf "zato-$COMPLETE_VERSION"
 }
 
 
 make_apkbuild_dir() {
-  for i in APKBUILD zato.post-deinstall zato.post-install zato.post-upgrade zato.pre-install zato.pre-upgrade ; do
-    sed -e "s|@@ZATO_ROOT_DIR@@|$ZATO_ROOT_DIR|g;s|@@ZATO_TARGET_DIR@@|$ZATO_TARGET_DIR|g;s|@@ZATO_VERSION@@|$ZATO_VERSION|g;s|@@PACKAGE_VERSION@@|$PACKAGE_VERSION|g;" < "$CURDIR/package-base/$i.in" > "$CURDIR/package-base/$i"
+  for i in $ABUILD_FILES ; do
+    sed -e "s|@@ZATO_ROOT_DIR@@|$ZATO_ROOT_DIR|g;s|@@ZATO_TARGET_DIR@@|$ZATO_TARGET_DIR|g;s|@@ZATO_VERSION@@|$ZATO_VERSION|g;s|@@PACKAGE_VERSION@@|$PACKAGE_VERSION|g;s|@@COMPLETE_VERSION@@|$COMPLETE_VERSION|g;" < "$CURDIR/package-base/$i.in" > "$CURDIR/package-base/$i"
   done
   cp $CURDIR/../bash_completion/zato $CURDIR/package-base/bash-completion
   cd package-base
@@ -101,7 +103,7 @@ call_abuild() {
 }
 
 isolate_package() {
-  mv "$CURDIR/alpine/x86_64/zato-$ZATO_VERSION-r$PACKAGE_VERSION.apk" "$CURDIR"
+  mv "$CURDIR/alpine/x86_64/zato-$COMPLETE_VERSION-r0.apk" "$CURDIR"
   rm -rf "$CURDIR/alpine"
 }
 

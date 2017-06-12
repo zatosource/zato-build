@@ -2,8 +2,8 @@
 # Contributor: Laurent Bercot <ska-devel@skarnet.org>
 
 pkgname=zato
-pkgver=@@ZATO_VERSION@@
-pkgrel=@@PACKAGE_VERSION@@
+pkgver=@@COMPLETE_VERSION@@
+pkgrel=0
 pkgdesc="An open source ESB and application server, in Python"
 url="https://zato.io/"
 arch="all"
@@ -14,7 +14,7 @@ libgfortran libsasl libuuid \
 swig py2-pip py-numpy py-numpy-f2py py2-numpy py2-numpy-f2py py-scipy"
 makedepends="findutils git libev-dev libevent-dev libffi-dev \
 libxml2-dev libxslt-dev linux-headers musl-dev openldap-dev postgresql-dev \
-python2-dev yaml-dev"
+python2-dev yaml-dev redis"
 subpackages=
 source="zato-$pkgver.tar bash-completion zato.initd"
 install="zato.post-deinstall zato.post-install zato.post-upgrade zato.pre-install zato.pre-upgrade"
@@ -49,19 +49,38 @@ build() {
 
 
 check() {
-  # We move everything...
+  # Move everything
   sudo mkdir -p "$ZATO_ROOT_DIR"
   sudo mv -f "$builddir" "$ZATO_TARGET_DIR"
+  stopredis=true
 
-  # We run the tests...  
+  # Start the redis server
+  if /etc/init.d/redis status >/dev/null 2>&1 ; then
+    stopredis=false
+  else
+    sudo /etc/init.d/redis start
+  fi
+
+  # Run the tests
   dir=`pwd`
   cd "$ZATO_TARGET_DIR"
-  # XXX: Remove the "|| true" before shipping!
-  ./run-tests.py nosetests || true
+  set +e
+  ./run-tests.py nosetests
+  exitcode=$?
+  set -e
   cd "$dir"
 
-  # ... We move everything back.
+  # Stop the redis server
+  if $stopredis ; then
+    sudo /etc/init.d/redis stop
+  fi
+
+  # Move everything back
   sudo mv -f "$ZATO_TARGET_DIR" "$builddir"
+
+  # Fail if the test suite did not pass
+  # XXX: uncomment the following line before shipping!
+  # test $exitcode -eq 0
 }
 
 
