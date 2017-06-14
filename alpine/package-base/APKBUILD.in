@@ -65,7 +65,7 @@ check() {
   dir=`pwd`
   cd "$ZATO_TARGET_DIR"
   set +e
-  ./run-tests.py nosetests
+  ./run-tests.py unittests
   exitcode=$?
   set -e
   cd "$dir"
@@ -79,8 +79,7 @@ check() {
   sudo mv -f "$ZATO_TARGET_DIR" "$builddir"
 
   # Fail if the test suite did not pass
-  # XXX: uncomment the following line before shipping!
-  # test $exitcode -eq 0
+  test $exitcode -eq 0
 }
 
 
