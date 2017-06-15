@@ -50,7 +50,7 @@ ALPINE_FLAVOUR=v3.6
 # /pkg is Alpine's choice for software that installs into its own directory.
 
 ZATO_ROOT_DIR=/pkg/zato
-ZATO_TARGET_DIR="$ZATO_ROOT_DIR/$ZATO_VERSION"
+ZATO_TARGET_DIR="$ZATO_ROOT_DIR/$COMPLETE_VERSION"
 
 CURDIR=`readlink -f .`
 sudo mkdir -p "$ZATO_TARGET_DIR"

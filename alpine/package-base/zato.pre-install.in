@@ -1,7 +1,7 @@
-#!/bin/sh
+#!/bin/sh -e
 
-addgroup -S zato 2>/dev/null
-adduser -S -D -h @@ZATO_ROOT_DIR@@ -G zato -s /bin/bash -g "Zato ESB" zato 2>/dev/null
+addgroup -S zato 2>/dev/null || true
+adduser -S -D -h @@ZATO_ROOT_DIR@@ -G zato -s /bin/bash -g "Zato ESB" zato 2>/dev/null || true
 
 ZATO_BACKUP_DIR=@@ZATO_ROOT_DIR@@/backup
 ZATO_DATE=`date +%Y%m%d_%H%M%S`
@@ -13,3 +13,10 @@ for directory in $ZATO_PATTERNS ; do
     cp -a $directory "$ZATO_BACKUP_DIR/${directory##*/}_$ZATO_DATE"
   fi
 done
+
+cat > @@ZATO_ROOT_DIR@@/.shrc <<EOF
+#!/bin/bash
+PATH="$PATH:@@ZATO_ROOT_DIR@@/current/bin"
+export PATH
+EOF
+ln -sf .shrc @@ZATO_ROOT_DIR@@/.bashrc
