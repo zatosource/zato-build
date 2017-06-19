@@ -1,3 +1,4 @@
 #!/bin/sh -e
 
-exec ln -nsf @@COMPLETE_VERSION@@ @@ZATO_ROOT_DIR@@/current
+ln -nsf @@COMPLETE_VERSION@@ @@ZATO_ROOT_DIR@@/current
+exec chown -hRP zato:zato @@ZATO_ROOT_DIR@@

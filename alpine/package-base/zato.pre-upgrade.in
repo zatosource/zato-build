@@ -10,5 +10,5 @@ for directory in $ZATO_PATTERNS ; do
     cp -a $directory "$ZATO_BACKUP_DIR/${directory##*/}_$ZATO_DATE"
   fi
 done
-
+chown -R zato:zato "$ZATO_BACKUP_DIR"
 exec /etc/init.d/zato stop

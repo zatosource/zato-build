@@ -3,6 +3,10 @@
 addgroup -S zato 2>/dev/null || true
 adduser -S -D -h @@ZATO_ROOT_DIR@@ -G zato -s /bin/bash -g "Zato ESB" zato 2>/dev/null || true
 
+# Compatibility with other distributions
+mkdir -p /opt
+ln -nsf @@ZATO_ROOT_DIR@@ /opt/zato
+
 ZATO_BACKUP_DIR=@@ZATO_ROOT_DIR@@/backup
 ZATO_DATE=`date +%Y%m%d_%H%M%S`
 ZATO_PATTERNS="@@ZATO_ROOT_DIR@@/[2-9].*"
@@ -13,6 +17,7 @@ for directory in $ZATO_PATTERNS ; do
     cp -a $directory "$ZATO_BACKUP_DIR/${directory##*/}_$ZATO_DATE"
   fi
 done
+chown -R zato:zato "$ZATO_BACKUP_DIR"
 
 cat > @@ZATO_ROOT_DIR@@/.shrc <<EOF
 #!/bin/bash
@@ -20,3 +25,4 @@ PATH="$PATH:@@ZATO_ROOT_DIR@@/current/bin"
 export PATH
 EOF
 ln -sf .shrc @@ZATO_ROOT_DIR@@/.bashrc
+chown zato:zato @@ZATO_ROOT_DIR@@/.bashrc @@ZATO_ROOT_DIR@@/.shrc
