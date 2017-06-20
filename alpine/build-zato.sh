@@ -58,7 +58,7 @@ test "$ZATO_TARGET_DIR" = `readlink -f "$ZATO_TARGET_DIR"` || { echo "build-zato
 
 echo "Building zato-$COMPLETE_VERSION-r0.apk"
 
-ABUILD_FILES="APKBUILD zato.post-deinstall zato.post-install zato.post-upgrade zato.pre-deinstall zato.pre-install zato.pre-upgrade"
+ABUILD_FILES="APKBUILD zato.post-deinstall zato.post-install zato.post-upgrade zato.pre-deinstall zato.pre-install zato.pre-upgrade zato.bashrc"
 TARGETS="zato-$COMPLETE_VERSION.tar bash-completion $ABUILD_FILES"
 
 prepare_abuild() {

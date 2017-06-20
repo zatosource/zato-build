@@ -1,3 +1,3 @@
 #!/bin/sh -e
 
-exec rm -rf @@ZATO_ROOT_DIR@@/current
+exec rm -rf @@ZATO_ROOT_DIR@@/current @@ZATO_TARGET_DIR@@

@@ -16,8 +16,10 @@ makedepends="file findutils git libev-dev libevent-dev libffi-dev \
 libxml2-dev libxslt-dev linux-headers musl-dev openldap-dev postgresql-dev \
 python2-dev yaml-dev redis"
 subpackages=
-source="zato-$pkgver.tar bash-completion zato.initd"
+source="zato-$pkgver.tar bash-completion zato.initd zato.bashrc"
 install="zato.post-deinstall zato.post-install zato.post-upgrade zato.pre-deinstall zato.pre-install zato.pre-upgrade"
+pkgusers=zato
+pkggroups=zato
 ZATO_ROOT_DIR=@@ZATO_ROOT_DIR@@
 ZATO_TARGET_DIR=@@ZATO_TARGET_DIR@@
 REPODEST="$srcdir/../.."
@@ -90,9 +92,9 @@ package() {
   rm -rf "$builddir/hotfixman.sh" "$builddir/hotfixes" "$builddir/.git*"
 
   # Move everything to $pkgdir/ for staging
-  mkdir -p -m 0755 -- "$pkgdir$ZATO_ROOT_DIR"
+  mkdir -p -m 0755 -- "$pkgdir$ZATO_ROOT_DIR/backup"
   mv -f "$builddir" "$pkgdir$ZATO_TARGET_DIR"
-  chmod -R g-s "$pkgdir$ZATO_TARGET_DIR"
+  chown -R zato:zato "$pkgdir$ZATO_ROOT_DIR"
 
   # Copy additional files
   mkdir -p -m 0755 "$pkgdir/etc/bash-completion.d"
@@ -100,5 +102,8 @@ package() {
   mkdir -p -m 0755 "$pkgdir/etc/init.d"
   cp -f "$srcdir/zato.initd" "$pkgdir/etc/init.d/zato"
   chmod 0755 "$pkgdir/etc/init.d/zato"
+  cp -f "$srcdir/zato.bashrc" "$pkgdir$ZATO_ROOT_DIR/.bashrc"
+  chown zato:zato "$pkgdir$ZATO_ROOT_DIR/.bashrc"
+  ln -s .bashrc "$pkgdir$ZATO_ROOT_DIR/.shrc"
 }
 
