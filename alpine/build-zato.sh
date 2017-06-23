@@ -48,6 +48,8 @@ ALPINE_FLAVOUR=v3.6
 # software that is NOT installed by a distribution's packaging system,
 # and abuild will refuse to create a package in /opt.
 # /pkg is Alpine's choice for software that installs into its own directory.
+# For compatibility, an /opt/zato -> /pkg/zato symlink will be created
+# by the pre-install script.
 
 ZATO_ROOT_DIR=/pkg/zato
 ZATO_TARGET_DIR="$ZATO_ROOT_DIR/$COMPLETE_VERSION"

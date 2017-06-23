@@ -16,7 +16,7 @@ makedepends="file findutils git libev-dev libevent-dev libffi-dev \
 libxml2-dev libxslt-dev linux-headers musl-dev openldap-dev postgresql-dev \
 python2-dev yaml-dev redis"
 subpackages=
-source="zato-$pkgver.tar bash-completion zato.initd zato.bashrc"
+source="zato-$pkgver.tar bash-completion zato.initd zato.bashrc zato.profile"
 install="zato.post-deinstall zato.post-install zato.post-upgrade zato.pre-deinstall zato.pre-install zato.pre-upgrade"
 pkgusers=zato
 pkggroups=zato
@@ -103,6 +103,7 @@ package() {
   cp -f "$srcdir/zato.initd" "$pkgdir/etc/init.d/zato"
   chmod 0755 "$pkgdir/etc/init.d/zato"
   cp -f "$srcdir/zato.bashrc" "$pkgdir$ZATO_ROOT_DIR/.bashrc"
+  cp -f "$srcdir/zato.profile" "$pkgdir$ZATO_ROOT_DIR/.profile"
   chown zato:zato "$pkgdir$ZATO_ROOT_DIR/.bashrc"
   ln -s .bashrc "$pkgdir$ZATO_ROOT_DIR/.shrc"
 }
