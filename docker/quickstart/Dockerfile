@@ -28,7 +28,7 @@ RUN mkdir -p /var/log/supervisor
 # Setup sshd
 RUN mkdir /var/run/sshd/
 
-# Create work environment for Zato 2.0.7
+# Create work environment for Zato 2.0.x
 
 # Set a password for zato user
 WORKDIR /opt/zato/
