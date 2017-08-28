@@ -1,7 +1,7 @@
 # Zato
 
 FROM ubuntu:14.04
-MAINTAINER Rafał Krysiak <rafal@zato.io>
+MAINTAINER Dariusz Suchojad <dsuch@zato.io>
 
 # Install helper programs used during Zato installation
 RUN apt-get update && apt-get install -y \

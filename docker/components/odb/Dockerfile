@@ -1,7 +1,7 @@
 # Zato ODB & Cluster
 
 FROM ubuntu:14.04
-MAINTAINER Andrzej Wróbel <andy@zato.io>
+MAINTAINER Dariusz Suchojad <dsuch@zato.io>
 
 RUN ln -s -f /bin/true /usr/bin/chfn
 

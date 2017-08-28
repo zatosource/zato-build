@@ -1,7 +1,7 @@
 # Zato server
 
 FROM ubuntu:14.04
-MAINTAINER Rafał Krysiak <rafal@zato.io>
+MAINTAINER Dariusz Suchojad <dsuch@zato.io>
 
 RUN ln -s -f /bin/true /usr/bin/chfn
 
