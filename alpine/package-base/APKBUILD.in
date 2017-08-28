@@ -1,0 +1,110 @@
+# Maintainer: Darius Suchojad <dsuch@zato.io>
+# Contributor: Laurent Bercot <ska-devel@skarnet.org>
+
+pkgname=zato
+pkgver=@@COMPLETE_VERSION@@
+pkgrel=0
+pkgdesc="An open source ESB and application server, in Python"
+url="https://zato.io/"
+arch="all"
+license="LGPL"
+options=
+depends="bash-completion gcc g++ gfortran haproxy libbz2 \
+libgfortran libsasl libuuid \
+swig py2-pip py-numpy py-numpy-f2py py2-numpy py2-numpy-f2py py-scipy"
+makedepends="file findutils git libev-dev libevent-dev libffi-dev \
+libxml2-dev libxslt-dev linux-headers musl-dev openldap-dev postgresql-dev \
+python2-dev yaml-dev redis"
+subpackages=
+source="zato-$pkgver.tar bash-completion zato.initd zato.bashrc zato.profile"
+install="zato.post-deinstall zato.post-install zato.post-upgrade zato.pre-deinstall zato.pre-install zato.pre-upgrade"
+pkgusers=zato
+pkggroups=zato
+ZATO_ROOT_DIR=@@ZATO_ROOT_DIR@@
+ZATO_TARGET_DIR=@@ZATO_TARGET_DIR@@
+REPODEST="$srcdir/../.."
+
+build() {
+  sudo rm -rf "$ZATO_TARGET_DIR"
+
+  # Zato builds in-place, so we move everything to ZATO_TARGET_DIR
+  sudo mkdir -p "$ZATO_ROOT_DIR"
+  sudo mv -f "$builddir" "$ZATO_TARGET_DIR"
+
+  # Distro-agnostic build prep
+  cd $ZATO_TARGET_DIR/code
+  cp ../LICENSE.txt .
+  cp ../licenses_3rd_party.txt . || true
+  mv -f `ls -a -1 | grep -vFx -e . -e ..` ..
+  cd ..
+  rmdir code
+
+  # Everything is in place in $ZATO_TARGET_DIR, we just call install.sh
+  RUNNING_FROM_ABUILD=1
+  CURDIR="$ZATO_TARGET_DIR"
+  export RUNNING_FROM_ABUILD CURDIR
+  ./install.sh
+
+  # And we move the result back
+  sudo mv -f "$ZATO_TARGET_DIR" "$builddir"
+}
+
+
+check() {
+  # Move everything
+  sudo mkdir -p "$ZATO_ROOT_DIR"
+  sudo mv -f "$builddir" "$ZATO_TARGET_DIR"
+  stopredis=true
+
+  # Start the redis server
+  if /etc/init.d/redis status >/dev/null 2>&1 ; then
+    stopredis=false
+  else
+    sudo /etc/init.d/redis start
+  fi
+
+  # Run the tests
+  dir=`pwd`
+  cd "$ZATO_TARGET_DIR"
+  set +e
+  ./run-tests.py unittests
+  exitcode=$?
+  set -e
+  cd "$dir"
+
+  # Stop the redis server
+  if $stopredis ; then
+    sudo /etc/init.d/redis stop
+  fi
+
+  # Move everything back
+  sudo mv -f "$ZATO_TARGET_DIR" "$builddir"
+
+  # Fail if the test suite did not pass
+  test $exitcode -eq 0
+}
+
+
+package() {
+  # Distro-agnostic build cleanup
+  find "$builddir" -name '*.pyc' -exec rm -f '{}' \;
+  find "$builddir" ! -perm /004 -exec chmod 644 '{}' \;
+  rm -rf "$builddir/hotfixman.sh" "$builddir/hotfixes" "$builddir/.git*"
+
+  # Move everything to $pkgdir/ for staging
+  mkdir -p -m 0755 -- "$pkgdir$ZATO_ROOT_DIR/backup"
+  mv -f "$builddir" "$pkgdir$ZATO_TARGET_DIR"
+  chown -R zato:zato "$pkgdir$ZATO_ROOT_DIR"
+
+  # Copy additional files
+  mkdir -p -m 0755 "$pkgdir/etc/bash-completion.d"
+  cp -f "$srcdir/bash-completion" "$pkgdir/etc/bash-completion.d/zato"
+  mkdir -p -m 0755 "$pkgdir/etc/init.d"
+  cp -f "$srcdir/zato.initd" "$pkgdir/etc/init.d/zato"
+  chmod 0755 "$pkgdir/etc/init.d/zato"
+  cp -f "$srcdir/zato.bashrc" "$pkgdir$ZATO_ROOT_DIR/.bashrc"
+  cp -f "$srcdir/zato.profile" "$pkgdir$ZATO_ROOT_DIR/.profile"
+  chown zato:zato "$pkgdir$ZATO_ROOT_DIR/.bashrc"
+  ln -s .bashrc "$pkgdir$ZATO_ROOT_DIR/.shrc"
+}
+

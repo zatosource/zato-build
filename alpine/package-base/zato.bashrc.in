@@ -1,0 +1,3 @@
+#!/bin/bash
+PATH="$PATH:@@ZATO_ROOT_DIR@@/current/bin"
+export PATH

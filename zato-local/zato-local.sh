@@ -17,7 +17,7 @@ function check_exit_code
 
 # Install Zato locally
 echo "Unpacking Zato..."
-tar -xzf zato-2.0.7.tar
+tar -xzf zato-$ZATO_VERSION.tar
 check_exit_code
 
 source $HOME/.bashrc
