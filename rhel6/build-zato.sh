@@ -123,7 +123,7 @@ function build_rpm {
 prepare
 cleanup
 download_python
+checkout_zato   # This must be before install_python because it runs git clone which requires an empty directory
 install_python
-checkout_zato
 install_zato
 build_rpm
