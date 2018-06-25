@@ -54,7 +54,7 @@ function checkout_zato {
     sudo mkdir -p $ZATO_TARGET_DIR
     sudo chown $USER $ZATO_TARGET_DIR
 
-    git clone https://github.com/zatosource/zato.git $ZATO_TARGET_DIR
+    git clone --depth 5 https://github.com/zatosource/zato.git $ZATO_TARGET_DIR
     cd $ZATO_TARGET_DIR
 
     for branch in `git branch -a | grep remotes | grep -v HEAD | grep -v master `; do

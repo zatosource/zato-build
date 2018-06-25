@@ -72,7 +72,7 @@ function checkout {
     sudo mkdir -p $ZATO_TARGET_DIR
     sudo chown $USER $ZATO_TARGET_DIR
 
-    git clone https://github.com/zatosource/zato.git $ZATO_TARGET_DIR
+    git clone --depth 5 https://github.com/zatosource/zato.git $ZATO_TARGET_DIR
     cd $ZATO_TARGET_DIR
 
     for branch in `git branch -a | grep remotes | grep -v HEAD | grep -v master `; do
@@ -85,22 +85,12 @@ function checkout {
 function install_zato {
 
     cd $ZATO_TARGET_DIR/code
-    cp ../LICENSE.txt .
-    cp ../licenses_3rd_party.txt .
-
-    cd $ZATO_TARGET_DIR
-    shopt -s dotglob
-    mv code/* .
-    shopt -u dotglob
-    rm -Rf code
-
     bash ./install.sh
 
     find $ZATO_TARGET_DIR/. -name *.pyc -exec rm -f {} \;
     find $ZATO_TARGET_DIR/. ! -perm /004 -exec chmod 644 {} \;
     rm -f ./code/hotfixman.sh
     rm -rf ./code/hotfixes
-    rm -rf ./code/.git
     cd $CURDIR
 
 }
