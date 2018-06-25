@@ -18,11 +18,11 @@ Provides: %{name} = %{version}-%{release}
 
 
 %description
-Zato - The next generation ESB and application server written in Python and released under 
+Zato - The next generation ESB and application server written in Python and released under
 a commercial-friendly LGPL license. Think:
 » Increased productivity
 » Painless rollouts with less downtime
-» Out of the box support for HTTP, JSON, SOAP, Redis, AMQP, JMS WebSphere MQ, ZeroMQ, FTP, SQL, 
+» Out of the box support for HTTP, JSON, SOAP, Redis, AMQP, JMS WebSphere MQ, ZeroMQ, FTP, SQL,
   hot-deployment, job scheduling, statistics, high-availability load balancing and more
 » Slick web admin GUI, CLI and API
 » Awesome documentation
@@ -106,13 +106,13 @@ chown -R zato:zato /opt/zato
 
 if ! grep -q /opt/zato/current /opt/zato/.bashrc; then
 echo "export PATH
-PATH="/opt/zato/current/code/bin:$PATH"">>/opt/zato/.bashrc
+PATH="/opt/zato/current/bin:$PATH"">>/opt/zato/.bashrc
 fi
 if [ -h "/opt/zato/current" ]; then
     rm -rf /opt/zato/current
-    ln -s /opt/zato/ZATO_VERSION /opt/zato/current
+    ln -s /opt/zato/ZATO_VERSION/code /opt/zato/current
 else
-    ln -s /opt/zato/ZATO_VERSION /opt/zato/current
+    ln -s /opt/zato/ZATO_VERSION/code /opt/zato/current
 fi
 
 if [ ! -d $HOME/nltk_data ]; then
