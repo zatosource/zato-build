@@ -87,7 +87,6 @@ function checkout_zato {
 }
 
 function install_zato {
-    cp $SOURCE_DIR/_install-fedora.sh $ZATO_TARGET_DIR/code
     cd $ZATO_TARGET_DIR/code
     bash ./install.sh
     find $ZATO_TARGET_DIR/. -name *.pyc -exec rm -f {} \;
