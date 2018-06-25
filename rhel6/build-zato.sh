@@ -35,7 +35,12 @@ ARCH=`uname -i`
 
 ZATO_ROOT_DIR=/opt/zato
 ZATO_TARGET_DIR=$ZATO_ROOT_DIR/$ZATO_VERSION
-PYTHON_TARGET_DIR=$ZATO_ROOT_DIR/python
+#PYTHON_TARGET_DIR=$ZATO_ROOT_DIR/python
+
+PYTHON_VERSION=2.7.15
+PYTHON_ARCH_EXTENSION=tgz
+PYTHON_SRC_DIR=$TMP_DIR/Python-$PYTHON_VERSION
+PYTHON_BUILD_DIR=$CURDIR/python-build
 
 echo Building RHEL RPM zato-$ZATO_VERSION-$PACKAGE_VERSION.$RHEL_VERSION.$ARCH
 
@@ -48,6 +53,23 @@ function cleanup {
     rm -rf $TMP_DIR
     rm -rf $ZATO_TARGET_DIR
     rm -rf $RPM_BUILD_DIR/BUILDROOT
+}
+
+function download_python {
+    mkdir -p $TMP_DIR
+    cd $TMP_DIR
+    wget -c https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.$PYTHON_ARCH_EXTENSION
+    tar -xvf ./Python-$PYTHON_VERSION.$PYTHON_ARCH_EXTENSION &> /dev/null
+}
+
+function install_python {
+    cd $TMP_DIR
+    $PYTHON_SRC_DIR/configure --prefix=$ZATO_TARGET_DIR/code
+    make -f $TMP_DIR/Makefile && make -f $TMP_DIR/Makefile altinstall
+
+    ln -s $ZATO_TARGET_DIR/code/bin/python2.7 $ZATO_TARGET_DIR/code/bin/python2
+    ln -s $ZATO_TARGET_DIR/code/bin/python2.7 $ZATO_TARGET_DIR/code/bin/python
+    strip -s $ZATO_TARGET_DIR/code/bin/python2.7
 }
 
 function checkout_zato {
@@ -92,14 +114,16 @@ function build_rpm {
     cp -r ../init_scripts/etc $RPM_BUILD_DIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION.$RHEL_VERSION.$ARCH/
     cp -r ../init_scripts/lib $RPM_BUILD_DIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION.$RHEL_VERSION.$ARCH/
 
-    cp -r $ZATO_TARGET_DIR $RPM_BUILD_DIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION.$RHEL_VERSION.$ARCH$ZATO_TARGET_DIR
-    cp -r $PYTHON_TARGET_DIR $RPM_BUILD_DIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION.$RHEL_VERSION.$ARCHpython
+    cp -r $ZATO_TARGET_DIR   $RPM_BUILD_DIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION.$RHEL_VERSION.$ARCH$ZATO_TARGET_DIR
+    cp -r $PYTHON_TARGET_DIR $RPM_BUILD_DIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION.$RHEL_VERSION.$ARCH/opt/zato/python
     cd $RPM_BUILD_DIR/SPECS
     rpmbuild -ba --target $ARCH zato.spec
 }
 
 prepare
 cleanup
+download_python
+install_python
 checkout_zato
 install_zato
 build_rpm
