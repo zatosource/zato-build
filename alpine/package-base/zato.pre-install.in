@@ -1,18 +1,11 @@
 #!/bin/sh -e
 
-addgroup -S zato 2>/dev/null || true
-adduser -S -D -h @@ZATO_ROOT_DIR@@ -G zato -s /bin/bash -g "Zato ESB" zato 2>/dev/null || true
+adduser zato -D -s /bin/bash -g "Zato platform" || true
+echo "export PATH=$PATH:/home/zato/current/bin" > /home/zato/.bashrc
+ln -s /home/zato/.bashrc /home/zato/.bash_profile
 
 # Compatibility with other distributions
-mkdir -p -m 0755 /opt
-ln -nsf @@ZATO_ROOT_DIR@@ /opt/zato
+ln -s @@ZATO_ROOT_DIR@@/current /home/zato/current
 
-ZATO_BACKUP_DIR=@@ZATO_ROOT_DIR@@/backup
-ZATO_DATE=`date +%Y%m%d_%H%M%S`
-ZATO_PATTERNS="@@ZATO_ROOT_DIR@@/[2-9].*"
-
-for directory in $ZATO_PATTERNS ; do
-  if [ -d "$directory" ] ; then
-    cp -a $directory "$ZATO_BACKUP_DIR/${directory##*/}_$ZATO_DATE"
-  fi
-done
+chown zato:zato /home/zato/.bashrc
+chown zato:zato /home/zato/.bash_profile
