@@ -41,16 +41,25 @@ if command -v lsb_release > /dev/null; then
         LIBBLAS3=libblas3gf
         LIBLAPACK3=liblapack3gf
         LIBUMFPACK_VERSION=5.4.0
+        LIBEVENT=2.0.5
     elif [[ "$release" == "xenial" ]]; then
         LIBATLAS3BASE=libatlas3-base
         LIBBLAS3=libblas3
         LIBLAPACK3=liblapack3
         LIBUMFPACK_VERSION=5.7.1
+        LIBEVENT=2.0.5
+    elif [[ "$release" == "bionic" ]]; then
+        LIBATLAS3BASE=libatlas3-base
+        LIBBLAS3=libblas3
+        LIBLAPACK3=liblapack3
+        LIBUMFPACK_VERSION=5
+        LIBEVENT=2.1.6
     else
         LIBATLAS3BASE=libatlas3gf-base
         LIBBLAS3=libblas3gf
         LIBLAPACK3=liblapack3gf
         LIBUMFPACK_VERSION=5.6.2
+        LIBEVENT=2.0.5
     fi
 
     # Add Debian-specific dependencies
@@ -121,6 +130,7 @@ function build_deb {
     sed -i "s/LIBBLAS3/$LIBBLAS3/g" $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/control
     sed -i "s/LIBLAPACK3/$LIBLAPACK3/g" $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/control
     sed -i "s/LIBUMFPACK_VERSION/$LIBUMFPACK_VERSION/g" $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/control
+    sed -i "s/LIBEVENT_VERSION/$LIBEVENT_VERSION/g" $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/control
     sed -i "s/RELEASE_NAME/$RELEASE_NAME/g" $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/control
     sed -i "s/ZATO_VERSION/$ZATO_VERSION/g" $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/postinst
     sed -i "s/ZATO_VERSION/$ZATO_VERSION/g" $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/postrm
