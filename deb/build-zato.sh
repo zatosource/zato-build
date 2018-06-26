@@ -54,6 +54,12 @@ if command -v lsb_release > /dev/null; then
         LIBLAPACK3=liblapack3
         LIBUMFPACK_VERSION=5
         LIBEVENT_VERSION=2.1-6
+    elif [[ "$release" == "stretch" ]]; then
+        LIBATLAS3BASE=libatlas3-base
+        LIBBLAS3=libblas3
+        LIBLAPACK3=liblapack3
+        LIBUMFPACK_VERSION=5
+        LIBEVENT_VERSION=2.0-5
     else
         LIBATLAS3BASE=libatlas3gf-base
         LIBBLAS3=libblas3gf
