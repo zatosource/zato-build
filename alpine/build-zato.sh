@@ -103,7 +103,7 @@ checkout_and_make_archive() {
 # local file. The APKBUILD uses that file as its main source.
 
   rm -rf "zato-$COMPLETE_VERSION"
-  git clone https://github.com/zatosource/zato.git "zato-$COMPLETE_VERSION"
+  git clone --depth 1 --no-single-branch https://github.com/zatosource/zato.git "zato-$COMPLETE_VERSION"
   cd "zato-$COMPLETE_VERSION"
   for branch in `git branch -a | grep -F remotes/ | grep -vF -e HEAD -e master -e main` ; do
     git branch --track "${branch#remotes/origin/}" "$branch"
