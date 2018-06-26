@@ -41,25 +41,25 @@ if command -v lsb_release > /dev/null; then
         LIBBLAS3=libblas3gf
         LIBLAPACK3=liblapack3gf
         LIBUMFPACK_VERSION=5.4.0
-        LIBEVENT=2.0.5
+        LIBEVENT_VERSION=2.0.5
     elif [[ "$release" == "xenial" ]]; then
         LIBATLAS3BASE=libatlas3-base
         LIBBLAS3=libblas3
         LIBLAPACK3=liblapack3
         LIBUMFPACK_VERSION=5.7.1
-        LIBEVENT=2.0.5
+        LIBEVENT_VERSION=2.0.5
     elif [[ "$release" == "bionic" ]]; then
         LIBATLAS3BASE=libatlas3-base
         LIBBLAS3=libblas3
         LIBLAPACK3=liblapack3
         LIBUMFPACK_VERSION=5
-        LIBEVENT=2.1.6
+        LIBEVENT_VERSION=2.1.6
     else
         LIBATLAS3BASE=libatlas3gf-base
         LIBBLAS3=libblas3gf
         LIBLAPACK3=liblapack3gf
         LIBUMFPACK_VERSION=5.6.2
-        LIBEVENT=2.0.5
+        LIBEVENT_VERSION=2.0.5
     fi
 
     # Add Debian-specific dependencies
