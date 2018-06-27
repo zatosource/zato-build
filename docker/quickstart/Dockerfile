@@ -56,7 +56,7 @@ RUN touch /opt/zato/web_admin_password
 RUN uuidgen > /opt/zato/web_admin_password
 RUN echo 'password'=$(cat /opt/zato/web_admin_password) >> /opt/zato/update_password.config
 
-ENV ZATO_BIN /opt/zato/*.*/bin/zato
+ENV ZATO_BIN /opt/zato/current/bin/zato
 
 RUN mkdir -p /opt/zato/env/qs-1
 RUN rm -rf /opt/zato/env/qs-1 && mkdir -p /opt/zato/env/qs-1
