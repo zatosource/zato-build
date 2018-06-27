@@ -1,6 +1,6 @@
 # Zato
 
-FROM ubuntu:14.04
+FROM ubuntu:16.04
 MAINTAINER Dariusz Suchojad <dsuch@zato.io>
 
 # Install helper programs used during Zato installation
@@ -19,7 +19,7 @@ RUN curl -s https://zato.io/repo/zato-0CBD7F72.pgp.asc | sudo apt-key add -
 
 # Add Zato repo to your apt
 # update sources and install Zato
-RUN apt-add-repository https://zato.io/repo/stable/2.0/ubuntu
+RUN apt-add-repository https://zato.io/repo/stable/3.0/ubuntu
 RUN apt-get update && apt-get install -y zato
 
 # Setup supervisor
@@ -27,8 +27,6 @@ RUN mkdir -p /var/log/supervisor
 
 # Setup sshd
 RUN mkdir /var/run/sshd/
-
-# Create work environment for Zato 2.0.x
 
 # Set a password for zato user
 WORKDIR /opt/zato/
