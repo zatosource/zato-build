@@ -6,12 +6,13 @@ MAINTAINER Dariusz Suchojad <dsuch@zato.io>
 # Install helper programs used during Zato installation
 RUN apt-get update && apt-get install -y \
     apt-transport-https \
-    python-software-properties \
-    software-properties-common \
-    libcurl4-openssl-dev \
     curl \
+    libcurl4-openssl-dev \
+    python-software-properties \
     redis-server \
+    software-properties-common \
     ssh \
+    sudo \
     supervisor
 
 # Add the package signing key
