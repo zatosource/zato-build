@@ -49,6 +49,7 @@ RUN chmod 755 /opt/zato/zato_start_load_balancer \
               /opt/zato/zato_start_server1 \
               /opt/zato/zato_start_server2 \
               /opt/zato/zato_start_web_admin
+              /opt/zato/zato_start_scheduler
 
 # Set a password for web admin and append it to a config file
 WORKDIR /opt/zato
