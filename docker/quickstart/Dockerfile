@@ -7,21 +7,29 @@ MAINTAINER Dariusz Suchojad <dsuch@zato.io>
 RUN apt-get update && apt-get install -y \
     apt-transport-https \
     curl \
+    git \
+    htop \
     libcurl4-openssl-dev \
+    mc \
     python-software-properties \
     redis-server \
     software-properties-common \
     ssh \
     sudo \
-    supervisor
+    supervisor \
+    vim
 
 # Add the package signing key
 RUN curl -s https://zato.io/repo/zato-0CBD7F72.pgp.asc | sudo apt-key add -
 
-# Add Zato repo to your apt
+# Add Zato repo and install the package
 # update sources and install Zato
 RUN apt-add-repository https://zato.io/repo/stable/3.0/ubuntu
 RUN apt-get update && apt-get install -y zato
+
+# Install latest updates
+WORKDIR /opt/zato/current
+RUN git pull
 
 # Setup supervisor
 RUN mkdir -p /var/log/supervisor
