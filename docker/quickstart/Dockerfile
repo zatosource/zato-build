@@ -30,6 +30,8 @@ RUN apt-get update && apt-get install -y zato
 # Install latest updates
 WORKDIR /opt/zato/current
 RUN git pull
+RUN cd ./code
+RUN ./bin/pip install -e ./zato-cy
 
 # Setup supervisor
 RUN mkdir -p /var/log/supervisor
