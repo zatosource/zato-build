@@ -34,13 +34,13 @@ apk version --check --quiet "${COMPLETE_VERSION}" || { echo "build-zato.sh: vers
 # suffix.
 
 # PACKAGER_PRIVKEY="$HOME/.abuild/dsuch@zato.io-XXXXXXXX.rsa"
-PACKAGER_PRIVKEY="$HOME/.abuild/ska-devel@skarnet.org-56139463.rsa"
+PACKAGER_PRIVKEY=${PACKAGER_PRIVKEY:-$HOME/.abuild/ska-devel@skarnet.org-56139463.rsa}
 
 
 # Where we get Alpine from, and what version
 
-PREFERRED_REPOSITORY=http://dl-cdn.alpinelinux.org/alpine
-ALPINE_FLAVOUR=v3.8
+PREFERRED_REPOSITORY=${PREFERRED_REPOSITORY:-http://dl-cdn.alpinelinux.org/alpine}
+ALPINE_FLAVOUR=${ALPINE_FLAVOUR:-v3.8}
 
 
 # These directories must be absolute.

@@ -1,0 +1,32 @@
+language: python
+cache:
+  directories:
+    - /tmp/travis-cache
+
+# https://zato.io/docs/admin/guide/install/index.html#operating-system-considerations
+env:
+  - MODE=packaging IMAGE=centos:6
+  - MODE=packaging IMAGE=centos:7
+  - MODE=packaging IMAGE=ubuntu:12.04
+  - MODE=packaging IMAGE=ubuntu:14.04
+  - MODE=packaging IMAGE=ubuntu:16.04
+  - MODE=packaging IMAGE=debian:7
+  - MODE=packaging IMAGE=debian:8
+  - MODE=packaging IMAGE=debian:9
+  - MODE=packaging IMAGE=alpine:3.6
+  - MODE=packaging IMAGE=alpine:3.7
+  - MODE=packaging IMAGE=alpine:3.8
+
+sudo: required
+os:
+  - linux
+
+matrix:
+  allow_failures:
+    - osx
+
+notifications:
+  email: false
+
+script:
+  - source .travis/test_${MODE}.sh
