@@ -40,7 +40,7 @@ PACKAGER_PRIVKEY="$HOME/.abuild/ska-devel@skarnet.org-56139463.rsa"
 # Where we get Alpine from, and what version
 
 PREFERRED_REPOSITORY=http://dl-cdn.alpinelinux.org/alpine
-ALPINE_FLAVOUR=v3.6
+ALPINE_FLAVOUR=v3.8
 
 
 # These directories must be absolute.
@@ -77,15 +77,12 @@ prepare_abuild() {
   fi
 
 
-# We need to pull py-numpy and py-numpy-f2py from community, and py-scipy
-# from testing. Testing is only available from edge. It's simpler to
-# rewrite our /etc/apk/repositories entirely and let abuild handle this.
+# We build a maximum of dependencies via wheels, but there are still
+# a few system packages we depend on.
 
   sudo sh -c "cat > /etc/apk/repositories.new && cp -f /etc/apk/repositories /etc/apk/repositories.old && mv -f /etc/apk/repositories.new /etc/apk/repositories && apk update && apk add tar alpine-sdk" <<EOF
 $PREFERRED_REPOSITORY/$ALPINE_FLAVOUR/main
 $PREFERRED_REPOSITORY/$ALPINE_FLAVOUR/community
-$PREFERRED_REPOSITORY/edge/testing
-$PREFERRED_REPOSITORY/edge/community
 EOF
 }
 
