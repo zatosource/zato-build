@@ -12,7 +12,7 @@ Requires(postun): /usr/sbin/userdel
 
 AutoReqProv: no
 
-Requires: tix, suitesparse, openssl, postgresql-libs, zlib, libevent, m2crypto, numpy, scipy, git, bzr, haproxy, atlas, libgfortran, lapack, swig, uuid, libxslt
+Requires: tix, suitesparse, openssl, postgresql-libs, zlib, libevent, m2crypto, git, bzr, haproxy, atlas, libgfortran, lapack, swig, uuid, libxslt
 Provides: %{name} = %{version}-%{release}
 
 

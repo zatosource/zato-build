@@ -13,7 +13,7 @@ echo Argument 2 must be Zato version
 fi
 
 if [[ -z "$3" ]]
-then
+ 
 echo Argument 3 must be package version
     exit 3
 fi
@@ -45,7 +45,7 @@ PYTHON_BUILD_DIR=$CURDIR/python-build
 echo Building RHEL RPM zato-$ZATO_VERSION-$PACKAGE_VERSION.$RHEL_VERSION.$ARCH
 
 function prepare {
-  yum install -y rpm-build rpmdevtools wget
+  yum install -y rpm-build rpmdevtools wget sqlite-devel
   rpmdev-setuptree
 }
 
@@ -121,8 +121,8 @@ function build_rpm {
 
 prepare
 cleanup
-#download_python
+download_python
 checkout_zato   # This must be before install_python because it runs git clone which requires an empty directory
-#install_python
+install_python
 install_zato
 build_rpm
