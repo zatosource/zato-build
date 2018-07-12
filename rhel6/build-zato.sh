@@ -49,7 +49,7 @@ function prepare {
 
 function cleanup {
     rm -rf $TMP_DIR
-    rm -rf $ZATO_TARGET_DIR
+    sudo rm -rf $ZATO_TARGET_DIR
     rm -rf $RPM_BUILD_DIR/BUILDROOT
 }
 
