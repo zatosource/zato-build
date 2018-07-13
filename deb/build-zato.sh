@@ -1,19 +1,16 @@
 #!/bin/bash
 
-if [[ -z "$1" ]]
-then
+if [ -z "$1" ] ; then
     echo Argument 1 must be branch name
     exit 1
 fi
 
-if [[ -z "$2" ]]
-then
+if [ -z "$2" ] ; then
     echo Argument 2 must be Zato version
     exit 2
 fi
 
-if [[ -z "$3" ]]
-then
+if [ -z "$3" ] ; then
     echo Argument 3 must be package version
     exit 3
 fi
@@ -100,7 +97,7 @@ function checkout_zato {
 function install_zato {
 
     cd $ZATO_TARGET_DIR/code
-    bash ./install.sh
+    ./install.sh
 
     find $ZATO_TARGET_DIR/. -name *.pyc -exec rm -f {} \;
     find $ZATO_TARGET_DIR/. ! -perm /004 -exec chmod 644 {} \;
@@ -152,4 +149,3 @@ cleanup
 checkout_zato
 install_zato
 build_deb
-
