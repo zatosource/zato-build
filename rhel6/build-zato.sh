@@ -13,7 +13,7 @@ echo Argument 2 must be Zato version
 fi
 
 if [[ -z "$3" ]]
- 
+then
 echo Argument 3 must be package version
     exit 3
 fi
