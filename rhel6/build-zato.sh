@@ -1,16 +1,19 @@
 #!/bin/bash
 
-if [ -z "$1" ] ; then
+if [[ -z "$1" ]]
+then
 echo Argument 1 must be branch name
     exit 1
 fi
 
-if [ -z "$2" ] ; then
+if [[ -z "$2" ]]
+then
 echo Argument 2 must be Zato version
     exit 2
 fi
 
-if [ -z "$3" ] ; then
+if [[ -z "$3" ]]
+then
 echo Argument 3 must be package version
     exit 3
 fi
@@ -24,9 +27,8 @@ while([ -h "${CURDIR}" ]) do CURDIR=`$RL "${CURDIR}"`; done
 N="/dev/null";pushd .>$N;cd `dirname ${CURDIR}`>$N;CURDIR=`pwd`;popd>$N
 
 SOURCE_DIR=$CURDIR/package-base
-TMP_DIR=$CURDIR/tmp
-HOME=${HOME:-$CURDIR}
-RPM_BUILD_DIR=$HOME/rpmbuild
+TMP_DIR=/opt/tmp
+RPM_BUILD_DIR=/root/rpmbuild
 
 RHEL_VERSION=el6
 ARCH=`uname -i`
@@ -43,13 +45,13 @@ PYTHON_BUILD_DIR=$CURDIR/python-build
 echo Building RHEL RPM zato-$ZATO_VERSION-$PACKAGE_VERSION.$RHEL_VERSION.$ARCH
 
 function prepare {
-  sudo yum install -y rpm-build rpmdevtools wget sqlite-devel
+  yum install -y rpm-build rpmdevtools wget sqlite-devel
   rpmdev-setuptree
 }
 
 function cleanup {
     rm -rf $TMP_DIR
-    sudo rm -rf $ZATO_TARGET_DIR
+    rm -rf $ZATO_TARGET_DIR
     rm -rf $RPM_BUILD_DIR/BUILDROOT
 }
 
