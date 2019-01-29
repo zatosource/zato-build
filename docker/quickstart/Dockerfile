@@ -25,17 +25,6 @@ RUN DEBIAN_FRONTEND=noninteractive \
 # Enable additional repository
 RUN add-apt-repository universe
 
-# Install and configure MySQL
-RUN DEBIAN_FRONTEND=noninteractive \
-    apt-get install -y \
-    mysql-server && \
-    service mysql stop && \
-    sed -e 's/^datadir\t.*$/datadir = \/data/' -i /etc/mysql/my.cnf && \
-    sed -e 's/^bind-address\t.*$/bind-address = 0.0.0.0/' -i /etc/mysql/my.cnf && \
-    cp /etc/mysql/my.cnf /usr/share/mysql/my-default.cnf && \
-    service mysql start && \
-    mysqladmin -u root password abcdef
-
 # Add the package signing key
 RUN curl -s https://zato.io/repo/zato-0CBD7F72.pgp.asc | sudo apt-key add -
 
