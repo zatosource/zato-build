@@ -1,6 +1,6 @@
 # Zato
 
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 MAINTAINER Dariusz Suchojad <dsuch@zato.io>
 
 # Install helper programs used during Zato installation
@@ -11,13 +11,19 @@ RUN apt-get update && apt-get install -y \
     htop \
     libcurl4-openssl-dev \
     mc \
-    python-software-properties \
     redis-server \
     software-properties-common \
     ssh \
     sudo \
     supervisor \
     vim
+
+RUN DEBIAN_FRONTEND=noninteractive \
+    apt-get install -y \
+    tzdata
+
+# Enable additional repository
+RUN add-apt-repository universe
 
 # Install and configure MySQL
 RUN DEBIAN_FRONTEND=noninteractive \
