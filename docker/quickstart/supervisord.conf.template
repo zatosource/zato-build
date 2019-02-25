@@ -5,14 +5,27 @@ loglevel = debug
 user = root
 directory = /opt/zato
 
+[inet_http_server]
+port = 127.0.0.1:9001
+
+[supervisorctl]
+serverurl = http://localhost:9001
+prompt = mysupervisor
+
+[rpcinterface:supervisor]
+supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
+
 [program:ssh]
 command = /usr/sbin/sshd -D
 user = root
 
+{{ if eq .Env.REDIS_HOSTNAME "localhost" }}
 [program:redis]
+process_name = redis
 command = redis-server
 user = zato
 autorestart = false
+{{ end }}
 
 [program:zato-load-balancer]
 command = /opt/zato/zato_start_load_balancer
