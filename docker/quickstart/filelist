@@ -1,5 +1,6 @@
 https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/Dockerfile
 https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/entrypoint.sh
+https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/quickstart-bootstrap.sh
 https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/supervisord.conf.template
 https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/update_password.config
 https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/zato_start_load_balancer

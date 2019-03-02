@@ -22,8 +22,8 @@ services:
     image: zato:3.0
     restart: on-failure
     environment:
-      - ZATO_USER_PASSWORD=mysecretpassword
-      - ZATO_WEBADMIN_PASSWORD=mysecretpassword
+      - ZATO_SSH_PASSWORD=mysecretpassword
+      - ZATO_WEB_ADMIN_PASSWORD=mysecretpassword
     ports:
       - 22
       - 6379:6379
@@ -57,8 +57,8 @@ services:
     image: zato:3.0
     restart: on-failure
     environment:
-      - ZATO_USER_PASSWORD=mysecretpassword
-      - ZATO_WEBADMIN_PASSWORD=mysecretpassword
+      - ZATO_SSH_PASSWORD=mysecretpassword
+      - ZATO_WEB_ADMIN_PASSWORD=mysecretpassword
       - REDIS_HOSTNAME=redis
       - ODB_TYPE=postgresql
       - ODB_HOSTNAME=postgres
@@ -82,7 +82,7 @@ services:
 
 The Zato image uses several environment variables which are easy to miss. While none of the variables are required, they may significantly aid you in using the image.
 
-### `ZATO_USER_PASSWORD`
+### `ZATO_SSH_PASSWORD`
 
 This environment variable is recommended for you to use the Zato image. This environment variable sets the password for user `zato` to access through ssh.
 
@@ -92,7 +92,7 @@ If not defined, the value is generated automatically at runtime. You can use thi
 $ docker exec zato:3.0 /bin/bash -c 'cat /opt/zato/zato_user_password'
 ```
 
-### `ZATO_WEBADMIN_PASSWORD`
+### `ZATO_WEB_ADMIN_PASSWORD`
 
 This environment variable is recommended for you to use the Zato image. This environment variable sets the password for the web admin’s technical account user to connect with.
 

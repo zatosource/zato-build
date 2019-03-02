@@ -35,17 +35,18 @@ RUN curl -s https://zato.io/repo/zato-0CBD7F72.pgp.asc | sudo apt-key add -
 # update sources and install Zato
 RUN apt-add-repository https://zato.io/repo/stable/3.0/ubuntu && apt-get update && apt-get install -y zato
 
-# Copy Docker basic structure
-COPY entrypoint.sh /entrypoint.sh
-COPY supervisord.conf.template /opt/zato/supervisord.conf.template
-RUN chmod 755  /entrypoint.sh
-
 # Install latest updates
 WORKDIR /opt/zato/current
 RUN git pull && ./update.sh &&  mkdir -p /var/log/supervisor /var/run/sshd/
 
 # Download Dockerize
 RUN curl -sfL https://github.com/powerman/dockerize/releases/download/${DOCKERIZE_VERSION}/dockerize-`uname -s`-`uname -m` | install /dev/stdin /usr/local/bin/dockerize
+
+# Copy Docker basic structure
+COPY entrypoint.sh /entrypoint.sh
+COPY quickstart-bootstrap.sh /opt/zato/quickstart-bootstrap.sh
+COPY supervisord.conf.template /opt/zato/supervisord.conf.template
+RUN chmod 755 /entrypoint.sh /opt/zato/quickstart-bootstrap.sh
 
 # Switch to zato user and create Zato environment
 USER zato
