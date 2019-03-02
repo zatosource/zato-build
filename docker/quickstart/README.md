@@ -110,7 +110,7 @@ If value is  `localhost`, a Redis service will be executed in the Zato's contain
 
 ### `ODB_TYPE`
 
-This environment variable sets the ODB type to use. Must be one of: `mysql`, `oracle`, `postgresql` or `sqlite`. Default value is `sqlite`.
+This environment variable sets the ODB type to use. Must be one of: `mysql`, `postgresql` or `sqlite`. Default value is `sqlite`.
 
 ### `ODB_HOSTNAME`
 
