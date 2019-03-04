@@ -33,7 +33,8 @@ fi
 if [[ -n "${REDIS_HOSTNAME}" ]]; then
   WAITS="${WAITS} -wait tcp://${REDIS_HOSTNAME}:6379 -timeout 10m "
 else
-  REDIS_HOSTNAME=localhost
+  export REDIS_HOSTNAME="localhost"
+  echo "REDIS_HOSTNAME=\"${REDIS_HOSTNAME}\"" >> /etc/environment
 fi
 
 if [[ -n "${ODB_HOSTNAME}" ]]; then
@@ -47,11 +48,11 @@ if [[ -n "${ODB_HOSTNAME}" ]]; then
     echo "ODB_TYPE=\"${ODB_TYPE}\"" >> /etc/environment
   fi
   WAITS="${WAITS} -wait tcp://${ODB_HOSTNAME}:${ODB_PORT} -timeout 10m "
+  echo "ODB_DATA=\"--odb_host '${ODB_HOSTNAME}' --odb_port '${ODB_PORT}' --odb_user '${ODB_USERNAME}' --odb_db_name '${ODB_NAME}' --odb_password '${ODB_PASSWORD}'\"" >> /etc/environment
 else
   ODB_TYPE="sqlite"
   echo "ODB_TYPE=\"${ODB_TYPE}\"" >> /etc/environment
 fi
-echo "ODB_DATA=\"--odb_host '${ODB_HOSTNAME}' --odb_port '${ODB_PORT}' --odb_user '${ODB_USERNAME}' --odb_db_name '${ODB_NAME}' --odb_password '${ODB_PASSWORD}'\"" >> /etc/environment
 
 /usr/local/bin/dockerize ${WAITS} -template /opt/zato/supervisord.conf.template:/opt/zato/supervisord.conf
 

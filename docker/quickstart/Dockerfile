@@ -46,19 +46,18 @@ RUN curl -sfL https://github.com/powerman/dockerize/releases/download/${DOCKERIZ
 COPY entrypoint.sh /entrypoint.sh
 COPY quickstart-bootstrap.sh /opt/zato/quickstart-bootstrap.sh
 COPY supervisord.conf.template /opt/zato/supervisord.conf.template
-RUN chmod 755 /entrypoint.sh /opt/zato/quickstart-bootstrap.sh
-
-# Switch to zato user and create Zato environment
-USER zato
-
-# Get additional config files and starter scripts
-WORKDIR /opt/zato
-RUN wget -P /opt/zato -i https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/filelist && \
-  chmod 755 /opt/zato/zato_start_load_balancer \
-              /opt/zato/zato_start_server1 \
-              /opt/zato/zato_start_server2 \
-              /opt/zato/zato_start_web_admin \
-              /opt/zato/zato_start_scheduler
+COPY zato_start_load_balancer /opt/zato/zato_start_load_balancer
+COPY zato_start_server1 /opt/zato/zato_start_server1
+COPY zato_start_server2 /opt/zato/zato_start_server2
+COPY zato_start_web_admin /opt/zato/zato_start_web_admin
+COPY zato_start_scheduler /opt/zato/zato_start_scheduler
+RUN chmod 755 /entrypoint.sh \
+    /opt/zato/quickstart-bootstrap.sh \
+    /opt/zato/zato_start_load_balancer \
+    /opt/zato/zato_start_server1 \
+    /opt/zato/zato_start_server2 \
+    /opt/zato/zato_start_web_admin \
+    /opt/zato/zato_start_scheduler
 
 USER root
 EXPOSE 22 6379 8183 17010 17011 11223
