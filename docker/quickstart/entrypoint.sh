@@ -57,12 +57,16 @@ else
   [[ -z "${ODB_PASSWORD}" ]] && ODB_PASSWORD=""$(uuidgen)""
   export PGPASSWORD="${ODB_PASSWORD}"
   echo "ODB_TYPE=\"${ODB_TYPE}\"" >> /etc/environment
-  echo "ODB_DATA=\"--odb_host '${ODB_HOSTNAME:-localhost}' --odb_port '${ODB_PORT:-5432}' --odb_user '${ODB_USERNAME:-postgres}' --odb_db_name '${ODB_NAME:-zato}' --odb_password '${ODB_PASSWORD}'\"" >> /etc/environment
+  echo "ODB_DATA=\"--odb_host '${ODB_HOSTNAME:-localhost}' --odb_port ${ODB_PORT:-5432} --odb_user '${ODB_USERNAME:-postgres}' --odb_db_name '${ODB_NAME:-zato}' --odb_password '${ODB_PASSWORD}'\"" >> /etc/environment
 
   su postgres -c "$PGBINPATH/initdb --username=\"${ODB_USERNAME:-postgres}\" --pwfile=<(echo \"$ODB_PASSWORD\") -D \"$PGDATA\""
-  chown -R postgres:postgres "$PGDATA"
+  su postgres -c "PGUSER=\"${PGUSER:-$POSTGRES_USER}\" $PGBINPATH/pg_ctl -D "$PGDATA" -o \"-c listen_addresses=''\"  -w start"
   psql=( psql -v ON_ERROR_STOP=1 --username "${ODB_USERNAME:-postgres}" --no-password )
+  "${psql[@]}" --dbname postgres --set db="${ODB_NAME:-zato}" <<-'EOSQL'
+				CREATE DATABASE :"db" ;
+			EOSQL
   psql+=( --dbname "$POSTGRES_DB" )
+  su postgres -c "PGUSER=\"${PGUSER:-$POSTGRES_USER}\" $PGBINPATH/pg_ctl -D "$PGDATA" -m fast -w stop"
 
 	unset PGPASSWORD
 fi
@@ -79,6 +83,8 @@ if [[ ! -d /opt/zato/env/qs-1 ]];then
   mkdir -p /opt/zato/env/qs-1
   chown zato. /opt/zato/env/qs-1
 fi
+
+echo "Running quickstart-bootstrap"
 
 sudo -H -u zato /opt/zato/quickstart-bootstrap.sh
 
