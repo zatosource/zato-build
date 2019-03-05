@@ -57,9 +57,17 @@ else
   export PGPASSWORD="${ODB_PASSWORD}"
   echo "ODB_TYPE=\"${ODB_TYPE}\"" >> /etc/environment
   echo "ODB_DATA=\"--odb_host '${ODB_HOSTNAME}' --odb_port '${ODB_PORT}' --odb_user '${ODB_USERNAME}' --odb_db_name '${ODB_NAME}' --odb_password '${ODB_PASSWORD}'\"" >> /etc/environment
-  sudo su - postgres <<EOF
-$PGBINPATH/initdb --username="$ODB_USERNAME" --pwfile=<(echo "$ODB_PASSWORD") -D $PGDATA
+  cat > /opt/zato/quickstart-bootstrap.sh <<EOF
+#!/bin/bash
+source /etc/environment
+
+cat /etc/environment
+
+set -x # enable show commands
+$PGBINPATH/initdb --username="$ODB_USERNAME" --pwfile=<(echo "$ODB_PASSWORD") -D "$PGDATA"
+set +x # disable show commands
 EOF
+  chmod +x /opt/zato/quickstart-bootstrap.sh && sudo -Hu postgres /opt/zato/quickstart-bootstrap.sh && rm -f /opt/zato/quickstart-bootstrap.sh
   chown -R postgres:postgres "$PGDATA"
   psql=( psql -v ON_ERROR_STOP=1 --username "$ODB_USERNAME" --no-password )
   psql+=( --dbname "$POSTGRES_DB" )
@@ -83,7 +91,6 @@ if [[ ! -d /opt/zato/env/qs-1 ]];then
   mkdir -p /opt/zato/env/qs-1
   chown zato. /opt/zato/env/qs-1
 fi
-
 
 sudo -H -u zato /opt/zato/quickstart-bootstrap.sh
 

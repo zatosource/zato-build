@@ -45,7 +45,7 @@ RUN curl -sfL https://github.com/powerman/dockerize/releases/download/${DOCKERIZ
 # postgresql
 RUN apt install -y postgresql postgresql-contrib postgresql-client
 USER postgres
-ENV PG_MAJOR=10
+ENV PG_MAJOR 10
 ENV PGBINPATH /usr/lib/postgresql/$PG_MAJOR/bin
 ENV PATH $PATH:$PGBINPATH
 ENV PGDATA /var/lib/postgresql/data

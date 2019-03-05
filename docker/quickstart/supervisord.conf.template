@@ -29,17 +29,10 @@ autorestart = false
 
 {{ if or (empty .Env.ODB_HOSTNAME) (eq .Env.ODB_HOSTNAME "localhost") }}
 [program:postgresql]
-command=postgres
-environment=PGDATA="{{ .Env.PGDATA }}"
+command=/usr/lib/postgresql/{{ .Env.PG_MAJOR }}/bin/pg_ctl -D /var/lib/postgresql/data -l logfile start
 user=postgres
-numprocs=1
-autostart=true
+environment=PGDATA="{{ .Env.PGDATA }}"
 autorestart=true
-redirect_stderr=true
-stdout_logfile=syslog
-stderr_logfile=syslog
-stdout_events_enabled=true
-stderr_events_enabled=true
 {{ end }}
 
 [program:zato-load-balancer]
