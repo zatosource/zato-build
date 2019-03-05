@@ -50,33 +50,21 @@ if [[ -n "${ODB_HOSTNAME}" ]]; then
   WAITS="${WAITS} -wait tcp://${ODB_HOSTNAME}:${ODB_PORT} -timeout 10m "
   echo "ODB_DATA=\"--odb_host '${ODB_HOSTNAME}' --odb_port '${ODB_PORT}' --odb_user '${ODB_USERNAME}' --odb_db_name '${ODB_NAME}' --odb_password '${ODB_PASSWORD}'\"" >> /etc/environment
 else
-  ODB_TYPE="postgresql"
-  ODB_HOSTNAME="localhost"
-  ODB_PORT="5432"
+  export ODB_TYPE="postgresql"
+  export ODB_PORT="5432"
+  export ODB_HOSTNAME="localhost"
   [[ -z "${ODB_USERNAME}" ]] && ODB_USERNAME="postgres"
+  [[ -z "${ODB_PASSWORD}" ]] && ODB_PASSWORD=""$(uuidgen)""
   export PGPASSWORD="${ODB_PASSWORD}"
   echo "ODB_TYPE=\"${ODB_TYPE}\"" >> /etc/environment
-  echo "ODB_DATA=\"--odb_host '${ODB_HOSTNAME}' --odb_port '${ODB_PORT}' --odb_user '${ODB_USERNAME}' --odb_db_name '${ODB_NAME}' --odb_password '${ODB_PASSWORD}'\"" >> /etc/environment
-  cat > /opt/zato/quickstart-bootstrap.sh <<EOF
-#!/bin/bash
-source /etc/environment
+  echo "ODB_DATA=\"--odb_host '${ODB_HOSTNAME:-localhost}' --odb_port '${ODB_PORT:-5432}' --odb_user '${ODB_USERNAME:-postgres}' --odb_db_name '${ODB_NAME:-zato}' --odb_password '${ODB_PASSWORD}'\"" >> /etc/environment
 
-cat /etc/environment
-
-set -x # enable show commands
-$PGBINPATH/initdb --username="$ODB_USERNAME" --pwfile=<(echo "$ODB_PASSWORD") -D "$PGDATA"
-set +x # disable show commands
-EOF
-  chmod +x /opt/zato/quickstart-bootstrap.sh && sudo -Hu postgres /opt/zato/quickstart-bootstrap.sh && rm -f /opt/zato/quickstart-bootstrap.sh
+  su postgres -c "$PGBINPATH/initdb --username=\"${ODB_USERNAME:-postgres}\" --pwfile=<(echo \"$ODB_PASSWORD\") -D \"$PGDATA\""
   chown -R postgres:postgres "$PGDATA"
-  psql=( psql -v ON_ERROR_STOP=1 --username "$ODB_USERNAME" --no-password )
+  psql=( psql -v ON_ERROR_STOP=1 --username "${ODB_USERNAME:-postgres}" --no-password )
   psql+=( --dbname "$POSTGRES_DB" )
 
-	PGUSER="${ODB_USERNAME}" \
-	pg_ctl -D "$PGDATA" -m fast -w stop
-
 	unset PGPASSWORD
-
 fi
 
 /usr/local/bin/dockerize ${WAITS} -template /opt/zato/supervisord.conf.template:/opt/zato/supervisord.conf

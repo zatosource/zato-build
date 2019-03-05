@@ -19,7 +19,7 @@ supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
 command = /usr/sbin/sshd -D
 user = root
 
-{{ if or (empty .Env.REDIS_HOSTNAME) (eq .Env.REDIS_HOSTNAME "localhost") }}
+{{ if or ( empty .Env.REDIS_HOSTNAME ) ( eq .Env.REDIS_HOSTNAME "localhost" ) }}
 [program:redis]
 process_name = redis
 command = redis-server
@@ -27,9 +27,9 @@ user = zato
 autorestart = false
 {{ end }}
 
-{{ if or (empty .Env.ODB_HOSTNAME) (eq .Env.ODB_HOSTNAME "localhost") }}
+{{ if or ( empty .Env.ODB_HOSTNAME ) ( eq .Env.ODB_HOSTNAME "localhost" ) }}
 [program:postgresql]
-command=/usr/lib/postgresql/{{ .Env.PG_MAJOR }}/bin/pg_ctl -D /var/lib/postgresql/data -l logfile start
+command=postgres
 user=postgres
 environment=PGDATA="{{ .Env.PGDATA }}"
 autorestart=true
