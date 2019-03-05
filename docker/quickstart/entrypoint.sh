@@ -50,8 +50,25 @@ if [[ -n "${ODB_HOSTNAME}" ]]; then
   WAITS="${WAITS} -wait tcp://${ODB_HOSTNAME}:${ODB_PORT} -timeout 10m "
   echo "ODB_DATA=\"--odb_host '${ODB_HOSTNAME}' --odb_port '${ODB_PORT}' --odb_user '${ODB_USERNAME}' --odb_db_name '${ODB_NAME}' --odb_password '${ODB_PASSWORD}'\"" >> /etc/environment
 else
-  ODB_TYPE="sqlite"
+  ODB_TYPE="postgresql"
+  ODB_HOSTNAME="localhost"
+  ODB_PORT="5432"
+  [[ -z "${ODB_USERNAME}" ]] && ODB_USERNAME="postgres"
+  export PGPASSWORD="${ODB_PASSWORD}"
   echo "ODB_TYPE=\"${ODB_TYPE}\"" >> /etc/environment
+  echo "ODB_DATA=\"--odb_host '${ODB_HOSTNAME}' --odb_port '${ODB_PORT}' --odb_user '${ODB_USERNAME}' --odb_db_name '${ODB_NAME}' --odb_password '${ODB_PASSWORD}'\"" >> /etc/environment
+  sudo su - postgres <<EOF
+$PGBINPATH/initdb --username="$ODB_USERNAME" --pwfile=<(echo "$ODB_PASSWORD") -D $PGDATA
+EOF
+  chown -R postgres:postgres "$PGDATA"
+  psql=( psql -v ON_ERROR_STOP=1 --username "$ODB_USERNAME" --no-password )
+  psql+=( --dbname "$POSTGRES_DB" )
+
+	PGUSER="${ODB_USERNAME}" \
+	pg_ctl -D "$PGDATA" -m fast -w stop
+
+	unset PGPASSWORD
+
 fi
 
 /usr/local/bin/dockerize ${WAITS} -template /opt/zato/supervisord.conf.template:/opt/zato/supervisord.conf
@@ -66,6 +83,7 @@ if [[ ! -d /opt/zato/env/qs-1 ]];then
   mkdir -p /opt/zato/env/qs-1
   chown zato. /opt/zato/env/qs-1
 fi
+
 
 sudo -H -u zato /opt/zato/quickstart-bootstrap.sh
 

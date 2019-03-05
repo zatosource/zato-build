@@ -27,6 +27,21 @@ user = zato
 autorestart = false
 {{ end }}
 
+{{ if or (empty .Env.ODB_HOSTNAME) (eq .Env.ODB_HOSTNAME "localhost") }}
+[program:postgresql]
+command=postgres
+environment=PGDATA="{{ .Env.PGDATA }}"
+user=postgres
+numprocs=1
+autostart=true
+autorestart=true
+redirect_stderr=true
+stdout_logfile=syslog
+stderr_logfile=syslog
+stdout_events_enabled=true
+stderr_events_enabled=true
+{{ end }}
+
 [program:zato-load-balancer]
 command = /opt/zato/zato_start_load_balancer
 user = zato
