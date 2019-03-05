@@ -55,20 +55,8 @@ else
   export ODB_HOSTNAME="localhost"
   [[ -z "${ODB_USERNAME}" ]] && ODB_USERNAME="postgres"
   [[ -z "${ODB_PASSWORD}" ]] && ODB_PASSWORD=""$(uuidgen)""
-  export PGPASSWORD="${ODB_PASSWORD}"
   echo "ODB_TYPE=\"${ODB_TYPE}\"" >> /etc/environment
-  echo "ODB_DATA=\"--odb_host '${ODB_HOSTNAME:-localhost}' --odb_port ${ODB_PORT:-5432} --odb_user '${ODB_USERNAME:-postgres}' --odb_db_name '${ODB_NAME:-zato}' --odb_password '${ODB_PASSWORD}'\"" >> /etc/environment
-
-  su postgres -c "$PGBINPATH/initdb --username=\"${ODB_USERNAME:-postgres}\" --pwfile=<(echo \"$ODB_PASSWORD\") -D \"$PGDATA\""
-  su postgres -c "PGUSER=\"${PGUSER:-$POSTGRES_USER}\" $PGBINPATH/pg_ctl -D "$PGDATA" -o \"-c listen_addresses=''\"  -w start"
-  psql=( psql -v ON_ERROR_STOP=1 --username "${ODB_USERNAME:-postgres}" --no-password )
-  "${psql[@]}" --dbname postgres --set db="${ODB_NAME:-zato}" <<-'EOSQL'
-				CREATE DATABASE :"db" ;
-			EOSQL
-  psql+=( --dbname "$POSTGRES_DB" )
-  su postgres -c "PGUSER=\"${PGUSER:-$POSTGRES_USER}\" $PGBINPATH/pg_ctl -D "$PGDATA" -m fast -w stop"
-
-	unset PGPASSWORD
+  echo "ODB_DATA=\"--odb_host ${ODB_HOSTNAME:-localhost} --odb_port ${ODB_PORT:-5432} --odb_user ${ODB_USERNAME:-postgres} --odb_db_name ${ODB_NAME:-zato} --odb_password ${ODB_PASSWORD}\"" >> /etc/environment
 fi
 
 /usr/local/bin/dockerize ${WAITS} -template /opt/zato/supervisord.conf.template:/opt/zato/supervisord.conf
@@ -84,8 +72,25 @@ if [[ ! -d /opt/zato/env/qs-1 ]];then
   chown zato. /opt/zato/env/qs-1
 fi
 
+# quickstart-bootstrap
+if [[ "${ODB_TYPE}" == "postgresql" && "${ODB_HOSTNAME}" == "localhost" ]]; then
+  echo "Initializing Postgresql database"
+  export PGPASSWORD="${ODB_PASSWORD}"
+  su postgres -c "$PGBINPATH/initdb --username=\"${ODB_USERNAME:-postgres}\" --pwfile=<(echo \"$ODB_PASSWORD\") -D \"$PGDATA\";PGUSER=\"${PGUSER:-$POSTGRES_USER}\" $PGBINPATH/pg_ctl -D \"$PGDATA\" -o \"-c listen_addresses=''\"  -w start"
+  psql=( psql -v ON_ERROR_STOP=1 --username "${ODB_USERNAME:-postgres}" --no-password )
+  "${psql[@]}" --dbname postgres --set db="${ODB_NAME:-zato}" <<-'EOSQL'
+CREATE DATABASE :"db" ;
+EOSQL
+  psql+=( --dbname "$POSTGRES_DB" )
+  WAITS="${WAITS} -wait tcp://localhost}:5432 -timeout 10m "
+fi
 echo "Running quickstart-bootstrap"
-
+/usr/local/bin/dockerize ${WAITS}
 sudo -H -u zato /opt/zato/quickstart-bootstrap.sh
+if [[ "${ODB_TYPE}" == "postgresql" && "${ODB_HOSTNAME}" == "localhost" ]]; then
+  echo "Stopping initialization of Postgresql"
+  su postgres -c "PGUSER=\"${PGUSER:-$POSTGRES_USER}\" $PGBINPATH/pg_ctl -D "$PGDATA" -m fast -w stop"
+	unset PGPASSWORD
+fi
 
 exec /usr/bin/supervisord -c /opt/zato/supervisord.conf
