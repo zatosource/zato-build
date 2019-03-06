@@ -48,7 +48,7 @@ if [[ -n "${ODB_HOSTNAME}" ]]; then
     echo "ODB_TYPE=\"${ODB_TYPE}\"" >> /etc/environment
   fi
   WAITS="${WAITS} -wait tcp://${ODB_HOSTNAME}:${ODB_PORT} -timeout 10m "
-  echo "ODB_DATA=\"--odb_host '${ODB_HOSTNAME}' --odb_port '${ODB_PORT}' --odb_user '${ODB_USERNAME}' --odb_db_name '${ODB_NAME}' --odb_password '${ODB_PASSWORD}'\"" >> /etc/environment
+  echo "ODB_DATA=\"--odb_host ${ODB_HOSTNAME} --odb_port ${ODB_PORT} --odb_user ${ODB_USERNAME} --odb_db_name ${ODB_NAME} --odb_password ${ODB_PASSWORD}\"" >> /etc/environment
 else
   export ODB_TYPE="postgresql"
   export ODB_PORT="5432"
