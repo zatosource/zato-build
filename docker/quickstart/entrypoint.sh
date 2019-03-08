@@ -18,17 +18,18 @@ fi
 if [[ -z "${ZATO_WEB_ADMIN_PASSWORD}" ]]; then
   if [[ -f /opt/zato/zato_user_password ]];then
     echo "Reading the password for web admin from the file"
-    ZATO_WEBADMIN_PASSWORD="$(cat /opt/zato/web_admin_password)"
+    ZATO_WEB_ADMIN_PASSWORD="$(cat /opt/zato/web_admin_password)"
   else
     echo "Generating a password for web admin"
-    ZATO_WEBADMIN_PASSWORD="$(uuidgen)"
-    su zato <<EOF
-# Set a password for web admin and append it to a config file
-echo "${ZATO_WEBADMIN_PASSWORD}" > /opt/zato/web_admin_password
-echo "password=${ZATO_WEBADMIN_PASSWORD}" >> /opt/zato/update_password.config
-EOF
+    ZATO_WEB_ADMIN_PASSWORD="$(uuidgen)"
   fi
 fi
+
+su zato <<EOF
+# Set a password for web admin and append it to a config file
+echo "${ZATO_WEB_ADMIN_PASSWORD}" > /opt/zato/web_admin_password
+echo "password=${ZATO_WEB_ADMIN_PASSWORD}" >> /opt/zato/update_password.config
+EOF
 
 if [[ -n "${REDIS_HOSTNAME}" ]]; then
   WAITS="${WAITS} -wait tcp://${REDIS_HOSTNAME}:6379 -timeout 10m "
