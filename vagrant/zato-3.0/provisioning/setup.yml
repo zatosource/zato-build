@@ -5,6 +5,39 @@
 # runs, the docker commands would fail if run by the vagrant user, since the
 # persisted connection state isn't aware of the addition of the 'docker' group.
 
-- name: Install Pip.
-  apt: name=python-pip state=installed
+- name: General | Package Installation.
+  apt: name={{ item }} state=installed
+  become: yes
+  with items:
+    - python-pip
+    - git
+    - apt-transport-https
+    - curl
+    - htop
+    - libcurl4-openssl-dev
+    - mc
+    - redis-server
+    - software-properties-common
+    - ssh
+    - sudo
+    - supervisor
+    - vim
+    - tzdata
+    - postgresql
+    - postgresql-contrib
+    - postgresql-client
+
+- name: General | Add repository universe.
+  command: add-apt-repository universe
+
+- name: Zato | Add Zato key.
+  command: curl -s https://zato.io/repo/zato-0CBD7F72.pgp.asc | apt-key add -
+
+- name: Zato | Add Zato repository.
+  apt_repository:
+    repo: deb https://zato.io/repo/stable/3.0/ubuntu hardy universe
+    state: present
+
+- name: Zato | Zato package installation.
+  apt: name=zato state=installed
   become: yes
