@@ -41,3 +41,23 @@
 - name: Zato | Zato package installation.
   apt: name=zato state=installed
   become: yes
+
+- name: Zato | Zato ODB database creation.
+  postgresql_db:
+    name: zato
+
+- name: Zato | Create database user zato and grant access to database.
+  postgresql_user:
+    db: zato
+    name: zato
+    password: zato
+
+- name: Start service redis, if not started
+  service:
+    name: redis-server
+    state: started
+
+- name: Start service postgresql, if not started
+  service:
+    name: httpd
+    state: started
