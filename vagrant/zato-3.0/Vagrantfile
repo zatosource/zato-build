@@ -1,0 +1,31 @@
+# encoding: utf-8
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "geerlingguy/ubuntu1804"
+  config.vm.network :private_network, ip: "192.168.33.39"
+  config.ssh.forward_agent = true
+
+  config.vm.hostname = "zato.localhost"
+  config.vm.network :forwarded_port, guest: 9098, host: 22
+  config.vm.network :forwarded_port, guest: 6379, host: 6379
+  config.vm.network :forwarded_port, guest: 8183, host: 8183
+  config.vm.network :forwarded_port, guest: 17010, host: 17010
+  config.vm.network :forwarded_port, guest: 17011, host: 17011
+  config.vm.network :forwarded_port, guest: 11223, host: 11223
+
+  config.vm.provider :virtualbox do |v|
+    v.name = "zato.localhost"
+    v.memory = 1024
+    v.cpus = 2
+    v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+    v.customize ["modifyvm", :id, "--ioapic", "on"]
+  end
+
+  # Enable provisioning with Ansible.
+  config.vm.provision "ansible" do |ansible|
+    ansible.compatibility_mode = "2.0"
+    ansible.playbook = "provisioning/main.yml"
+  end
+end
