@@ -8,7 +8,7 @@
 - name: General | Package Installation.
   apt: name={{ item }} state=installed
   become: yes
-  with items:
+  loop:
     - python-pip
     - git
     - apt-transport-https
