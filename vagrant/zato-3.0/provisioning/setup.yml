@@ -26,6 +26,7 @@
     - postgresql
     - postgresql-contrib
     - postgresql-client
+    - python-psycopg2
 
 - name: General | Add repository universe.
   command: add-apt-repository universe
@@ -37,11 +38,12 @@
 
 - name: Zato | Add Zato repository.
   apt_repository:
-    repo: deb https://zato.io/repo/stable/3.0/ubuntu hardy universe
+    repo: deb https://zato.io/repo/stable/3.0/ubuntu bionic main
     state: present
+    filename: zato
 
 - name: Zato | Zato package installation.
-  apt: name=zato state=installed
+  apt: name=zato state=present
   become: yes
 
 - name: Zato | Zato ODB database creation.
