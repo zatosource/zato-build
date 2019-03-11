@@ -6,7 +6,7 @@
 # persisted connection state isn't aware of the addition of the 'docker' group.
 
 - name: General | Package Installation.
-  apt: name={{ item }} state=installed
+  apt: name={{ item }} state=present
   become: yes
   loop:
     - python-pip
@@ -30,8 +30,10 @@
 - name: General | Add repository universe.
   command: add-apt-repository universe
 
-- name: Zato | Add Zato key.
-  command: curl -s https://zato.io/repo/zato-0CBD7F72.pgp.asc | apt-key add -
+- name: Zato | Add Zato's Apt signing key
+  apt_key:
+    url: https://zato.io/repo/zato-0CBD7F72.pgp.asc
+    state: present
 
 - name: Zato | Add Zato repository.
   apt_repository:
