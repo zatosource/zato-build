@@ -31,6 +31,28 @@
 - name: General | Add repository universe.
   command: add-apt-repository universe
 
+# - name: General | Initiate database
+#   command: initdb
+#            creates=/var/lib/pgsql/data/postgresql.conf
+
+- name: General | Start PostgreSQL and enable at boot
+  service: name=postgresql
+          enabled=yes
+          state=started
+
+- name: General | Ensure PostgreSQL is listening on all localhost
+  lineinfile: dest=/var/lib/pgsql/data/postgresql.conf
+     regexp='^#?listen_addresses\s*='
+     line="listen_addresses = '127.0.0.1'"
+     state=present
+  notify: restart postgresql
+
+- lineinfile: dest=/var/lib/pgsql/data/pg_hba.conf
+           regexp='host\s+all\s+all\s+127.0.0.1/32\s+md5'
+           line='host all all 127.0.0.1/32 md5'
+           insertbefore=BOF
+  notify: restart postgresql
+
 - name: Zato | Add Zato's Apt signing key
   apt_key:
     url: https://zato.io/repo/zato-0CBD7F72.pgp.asc

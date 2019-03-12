@@ -8,3 +8,7 @@
 
   tasks:
     - import_tasks: setup.yml
+
+  handlers:
+    - name: restart postgresql
+      service: name=postgresql state=restarted
