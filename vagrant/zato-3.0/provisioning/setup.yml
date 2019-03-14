@@ -73,37 +73,42 @@
     name: postgresql
     state: started
 
+- name: Zato | Copying Zato's quickstart script
+  copy:
+    src: provisioning/quickstart-bootstrap.sh
+    dest: /opt/zato/quickstart-bootstrap.sh
+    mode: 0755
+
 - name: Zato | Zato's global configuration
   shell: |
-    echo "{{zato_ssh_password}}" > /opt/zato/zato_user_password && \
-    chown zato:zato /opt/zato/zato_user_password && \
-    echo "zato:$(cat /opt/zato/zato_user_password)" > /opt/zato/change_zato_password && \
-    chpasswd < /opt/zato/change_zato_password
+    cd /opt/zato/
+    for i in update_password.config zato_start_load_balancer zato_start_scheduler zato_start_server1 zato_start_server2 zato_start_web_admin;do
+      [[ -f $i ]] || wget https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/$i
+    done
+    chmod 755 \
+      /opt/zato/zato_start_load_balancer \
+      /opt/zato/zato_start_server1 \
+      /opt/zato/zato_start_server2 \
+      /opt/zato/zato_start_web_admin \
+      /opt/zato/zato_start_scheduler || exit 1
 
-    cd /opt/zato/ && wget -i https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/filelist
-    
+    chown zato. /opt/zato/update_password.config || exit 1
+
     if [[ ! -d /opt/zato/env/qs-1 ]];then
-      mkdir -p /opt/zato/env/qs-1
-      chown zato. /opt/zato/env/qs-1
+      mkdir -p /opt/zato/env/qs-1 || exit 1
+      chown zato. /opt/zato/env/qs-1 || exit 1
     fi
 
+    su zato -c /opt/zato/quickstart-bootstrap.sh || exit 1
+
     exit 0
   args:
     executable: /bin/bash
 
-- name: Zato | Zato's quickstart
-  become: yes
-  become_user: zato
-  shell: |
-    cd /opt/zato/env/qs-1 || exit 1
 
-    set -x # enable show commands
-    {{zato_bin}} quickstart create --odb_user postgres --kvdb_password '' /opt/zato/env/qs-1/ postgresql localhost 6379
-    {{zato_bin}} from-config /opt/zato/update_password.config
-    sed -i 's/127.0.0.1:11223/0.0.0.0:11223/g' /opt/zato/env/qs-1/load-balancer/config/repo/zato.config
-    sed -i 's/gunicorn_workers=2/gunicorn_workers=1/g' /opt/zato/env/qs-1/server1/config/repo/server.conf
-    sed -i 's/gunicorn_workers=2/gunicorn_workers=1/g' /opt/zato/env/qs-1/server2/config/repo/server.conf
-    set +x # disable show commands
-    exit 0
-  args:
-    executable: /bin/bash
+- name: Zato | Copying Zato's supervisord config
+  copy:
+    src: provisioning/supervisord.conf
+    dest: /etc/supervisor/conf.d/zato.conf
+    mode: 0644
+  notify: restart supervisor

@@ -12,6 +12,8 @@
   handlers:
     - name: restart postgresql
       service: name=postgresql state=restarted
+    - name: restart supervisor
+      service: name=supervisor state=restarted
 
   vars:
     zato_bin: /opt/zato/current/bin/zato
