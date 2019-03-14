@@ -1,7 +1,7 @@
 # Zato
 
 FROM ubuntu:18.04
-MAINTAINER Dariusz Suchojad <dsuch@zato.io>
+LABEL maintainer="Anielkis Herrera <aherrera@zato.io>,Dariusz Suchojad <dsuch@zato.io>"
 
 ENV ZATO_BIN /opt/zato/current/bin/zato
 
@@ -45,12 +45,12 @@ RUN curl -sfL https://github.com/powerman/dockerize/releases/download/${DOCKERIZ
 # grab gosu for easy step-down from root
 ENV GOSU_VERSION 1.11
 RUN set -x \
-	&& apt-get update && apt-get install -y --no-install-recommends ca-certificates wget && rm -rf /var/lib/apt/lists/* \
-	&& wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture)" \
-	&& chmod +x /usr/local/bin/gosu \
-	&& gosu nobody true
+    && apt-get update && apt-get install -y --no-install-recommends ca-certificates wget && rm -rf /var/lib/apt/lists/* \
+    && wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture)" \
+    && chmod +x /usr/local/bin/gosu \
+    && gosu nobody true
 
-# postgresql
+# PostgreSQL
 ENV PG_MAJOR 10
 ENV PGBINPATH /usr/lib/postgresql/$PG_MAJOR/bin
 ENV PATH $PATH:$PGBINPATH

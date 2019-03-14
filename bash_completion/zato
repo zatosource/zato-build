@@ -3,258 +3,1071 @@
 #have zato &&
 _zato()
 {
-   local cur prev opts
-    COMPREPLY=()
+    local cur
     cur="${COMP_WORDS[COMP_CWORD]}"
-    prev="${COMP_WORDS[COMP_CWORD-1]}"
 
-    first="${COMP_WORDS[1]}"
-    second="${COMP_WORDS[2]}"
+    if [ $COMP_CWORD -eq 1 ]; then
+        COMPREPLY=( $( compgen -W '-h --help --version apispec ca check-config component-version create crypto decrypt delete encrypt enmasse hash info from-config migrate quickstart service sso start stop update' -- $cur) )
+    else
+        case ${COMP_WORDS[1]} in
+            apispec)
+            _zato_apispec
+        ;;
+            ca)
+            _zato_ca
+        ;;
+            check-config)
+            _zato_check-config
+        ;;
+            component-version)
+            _zato_component-version
+        ;;
+            create)
+            _zato_create
+        ;;
+            crypto)
+            _zato_crypto
+        ;;
+            decrypt)
+            _zato_decrypt
+        ;;
+            delete)
+            _zato_delete
+        ;;
+            encrypt)
+            _zato_encrypt
+        ;;
+            enmasse)
+            _zato_enmasse
+        ;;
+            hash)
+            _zato_hash
+        ;;
+            info)
+            _zato_info
+        ;;
+            from-config)
+            _zato_from-config
+        ;;
+            migrate)
+            _zato_migrate
+        ;;
+            quickstart)
+            _zato_quickstart
+        ;;
+            service)
+            _zato_service
+        ;;
+            sso)
+            _zato_sso
+        ;;
+            start)
+            _zato_start
+        ;;
+            stop)
+            _zato_stop
+        ;;
+            update)
+            _zato_update
+        ;;
+        esac
 
-    opts_help="-h --help --store-log --verbose --store-config"
-    opts_help_short="-h --help"
-    opts_command="ca check-config component-version create decrypt delete encrypt enmasse info from-config quickstart service start stop update"
-    opts_ca="create"
-    opts_ca_create="ca lb_agent server web_admin"
-    opts_ca_create_ca="--organization --organizational-unit --locality --state-or-province --country --common-name"
-    opts_create="cluster load_balancer odb  server user  web_admin"
-    opts_invoke="--payload --headers --channel --data-format --transport --url-path --max-cid-repr --max-response-repr --async --expiration"
-    opts_enmasse="--server-url --export-local --export-odb --import --ignore-missing-defs --replace-odb-objects --input --cols_width"
-    opts_create_add="--odb_host --odb_port --odb_user --odb_db_name --postgresql_schema --odb_password "
-    case $prev in
-     ca|lb_agent|server|web_admin)
-        prev2="${COMP_WORDS[COMP_CWORD-2]}"
-        if [[ ${prev2} == create ]]; then
-            if [[ ${cur} == -* ]] ; then
-	            COMPREPLY=( $(compgen -W "${opts_ca_create_ca} ${opts_help}" -- ${cur}) )
-		else
-		    compopt -o nospace; COMPREPLY=( $(compgen -S "/" -d -- ${cur}) )
-	    	fi
-            return 0
-        else
-            COMPREPLY=( $( compgen -W "${opts_ca}  ${opts_help}" -- $cur ) )
-            return 0
-        fi
-        ;;
-     create)
-        prev2="${COMP_WORDS[COMP_CWORD-2]}"
-        case $prev2 in
-	    ca)
-	        COMPREPLY=( $( compgen -W "${opts_ca_create}  ${opts_help}" -- $cur ) )
-        	return 0
-		;;
-	    quickstart)
-		if [[ ${cur} == -* ]] ; then
-		    COMPREPLY=( $( compgen -W "${opts_help} ${opts_create_add} --kvdb_password --cluster_name --servers" -- $cur ) )
-		else
-		    compopt -o nospace; COMPREPLY=( $(compgen -S "/" -d -- ${cur}) )
-		fi
-        	return 0
-		;;
-	    zato)
-    		COMPREPLY=( $( compgen -W "${opts_create}  ${opts_help}" -- $cur ) )
-        	return 0
-		;;
-	esac
-        ;;
-     cluster)
-	if [[ ${cur} == -* ]] ; then
-	    COMPREPLY=( $( compgen -W "${opts_help} ${opts_create_add} --tech_account_password" -- $cur ) )
-	fi
-	return 0
-	;;
-     load_balancer)
-	if [[ ${cur} == -* ]] ; then
-	    COMPREPLY=( $( compgen -W "${opts_help}" -- $cur ) )
-	else
-	    COMPREPLY=( $(compgen -f -- ${cur}) )
-	fi
-        return 0
-	;;
-     odb)
-	if [[ ${cur} == -* ]] ; then
-	    COMPREPLY=( $( compgen -W "${opts_help} ${opts_create_add}" -- $cur ) )
-	fi
-	return 0
-	;;
-     server)
-	if [[ ${cur} == -* ]] ; then
-	    COMPREPLY=( $( compgen -W "${opts_help} ${opts_create_add} --kvdb_password " -- $cur ) )
-	else
-	    COMPREPLY=( $(compgen -f -- ${cur}) )
-	fi
-        return 0
-	;;
-     user)
-	if [[ ${cur} == -* ]] ; then
-	    COMPREPLY=( $( compgen -W "${opts_help}" -- $cur ) )
-	else
-	    compopt -o nospace; COMPREPLY=( $(compgen -S "/" -d -- ${cur}) )
-	fi
-        return 0
-	;;
-     web_admin)
-	if [[ ${cur} == -* ]] ; then
-	    COMPREPLY=( $( compgen -W "${opts_help} ${opts_create_add} --tech_account_password" -- $cur ) )
-	else
-	    COMPREPLY=( $(compgen -f -- ${cur}) )
-	fi
-	;;
-     check-config|component-version)
-	if [[ ${cur} == -* ]] ; then
-	    COMPREPLY=( $(compgen -W "${opts_help}" -- ${cur}) )
-	else
-	    compopt -o nospace; COMPREPLY=( $(compgen -S "/" -d -- ${cur}) )
-	fi
-	return 0
-	;;
-     decrypt|encrypt)
-	if [[ ${cur} == -* ]] ; then
-	    COMPREPLY=( $(compgen -W "${opts_help} --secret" -- ${cur}) )
-	else
-	    COMPREPLY=( $(compgen -f -- ${cur}) )
-	fi
-	return 0
-	;;
-     info)
-	if [[ ${cur} == -* ]] ; then
-	    COMPREPLY=( $(compgen -W "${opts_help} --format --cols_width" -- ${cur}) )
-	else
-	    compopt -o nospace; COMPREPLY=( $(compgen -S "/" -d -- ${cur}) )
-	fi
-	return 0
-        ;;
-     enmasse)
-	if [[ ${cur} == -* ]] ; then
-	    COMPREPLY=( $(compgen -W "${opts_help} ${opts_enmasse}" -- ${cur}) )
-	else
-	    COMPREPLY=( $(compgen -f -- ${cur}) )
-	fi
-	return 0
-	;;
-    --format)
-	if [[ ${cur} == -* ]] ; then
-            COMPREPLY=( $(compgen -W "${opts_help} --cols_width" -- ${cur}) )
-	else
-	    compopt -o nospace; COMPREPLY=( $(compgen -S "/" -d -- ${cur}) )
-    	fi
-	return 0
-        ;;
-    from-config)
-	if [[ ${cur} == -* ]] ; then
-            COMPREPLY=( $(compgen -W "${opts_help}" -- ${cur}) )
-	else
-	    COMPREPLY=( $(compgen -f -- ${cur}) )
-    	fi
-	return 0
-	;;
-    start|stop)
-	if [[ ${cur} == -* ]] ; then
-            COMPREPLY=( $(compgen -W "${opts_help}" -- ${cur}) )
-	else
-	    compopt -o nospace; COMPREPLY=( $(compgen -S "/" -d -- ${cur}) )
-    	fi
-	return 0
-	;;
-    update)
-	COMPREPLY=( $( compgen -W "${opts_help} crypto password openid" -- $cur ) )
-	return 0
-	;;
-    password|crypto)
-	if [[ ${cur} == -* ]] ; then
-            COMPREPLY=( $(compgen -W "${opts_help}" -- ${cur}) )
-	else
-	    COMPREPLY=( $(compgen -f -- ${cur}) )
-    	fi
-	return 0
-	;;
-    quickstart)
-	COMPREPLY=( $( compgen -W "${opts_help} create" -- $cur ) )
-	return 0
-	;;
-    service)
-	COMPREPLY=( $( compgen -W "${opts_help} invoke" -- $cur ) )
-	return 0
-	;;
-    invoke)
-	if [[ ${cur} == -* ]] ; then
-            COMPREPLY=( $(compgen -W "${opts_help} ${opts_invoke}" -- ${cur}) )
-	else
-	    COMPREPLY=( $(compgen -f -- ${cur}) )
-    	fi
-	return 0
-	;;
-     -h|--help|--verbose)
-        return 0
-        ;;
-     --store-log|--store-config)
-	compopt -o nospace; COMPREPLY=( $(compgen -S "/" -d -- ${cur}) )
-	return 0
-	;;
-     --organization|--organizational-unit|--locality|--state-or-province|--country|--common-name)
-	return 0
-	;;
-     *)
-        if (($COMP_CWORD >= 2)) ; then
-	prev2="${COMP_WORDS[COMP_CWORD-2]}"
-	fi
-	case $prev2 in
-	    --organization|--organizational-unit|--locality|--state-or-province|--country|--common-name)
-		if [[ ${cur} == -* ]] ; then
-	            COMPREPLY=( $(compgen -W "${opts_ca_create_ca} ${opts_help}" -- ${cur}) )
-		else
-		    compopt -o nospace; COMPREPLY=( $(compgen -S "/" -d -- ${cur}) )
-	    	fi
-		return 0
-	    ;;
-	    check-config|component-version)
-		return 0
-	    ;;
-	    decrypt|encrypt)
-		COMPREPLY=( $(compgen -W "${opts_help} --secret" -- ${cur}) )
-		return 0
-	    ;;
-	    --secret)
-		if [[ ${cur} == -* ]] ; then
-	            COMPREPLY=( $(compgen -W "${opts_help}" -- ${cur}) )
-		else
-		    COMPREPLY=( $(compgen -f -- ${cur}) )
-	    	fi
-		return 0
-	    ;;
-	    --payload|--headers|--channel|--data-format|--transport|--url-path|--max-cid-repr|--max-response-repr|--async|--expiration)
-	    if [[ ${cur} == -* ]] ; then
-	            COMPREPLY=( $(compgen -W "${opts_invoke} ${opts_help}" -- ${cur}) )
-		else
-		    compopt -o nospace; COMPREPLY=( $(compgen -S "/" -d -- ${cur}) )
-	    	fi
-		return 0
-	    ;;
-	    --server-url|--export-local|--export-odb|--import|--ignore-missing-defs|--replace-odb-objects|--input)
-	    if [[ ${cur} == -* ]] ; then
-	            COMPREPLY=( $(compgen -W "${opts_enmasse} ${opts_help}" -- ${cur}) )
-		else
-		    compopt -o nospace; COMPREPLY=( $(compgen -S "/" -d -- ${cur}) )
-	    	fi
-		return 0
-	    ;;
-	    --odb_host|--odb_port|--odb_user|--odb_db_name|--postgresql_schema|--odb_password|--tech_account_password)
-	    if [[ ${cur} == -* ]] ; then
-	            COMPREPLY=( $(compgen -W "${opts_create_add} ${opts_help}" -- ${cur}) )
-	    	fi
-		return 0
-	    ;;
-	    *)
-		if [[ $prev != "zato" ]]; then
-		COMPREPLY=( $(compgen -W "${opts_help}" -- ${cur}) )
-		return 0
-		fi
-	    ;;
-	esac
-        ;;
-   esac
-
-   COMPREPLY=( $(compgen -W "${opts_command} ${opts_help_short} --version" -- ${cur}) )
+    fi
 }
-complete -F _zato zato
 
+_zato_apispec()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 2 ]; then
+        COMPREPLY=( $( compgen -dW '-h --help --store-log --verbose --store-config --include --with-internal --exclude --dir --delete-dir --with-api-invoke --with-rest-channels --api-invoke-path ' -- $cur) )
+    fi
+}
+
+_zato_ca()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -eq 2 ]; then
+        COMPREPLY=( $( compgen -W ' create' -- $cur) )
+    else
+        case ${COMP_WORDS[2]} in
+            create)
+            _zato_ca_create
+        ;;
+        esac
+
+    fi
+}
+
+_zato_ca_create()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -eq 3 ]; then
+        COMPREPLY=( $( compgen -W ' ca lb_agent scheduler server web_admin' -- $cur) )
+    else
+        case ${COMP_WORDS[3]} in
+            ca)
+            _zato_ca_create_ca
+        ;;
+            lb_agent)
+            _zato_ca_create_lb_agent
+        ;;
+            scheduler)
+            _zato_ca_create_scheduler
+        ;;
+            server)
+            _zato_ca_create_server
+        ;;
+            web_admin)
+            _zato_ca_create_web_admin
+        ;;
+        esac
+
+    fi
+}
+
+_zato_ca_create_ca()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 4 ]; then
+        COMPREPLY=( $( compgen -dW '-h --help --store-log --verbose --store-config --common-name --country= --locality= --organization= --organizational-unit= --state-or-province= ' -- $cur) )
+    fi
+}
+
+_zato_ca_create_lb_agent()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 4 ]; then
+        COMPREPLY=( $( compgen -dW '-h --help --store-log --verbose --store-config --common-name --country= --locality= --organization= --organizational-unit= --state-or-province= ' -- $cur) )
+    fi
+}
+
+_zato_ca_create_scheduler()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 4 ]; then
+        COMPREPLY=( $( compgen -dW '-h --help --store-log --verbose --store-config --common-name --country= --locality= --organization= --organizational-unit= --state-or-province= ' -- $cur) )
+    fi
+}
+
+_zato_ca_create_server()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 4 ]; then
+        COMPREPLY=( $( compgen -dW '-h --help --store-log --verbose --store-config --common-name --country= --locality= --organization= --organizational-unit= --state-or-province= ' -- $cur) )
+    fi
+}
+
+_zato_ca_create_web_admin()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 4 ]; then
+        COMPREPLY=( $( compgen -dW '-h --help --store-log --verbose --store-config --common-name --country= --locality= --organization= --organizational-unit= --state-or-province= ' -- $cur) )
+    fi
+}
+
+_zato_check-config()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -eq 2 ]; then
+        COMPREPLY=( $( compgen -W '-h --help --store-log --verbose --store-config path' -- $cur) )
+    else
+        case ${COMP_WORDS[2]} in
+            path)
+            _zato_check-config_path
+        ;;
+        esac
+
+    fi
+}
+
+_zato_check-config_path()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 3 ]; then
+        COMPREPLY=( $( compgen -W ' ' -- $cur) )
+    fi
+}
+
+_zato_component-version()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 2 ]; then
+        COMPREPLY=( $( compgen -dW '-h --help --store-log --verbose --store-config ' -- $cur) )
+    fi
+}
+
+_zato_create()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -eq 2 ]; then
+        COMPREPLY=( $( compgen -W ' cluster load_balancer odb scheduler secret_key server user web_admin' -- $cur) )
+    else
+        case ${COMP_WORDS[2]} in
+            cluster)
+            _zato_create_cluster
+        ;;
+            load_balancer)
+            _zato_create_load_balancer
+        ;;
+            odb)
+            _zato_create_odb
+        ;;
+            scheduler)
+            _zato_create_scheduler
+        ;;
+            secret_key)
+            _zato_create_secret_key
+        ;;
+            server)
+            _zato_create_server
+        ;;
+            user)
+            _zato_create_user
+        ;;
+            web_admin)
+            _zato_create_web_admin
+        ;;
+        esac
+
+    fi
+}
+
+_zato_create_cluster()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -eq 3 ]; then
+        COMPREPLY=( $( compgen -dW '-h --help --store-log --verbose --store-config --odb_host --odb_port --odb_user --odb_db_name --postgresql_schema --odb_password --tech_account_password mysql postgresql sqlite' -- $cur) )
+    else
+        case ${COMP_WORDS[3]} in
+            mysql)
+            _zato_create_cluster_mysql
+        ;;
+            postgresql)
+            _zato_create_cluster_postgresql
+        ;;
+            sqlite)
+            _zato_create_cluster_sqlite
+        ;;
+        esac
+
+    fi
+}
+
+_zato_create_cluster_mysql()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 4 ]; then
+        COMPREPLY=( $( compgen -W ' ' -- $cur) )
+    fi
+}
+
+_zato_create_cluster_postgresql()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 4 ]; then
+        COMPREPLY=( $( compgen -W ' ' -- $cur) )
+    fi
+}
+
+_zato_create_cluster_sqlite()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 4 ]; then
+        COMPREPLY=( $( compgen -W ' ' -- $cur) )
+    fi
+}
+
+_zato_create_load_balancer()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 3 ]; then
+        COMPREPLY=( $( compgen -dW '-h --help --store-log --verbose --store-config ' -- $cur) )
+    fi
+}
+
+_zato_create_odb()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -eq 3 ]; then
+        COMPREPLY=( $( compgen -dW '-h --help --store-log --verbose --store-config --odb_host --odb_port --odb_user --odb_db_name --postgresql_schema --odb_password mysql postgresql sqlite' -- $cur) )
+    else
+        case ${COMP_WORDS[3]} in
+            mysql)
+            _zato_create_odb_mysql
+        ;;
+            postgresql)
+            _zato_create_odb_postgresql
+        ;;
+            sqlite)
+            _zato_create_odb_sqlite
+        ;;
+        esac
+
+    fi
+}
+
+_zato_create_odb_mysql()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 4 ]; then
+        COMPREPLY=( $( compgen -W ' ' -- $cur) )
+    fi
+}
+
+_zato_create_odb_postgresql()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 4 ]; then
+        COMPREPLY=( $( compgen -W ' ' -- $cur) )
+    fi
+}
+
+_zato_create_odb_sqlite()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 4 ]; then
+        COMPREPLY=( $( compgen -W ' ' -- $cur) )
+    fi
+}
+
+_zato_create_scheduler()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -eq 3 ]; then
+        COMPREPLY=( $( compgen -dW '-h --help --store-log --verbose --store-config --odb_host --odb_port --odb_user --odb_db_name --postgresql_schema --odb_password --kvdb_password --cluster_id --secret_key mysql postgresql sqlite' -- $cur) )
+    else
+        case ${COMP_WORDS[3]} in
+            mysql)
+            _zato_create_scheduler_mysql
+        ;;
+            postgresql)
+            _zato_create_scheduler_postgresql
+        ;;
+            sqlite)
+            _zato_create_scheduler_sqlite
+        ;;
+        esac
+
+    fi
+}
+
+_zato_create_scheduler_mysql()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 4 ]; then
+        COMPREPLY=( $( compgen -W ' ' -- $cur) )
+    fi
+}
+
+_zato_create_scheduler_postgresql()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 4 ]; then
+        COMPREPLY=( $( compgen -W ' ' -- $cur) )
+    fi
+}
+
+_zato_create_scheduler_sqlite()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 4 ]; then
+        COMPREPLY=( $( compgen -W ' ' -- $cur) )
+    fi
+}
+
+_zato_create_secret_key()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 3 ]; then
+        COMPREPLY=( $( compgen -W '-h --help --store-log --verbose --store-config ' -- $cur) )
+    fi
+}
+
+_zato_create_server()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -eq 3 ]; then
+        COMPREPLY=( $( compgen -dW '-h --help --store-log --verbose --store-config --odb_host --odb_port --odb_user --odb_db_name --postgresql_schema --odb_password --kvdb_password --secret_key --jwt_secret --http_port mysql postgresql sqlite' -- $cur) )
+    else
+        case ${COMP_WORDS[3]} in
+            mysql)
+            _zato_create_server_mysql
+        ;;
+            postgresql)
+            _zato_create_server_postgresql
+        ;;
+            sqlite)
+            _zato_create_server_sqlite
+        ;;
+        esac
+
+    fi
+}
+
+_zato_create_server_mysql()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 4 ]; then
+        COMPREPLY=( $( compgen -W ' ' -- $cur) )
+    fi
+}
+
+_zato_create_server_postgresql()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 4 ]; then
+        COMPREPLY=( $( compgen -W ' ' -- $cur) )
+    fi
+}
+
+_zato_create_server_sqlite()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 4 ]; then
+        COMPREPLY=( $( compgen -W ' ' -- $cur) )
+    fi
+}
+
+_zato_create_user()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 3 ]; then
+        COMPREPLY=( $( compgen -dW '-h --help --store-log --verbose --store-config --username --email --password ' -- $cur) )
+    fi
+}
+
+_zato_create_web_admin()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -eq 3 ]; then
+        COMPREPLY=( $( compgen -dW '-h --help --store-log --verbose --store-config --odb_host --odb_port --odb_user --odb_db_name --postgresql_schema --odb_password --tech_account_password mysql postgresql sqlite' -- $cur) )
+    else
+        case ${COMP_WORDS[3]} in
+            mysql)
+            _zato_create_web_admin_mysql
+        ;;
+            postgresql)
+            _zato_create_web_admin_postgresql
+        ;;
+            sqlite)
+            _zato_create_web_admin_sqlite
+        ;;
+        esac
+
+    fi
+}
+
+_zato_create_web_admin_mysql()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 4 ]; then
+        COMPREPLY=( $( compgen -W ' ' -- $cur) )
+    fi
+}
+
+_zato_create_web_admin_postgresql()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 4 ]; then
+        COMPREPLY=( $( compgen -W ' ' -- $cur) )
+    fi
+}
+
+_zato_create_web_admin_sqlite()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 4 ]; then
+        COMPREPLY=( $( compgen -W ' ' -- $cur) )
+    fi
+}
+
+_zato_crypto()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -eq 2 ]; then
+        COMPREPLY=( $( compgen -W '-h --help --store-log --verbose --store-config create-secret-key' -- $cur) )
+    else
+        case ${COMP_WORDS[2]} in
+            create-secret-key)
+            _zato_crypto_create-secret-key
+        ;;
+        esac
+
+    fi
+}
+
+_zato_crypto_create-secret-key()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 3 ]; then
+        COMPREPLY=( $( compgen -W ' ' -- $cur) )
+    fi
+}
+
+_zato_decrypt()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 2 ]; then
+        COMPREPLY=( $( compgen -fW '-h --help --store-log --verbose --store-config --secret ' -- $cur) )
+    fi
+}
+
+_zato_delete()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -eq 2 ]; then
+        COMPREPLY=( $( compgen -W ' odb' -- $cur) )
+    else
+        case ${COMP_WORDS[2]} in
+            odb)
+            _zato_delete_odb
+        ;;
+        esac
+
+    fi
+}
+
+_zato_delete_odb()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -eq 3 ]; then
+        COMPREPLY=( $( compgen -dW '-h --help --store-log --verbose --store-config --odb_host --odb_port --odb_user --odb_db_name --postgresql_schema --odb_password mysql postgresql sqlite' -- $cur) )
+    else
+        case ${COMP_WORDS[3]} in
+            mysql)
+            _zato_delete_odb_mysql
+        ;;
+            postgresql)
+            _zato_delete_odb_postgresql
+        ;;
+            sqlite)
+            _zato_delete_odb_sqlite
+        ;;
+        esac
+
+    fi
+}
+
+_zato_delete_odb_mysql()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 4 ]; then
+        COMPREPLY=( $( compgen -W ' ' -- $cur) )
+    fi
+}
+
+_zato_delete_odb_postgresql()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 4 ]; then
+        COMPREPLY=( $( compgen -W ' ' -- $cur) )
+    fi
+}
+
+_zato_delete_odb_sqlite()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 4 ]; then
+        COMPREPLY=( $( compgen -W ' ' -- $cur) )
+    fi
+}
+
+_zato_encrypt()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 2 ]; then
+        COMPREPLY=( $( compgen -fW '-h --help --store-log --verbose --store-config --secret ' -- $cur) )
+    fi
+}
+
+_zato_enmasse()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -eq 2 ]; then
+        COMPREPLY=( $( compgen -dW '-h --help --store-log --verbose --store-config --server-url --export-local --export-odb --import --clean-odb --dump-format --ignore-missing-defs --replace-odb-objects --input --cols_width json' -- $cur) )
+    else
+        case ${COMP_WORDS[2]} in
+            json)
+            _zato_enmasse_json
+        ;;
+        esac
+
+    fi
+}
+
+_zato_enmasse_json()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 3 ]; then
+        COMPREPLY=( $( compgen -W ' ' -- $cur) )
+    fi
+}
+
+_zato_hash()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -eq 2 ]; then
+        COMPREPLY=( $( compgen -W ' get-rounds' -- $cur) )
+    else
+        case ${COMP_WORDS[2]} in
+            get-rounds)
+            _zato_hash_get-rounds
+        ;;
+        esac
+
+    fi
+}
+
+_zato_hash_get-rounds()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 3 ]; then
+        COMPREPLY=( $( compgen -dW '-h --help --store-log --verbose --store-config --json --rounds-only ' -- $cur) )
+    fi
+}
+
+_zato_info()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 2 ]; then
+        COMPREPLY=( $( compgen -dW '-h --help --store-log --verbose --store-config --format --cols_width ' -- $cur) )
+    fi
+}
+
+_zato_from-config()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 2 ]; then
+        COMPREPLY=( $( compgen -fW '-h --help --store-log --verbose --store-config ' -- $cur) )
+    fi
+}
+
+_zato_migrate()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 2 ]; then
+        COMPREPLY=( $( compgen -dW '-h --help --store-log --verbose --store-config ' -- $cur) )
+    fi
+}
+
+_zato_quickstart()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -eq 2 ]; then
+        COMPREPLY=( $( compgen -W ' create' -- $cur) )
+    else
+        case ${COMP_WORDS[2]} in
+            create)
+            _zato_quickstart_create
+        ;;
+        esac
+
+    fi
+}
+
+_zato_quickstart_create()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -eq 3 ]; then
+        COMPREPLY=( $( compgen -dW '-h --help --store-log --verbose --store-config --odb_host --odb_port --odb_user --odb_db_name --postgresql_schema --odb_password --kvdb_password --cluster_name --servers mysql postgresql sqlite' -- $cur) )
+    else
+        case ${COMP_WORDS[3]} in
+            mysql)
+            _zato_quickstart_create_mysql
+        ;;
+            postgresql)
+            _zato_quickstart_create_postgresql
+        ;;
+            sqlite)
+            _zato_quickstart_create_sqlite
+        ;;
+        esac
+
+    fi
+}
+
+_zato_quickstart_create_mysql()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 4 ]; then
+        COMPREPLY=( $( compgen -W ' ' -- $cur) )
+    fi
+}
+
+_zato_quickstart_create_postgresql()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 4 ]; then
+        COMPREPLY=( $( compgen -W ' ' -- $cur) )
+    fi
+}
+
+_zato_quickstart_create_sqlite()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 4 ]; then
+        COMPREPLY=( $( compgen -W ' ' -- $cur) )
+    fi
+}
+
+_zato_service()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -eq 2 ]; then
+        COMPREPLY=( $( compgen -W ' invoke' -- $cur) )
+    else
+        case ${COMP_WORDS[2]} in
+            invoke)
+            _zato_service_invoke
+        ;;
+        esac
+
+    fi
+}
+
+_zato_service_invoke()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 3 ]; then
+        COMPREPLY=( $( compgen -dW '-h --help --store-log --verbose --store-config --payload --headers --channel --data-format --transport --url-path --max-cid-repr --max-response-repr --async --expiration ' -- $cur) )
+    fi
+}
+
+_zato_sso()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -eq 2 ]; then
+        COMPREPLY=( $( compgen -W ' create-user create-super-user lock-user unlock-user delete-user change-user-password reset-user-password create-odb' -- $cur) )
+    else
+        case ${COMP_WORDS[2]} in
+            create-user)
+            _zato_sso_create-user
+        ;;
+            create-super-user)
+            _zato_sso_create-super-user
+        ;;
+            lock-user)
+            _zato_sso_lock-user
+        ;;
+            unlock-user)
+            _zato_sso_unlock-user
+        ;;
+            delete-user)
+            _zato_sso_delete-user
+        ;;
+            change-user-password)
+            _zato_sso_change-user-password
+        ;;
+            reset-user-password)
+            _zato_sso_reset-user-password
+        ;;
+            create-odb)
+            _zato_sso_create-odb
+        ;;
+        esac
+
+    fi
+}
+
+_zato_sso_create-user()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 3 ]; then
+        COMPREPLY=( $( compgen -dW '-h --help --store-log --verbose --store-config --email --display-name --first-name --middle-name --last-name --password ' -- $cur) )
+    fi
+}
+
+_zato_sso_create-super-user()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 3 ]; then
+        COMPREPLY=( $( compgen -dW '-h --help --store-log --verbose --store-config --store-config --email --display-name --first-name --middle-name --last-name --password ' -- $cur) )
+    fi
+}
+
+_zato_sso_lock-user()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 3 ]; then
+        COMPREPLY=( $( compgen -dW '-h --help --store-log --verbose --store-config ' -- $cur) )
+    fi
+}
+
+_zato_sso_unlock-user()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 3 ]; then
+        COMPREPLY=( $( compgen -dW '-h --help --store-log --verbose --store-config ' -- $cur) )
+    fi
+}
+
+_zato_sso_delete-user()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 3 ]; then
+        COMPREPLY=( $( compgen -dW '-h --help --store-log --verbose --store-config --yes ' -- $cur) )
+    fi
+}
+
+_zato_sso_change-user-password()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 3 ]; then
+        COMPREPLY=( $( compgen -dW '-h --help --store-log --verbose --store-config --store-config --password --expiry --must-change ' -- $cur) )
+    fi
+}
+
+_zato_sso_reset-user-password()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 3 ]; then
+        COMPREPLY=( $( compgen -dW '-h --help --store-log --verbose --store-config --store-config --expiry --must-change ' -- $cur) )
+    fi
+}
+
+_zato_sso_create-odb()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -eq 3 ]; then
+        COMPREPLY=( $( compgen -dW '-h --help --store-log --verbose --store-config --odb_host --odb_port --odb_user --odb_db_name --postgresql_schema --odb_password mysql postgresql sqlite' -- $cur) )
+    else
+        case ${COMP_WORDS[3]} in
+            mysql)
+            _zato_sso_create-odb_mysql
+        ;;
+            postgresql)
+            _zato_sso_create-odb_postgresql
+        ;;
+            sqlite)
+            _zato_sso_create-odb_sqlite
+        ;;
+        esac
+
+    fi
+}
+
+_zato_sso_create-odb_mysql()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 4 ]; then
+        COMPREPLY=( $( compgen -W ' ' -- $cur) )
+    fi
+}
+
+_zato_sso_create-odb_postgresql()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 4 ]; then
+        COMPREPLY=( $( compgen -W ' ' -- $cur) )
+    fi
+}
+
+_zato_sso_create-odb_sqlite()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 4 ]; then
+        COMPREPLY=( $( compgen -W ' ' -- $cur) )
+    fi
+}
+
+_zato_start()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 2 ]; then
+        COMPREPLY=( $( compgen -dW '-h --help --store-log --verbose --store-config --fg --sync-internal --secret-key ' -- $cur) )
+    fi
+}
+
+_zato_stop()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 2 ]; then
+        COMPREPLY=( $( compgen -dW '-h --help --store-log --verbose --store-config ' -- $cur) )
+    fi
+}
+
+_zato_update()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -eq 2 ]; then
+        COMPREPLY=( $( compgen -W ' crypto password' -- $cur) )
+    else
+        case ${COMP_WORDS[2]} in
+            crypto)
+            _zato_update_crypto
+        ;;
+            password)
+            _zato_update_password
+        ;;
+        esac
+
+    fi
+}
+
+_zato_update_crypto()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 3 ]; then
+        COMPREPLY=( $( compgen -fW '-h --help --store-log --verbose --store-config ' -- $cur) )
+    fi
+}
+
+_zato_update_password()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [ $COMP_CWORD -ge 3 ]; then
+        COMPREPLY=( $( compgen -dW '-h --help --store-log --verbose --store-config --password ' -- $cur) )
+    fi
+}
+
+complete -o bashdefault -o default -o filenames -F _zato zato
