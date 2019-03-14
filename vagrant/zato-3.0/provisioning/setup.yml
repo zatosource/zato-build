@@ -41,17 +41,12 @@
           state=started
 
 - name: General | Ensure PostgreSQL is listening on all localhost
-  lineinfile: dest=/var/lib/pgsql/data/postgresql.conf
+  lineinfile: dest=/etc/postgresql/10/main/postgresql.conf
      regexp='^#?listen_addresses\s*='
      line="listen_addresses = '127.0.0.1'"
      state=present
   notify: restart postgresql
 
-- lineinfile: dest=/var/lib/pgsql/data/pg_hba.conf
-           regexp='host\s+all\s+all\s+127.0.0.1/32\s+md5'
-           line='host all all 127.0.0.1/32 md5'
-           insertbefore=BOF
-  notify: restart postgresql
 
 - name: Zato | Add Zato's Apt signing key
   apt_key:
@@ -68,16 +63,6 @@
   apt: name=zato state=present
   become: yes
 
-- name: Zato | Zato ODB database creation.
-  postgresql_db:
-    name: zato
-
-- name: Zato | Create database user zato and grant access to database.
-  postgresql_user:
-    db: zato
-    name: zato
-    password: zato
-
 - name: Start service redis, if not started
   service:
     name: redis-server
@@ -85,5 +70,40 @@
 
 - name: Start service postgresql, if not started
   service:
-    name: httpd
+    name: postgresql
     state: started
+
+- name: Zato | Zato's global configuration
+  shell: |
+    echo "{{zato_ssh_password}}" > /opt/zato/zato_user_password && \
+    chown zato:zato /opt/zato/zato_user_password && \
+    echo "zato:$(cat /opt/zato/zato_user_password)" > /opt/zato/change_zato_password && \
+    chpasswd < /opt/zato/change_zato_password
+
+    cd /opt/zato/ && wget -i https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/filelist
+    
+    if [[ ! -d /opt/zato/env/qs-1 ]];then
+      mkdir -p /opt/zato/env/qs-1
+      chown zato. /opt/zato/env/qs-1
+    fi
+
+    exit 0
+  args:
+    executable: /bin/bash
+
+- name: Zato | Zato's quickstart
+  become: yes
+  become_user: zato
+  shell: |
+    cd /opt/zato/env/qs-1 || exit 1
+
+    set -x # enable show commands
+    {{zato_bin}} quickstart create --odb_user postgres --kvdb_password '' /opt/zato/env/qs-1/ postgresql localhost 6379
+    {{zato_bin}} from-config /opt/zato/update_password.config
+    sed -i 's/127.0.0.1:11223/0.0.0.0:11223/g' /opt/zato/env/qs-1/load-balancer/config/repo/zato.config
+    sed -i 's/gunicorn_workers=2/gunicorn_workers=1/g' /opt/zato/env/qs-1/server1/config/repo/server.conf
+    sed -i 's/gunicorn_workers=2/gunicorn_workers=1/g' /opt/zato/env/qs-1/server2/config/repo/server.conf
+    set +x # disable show commands
+    exit 0
+  args:
+    executable: /bin/bash

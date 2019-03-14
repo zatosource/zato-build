@@ -24,7 +24,8 @@ Vagrant.configure("2") do |config|
   end
 
   # Enable provisioning with Ansible.
-  config.vm.provision "ansible" do |ansible|
+  config.vm.provision 'ansible' do |ansible|
+    ansible.galaxy_role_file = 'provisioning/requirements.yml'
     ansible.compatibility_mode = "2.0"
     ansible.playbook = "provisioning/main.yml"
   end
