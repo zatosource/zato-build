@@ -55,7 +55,7 @@
     url: https://zato.io/repo/zato-0CBD7F72.pgp.asc
     state: present
   register: task_result
-  until: task_result | succeeded
+  until: task_result is succeeded
   retries: 10
   delay: 5
 
@@ -65,7 +65,7 @@
     state: present
     filename: zato
   register: task_result
-  until: task_result | succeeded
+  until: task_result is succeeded
   retries: 10
   delay: 5
 
@@ -96,7 +96,7 @@
   shell: |
     cd /opt/zato/
     for i in update_password.config zato_start_load_balancer zato_start_scheduler zato_start_server1 zato_start_server2 zato_start_web_admin;do
-      [[ -f $i ]] || wget https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/$i
+      [[ -f $i ]] || wget -t 0 -T 10 -w 2 https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/$i
     done
     chmod 755 \
       /opt/zato/zato_start_load_balancer \
@@ -105,6 +105,9 @@
       /opt/zato/zato_start_web_admin \
       /opt/zato/zato_start_scheduler || exit 1
 
+    echo "{{zato_web_admin_password}}" > /opt/zato/web_admin_password
+    echo "password={{zato_web_admin_password}}" >> /opt/zato/update_password.config
+
     chown zato. /opt/zato/update_password.config || exit 1
 
     if [[ ! -d /opt/zato/env/qs-1 ]];then
@@ -112,7 +115,7 @@
       chown zato. /opt/zato/env/qs-1 || exit 1
     fi
 
-    su zato -c /opt/zato/quickstart-bootstrap.sh || exit 1
+    su zato -c /opt/zato/quickstart-bootstrap.sh 2>&1 | tee /tmp/quickstart-bootstrap.log || exit 1
 
     exit 0
   args:
@@ -120,7 +123,7 @@
   register: quickstart
 
 - name: DISPLAY THE OUTPUT
-  debug: var=quickstart.stdout_lines
+  debug: msg={{ quickstart.stdout_lines | to_nice_json(indent=2) }}
 
 - name: Zato | Copying Zato's supervisord config
   copy:

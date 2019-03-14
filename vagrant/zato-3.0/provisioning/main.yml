@@ -17,8 +17,7 @@
 
   vars:
     zato_bin: /opt/zato/current/bin/zato
-    zato_ssh_password:
-    zato_web_admin_password:
+    zato_web_admin_password: mysecretpassword
     dbname: zato
     dbuser: postgres
     dbpassword:
@@ -26,6 +25,11 @@
     postgresql_restarted_state: "restarted"
     postgresql_service_state: started
     postgresql_service_enabled: true
+
+    postgresql_users:
+      - name: zato #required; the rest are optional
+        password: mysupersecretpassword # defaults to not set
+        # db: zato # defaults to not set
     postgresql_databases:
       - name: zato # required; the rest are optional
         # owner: zato
