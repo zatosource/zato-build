@@ -1,9 +1,4 @@
 ---
-# You can add users to the docker group to allow them to manage docker
-# containers. This playbook uses sudo rather than the vagrant user because
-# Ansible uses ControlPersist for SSH connections. The first time this playbook
-# runs, the docker commands would fail if run by the vagrant user, since the
-# persisted connection state isn't aware of the addition of the 'docker' group.
 
 - name: General | Package Installation.
   apt: name={{ item }} state=present
@@ -33,10 +28,6 @@
 
 - name: General | Add repository universe.
   command: add-apt-repository universe
-
-# - name: General | Initiate database
-#   command: initdb
-#            creates=/var/lib/pgsql/data/postgresql.conf
 
 - name: General | Start PostgreSQL and enable at boot
   service: name=postgresql
@@ -94,7 +85,33 @@
 
 - name: Zato | Zato's global configuration
   shell: |
+    set -x # enable show commands
+    [[ -f /opt/zato-env.sh ]] && source /opt/zato-env.sh
     cd /opt/zato/
+    if [[ -z "${ZATO_SSH_PASSWORD}" ]]; then
+      if [[ -f /opt/zato/zato_user_password ]];then
+        echo "Reading the password for zato user from the file"
+        ZATO_SSH_PASSWORD="$(cat /opt/zato/zato_user_password)"
+      else
+        echo "Generating a password for zato user"
+        ZATO_SSH_PASSWORD="$(uuidgen)"
+      fi
+    fi
+    if [[ -z "${ZATO_WEB_ADMIN_PASSWORD}" ]]; then
+      if [[ -f /opt/zato/zato_user_password ]];then
+        echo "Reading the password for web admin from the file"
+        ZATO_WEB_ADMIN_PASSWORD="$(cat /opt/zato/web_admin_password)"
+      else
+        echo "Generating a password for web admin"
+        ZATO_WEB_ADMIN_PASSWORD="$(uuidgen)"
+      fi
+    fi
+
+    echo "${ZATO_SSH_PASSWORD}" > /opt/zato/zato_user_password && \
+    chown zato:zato /opt/zato/zato_user_password && \
+    echo "zato:$(cat /opt/zato/zato_user_password)" > /opt/zato/change_zato_password && \
+    chpasswd < /opt/zato/change_zato_password
+
     for i in update_password.config zato_start_load_balancer zato_start_scheduler zato_start_server1 zato_start_server2 zato_start_web_admin;do
       [[ -f $i ]] || wget -t 0 -T 10 -w 2 https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/$i
     done
@@ -105,10 +122,10 @@
       /opt/zato/zato_start_web_admin \
       /opt/zato/zato_start_scheduler || exit 1
 
-    echo "{{zato_web_admin_password}}" > /opt/zato/web_admin_password
-    echo "password={{zato_web_admin_password}}" >> /opt/zato/update_password.config
+    echo "${ZATO_WEB_ADMIN_PASSWORD}" > /opt/zato/web_admin_password
+    echo "password=${ZATO_WEB_ADMIN_PASSWORD}" >> /opt/zato/update_password.config
 
-    chown zato. /opt/zato/update_password.config || exit 1
+    chown zato:zato /opt/zato/update_password.config || exit 1
 
     if [[ ! -d /opt/zato/env/qs-1 ]];then
       mkdir -p /opt/zato/env/qs-1 || exit 1
@@ -117,13 +134,14 @@
 
     su zato -c /opt/zato/quickstart-bootstrap.sh 2>&1 | tee /tmp/quickstart-bootstrap.log || exit 1
 
+    set -x # enable show commands
     exit 0
   args:
     executable: /bin/bash
   register: quickstart
 
-# - name: DISPLAY THE OUTPUT
-#   debug: msg={{ quickstart.stdout_lines | to_nice_json(indent=2) }}
+- name: DISPLAY THE OUTPUT
+  debug: msg={{ quickstart.stdout_lines | to_nice_json(indent=2) }}
 
 - name: Zato | Copying Zato's supervisord config
   copy:
