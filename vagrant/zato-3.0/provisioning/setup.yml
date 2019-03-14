@@ -122,8 +122,8 @@
     executable: /bin/bash
   register: quickstart
 
-- name: DISPLAY THE OUTPUT
-  debug: msg={{ quickstart.stdout_lines | to_nice_json(indent=2) }}
+# - name: DISPLAY THE OUTPUT
+#   debug: msg={{ quickstart.stdout_lines | to_nice_json(indent=2) }}
 
 - name: Zato | Copying Zato's supervisord config
   copy:
