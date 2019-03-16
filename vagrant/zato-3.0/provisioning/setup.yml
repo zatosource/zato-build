@@ -21,10 +21,7 @@
     - supervisor
     - vim
     - tzdata
-    - postgresql
-    - postgresql-contrib
     - postgresql-client
-    - python-psycopg2
 
 - name: General | Add repository universe.
   command: add-apt-repository universe
@@ -77,16 +74,13 @@
     name: postgresql
     state: started
 
-- name: Zato | Copying Zato's quickstart script
-  copy:
-    src: provisioning/quickstart-bootstrap.sh
-    dest: /opt/zato/quickstart-bootstrap.sh
-    mode: 0755
-
 - name: Zato | Zato's global configuration
   shell: |
     set -x # enable show commands
     [[ -f /opt/zato-env.sh ]] && source /opt/zato-env.sh
+
+    echo "ODB_PASSWORD=\"{{ item.password }}\"" >> /etc/environment
+
     cd /opt/zato/
     if [[ -z "${ZATO_SSH_PASSWORD}" ]]; then
       if [[ -f /opt/zato/zato_user_password ]];then
@@ -127,21 +121,55 @@
 
     chown zato:zato /opt/zato/update_password.config || exit 1
 
-    if [[ ! -d /opt/zato/env/qs-1 ]];then
-      mkdir -p /opt/zato/env/qs-1 || exit 1
-      chown zato. /opt/zato/env/qs-1 || exit 1
-    fi
-
-    su zato -c /opt/zato/quickstart-bootstrap.sh 2>&1 | tee /tmp/quickstart-bootstrap.log || exit 1
-
     set -x # enable show commands
     exit 0
   args:
     executable: /bin/bash
+  with_items: "{{ postgresql_users }}"
+
+- name: Zato | Create quickstart directory
+  file: path=/opt/zato/env/qs-1/ owner=zato group=zato
+        state=directory
+  become: yes
+  become_user: zato
+
+- name: Zato | create quickstart on Debian-based systems
+  shell: rm -rf /opt/zato/env/qs-1 &&
+         mkdir -p /opt/zato/env/qs-1 &&
+         /opt/zato/current/bin/zato quickstart create \
+         --odb_host "localhost" \
+         --odb_port 5432 \
+         --odb_user "{{ item.name }}" \
+         --odb_db_name "{{ item.db }}" \
+         --odb_password "{{ item.password }}" \
+         --kvdb_password '' \
+         /opt/zato/env/qs-1 postgresql localhost 6379
+         --verbose
+  become: yes
+  become_user: zato
+  with_items: "{{ postgresql_users }}"
   register: quickstart
 
-- name: DISPLAY THE OUTPUT
-  debug: msg={{ quickstart.stdout_lines | to_nice_json(indent=2) }}
+- name: Zato | Granting access to load-balancer
+  replace:
+   path: /opt/zato/env/qs-1/load-balancer/config/repo/zato.config
+   regexp: '127\.0\.0\.1:11223'
+   replace: '0.0.0.0:11223'
+   backup: yes
+
+- name: Zato | Reduce Workers in server1
+  replace:
+   path: /opt/zato/env/qs-1/server1/config/repo/server.conf
+   regexp: 'gunicorn_workers=2'
+   replace: 'gunicorn_workers=1'
+   backup: yes
+
+- name: Zato | Reduce Workers in server2
+  replace:
+   path: /opt/zato/env/qs-1/server2/config/repo/server.conf
+   regexp: 'gunicorn_workers=2'
+   replace: 'gunicorn_workers=1'
+   backup: yes
 
 - name: Zato | Copying Zato's supervisord config
   copy:
