@@ -5,6 +5,7 @@
 $set_environment_variables = <<SCRIPT
 tee "/opt/zato-env.sh" > "/dev/null" <<EOF
 ZATO_WEB_ADMIN_PASSWORD=#{ENV['ZATO_WEB_ADMIN_PASSWORD']}
+ZATO_IDE_PUBLISHER_PASSWORD=#{ENV['ZATO_IDE_PUBLISHER_PASSWORD']}
 ZATO_SSH_PASSWORD=#{ENV['ZATO_SSH_PASSWORD']}
 EOF
 SCRIPT
@@ -37,9 +38,14 @@ Vagrant.configure("2") do |config|
     ansible.compatibility_mode = "2.0"
     ansible.galaxy_role_file = 'provisioning/requirements.yml'
     ansible.playbook = "provisioning/main.yml"
-    ansible.verbose = "v"
     ansible.extra_vars = {
       "allow_world_readable_tmpfiles": true
     }
+    ansible.verbose = "#{ENV.fetch('ANSIBLE_VERBOSE', false)}"
+  end
+
+  if ENV.has_key?('ZATO_HOST_DEPLOY_DIR')
+      config.vm.synced_folder "#{ENV['ZATO_HOST_DEPLOY_DIR']}", "/opt/hot-deploy", owner: "zato",
+      group: "zato", mount_options: ["uid=1000", "gid=1000"]
   end
 end
