@@ -17,22 +17,20 @@
 
   vars:
     zato_bin: /opt/zato/current/bin/zato
-    zato_web_admin_password: mysecretpassword
     dbname: zato
     dbuser: postgres
-    dbpassword:
+    dbpassword: "{{ lookup('password', '/tmp/odb_password length=15 chars=ascii_letters') }}"
 
     postgresql_restarted_state: "restarted"
     postgresql_service_state: started
     postgresql_service_enabled: true
 
     postgresql_databases:
-      - name: zato # required; the rest are optional
-      # owner: zato
+      - name: zato
     postgresql_users:
-      - name: zato #required; the rest are optional
-        password: "{{ lookup('password', '/dev/null length=15 chars=ascii_letters') }}" # defaults to not set
-        db: zato # defaults to not set
+      - name: zato
+        password: "{{ dbpassword }}"
+        db: zato
         priv: "ALL"
 
     postgresql_hba_entries:

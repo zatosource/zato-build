@@ -21,15 +21,13 @@
     - supervisor
     - vim
     - tzdata
+    - postgresql
+    - postgresql-contrib
     - postgresql-client
+    - python-psycopg2
 
 - name: General | Add repository universe.
   command: add-apt-repository universe
-
-- name: General | Start PostgreSQL and enable at boot
-  service: name=postgresql
-          enabled=yes
-          state=started
 
 - name: General | Ensure PostgreSQL is listening on all localhost
   lineinfile: dest=/etc/postgresql/10/main/postgresql.conf
@@ -68,18 +66,18 @@
   service:
     name: redis-server
     state: started
+    enabled: yes
 
 - name: Start service postgresql, if not started
   service:
     name: postgresql
     state: started
+    enabled: yes
 
 - name: Zato | Zato's global configuration
   shell: |
     set -x # enable show commands
     [[ -f /opt/zato-env.sh ]] && source /opt/zato-env.sh
-
-    echo "ODB_PASSWORD=\"{{ item.password }}\"" >> /etc/environment
 
     cd /opt/zato/
     if [[ -z "${ZATO_SSH_PASSWORD}" ]]; then
@@ -125,7 +123,6 @@
     exit 0
   args:
     executable: /bin/bash
-  with_items: "{{ postgresql_users }}"
 
 - name: Zato | Create quickstart directory
   file: path=/opt/zato/env/qs-1/ owner=zato group=zato
@@ -133,21 +130,18 @@
   become: yes
   become_user: zato
 
-- name: Zato | create quickstart on Debian-based systems
-  shell: rm -rf /opt/zato/env/qs-1 &&
-         mkdir -p /opt/zato/env/qs-1 &&
-         /opt/zato/current/bin/zato quickstart create \
+- name: Zato | create quickstart
+  shell: /opt/zato/current/bin/zato quickstart create \
          --odb_host "localhost" \
          --odb_port 5432 \
-         --odb_user "{{ item.name }}" \
-         --odb_db_name "{{ item.db }}" \
-         --odb_password "{{ item.password }}" \
+         --odb_user "zato" \
+         --odb_db_name "zato" \
+         --odb_password "{{ dbpassword }}" \
          --kvdb_password '' \
          /opt/zato/env/qs-1 postgresql localhost 6379
          --verbose
   become: yes
   become_user: zato
-  with_items: "{{ postgresql_users }}"
   register: quickstart
 
 - name: Zato | Granting access to load-balancer
@@ -177,3 +171,9 @@
     dest: /etc/supervisor/conf.d/zato.conf
     mode: 0644
   notify: restart supervisor
+
+- name: Start service supervisor, if not started
+  service:
+    name: supervisor
+    state: started
+    enabled: yes
