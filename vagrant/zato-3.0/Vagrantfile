@@ -41,7 +41,9 @@ Vagrant.configure("2") do |config|
     ansible.extra_vars = {
       "allow_world_readable_tmpfiles": true
     }
-    ansible.verbose = "#{ENV.fetch('ANSIBLE_VERBOSE', false)}"
+    if ENV.has_key?('ANSIBLE_VERBOSE')
+      ansible.verbose = "#{ENV.fetch('ANSIBLE_VERBOSE', false)}"
+    end
   end
 
   if ENV.has_key?('ZATO_HOST_DEPLOY_DIR')
