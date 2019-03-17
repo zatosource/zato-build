@@ -182,32 +182,6 @@
   become: yes
   become_user: zato
 
-- name: Zato | Set ide_publisher password
-  shell: |
-    set -x # enable show commands
-    [[ -f /opt/zato-env.sh ]] && source /opt/zato-env.sh
-
-    cd /opt/zato/
-    if [[ -n "${ZATO_IDE_PUBLISHER_PASSWORD}" ]]; then
-      echo "${ZATO_IDE_PUBLISHER_PASSWORD}" > /opt/zato/zato_ide_publisher_password
-
-      cp /opt/zato/update_password.config /opt/zato/update_ide_publisher_password.config
-      sed -i -e 's/username=.*/username=ide_publisher/' /opt/zato/update_ide_publisher_password.config
-      sed -i -e '/password=/d' /opt/zato/update_ide_publisher_password.config
-      echo "password=${ZATO_IDE_PUBLISHER_PASSWORD}" >> /opt/zato/update_ide_publisher_password.config
-
-      /opt/zato/current/bin/zato from-config \
-        /opt/zato/update_ide_publisher_password.config --verbose || exit 1
-    else
-      touch /opt/zato/zato_ide_publisher_password
-    fi
-  args:
-    chdir: /opt/zato/env/qs-1
-    creates: /opt/zato/zato_ide_publisher_password
-    executable: /bin/bash
-  become: yes
-  become_user: zato
-
 - name: Zato | Granting access to load-balancer
   replace:
    path: /opt/zato/env/qs-1/load-balancer/config/repo/zato.config
@@ -249,3 +223,30 @@
     dest: /etc/supervisor/conf.d/zato.conf
     mode: 0644
   notify: restart supervisor
+
+- name: Zato | Set ide_publisher password
+  shell: |
+    set -x # enable show commands
+    [[ -f /opt/zato-env.sh ]] && source /opt/zato-env.sh
+
+    cd /opt/zato/
+    if [[ -n "${ZATO_IDE_PUBLISHER_PASSWORD}" ]]; then
+      curl -sfL $(curl -s https://api.github.com/repos/powerman/dockerize/releases/latest | grep -i /dockerize-$(uname -s)-$(uname -m)\" | cut -d\" -f4) | install /dev/stdin /opt/zato/dockerize
+
+      # wait for server1
+      /opt/zato/dockerize -wait-http-status-code 200 -wait http://localhost:17010/zato/ping -timeout 10m
+
+      zato service invoke --verbose --payload \
+        "{\"password1\":\"${ZATO_IDE_PUBLISHER_PASSWORD}\", \"password2\": \"${ZATO_IDE_PUBLISHER_PASSWORD}\", \"id\": 4}" \
+        /opt/zato/env/qs-1/server1/ zato.security.basic-auth.change-password || exit 1
+
+      echo "${ZATO_IDE_PUBLISHER_PASSWORD}" > /opt/zato/zato_ide_publisher_password
+    else
+      touch /opt/zato/zato_ide_publisher_password
+    fi
+  args:
+    chdir: /opt/zato/env/qs-1
+    creates: /opt/zato/zato_ide_publisher_password
+    executable: /bin/bash
+  become: yes
+  become_user: zato
