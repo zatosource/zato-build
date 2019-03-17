@@ -1,7 +1,7 @@
 # Zato
 
 FROM ubuntu:18.04
-LABEL maintainer="Anielkis Herrera <aherrera@zato.io>,Dariusz Suchojad <dsuch@zato.io>"
+LABEL maintainer="Anielkis Herrera <aherrera@zato.io>, Dariusz Suchojad <dsuch@zato.io>"
 
 ENV ZATO_BIN /opt/zato/current/bin/zato
 
@@ -42,7 +42,7 @@ RUN git pull && ./update.sh &&  mkdir -p /var/log/supervisor /var/run/sshd/
 # Download Dockerize
 RUN curl -sfL https://github.com/powerman/dockerize/releases/download/${DOCKERIZE_VERSION}/dockerize-`uname -s`-`uname -m` | install /dev/stdin /usr/local/bin/dockerize
 
-# grab gosu for easy step-down from root
+# Install gosu for easy step-down from root
 ENV GOSU_VERSION 1.11
 RUN set -x \
     && apt-get update && apt-get install -y --no-install-recommends ca-certificates wget && rm -rf /var/lib/apt/lists/* \
@@ -60,6 +60,7 @@ USER postgres
 RUN mkdir -p "$PGDATA" && chown -R postgres:postgres "$PGDATA" && chmod 777 "$PGDATA"
 
 USER root
+
 # Copy Docker basic structure
 COPY entrypoint.sh /entrypoint.sh
 COPY quickstart-bootstrap.sh /opt/zato/quickstart-bootstrap.sh
