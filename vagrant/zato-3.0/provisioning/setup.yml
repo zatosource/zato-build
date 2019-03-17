@@ -224,6 +224,8 @@
     mode: 0644
   notify: restart supervisor
 
+- meta: flush_handlers
+
 - name: Zato | Set ide_publisher password
   shell: |
     set -x # enable show commands
@@ -236,7 +238,7 @@
       # wait for server1
       /opt/zato/dockerize -wait-http-status-code 200 -wait http://localhost:17010/zato/ping -timeout 10m
 
-      zato service invoke --verbose --payload \
+      /opt/zato/current/bin/zato service invoke --verbose --payload \
         "{\"password1\":\"${ZATO_IDE_PUBLISHER_PASSWORD}\", \"password2\": \"${ZATO_IDE_PUBLISHER_PASSWORD}\", \"id\": 4}" \
         /opt/zato/env/qs-1/server1/ zato.security.basic-auth.change-password || exit 1
 
