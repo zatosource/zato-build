@@ -93,7 +93,12 @@ sudo -H -u zato /opt/zato/quickstart-bootstrap.sh
 if [[ "${ODB_TYPE}" == "postgresql" && "${ODB_HOSTNAME}" == "localhost" ]]; then
   echo "Stopping initialization of Postgresql"
   su postgres -c "PGUSER=\"${PGUSER:-$POSTGRES_USER}\" $PGBINPATH/pg_ctl -D "$PGDATA" -m fast -w stop"
-	unset PGPASSWORD
+  unset PGPASSWORD
 fi
+
+# Hot deploy configuration
+[[ -d /opt/hot-deploy ]] || mkdir -p /opt/hot-deploy
+chmod 777 /opt/hot-deploy
+sed -i -e 's|pickup_dir=.*|pickup_dir=/opt/hot-deploy|' /opt/zato/env/qs-1/server1/config/repo/server.conf
 
 exec /usr/bin/supervisord -c /opt/zato/supervisord.conf
