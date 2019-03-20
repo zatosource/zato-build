@@ -39,7 +39,7 @@ autorestart=true
 [program:ide_password_update]
 command=/opt/zato/ide_password_update.sh
 user=zato
-autorestart=false
+autorestart=unexpected
 {{ end }}
 
 [program:zato-load-balancer]
