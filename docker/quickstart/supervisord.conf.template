@@ -35,6 +35,13 @@ environment=PGDATA="{{ .Env.PGDATA }}"
 autorestart=true
 {{ end }}
 
+{{ if .Env.ZATO_IDE_PUBLISHER_PASSWORD }}
+[program:ide_password_update]
+command=/opt/zato/ide_password_update.sh
+user=zato
+autorestart=false
+{{ end }}
+
 [program:zato-load-balancer]
 command = /opt/zato/zato_start_load_balancer
 user = zato
