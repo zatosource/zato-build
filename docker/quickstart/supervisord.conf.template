@@ -38,6 +38,7 @@ autorestart=true
 {{ if .Env.ZATO_IDE_PUBLISHER_PASSWORD }}
 [program:ide_password_update]
 command=/opt/zato/ide_password_update.sh
+directory=/opt/zato/
 user=zato
 autorestart=unexpected
 {{ end }}
