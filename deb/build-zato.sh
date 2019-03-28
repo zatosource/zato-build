@@ -18,6 +18,15 @@ fi
 BRANCH_NAME=$1
 ZATO_VERSION=$2
 PACKAGE_VERSION=$3
+PY_BINARY=${4:-python}
+
+# Python 2 dependencies
+PYTHON_DEPENDENCIES="python2.7, python-pip"
+if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][0])') -eq 3 ]]
+then
+    # Python 3 dependencies
+    PYTHON_DEPENDENCIES="python3, python3-pip"
+fi
 
 CURDIR="${BASH_SOURCE[0]}";RL="readlink";([[ `uname -s`=='Darwin' ]] || RL="$RL -f")
 while([ -h "${CURDIR}" ]) do CURDIR=`$RL "${CURDIR}"`; done
@@ -139,6 +148,7 @@ function build_deb {
     sed -i "s/LIBUMFPACK_VERSION/$LIBUMFPACK_VERSION/g" $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/control
     sed -i "s/LIBEVENT_VERSION/$LIBEVENT_VERSION/g" $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/control
     sed -i "s/RELEASE_NAME/$RELEASE_NAME/g" $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/control
+    sed -i "s/PYTHON_DEPENDENCIES/$PYTHON_DEPENDENCIES/g" $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/control
     sed -i "s/ZATO_VERSION/$ZATO_VERSION/g" $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/postinst
     sed -i "s/ZATO_VERSION/$ZATO_VERSION/g" $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/postrm
 
