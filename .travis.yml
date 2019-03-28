@@ -5,17 +5,14 @@ cache:
 
 # https://zato.io/docs/admin/guide/install/index.html#operating-system-considerations
 env:
-  - MODE=packaging IMAGE=centos:6
   - MODE=packaging IMAGE=centos:7
-  - MODE=packaging IMAGE=ubuntu:12.04
-  - MODE=packaging IMAGE=ubuntu:14.04
   - MODE=packaging IMAGE=ubuntu:16.04
-  - MODE=packaging IMAGE=debian:7
+  - MODE=packaging IMAGE=ubuntu:18.04
   - MODE=packaging IMAGE=debian:8
   - MODE=packaging IMAGE=debian:9
-  - MODE=packaging IMAGE=alpine:3.6
   - MODE=packaging IMAGE=alpine:3.7
   - MODE=packaging IMAGE=alpine:3.8
+  - MODE=packaging IMAGE=alpine:3.9
 
 sudo: required
 os:
