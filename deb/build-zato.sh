@@ -30,6 +30,10 @@ RELEASE_NAME=`lsb_release -cs`
 ZATO_ROOT_DIR=/opt/zato
 ZATO_TARGET_DIR=$ZATO_ROOT_DIR/$ZATO_VERSION
 
+if ! [ -x "$(command -v lsb_release)" ]; then
+  sudo apt-get install -y lsb-release
+fi
+
 # Ubuntu and Debian require different versions of packages.
 if command -v lsb_release > /dev/null; then
     release=$(lsb_release -c | cut -f2)

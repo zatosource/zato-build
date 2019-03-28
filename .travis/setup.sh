@@ -60,7 +60,7 @@ if [[ -n "$IMAGE" ]]; then
     run abuild-keygen -an
   elif [ "${IMAGE:0:6}" = "ubuntu" -o "${IMAGE:0:6}" = "debian" ]; then
     run apt-get update
-    run apt-get -y install sudo git
+    run apt-get -y install sudo git lsb-release
   fi
 
   # chown everything to Travis UID so caching succeeds.
