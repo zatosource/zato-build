@@ -23,7 +23,7 @@ PY_BINARY=${4:-python}
 
 # Python 2 dependencies
 PYTHON_DEPENDENCIES="python2-dev"
-PYTHON_VERSION="-python2"
+PYTHON_VERSION=""
 if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][0])') -eq 3 ]]
 then
     # Python 3 dependencies
