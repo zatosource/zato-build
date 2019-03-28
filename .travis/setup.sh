@@ -56,7 +56,7 @@ if [[ -n "$IMAGE" ]]; then
     run yum -y install sudo git
   elif [ "${IMAGE:0:6}" = "alpine" ]; then
     run apk update
-    run apk add sudo bash git
+    run apk add sudo bash git abuild
     run abuild-keygen -an
   elif [ "${IMAGE:0:6}" = "ubuntu" -o "${IMAGE:0:6}" = "debian" ]; then
     run apt-get update
