@@ -43,7 +43,8 @@ else
   COMPLETE_VERSION="${ZATO_VERSION}_${PACKAGE_VERSION}"
 fi
 
-apk version --check --quiet "${COMPLETE_VERSION}" || { echo "build-zato.sh: version $COMPLETE_VERSION is not valid for apk: suffixes must be {alpha|beta|pre|rc}[0-9]+" 1>&2 ; exit 100 ; }
+apk version --check "${COMPLETE_VERSION}"
+# apk version --check --quiet "${COMPLETE_VERSION}" || { echo "build-zato.sh: version $COMPLETE_VERSION is not valid for apk: suffixes must be {alpha|beta|pre|rc}[0-9]+" 1>&2 ; exit 100 ; }
 
 
 # This is the file where the packager's private key (to sign the apk)
