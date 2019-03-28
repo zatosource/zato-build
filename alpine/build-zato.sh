@@ -18,26 +18,29 @@ ZATO_VERSION="$2"
 # * "alpha", "beta", "pre" or "rc" followed by one or more digits.
 # This is a versioning convention coming from Gentoo, that Alpine also follows.
 
-PACKAGE_VERSION="$3"
+# PACKAGE_VERSION="$3"
 PY_BINARY=${4:-python}
 
 apk add $PY_BINARY
 
+if ! [ -x "$(command -v $PY_BINARY)" ]; then
+  sudo apk add $PY_BINARY
+fi
+
 # Python 2 dependencies
-PYTHON_DEPENDENCIES="python2-dev"
-PYTHON_VERSION=""
+PYTHON_DEPENDENCIES="python2 python2-dev"
+PACKAGE_VERSION="-python27"
 if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][0])') -eq 3 ]]
 then
     # Python 3 dependencies
-    PYTHON_DEPENDENCIES="python3-dev"
-    PYTHON_VERSION="-python3"
+    PYTHON_DEPENDENCIES="python3 python3-dev"
+    PACKAGE_VERSION="-python3"
 fi
 
-COMPLETE_VERSION="${ZATO_VERSION}"
-# if test -z "${PACKAGE_VERSION}" || test "${PACKAGE_VERSION}" = "stable" ; then
-#     COMPLETE_VERSION="${ZATO_VERSION}"
-# else
-#   COMPLETE_VERSION="${ZATO_VERSION}_${PACKAGE_VERSION}"
+if test -z "${PACKAGE_VERSION}" || test "${PACKAGE_VERSION}" = "stable" ; then
+    COMPLETE_VERSION="${ZATO_VERSION}"
+else
+  COMPLETE_VERSION="${ZATO_VERSION}_${PACKAGE_VERSION}"
 fi
 
 apk version --check --quiet "${COMPLETE_VERSION}" || { echo "build-zato.sh: version $COMPLETE_VERSION is not valid for apk: suffixes must be {alpha|beta|pre|rc}[0-9]+" 1>&2 ; exit 100 ; }
@@ -129,7 +132,7 @@ checkout_and_make_archive() {
 
 make_apkbuild_dir() {
   for i in $ABUILD_FILES ; do
-    sed -e "s|@@ZATO_ROOT_DIR@@|$ZATO_ROOT_DIR|g;s|@@ZATO_TARGET_DIR@@|$ZATO_TARGET_DIR|g;s|@@ZATO_VERSION@@|$ZATO_VERSION|g;s|@@PACKAGE_VERSION@@|$PACKAGE_VERSION|g;s|@@COMPLETE_VERSION@@|$COMPLETE_VERSION|g;s|@@PYTHON_DEPENDENCIES@@|$PYTHON_DEPENDENCIES|g;s|@@PYTHON_VERSION@@|$PYTHON_VERSION|g;" < "$CURDIR/package-base/$i.in" > "$CURDIR/package-base/$i"
+    sed -e "s|@@ZATO_ROOT_DIR@@|$ZATO_ROOT_DIR|g;s|@@ZATO_TARGET_DIR@@|$ZATO_TARGET_DIR|g;s|@@ZATO_VERSION@@|$ZATO_VERSION|g;s|@@PACKAGE_VERSION@@|$PACKAGE_VERSION|g;s|@@COMPLETE_VERSION@@|$COMPLETE_VERSION|g;s|@@PYTHON_DEPENDENCIES@@|$PYTHON_DEPENDENCIES|g;" < "$CURDIR/package-base/$i.in" > "$CURDIR/package-base/$i"
   done
   cp $CURDIR/../bash_completion/zato $CURDIR/package-base/bash-completion
   cd package-base

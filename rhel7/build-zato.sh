@@ -18,6 +18,23 @@ fi
 BRANCH_NAME=$1
 ZATO_VERSION=$2
 PACKAGE_VERSION=$3
+PY_BINARY=${4:-python}
+
+if ! [ -x "$(command -v $PY_BINARY)" ]; then
+  sudo yum install -y $PY_BINARY
+fi
+
+# Python 2 dependencies
+PYTHON_DEPENDENCIES=""
+PACKAGE_VERSION="python27"
+if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][0])') -eq 3 ]]
+then
+    # Python 3 dependencies
+    PYTHON_DEPENDENCIES=", python3, python3-pip"
+    if [[ $PACKAGE_VERSION == "python" ]];then
+        PACKAGE_VERSION="python3"
+    fi
+fi
 
 CURDIR="${BASH_SOURCE[0]}";RL="readlink";([[ `uname -s`=='Darwin' ]] || RL="$RL -f")
 while([ -h "${CURDIR}" ]) do CURDIR=`$RL "${CURDIR}"`; done
