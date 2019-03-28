@@ -21,6 +21,8 @@ ZATO_VERSION="$2"
 PACKAGE_VERSION="$3"
 PY_BINARY=${4:-python}
 
+apk add $PY_BINARY
+
 # Python 2 dependencies
 PYTHON_DEPENDENCIES="python2-dev"
 PYTHON_VERSION=""
