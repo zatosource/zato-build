@@ -20,6 +20,10 @@ ZATO_VERSION=$2
 PACKAGE_VERSION=$3
 PY_BINARY=${4:-python}
 
+if ! [ -x "$(command -v $PY_BINARY)" ]; then
+  sudo apt-get install -y $PY_BINARY
+fi
+
 # Python 2 dependencies
 PYTHON_DEPENDENCIES="python2.7, python-pip"
 if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][0])') -eq 3 ]]
