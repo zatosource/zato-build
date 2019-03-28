@@ -53,14 +53,14 @@ if [[ -n "$IMAGE" ]]; then
 
   # Some official images lack sudo, which breaks install.sh.
   if [ "${IMAGE:0:6}" = "centos" ]; then
-    run yum -y install sudo
+    run yum -y install sudo git
   elif [ "${IMAGE:0:6}" = "alpine" ]; then
     run apk update
-    run apk add sudo bash
+    run apk add sudo bash git
     run abuild-keygen -an
   elif [ "${IMAGE:0:6}" = "ubuntu" -o "${IMAGE:0:6}" = "debian" ]; then
     run apt-get update
-    run apt-get -y install sudo
+    run apt-get -y install sudo git
   fi
 
   # chown everything to Travis UID so caching succeeds.
