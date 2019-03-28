@@ -13,4 +13,4 @@ case "$name" in
   alpine) repo="alpine" ; export ALPINE_FLAVOUR="v$version" ;;
 esac
 
-run bash -xe "cd /tmp/zato-build/$repo && exec ./build-zato.sh main $ZATO_VERSION $PACKAGE_VERSION"
+run bash -ec "cd /tmp/zato-build/$repo && exec ./build-zato.sh main $ZATO_VERSION $PACKAGE_VERSION ${PY_VERSION:-python}"

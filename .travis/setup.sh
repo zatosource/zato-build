@@ -24,15 +24,17 @@ sudo mkdir -p /tmp/travis-cache/var/cache/apt
 sudo mkdir -p /tmp/travis-cache/var/lib/apt
 sudo mkdir -p /tmp/travis-cache/var/cache/yum
 
-run() {
-  if test -n "$IMAGE" ; then
-    docker exec target "$@"
-  else
-    "$@"
-  fi
+function run()
+{
+    if [ "$IMAGE" ]
+    then
+        docker exec target "$@"
+    else
+        "$@"
+    fi
 }
 
-if test -n "$IMAGE" ; then
+if [[ -n "$IMAGE" ]]; then
   # chown everything to root so perms within container work.
   sudo chown -R root: /tmp/travis-cache
 
@@ -49,19 +51,20 @@ if test -n "$IMAGE" ; then
     "$IMAGE" \
     sleep 86400
 
-  # Some official images lack sudo and/or bash.
-  # Also add developer keys for Alpine.
-
-  if test "${IMAGE:0:6}" = "centos" ; then
+  # Some official images lack sudo, which breaks install.sh.
+  if [ "${IMAGE:0:6}" = "centos" ]; then
     run yum -y install sudo
-  elif test "${IMAGE:0:6}" = "alpine" ; then
-    run /bin/sh -ec "apk update && apk upgrade && apk add sudo bash && exec abuild-keygen -an"
-  elif test "${IMAGE:0:6}" = "ubuntu" -o "${IMAGE:0:6}" = "debian" ; then
-    run /bin/sh -ec "apt-get update && exec apt-get -y install sudo"
+  elif [ "${IMAGE:0:6}" = "alpine" ]; then
+    run apk update
+    run apk add sudo bash
+    run abuild-keygen -an
+  elif [ "${IMAGE:0:6}" = "ubuntu" -o "${IMAGE:0:6}" = "debian" ]; then
+    run apt-get update
+    run apt-get -y install sudo
   fi
 
   # chown everything to Travis UID so caching succeeds.
   trap "sudo chown -R $(whoami): /tmp/travis-cache" EXIT
 else
-  ln -sf `pwd` /tmp/zato-build
+  ln -sf $(pwd) /tmp/zato-build
 fi
