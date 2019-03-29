@@ -67,7 +67,7 @@ autorefresh=1
 baseurl=file:///tmp/zato-build/packages/
 gpgcheck=0
 EOF
-
+  yum install -y zato
 # elif [ "$(type -p apk)" ]
 # then
 else
