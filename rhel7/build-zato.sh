@@ -48,6 +48,8 @@ then
     # scl enable rh-python36 bash
     source /opt/rh/rh-python36/enable
 fi
+# enable python3 if installed
+[[ -f /opt/rh/rh-python36/enable ]] && source /opt/rh/rh-python36/enable
 
 CURDIR="${BASH_SOURCE[0]}";RL="readlink";([[ `uname -s`=='Darwin' ]] || RL="$RL -f")
 while([ -h "${CURDIR}" ]) do CURDIR=`$RL "${CURDIR}"`; done

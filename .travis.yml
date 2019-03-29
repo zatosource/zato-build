@@ -6,6 +6,7 @@ cache:
 # https://zato.io/docs/admin/guide/install/index.html#operating-system-considerations
 env:
   - MODE=packaging IMAGE=centos:7
+  - MODE=packaging IMAGE=centos:7 PY_BINARY=python3
   - MODE=packaging IMAGE=ubuntu:16.04
   - MODE=packaging IMAGE=ubuntu:16.04 PY_BINARY=python3
   - MODE=packaging IMAGE=ubuntu:18.04
