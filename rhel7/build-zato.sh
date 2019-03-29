@@ -137,8 +137,10 @@ function build_rpm {
     cd $RPM_BUILD_DIR/SPECS
     rpmbuild -ba zato.spec
 
-    [[ -d /tmp/zato-build/packages/$RHEL_VERSION/ ]] || mkdir -p /tmp/zato-build/packages/$RHEL_VERSION/
-    mv /root/rpmbuild/RPMS/x86_64/zato-$ZATO_VERSION-$PACKAGE_VERSION.$RHEL_VERSION.$ARCH.rpm /tmp/zato-build/packages/$RHEL_VERSION/
+    if [[ -n $4 && $4 == "travis" ]]; then
+        [[ -d /tmp/zato-build/packages/$RHEL_VERSION/ ]] || mkdir -p /tmp/zato-build/packages/$RHEL_VERSION/
+        mv /root/rpmbuild/RPMS/x86_64/zato-$ZATO_VERSION-$PACKAGE_VERSION.$RHEL_VERSION.$ARCH.rpm /tmp/zato-build/packages/$RHEL_VERSION/
+    fi
 }
 
 prepare
