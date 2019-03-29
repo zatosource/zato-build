@@ -26,9 +26,11 @@ fi
 
 # Python 2 dependencies
 PYTHON_DEPENDENCIES="python2.7, python-pip"
+PACKAGE_VERSION="python27"
 if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][0])') -eq 3 ]]
 then
     # Python 3 dependencies
+    PACKAGE_VERSION="python3"
     PYTHON_DEPENDENCIES="python3, python3-pip"
 fi
 
