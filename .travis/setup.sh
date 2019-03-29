@@ -34,6 +34,16 @@ function run()
     fi
 }
 
+function run_checking()
+{
+    if [ "$IMAGE" ]
+    then
+        docker exec target-testing "$@"
+    else
+        "$@"
+    fi
+}
+
 if [[ -n "$IMAGE" ]]; then
   # chown everything to root so perms within container work.
   sudo chown -R root: /tmp/travis-cache
@@ -51,16 +61,41 @@ if [[ -n "$IMAGE" ]]; then
     "$IMAGE" \
     sleep 86400
 
+  # Arrange for the container to be downloaded and started.
+  docker run \
+    --name target-testing \
+    --volume $TRAVIS_BUILD_DIR:/tmp/zato-build \
+    --volume /tmp/travis-cache/root/.cache/pip:/root/.cache/pip \
+    --volume /tmp/travis-cache/var/cache/apk:/var/cache/apk \
+    --volume /tmp/travis-cache/var/cache/apt:/var/cache/apt \
+    --volume /tmp/travis-cache/var/lib/apt:/var/lib/apt \
+    --volume /tmp/travis-cache/var/cache/yum:/var/cache/yum \
+    --detach \
+    "$IMAGE" \
+    sleep 86400
+
   # Some official images lack sudo, which breaks install.sh.
   if [ "${IMAGE:0:6}" = "centos" ]; then
     run yum -y install sudo git
+
+    # testing
+    run_checking yum -y install sudo git
   elif [ "${IMAGE:0:6}" = "alpine" ]; then
     run apk update
     run apk add sudo bash git abuild
     run abuild-keygen -an
+
+    # testing
+    run_checking apk update
+    run_checking apk add sudo bash git abuild
+    run_checking abuild-keygen -an
   elif [ "${IMAGE:0:6}" = "ubuntu" -o "${IMAGE:0:6}" = "debian" ]; then
     run apt-get update
     run apt-get -y install sudo git lsb-release
+
+    # testing
+    run_checking apt-get update
+    run_checking apt-get -y install sudo git lsb-release
   fi
 
   # chown everything to Travis UID so caching succeeds.
