@@ -17,8 +17,8 @@ fi
 
 BRANCH_NAME=$1
 ZATO_VERSION=$2
-PACKAGE_VERSION=$3
-PY_BINARY=${4:-python}
+# PACKAGE_VERSION=$3
+PY_BINARY=${3:-python}
 
 if ! [ -x "$(command -v $PY_BINARY)" ]; then
   sudo apt-get install -y $PY_BINARY

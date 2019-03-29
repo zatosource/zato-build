@@ -19,7 +19,7 @@ ZATO_VERSION="$2"
 # This is a versioning convention coming from Gentoo, that Alpine also follows.
 
 # PACKAGE_VERSION="$3"
-PY_BINARY=${4:-python}
+PY_BINARY=${3:-python}
 
 apk add $PY_BINARY
 
