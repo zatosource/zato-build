@@ -18,7 +18,7 @@ if [ "$(type -p apt-get)" ]; then
     sudo apt-get install -y lsb-release
   fi
 
-  for i in $(find "/tmp/packages/$(lsb_release -c | cut -f2)/" -type f -name \*.deb);do
+  for i in $(find "/tmp/packages/" -type f -name \*.deb);do
     dpkg -i $i
   done
   apt-get install -f -y || exit 1
@@ -40,7 +40,7 @@ elif [ "$(type -p yum)" ]; then
     source /opt/rh/rh-python36/enable
   fi
 
-  for i in $(find /tmp/packages/$RHEL_VERSION/ -type f -name \*.rpm);do
+  for i in $(find /tmp/packages/ -type f -name \*.rpm);do
     yum install -y $i
   done
 # elif [ "$(type -p apk)" ]
