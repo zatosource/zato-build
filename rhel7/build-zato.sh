@@ -21,7 +21,23 @@ PY_BINARY=$3
 # PY_BINARY=${4:-python}
 
 if ! [ -x "$(command -v $PY_BINARY)" ]; then
-  sudo yum install -y $PY_BINARY
+    if [[ "$PY_BINARY" == "python3" ]]; then
+        sudo yum install -y centos-release-scl-rh
+        sudo yum-config-manager --enable centos-sclo-rh-testing
+
+        # On RHEL, enable RHSCL and RHSCL-beta repositories for you system:
+        sudo yum-config-manager --enable rhel-server-rhscl-7-rpms
+        sudo yum-config-manager --enable rhel-server-rhscl-beta-7-rpms
+
+        # 2. Install the collection:
+        sudo yum install -y rh-python36
+
+        # 3. Start using software collections:
+        # scl enable rh-python36 bash
+        source /opt/rh/rh-python36/enable
+    else
+        sudo yum install -y $PY_BINARY
+    fi
 fi
 
 # Python 2 dependencies
@@ -48,8 +64,6 @@ then
     # scl enable rh-python36 bash
     source /opt/rh/rh-python36/enable
 fi
-# enable python3 if installed
-[[ -f /opt/rh/rh-python36/enable ]] && source /opt/rh/rh-python36/enable
 
 CURDIR="${BASH_SOURCE[0]}";RL="readlink";([[ `uname -s`=='Darwin' ]] || RL="$RL -f")
 while([ -h "${CURDIR}" ]) do CURDIR=`$RL "${CURDIR}"`; done
