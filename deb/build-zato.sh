@@ -163,8 +163,8 @@ function build_deb {
     dpkg-deb --build zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH
 
     if [[ -n $4 && $4 == "travis" ]]; then
-        [[ -d "/tmp/zato-build/packages/" ]] || mkdir -p "/tmp/zato-build/packages/"
-        cp $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH.deb "/tmp/zato-build/packages/"
+        [[ -d "/tmp/packages/$(lsb_release -c | cut -f2)/" ]] || mkdir -p "/tmp/packages/$(lsb_release -c | cut -f2)/"
+        cp $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH.deb "/tmp/packages/$(lsb_release -c | cut -f2)/"
     fi
 
     mv $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH.deb $CURDIR/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH-$RELEASE_NAME.deb

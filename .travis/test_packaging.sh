@@ -16,5 +16,5 @@ esac
 run bash -ec "cd /tmp/zato-build/$repo && exec ./build-zato.sh main \"$ZATO_VERSION\" \"${PY_BINARY:-python}\" travis"
 
 echo "Artifacts:"
-find $TRAVIS_BUILD_DIR/packages/ -type f
+find /tmp/travis-cache/packages -type f
 run_checking bash -ec "cd /tmp/zato-build/.travis && exec ./test_install.sh \"$ZATO_VERSION\" \"${PY_BINARY:-python}\""

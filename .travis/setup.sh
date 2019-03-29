@@ -18,6 +18,7 @@
 #
 
 set -xe
+sudo mkdir -p /tmp/travis-cache/packages
 sudo mkdir -p /tmp/travis-cache/root/.cache/pip
 sudo mkdir -p /tmp/travis-cache/var/cache/apk
 sudo mkdir -p /tmp/travis-cache/var/cache/apt
@@ -52,6 +53,7 @@ if [[ -n "$IMAGE" ]]; then
   docker run \
     --name target \
     --volume $TRAVIS_BUILD_DIR:/tmp/zato-build \
+    --volume /tmp/travis-cache/packages:/tmp/packages \
     --volume /tmp/travis-cache/root/.cache/pip:/root/.cache/pip \
     --volume /tmp/travis-cache/var/cache/apk:/var/cache/apk \
     --volume /tmp/travis-cache/var/cache/apt:/var/cache/apt \
@@ -65,6 +67,7 @@ if [[ -n "$IMAGE" ]]; then
   docker run \
     --name target-testing \
     --volume $TRAVIS_BUILD_DIR:/tmp/zato-build \
+    --volume /tmp/travis-cache/packages:/tmp/packages \
     --volume /tmp/travis-cache/root/.cache/pip:/root/.cache/pip \
     --volume /tmp/travis-cache/var/cache/apk:/var/cache/apk \
     --volume /tmp/travis-cache/var/cache/apt:/var/cache/apt \

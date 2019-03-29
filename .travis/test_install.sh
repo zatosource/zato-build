@@ -9,15 +9,21 @@ ZATO_VERSION=$1
 # PACKAGE_VERSION=$3
 PY_BINARY=${2:-python}
 
-cd /tmp/zato-build/packages/ || exit 1
+cd /tmp/packages || exit 1
 
 if [ "$(type -p apt-get)" ]; then
   apt-get update
-  for i in $(find /tmp/zato-build/packages/ -type f -name \*.deb);do
+
+  if ! [ -x "$(command -v lsb_release)" ]; then
+    sudo apt-get install -y lsb-release
+  fi
+
+  for i in $(find "/tmp/packages/$(lsb_release -c | cut -f2)/" -type f -name \*.deb);do
     dpkg -i $i
   done
   apt-get install -f -y || exit 1
 elif [ "$(type -p yum)" ]; then
+  RHEL_VERSION=el7
   if [[ ${PY_BINARY} == "python3" ]]; then
     sudo yum install -y centos-release-scl-rh
     sudo yum-config-manager --enable centos-sclo-rh-testing
@@ -34,7 +40,7 @@ elif [ "$(type -p yum)" ]; then
     source /opt/rh/rh-python36/enable
   fi
 
-  for i in $(find /tmp/zato-build/packages/ -type f -name \*.rpm);do
+  for i in $(find /tmp/packages/$RHEL_VERSION/ -type f -name \*.rpm);do
     yum install -y $i
   done
 # elif [ "$(type -p apk)" ]
