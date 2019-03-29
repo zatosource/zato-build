@@ -164,8 +164,8 @@ function build_deb {
 
     mv $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH.deb $CURDIR/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH-$RELEASE_NAME.deb
 
-    [[ -d "/tmp/zato-build/$(lsb_release -c | cut -f2)/" ]] || mkdir -p "/tmp/zato-build/$(lsb_release -c | cut -f2)/"
-    cp "$CURDIR/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH-$RELEASE_NAME.deb" "/tmp/zato-build/$(lsb_release -c | cut -f2)/"
+    [[ -d "/tmp/zato-build/packages/$(lsb_release -c | cut -f2)/" ]] || mkdir -p "/tmp/zato-build/packages/$(lsb_release -c | cut -f2)/"
+    cp "$CURDIR/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH-$RELEASE_NAME.deb" "/tmp/zato-build/packages/$(lsb_release -c | cut -f2)/"
 }
 
 cleanup
