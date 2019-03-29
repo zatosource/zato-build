@@ -38,8 +38,8 @@ BLOCK
   cat > /etc/apt/sources.list.d/zato.list << EOF
 deb [ arch=amd64 ] file:///tmp/zato-build/packages/ $DIST_NAME main
 EOF
-  apt-get update
-  apt-get install -y zato || exit 1
+  apt-get update --allow-insecure-repositories
+  apt-get install --allow-insecure-repositories -y zato || exit 1
 elif [ "$(type -p yum)" ]; then
   yum install -y createrepo gnutls-devel
   if [[ ${PY_BINARY} == "python3" ]]; then
