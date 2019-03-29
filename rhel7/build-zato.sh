@@ -47,9 +47,8 @@ if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][0])') -eq 3 ]]
 then
     # Python 3 dependencies
     PYTHON_DEPENDENCIES=", rh-python36, rh-python36-python-pip"
-    if [[ $PACKAGE_VERSION == "python" ]];then
-        PACKAGE_VERSION="python3"
-    fi
+    PACKAGE_VERSION="python3"
+
     sudo yum install -y centos-release-scl-rh
     sudo yum-config-manager --enable centos-sclo-rh-testing
 
