@@ -21,9 +21,9 @@ if [ "$(type -p apt-get)" ]; then
   if ! [ -x "/usr/bin/timedatectl" ]; then
     /usr/bin/timedatectl show
     # sudo timedatectl set-timezone GMT
-  else
-    ls -l /etc/localtime
   fi
+  echo "ls -l /etc/localtime"
+  ls -l /etc/localtime
 
   for i in $(find "/tmp/packages/" -type f -name \*.deb); do
     dpkg -i $i
