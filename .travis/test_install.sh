@@ -57,5 +57,10 @@ else
   echo "install.sh: Unsupported OS: could not detect apt-get, yum, or apk." >&2
   exit 1
 fi
+if [[ ${PY_BINARY} == "python3" ]]; then
+    PY_VERSION="py3."
+else
+    PY_VERSION="py2."
+fi
 
-su - zato -c 'head -n 2 /opt/zato/current/bin/zato;zato --version' || exit 1
+[[ -n "$(su - zato -c 'zato --version'|grep 'Zato '|grep "$PY_VERSION")" ]] || exit 1
