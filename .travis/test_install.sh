@@ -18,8 +18,8 @@ if [ "$(type -p apt-get)" ]; then
     sudo apt-get install -y lsb-release
   fi
 
-  if ! [ -x "$(command -v timedatectl)" ]; then
-    timedatectl show
+  if ! [ -x "/usr/bin/timedatectl" ]; then
+    /usr/bin/timedatectl show
     # sudo timedatectl set-timezone GMT
   else
     ls -l /etc/localtime
