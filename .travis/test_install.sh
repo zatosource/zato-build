@@ -63,7 +63,7 @@ else
     PY_VERSION="py2."
 fi
 
-su - zato -c 'zato --version > /tmp/zato-version'
+su - zato -c 'zato --version 1>/tmp/zato-version 2>&1'
 
 if [[ -n "$(grep 'Zato ' /tmp/zato-version|grep $PY_VERSION)" ]];then
     echo "Zato runs ok"
