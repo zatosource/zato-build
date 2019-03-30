@@ -49,3 +49,5 @@ else
   echo "install.sh: Unsupported OS: could not detect apt-get, yum, or apk." >&2
   exit 1
 fi
+
+su - zato -c 'head -n 2 /opt/zato/current/bin/zato;zato --version' || exit 1
