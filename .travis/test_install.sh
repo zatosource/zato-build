@@ -12,7 +12,6 @@ PY_BINARY=${2:-python}
 cd /tmp/packages || exit 1
 
 if [ "$(type -p apt-get)" ]; then
-  export DEBIAN_FRONTEND=noninteractive
   apt-get update
 
   if ! [ -x "$(command -v lsb_release)" ]; then
@@ -20,7 +19,7 @@ if [ "$(type -p apt-get)" ]; then
   fi
 
   if ! [ -e "/usr/share/zoneinfo/GMT" ]; then
-    sudo apt-get install -y --no-install-recommends tzdata
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends tzdata
   fi
 
   if ! [ -e "/etc/localtime" ]; then
