@@ -68,8 +68,8 @@ su - zato -c 'zato --version 1>/tmp/zato-version 2>&1'
 cat /tmp/zato-version
 
 if [[ -n "$(grep 'Zato ' /tmp/zato-version | grep $PY_VERSION)" ]]; then
-  [[ -n "$(grep 'Zato ' /tmp/zato-version)" ]] && echo "Zato runs ok"
-  [[ -n "$(grep 'Zato ' /tmp/zato-version | grep $PY_VERSION)" ]] && echo "Python version ok"
+  [[ -n "$(grep 'Zato ' /tmp/zato-version)" ]] && echo "Zato execution: ok"
+  [[ -n "$(grep 'Zato ' /tmp/zato-version | grep $PY_VERSION)" ]] && echo "Python version: ok"
   echo "Zato command output:"
   cat /tmp/zato-version
 else
