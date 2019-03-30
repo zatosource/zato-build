@@ -6,8 +6,8 @@ if [ -z "$1" ]; then
 fi
 
 ZATO_VERSION=$1
-# PACKAGE_VERSION=$3
 PY_BINARY=${2:-python}
+# PACKAGE_VERSION=$3
 
 cd /tmp/packages || exit 1
 
@@ -18,7 +18,12 @@ if [ "$(type -p apt-get)" ]; then
     sudo apt-get install -y lsb-release
   fi
 
-  for i in $(find "/tmp/packages/" -type f -name \*.deb);do
+  if ! [ -x "$(command -v timedatectl)" ]; then
+    timedatectl show
+    # sudo timedatectl set-timezone GMT
+  fi
+
+  for i in $(find "/tmp/packages/" -type f -name \*.deb); do
     dpkg -i $i
   done
   apt-get install -f -y || exit 1
@@ -40,11 +45,11 @@ elif [ "$(type -p yum)" ]; then
     source /opt/rh/rh-python36/enable
   fi
 
-  for i in $(find /tmp/packages/ -type f -name \*.rpm);do
+  for i in $(find /tmp/packages/ -type f -name \*.rpm); do
     yum install -y $i
   done
-# elif [ "$(type -p apk)" ]
-# then
+  # elif [ "$(type -p apk)" ]
+  # then
 else
   echo "install.sh: Unsupported OS: could not detect apt-get, yum, or apk." >&2
   exit 1
