@@ -18,7 +18,7 @@ fi
 BRANCH_NAME=$1
 ZATO_VERSION=$2
 PY_BINARY=$3
-# PY_BINARY=${4:-python}
+TRAVIS_PROCESS_NAME=$4
 
 if ! [ -x "$(command -v $PY_BINARY)" ]; then
     if [[ "$PY_BINARY" == "python3" ]]; then
@@ -137,7 +137,7 @@ function build_rpm {
     cd $RPM_BUILD_DIR/SPECS
     rpmbuild -ba zato.spec
 
-    if [[ -n $4 && $4 == "travis" ]]; then
+    if [[ -n $TRAVIS_PROCESS_NAME && $TRAVIS_PROCESS_NAME == "travis" ]]; then
         [[ -d /tmp/packages/$RHEL_VERSION/ ]] || mkdir -p /tmp/packages/$RHEL_VERSION/
         mv /root/rpmbuild/RPMS/x86_64/zato-$ZATO_VERSION-$PACKAGE_VERSION.$RHEL_VERSION.$ARCH.rpm /tmp/packages/$RHEL_VERSION/
     fi

@@ -19,6 +19,7 @@ BRANCH_NAME=$1
 ZATO_VERSION=$2
 # PACKAGE_VERSION=$3
 PY_BINARY=${3:-python}
+TRAVIS_PROCESS_NAME=$4
 
 if ! [ -x "$(command -v $PY_BINARY)" ]; then
   sudo apt-get install -y $PY_BINARY
@@ -162,7 +163,7 @@ function build_deb {
     cd $CURDIR/BUILDROOT
     dpkg-deb --build zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH
 
-    if [[ -n $4 && $4 == "travis" ]]; then
+    if [[ -n $TRAVIS_PROCESS_NAME && $TRAVIS_PROCESS_NAME == "travis" ]]; then
         [[ -d "/tmp/packages/$(lsb_release -c | cut -f2)/" ]] || mkdir -p "/tmp/packages/$(lsb_release -c | cut -f2)/"
         cp $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH.deb "/tmp/packages/$(lsb_release -c | cut -f2)/"
     fi
