@@ -18,12 +18,9 @@ if [ "$(type -p apt-get)" ]; then
     sudo apt-get install -y lsb-release
   fi
 
-  if ! [ -x "/usr/bin/timedatectl" ]; then
-    /usr/bin/timedatectl show
-    # sudo timedatectl set-timezone GMT
+  if ! [ -e "/etc/localtime" ]; then
+    ln -s /usr/share/zoneinfo/GMT /etc/localtime
   fi
-  echo "ls -l /etc/localtime"
-  ls -l /etc/localtime
 
   for i in $(find "/tmp/packages/" -type f -name \*.deb); do
     dpkg -i $i
