@@ -73,7 +73,20 @@ if [[ -n "$(grep 'Zato ' /tmp/zato-version | grep $PY_VERSION)" ]]; then
   echo "Zato command output:"
   cat /tmp/zato-version
 else
-  echo "Zato failed to pass test"
+  echo "Zato failed to pass tests"
+  echo -n "Zato execution:"
+  if [[ -n "$(grep 'Zato ' /tmp/zato-version)" ]]; then
+      echo "ok"
+  else
+      echo "error"
+  fi
+  echo -n "Python version ($PY_VERSION):"
+  if [[ -n "$(grep 'Zato ' /tmp/zato-version | grep $PY_VERSION)" ]]; then
+      echo "ok"
+  else
+      echo "error"
+  fi
+  echo "Zato command output:"
   cat /tmp/zato-version
   exit 1
 fi
