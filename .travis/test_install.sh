@@ -65,7 +65,7 @@ fi
 
 su - zato -c 'zato --version > /tmp/zato-version'
 
-if [[ -n "$(echo /tmp/zato-version|grep 'Zato '|grep $PY_VERSION)" ]];then
+if [[ -n "$(grep 'Zato ' /tmp/zato-version|grep $PY_VERSION)" ]];then
     echo "Zato runs ok"
 else
     echo "Zato failed to pass test"
