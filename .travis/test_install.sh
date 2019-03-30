@@ -58,17 +58,22 @@ else
   exit 1
 fi
 if [[ ${PY_BINARY} == "python3" ]]; then
-    PY_VERSION="py3."
+  PY_VERSION="py3."
 else
-    PY_VERSION="py2."
+  PY_VERSION="py2."
 fi
 
 su - zato -c 'zato --version 1>/tmp/zato-version 2>&1'
 
-if [[ -n "$(grep 'Zato ' /tmp/zato-version|grep $PY_VERSION)" ]];then
-    echo "Zato runs ok"
+cat /tmp/zato-version
+
+if [[ -n "$(grep 'Zato ' /tmp/zato-version | grep $PY_VERSION)" ]]; then
+  [[ -n "$(grep 'Zato ' /tmp/zato-version)" ]] && echo "Zato runs ok"
+  [[ -n "$(grep 'Zato ' /tmp/zato-version | grep $PY_VERSION)" ]] && echo "Python version ok"
+  echo "Zato command output:"
+  cat /tmp/zato-version
 else
-    echo "Zato failed to pass test"
-    ls /tmp/zato-version
-    exit 1
+  echo "Zato failed to pass test"
+  cat /tmp/zato-version
+  exit 1
 fi
