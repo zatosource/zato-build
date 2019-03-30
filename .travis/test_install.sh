@@ -63,15 +63,12 @@ else
     PY_VERSION="py2."
 fi
 
-check_str="$(su - zato -c 'zato --version' 2>&1)"
-if [[ -n "$(echo ${check_str}|grep 'Zato '|grep $PY_VERSION)" ]];then
+su - zato -c 'zato --version > /tmp/zato-version'
+
+if [[ -n "$(echo /tmp/zato-version|grep 'Zato '|grep $PY_VERSION)" ]];then
     echo "Zato runs ok"
 else
     echo "Zato failed to pass test"
-    echo "check_str: '$check_str'"
-    echo "test1:"
-    su - zato -c 'zato --version'|grep 'Zato '
-    echo "test2:"
-    su - zato -c 'zato --version'|grep 'Zato '|grep "$PY_VERSION"
+    ls /tmp/zato-version
     exit 1
 fi
