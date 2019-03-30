@@ -18,6 +18,10 @@ if [ "$(type -p apt-get)" ]; then
     sudo apt-get install -y lsb-release
   fi
 
+  if ! [ -e "/usr/share/zoneinfo/GMT" ]; then
+    sudo apt-get install -y tzdata
+  fi
+
   if ! [ -e "/etc/localtime" ]; then
     ln -s /usr/share/zoneinfo/GMT /etc/localtime
   fi
