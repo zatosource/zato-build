@@ -22,10 +22,15 @@ if [[ -z "$3" || -z "$(echo $3| grep -E '^python[2,3]?\.?')" ]] ; then
     exit 1
 fi
 
+if [[ -n "$4" || -z "$(echo $4| grep -E '^(stable|alpha|beta|pre|rc)')" ]] ; then
+    echo Argument 4 is the package version to build it should be empty or one of stable, alpha, beta, pre or rc
+    exit 1
+fi
+
 BRANCH_NAME=$1
 ZATO_VERSION=$2
 PY_BINARY=$3
-[[ -n "$4" ]] && PACKAGE_VERSION="${4}_"
+[[ -n "$4" ]] && PACKAGE_VERSION_SUFFIX="_${4}"
 TRAVIS_PROCESS_NAME=$5
 
 if ! [ -x "$(command -v $PY_BINARY)" ]; then
@@ -50,12 +55,12 @@ fi
 
 # Python 2 dependencies
 PYTHON_DEPENDENCIES=""
-PACKAGE_VERSION="${PACKAGE_VERSION}python27"
+PACKAGE_VERSION="python27${PACKAGE_VERSION_SUFFIX}"
 if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][0])') -eq 3 ]]
 then
     # Python 3 dependencies
     PYTHON_DEPENDENCIES=", rh-python36, rh-python36-python-pip"
-    PACKAGE_VERSION="${PACKAGE_VERSION}python3"
+    PACKAGE_VERSION="python3${PACKAGE_VERSION_SUFFIX}"
 
     sudo yum install -y centos-release-scl-rh
     sudo yum-config-manager --enable centos-sclo-rh-testing
