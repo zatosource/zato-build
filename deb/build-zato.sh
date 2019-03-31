@@ -22,7 +22,7 @@ if [[ -z "$3" || -z "$(echo $3| grep -E '^python[2,3]?\.?')" ]] ; then
     exit 1
 fi
 
-if [[ -n "$4" || -z "$(echo $4| grep -E '^(stable|alpha|beta|pre|rc)')" ]] ; then
+if [[ -n "$4" && -z "$(echo $4| grep -E '^(stable|alpha|beta|pre|rc)')" ]] ; then
     echo Argument 4 is the package version to build it should be empty or one of stable, alpha, beta, pre or rc
     exit 1
 fi
