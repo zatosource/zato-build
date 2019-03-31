@@ -25,7 +25,7 @@ if [[ "$1" == "-h" || "$1" == "--help" ]] ; then
     exit 0
 fi
 
-if [[ -z "$3" || -z "$(echo $3| grep -E '^python[2,3]\.?')" ]] ; then
+if [[ -z "$3" || -z "$(echo $3| grep -E '^python[2,3]?\.?')" ]] ; then
     echo Argument 3 must be the Python executable to use e.g. python, python2 or python3
     exit 1
 fi
