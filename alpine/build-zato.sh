@@ -30,11 +30,6 @@ if [[ -z "$3" || -z "$(echo $3| grep -E '^python[2,3]?\.?')" ]] ; then
     exit 1
 fi
 
-if [[ -z "$4" ]] ; then
-    usage
-    exit 1
-fi
-
 BRANCH_NAME="$1"
 ZATO_VERSION="$2"
 PY_BINARY="$3"
