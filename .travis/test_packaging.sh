@@ -13,8 +13,8 @@ case "$name" in
   alpine) repo="alpine" ; export ALPINE_FLAVOUR="v$version" ;;
 esac
 
-run bash -ec "cd /tmp/zato-build/$repo && exec ./build-zato.sh main \"$ZATO_VERSION\" \"${PY_BINARY:-python}\" travis"
+run bash -ec "cd /tmp/zato-build/$repo && exec ./build-zato.sh main \"$ZATO_VERSION\" \"${PY_BINARY:-python}\" \"${PACKAGE_VERSION}\" travis"
 
 echo "Artifacts:"
 find /tmp/travis-cache/packages -type f
-run_checking bash -ec "cd /tmp/zato-build/.travis && exec ./test_install.sh \"$ZATO_VERSION\" \"${PY_BINARY:-python}\""
+run_checking bash -ec "cd /tmp/zato-build/.travis && exec ./test_install.sh \"$ZATO_VERSION\" \"${PY_BINARY:-python}\" \"${PACKAGE_VERSION}\""

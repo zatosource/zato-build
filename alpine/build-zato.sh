@@ -6,20 +6,50 @@
 # instructions to do so are available at
 # https://gitlab.com/zatosource/alpine-linux/wikis/how-to-manage-an-alpine-linux-repository
 
-
-test "$#" -ge 2 || { echo "build-zato.sh: usage: ./build-zato.sh branch-name zato-version [ package-version ]" 1>&2 ; exit 100 ; }
 test -n "$HOME" || { echo "build-zato.sh: HOME not set; abuild needs to run as a user with a home directory!" 1>&2 ; exit 100 ; }
+
+function usage(){
+    echo "$0 BRANCH_NAME ZATO_VERSION PYTHON_EXECUTABLE [PACKAGE_VERSION] [PROCESS]"
+    echo ""
+    echo "BRANCH_NAME: zatosource/zato branch name to build (e.g. master)"
+    echo "ZATO_VERSION: zato version to build (e.g. 3.0.0)"
+    echo "PYTHON_EXECUTABLE: Python executable to use (e.g. python, python2 or python3)"
+    echo "PACKAGE_VERSION: (optional) package version to build. The acceptable values for package-version are:"
+    echo "                 * \"\" (empty) or \"stable\", for stable versions."
+    echo "                 * \"alpha\", \"beta\", \"pre\" or \"rc\" followed by one or more digits."
+    echo "PROCESS: (optional) should be \"travis\" if run inside TravisCI"
+}
+
+if [[ "$1" == "-h" || "$1" == "--help" ]] ; then
+    usage
+    exit 0
+fi
+
+if [[ -z "$3" || -z "$(echo $3| grep -E '^python[2,3]\.?')" ]] ; then
+    echo Argument 3 must be the Python executable to use e.g. python, python2 or python3
+    exit 1
+fi
+
+if [[ -z "$4" ]] ; then
+    usage
+    exit 1
+fi
 
 BRANCH_NAME="$1"
 ZATO_VERSION="$2"
+PY_BINARY="$3"
+PACKAGE_VERSION="${4}"
+TRAVIS_PROCESS_NAME="$5"
+
+echo "TODO: Alpice Linux"
+exit 1
 
 # The acceptable values for package-version are:
 # * nothing or "stable", for stable versions. (The Alpine version will then have no suffix.)
 # * "alpha", "beta", "pre" or "rc" followed by one or more digits.
 # This is a versioning convention coming from Gentoo, that Alpine also follows.
 
-# PACKAGE_VERSION="$3"
-PY_BINARY=${3:-python}
+PY_BINARY=$3
 
 apk add $PY_BINARY
 

@@ -1,24 +1,37 @@
 #!/bin/bash
 
-if [ -z "$1" ] ; then
-echo Argument 1 must be branch name
+function usage(){
+    echo "$0 BRANCH_NAME ZATO_VERSION PYTHON_EXECUTABLE [PACKAGE_VERSION] [PROCESS]"
+    echo ""
+    echo "BRANCH_NAME: zatosource/zato branch name to build (e.g. master)"
+    echo "ZATO_VERSION: zato version to build (e.g. 3.0.0)"
+    echo "PYTHON_EXECUTABLE: Python executable to use (e.g. python, python2 or python3)"
+    echo "PACKAGE_VERSION: (optional) package version to build. The acceptable values for package-version are:"
+    echo "                 * \"\" (empty) or \"stable\", for stable versions."
+    echo "                 * \"alpha\", \"beta\", \"pre\" or \"rc\" followed by one or more digits."
+    echo "PROCESS: (optional) should be \"travis\" if run inside TravisCI"
+}
+
+if [[ "$1" == "-h" || "$1" == "--help" ]] ; then
+    usage
+    exit 0
+fi
+
+if [[ -z "$3" || -z "$(echo $3| grep -E '^python[2,3]\.?')" ]] ; then
+    echo Argument 3 must be the Python executable to use e.g. python, python2 or python3
     exit 1
 fi
 
-if [ -z "$2" ] ; then
-echo Argument 2 must be Zato version
-    exit 2
-fi
-
-if [ -z "$3" ] ; then
-echo Argument 3 must be package version
-    exit 3
+if [[ -z "$4" ]] ; then
+    usage
+    exit 1
 fi
 
 BRANCH_NAME=$1
 ZATO_VERSION=$2
 PY_BINARY=$3
-TRAVIS_PROCESS_NAME=$4
+[[ -n "$4" ]] && PACKAGE_VERSION="${4}_"
+TRAVIS_PROCESS_NAME=$5
 
 if ! [ -x "$(command -v $PY_BINARY)" ]; then
     if [[ "$PY_BINARY" == "python3" ]]; then
@@ -42,12 +55,12 @@ fi
 
 # Python 2 dependencies
 PYTHON_DEPENDENCIES=""
-PACKAGE_VERSION="python27"
+PACKAGE_VERSION="${PACKAGE_VERSION}python27"
 if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][0])') -eq 3 ]]
 then
     # Python 3 dependencies
     PYTHON_DEPENDENCIES=", rh-python36, rh-python36-python-pip"
-    PACKAGE_VERSION="python3"
+    PACKAGE_VERSION="${PACKAGE_VERSION}python3"
 
     sudo yum install -y centos-release-scl-rh
     sudo yum-config-manager --enable centos-sclo-rh-testing
