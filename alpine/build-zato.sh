@@ -25,13 +25,23 @@ if [[ "$1" == "-h" || "$1" == "--help" ]] ; then
     exit 0
 fi
 
+if [[ -z "$1" ]] ; then
+    echo Argument 1 must be the branch name from zatosource/zato used to build the package.
+    exit 1
+fi
+
+if [[ -z "$2" || -z "$(echo $2| grep -E '^[0-9]+\.[0-9]+\.[0-9]+')" ]] ; then
+    echo Argument 2 must be the Zato version to build.
+    exit 1
+fi
+
 if [[ -z "$3" || -z "$(echo $3| grep -E '^python[2,3]?\.?')" ]] ; then
-    echo Argument 3 must be the Python executable to use e.g. python, python2 or python3
+    echo Argument 3 must be the Python executable to use e.g. python, python2 or python3.
     exit 1
 fi
 
 if [[ -n "$4" && -z "$(echo $4| grep -E '^(stable|alpha|beta|pre|rc)')" ]] ; then
-    echo Argument 4 is the package version to build it should be empty or one of stable, alpha, beta, pre or rc
+    echo Argument 4 is the release level of the build. The value has to be empty or be one of: stable, alpha, beta, pre or rc.
     exit 1
 fi
 
