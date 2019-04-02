@@ -82,7 +82,7 @@ if [[ -n "$IMAGE" ]]; then
     run yum -y install sudo git
 
     # testing
-    run_checking yum -y install sudo git
+    run_checking yum -y install sudo git s3cmd
   elif [ "${IMAGE:0:6}" = "alpine" ]; then
     run apk update
     run apk add sudo bash git abuild
@@ -90,11 +90,11 @@ if [[ -n "$IMAGE" ]]; then
 
     # testing
     run_checking apk update
-    run_checking apk add sudo bash git abuild
+    run_checking apk add sudo bash git abuild s3cmd
     run_checking abuild-keygen -an
   elif [ "${IMAGE:0:6}" = "ubuntu" -o "${IMAGE:0:6}" = "debian" ]; then
     run apt-get update
-    run apt-get -y install sudo git lsb-release
+    run apt-get -y install sudo git lsb-release s3cmd
 
     # testing
     run_checking apt-get update

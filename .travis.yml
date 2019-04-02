@@ -42,7 +42,3 @@ notifications:
 
 script:
   - source .travis/test_${MODE}.sh
-  - echo "Tests passed..Uploading packages"
-  - find /tmp/travis-cache/packages/
-  - s3cmd --access_key=$ZATO_S3_ACCESS_KEY --secret_key=$ZATO_S3_SECRET_KEY sync /tmp/travis-cache/packages/ $ZATO_S3_BUCKET_NAME/
-  - echo "Packages uploaded"
