@@ -82,7 +82,8 @@ if [[ -n "$IMAGE" ]]; then
     run yum -y install sudo git
 
     # testing
-    run_checking yum -y install sudo git s3cmd
+    run_checking yum -y install sudo git epel-release
+    run_checking yum -y s3cmd
   elif [ "${IMAGE:0:6}" = "alpine" ]; then
     run apk update
     run apk add sudo bash git abuild
