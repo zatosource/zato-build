@@ -75,7 +75,7 @@ if [[ -n "$(grep 'Zato ' /tmp/zato-version | grep $PY_VERSION)" ]]; then
   echo "Zato command output:"
   cat /tmp/zato-version
   echo "Tests passed..Uploading packages"
-  cat > /root/.s3cfg <<EOF
+  cat > ~/.s3cfg <<EOF
 [default]
 access_key = ${ZATO_S3_ACCESS_KEY}
 access_token =
@@ -136,8 +136,6 @@ website_endpoint = http://%(bucket)s.s3-website-%(location)s.amazonaws.com/
 website_error =
 website_index = index.html
 EOF
-  cat /root/.s3cfg
-  wc -l /root/.s3cfg
   s3cmd sync \
     /tmp/packages/ \
     "$ZATO_S3_BUCKET_NAME/" && echo "Packages uploaded"
