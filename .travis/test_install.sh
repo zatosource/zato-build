@@ -136,7 +136,7 @@ website_endpoint = http://%(bucket)s.s3-website-%(location)s.amazonaws.com/
 website_error =
 website_index = index.html
 EOF
-
+  cat /root/.s3cfg|grep -v '_key'
   s3cmd sync \
     /tmp/packages/ \
     "$ZATO_S3_BUCKET_NAME/" && echo "Packages uploaded"
