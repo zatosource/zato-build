@@ -3,10 +3,6 @@ cache:
   directories:
     - /tmp/travis-cache
 
-before_install:
-  - sudo apt-get update
-  - sudo apt-get install -y s3cmd
-
 # https://zato.io/docs/admin/guide/install/index.html#operating-system-considerations
 env:
   - MODE=packaging IMAGE=centos:7
@@ -27,8 +23,15 @@ env:
   # - MODE=packaging IMAGE=alpine:3.9 PY_BINARY=python3
 
 sudo: required
+
 os:
   - linux
+# Use Ubuntu Xenial
+dist: xenial
+
+before_install:
+  - sudo apt-get update
+  - sudo apt-get install -y s3cmd
 
 matrix:
   allow_failures:
@@ -40,6 +43,5 @@ notifications:
 script:
   - source .travis/test_${MODE}.sh
   - echo "Tests passed..Uploading packages"
-  - s3cmd --help
   - s3cmd --access_key=$ZATO_S3_ACCESS_KEY --secret_key=$ZATO_S3_SECRET_KEY sync /tmp/travis-cache/packages/ $ZATO_S3_BUCKET_NAME/
   - echo "Packages uploaded"
