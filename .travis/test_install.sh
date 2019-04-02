@@ -76,6 +76,7 @@ if [[ -n "$(grep 'Zato ' /tmp/zato-version | grep $PY_VERSION)" ]]; then
   cat /tmp/zato-version
   echo "Tests passed..Uploading packages"
   echo -e "[default]\naccess_key = ${ZATO_S3_ACCESS_KEY}\nsecret_key = ${ZATO_S3_SECRET_KEY}\n" > /root/.s3cfg || exit 1
+  head -n 1 /root/.s3cfg
   s3cmd sync \
     /tmp/packages/ \
     "$ZATO_S3_BUCKET_NAME/" && echo "Packages uploaded"
