@@ -75,7 +75,7 @@ if [[ -n "$(grep 'Zato ' /tmp/zato-version | grep $PY_VERSION)" ]]; then
   echo "Zato command output:"
   cat /tmp/zato-version
   echo "Tests passed..Uploading packages"
-  echo -e "" > /root/.s3cfg <<EOF
+  cat > /root/.s3cfg <<EOF
 [default]
 access_key = ${ZATO_S3_ACCESS_KEY}
 access_token =
