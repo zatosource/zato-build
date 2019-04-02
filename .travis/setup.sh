@@ -95,11 +95,11 @@ if [[ -n "$IMAGE" ]]; then
     run_checking abuild-keygen -an
   elif [ "${IMAGE:0:6}" = "ubuntu" -o "${IMAGE:0:6}" = "debian" ]; then
     run apt-get update
-    run apt-get -y install sudo git lsb-release s3cmd
+    run apt-get -y install sudo git lsb-release
 
     # testing
     run_checking apt-get update
-    run_checking apt-get -y install sudo git lsb-release
+    run_checking DEBIAN_FRONTEND=noninteractive apt-get -y install sudo git lsb-release s3cmd
   fi
 
   # chown everything to Travis UID so caching succeeds.
