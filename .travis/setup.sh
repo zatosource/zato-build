@@ -66,6 +66,7 @@ if [[ -n "$IMAGE" ]]; then
   # Arrange for the container to be downloaded and started.
   docker run \
     --name target-testing \
+    -e DEBIAN_FRONTEND=noninteractive \
     --volume $TRAVIS_BUILD_DIR:/tmp/zato-build \
     --volume /tmp/travis-cache/packages:/tmp/packages \
     --volume /tmp/travis-cache/root/.cache/pip:/root/.cache/pip \
@@ -99,7 +100,7 @@ if [[ -n "$IMAGE" ]]; then
 
     # testing
     run_checking apt-get update
-    run_checking DEBIAN_FRONTEND=noninteractive apt-get -y install sudo git lsb-release s3cmd
+    run_checking apt-get -y install sudo git lsb-release s3cmd
   fi
 
   # chown everything to Travis UID so caching succeeds.
