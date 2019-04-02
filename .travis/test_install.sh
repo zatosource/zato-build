@@ -74,13 +74,6 @@ if [[ -n "$(grep 'Zato ' /tmp/zato-version | grep $PY_VERSION)" ]]; then
   [[ -n "$(grep 'Zato ' /tmp/zato-version | grep $PY_VERSION)" ]] && echo "Python version: ok"
   echo "Zato command output:"
   cat /tmp/zato-version
-  echo "Tests passed..Uploading packages"
-  s3cmd sync \
-      --access_key=$ZATO_S3_ACCESS_KEY \
-      --secret_key=$ZATO_S3_SECRET_KEY \
-    /tmp/packages/ \
-    $ZATO_S3_BUCKET_NAME/
-  echo "Packages uploaded"
 else
   echo "Zato failed to pass tests"
   echo -n "Zato execution:"
