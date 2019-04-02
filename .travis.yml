@@ -3,6 +3,10 @@ cache:
   directories:
     - /tmp/travis-cache
 
+before_install:
+  - sudo apt-get update
+  - sudo apt-get install -y s3cmd
+
 # https://zato.io/docs/admin/guide/install/index.html#operating-system-considerations
 env:
   - MODE=packaging IMAGE=centos:7
