@@ -136,9 +136,13 @@ website_endpoint = http://%(bucket)s.s3-website-%(location)s.amazonaws.com/
 website_error =
 website_index = index.html
 EOF
-  s3cmd sync \
-    /tmp/packages/ \
-    "$ZATO_S3_BUCKET_NAME/" && echo "Packages uploaded"
+  s3cmd sync /tmp/packages/ "$ZATO_S3_BUCKET_NAME/"
+  if [[ $? -eq 0 ]]; then
+      echo "Packages uploaded"
+  else
+      echo "Packages uploading failed"
+      s3cmd --version
+  fi
 else
   echo "Zato failed to pass tests"
   echo -n "Zato execution:"
