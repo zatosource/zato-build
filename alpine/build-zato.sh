@@ -47,12 +47,15 @@ fi
 
 BRANCH_NAME="$1"
 ZATO_VERSION="$2"
-PY_BINARY="$3"
+PY_BINARY="${3:-python3}"
 PACKAGE_VERSION="${4}"
 TRAVIS_PROCESS_NAME="$5"
 
-echo "TODO: Alpice Linux"
-exit 1
+
+if [[ "${PY_BINARY}" != "python3" ]]; then
+    echo "Unsupported Python version"
+    exit 1
+fi
 
 # The acceptable values for package-version are:
 # * nothing or "stable", for stable versions. (The Alpine version will then have no suffix.)
@@ -67,15 +70,16 @@ if ! [ -x "$(command -v $PY_BINARY)" ]; then
   sudo apk add $PY_BINARY
 fi
 
-# Python 2 dependencies
-PYTHON_DEPENDENCIES="python2 python2-dev"
-PACKAGE_VERSION="python27"
-if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][0])') -eq 3 ]]
-then
-    # Python 3 dependencies
-    PYTHON_DEPENDENCIES="python3 python3-dev"
-    PACKAGE_VERSION="python3"
-fi
+PYTHON_DEPENDENCIES="python3 python3-dev"
+# # Python 2 dependencies
+# PYTHON_DEPENDENCIES="python2 python2-dev"
+# # PACKAGE_VERSION="python27"
+# if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][0])') -eq 3 ]]
+# then
+#     # Python 3 dependencies
+#     PYTHON_DEPENDENCIES="python3 python3-dev"
+#     # PACKAGE_VERSION="python3"
+# fi
 
 if test -z "${PACKAGE_VERSION}" || test "${PACKAGE_VERSION}" = "stable" ; then
     COMPLETE_VERSION="${ZATO_VERSION}"
