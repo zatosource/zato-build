@@ -51,8 +51,12 @@ elif [ "$(type -p yum)" ]; then
   for i in $(find /tmp/packages/ -type f -name \*.rpm); do
     yum install -y $i
   done
-  # elif [ "$(type -p apk)" ]
-  # then
+elif [ "$(type -p apk)" ]; then
+  apk update
+  apk add python py-pip py-setuptools git ca-certificates
+  pip install python-dateutil
+  git clone https://github.com/s3tools/s3cmd.git /opt/s3cmd
+  ln -s /opt/s3cmd/s3cmd /usr/bin/s3cmd
 else
   echo "install.sh: Unsupported OS: could not detect apt-get, yum, or apk." >&2
   exit 1
@@ -75,7 +79,7 @@ if [[ -n "$(grep 'Zato ' /tmp/zato-version | grep $PY_VERSION)" ]]; then
   echo "Zato command output:"
   cat /tmp/zato-version
   echo "Tests passed..Uploading packages"
-  cat > ~/.s3cfg <<EOF
+  cat >~/.s3cfg <<EOF
 [default]
 access_key = ${ZATO_S3_ACCESS_KEY}
 access_token =
@@ -138,25 +142,25 @@ website_index = index.html
 EOF
   s3cmd sync /tmp/packages/ "$ZATO_S3_BUCKET_NAME/"
   if [[ $? -eq 0 ]]; then
-      echo "Package uploaded"
+    echo "Package uploaded"
   else
-      echo "Package upload failed"
-      s3cmd --version
-      exit 1
+    echo "Package upload failed"
+    s3cmd --version
+    exit 1
   fi
 else
   echo "Zato failed to pass tests"
   echo -n "Zato execution:"
   if [[ -n "$(grep 'Zato ' /tmp/zato-version)" ]]; then
-      echo "ok"
+    echo "ok"
   else
-      echo "error"
+    echo "error"
   fi
   echo -n "Python version ($PY_VERSION):"
   if [[ -n "$(grep 'Zato ' /tmp/zato-version | grep $PY_VERSION)" ]]; then
-      echo "ok"
+    echo "ok"
   else
-      echo "error"
+    echo "error"
   fi
   echo "Zato command output:"
   cat /tmp/zato-version
