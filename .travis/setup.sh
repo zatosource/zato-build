@@ -24,6 +24,7 @@ sudo mkdir -p /tmp/travis-cache/var/cache/apk
 sudo mkdir -p /tmp/travis-cache/var/cache/apt
 sudo mkdir -p /tmp/travis-cache/var/lib/apt
 sudo mkdir -p /tmp/travis-cache/var/cache/yum
+sudo mkdir -p /tmp/travis-cache/apk_keys
 
 function run()
 {
@@ -53,6 +54,7 @@ if [[ -n "$IMAGE" ]]; then
   docker run \
     --name target \
     --volume $TRAVIS_BUILD_DIR:/tmp/zato-build \
+    --volume /tmp/travis-cache/abuild:/root/.abuild/ \
     --volume /tmp/travis-cache/packages:/tmp/packages \
     --volume /tmp/travis-cache/root/.cache/pip:/root/.cache/pip \
     --volume /tmp/travis-cache/var/cache/apk:/var/cache/apk \
@@ -71,6 +73,7 @@ if [[ -n "$IMAGE" ]]; then
     -e ZATO_S3_SECRET_KEY=${ZATO_S3_SECRET_KEY} \
     -e ZATO_S3_BUCKET_NAME=${ZATO_S3_BUCKET_NAME} \
     --volume $TRAVIS_BUILD_DIR:/tmp/zato-build \
+    --volume /tmp/travis-cache/abuild:/root/.abuild/ \
     --volume /tmp/travis-cache/packages:/tmp/packages \
     --volume /tmp/travis-cache/root/.cache/pip:/root/.cache/pip \
     --volume /tmp/travis-cache/var/cache/apk:/var/cache/apk \
@@ -96,7 +99,6 @@ if [[ -n "$IMAGE" ]]; then
     # testing
     run_checking apk update
     run_checking apk add sudo bash git abuild
-    run_checking abuild-keygen -an
   elif [ "${IMAGE:0:6}" = "ubuntu" -o "${IMAGE:0:6}" = "debian" ]; then
     run apt-get update
     run apt-get -y install sudo git lsb-release
