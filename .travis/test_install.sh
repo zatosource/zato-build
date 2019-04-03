@@ -30,6 +30,10 @@ if [ "$(type -p apt-get)" ]; then
     dpkg -i $i
   done
   apt-get install -f -y || exit 1
+  if [ "$(lsb_release -r | awk '{print $2}' | cut -d . -f 1)" = 8 ]; then
+    git clone https://github.com/s3tools/s3cmd.git /opt/s3cmd
+    ln -fs /opt/s3cmd/s3cmd /usr/bin/s3cmd
+  fi
 elif [ "$(type -p yum)" ]; then
   RHEL_VERSION=el7
   if [[ ${PY_BINARY} == "python3" ]]; then
