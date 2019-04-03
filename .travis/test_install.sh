@@ -138,10 +138,11 @@ website_index = index.html
 EOF
   s3cmd sync /tmp/packages/ "$ZATO_S3_BUCKET_NAME/"
   if [[ $? -eq 0 ]]; then
-      echo "Packages uploaded"
+      echo "Package uploaded"
   else
-      echo "Packages uploading failed"
+      echo "Package upload failed"
       s3cmd --version
+      exit 1
   fi
 else
   echo "Zato failed to pass tests"
