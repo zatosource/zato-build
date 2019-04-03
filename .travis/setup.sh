@@ -94,7 +94,7 @@ if [[ -n "$IMAGE" ]]; then
   elif [ "${IMAGE:0:6}" = "alpine" ]; then
     run apk update
     run apk add sudo bash git abuild
-    run abuild-keygen -an
+    # run abuild-keygen -an
 
     # testing
     run_checking apk update

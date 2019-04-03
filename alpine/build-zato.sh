@@ -54,6 +54,9 @@ PY_BINARY="${3:-python3}"
 PACKAGE_VERSION="${4}"
 TRAVIS_PROCESS_NAME="$5"
 
+if test -z "${PACKAGER}"; then
+    PACKAGER="Anielkis Herrera <aherrera@zato.io>"
+fi
 ALPINE_VERSION=$(cat /etc/alpine-release)
 
 if [ "${PY_BINARY}" != "python3" ]; then
@@ -101,10 +104,17 @@ apk version --check --quiet "${COMPLETE_VERSION}" || {
 # suffix.
 
 # PACKAGER_PRIVKEY="$HOME/.abuild/dsuch@zato.io-XXXXXXXX.rsa"
-PACKAGER_PRIVKEY=${PACKAGER_PRIVKEY:-$HOME/.abuild/ska-devel@skarnet.org-56139463.rsa}
-if test -n "$(find $HOME/.abuild -type f -name \*.rsa)"; then
-    PACKAGER_PRIVKEY="$(find $HOME/.abuild -type f -name \*.rsa|head -n 1)"
+# PACKAGER_PRIVKEY=${PACKAGER_PRIVKEY:-$HOME/.abuild/ska-devel@skarnet.org-56139463.rsa}
+if test -n "${PACKAGER}"; then
+    emailaddr=${PACKAGER##*<}
+    emailaddr=${emailaddr%%>*}
 fi
+echo "looking for key with ${emailaddr}"
+if test -n "$(find $HOME/.abuild -type f -name ${emailaddr}\*.rsa)"; then
+    PACKAGER_PRIVKEY="$(find $HOME/.abuild -type f -name ${emailaddr}\*.rsa|head -n 1)"
+fi
+
+abuild-keygen -an
 # copy keys, they will be used in the testing process
 find $HOME/.abuild -type f -name \*.rsa\* -exec cp {} /root/.keys/ \;
 
@@ -141,7 +151,6 @@ TARGETS="zato-$COMPLETE_VERSION.tar bash-completion $ABUILD_FILES"
 prepare_abuild() {
 
   # Ensure abuild can access the packager's keypair
-
   mkdir -p "$HOME/.abuild"
   echo "PACKAGER_PRIVKEY=$PACKAGER_PRIVKEY" >"$HOME/.abuild/abuild.conf"
   pubkey=$(basename $PACKAGER_PRIVKEY).pub
