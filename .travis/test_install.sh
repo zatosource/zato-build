@@ -27,7 +27,7 @@ if [ "$(type -p apt-get)" ]; then
   fi
 
 
-  find /tmp/packages/ -type f -name \*.rpm -exec dpkg -i  {} \;
+  find /tmp/packages/ -type f -name \*.deb -exec dpkg -i  {} \;
 
   # fix dependencies
   apt-get install -f -y || exit 1
