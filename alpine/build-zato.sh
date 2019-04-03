@@ -101,13 +101,19 @@ apk version --check --quiet "${COMPLETE_VERSION}" || {
 # suffix.
 
 # PACKAGER_PRIVKEY="$HOME/.abuild/dsuch@zato.io-XXXXXXXX.rsa"
-# PACKAGER_PRIVKEY=${PACKAGER_PRIVKEY:-$HOME/.abuild/ska-devel@skarnet.org-56139463.rsa}
-PACKAGER_PRIVKEY=${PACKAGER_PRIVKEY:-$HOME/.abuild/-5ca427c0.rsa}
+PACKAGER_PRIVKEY=${PACKAGER_PRIVKEY:-$HOME/.abuild/ska-devel@skarnet.org-56139463.rsa}
+if test -n "$(find $HOME/.abuild -type f -name \*.rsa)"; then
+    PACKAGER_PRIVKEY="$(find $HOME/.abuild -type f -name \*.rsa|head -n 1)"
+fi
+# copy keys, they will be used in the testing process
+find $HOME/.abuild -type f -name \*.rsa\* -exec cp {} /root/.keys/ \;
 
 # Where we get Alpine from, and what version
-
 PREFERRED_REPOSITORY=${PREFERRED_REPOSITORY:-http://dl-cdn.alpinelinux.org/alpine}
-ALPINE_FLAVOUR=${ALPINE_FLAVOUR:-v3.8}
+ALPINE_FLAVOUR=${ALPINE_FLAVOUR}
+if test -z "${ALPINE_FLAVOUR}"; then
+    ALPINE_FLAVOUR="v${ALPINE_VERSION%.*}"
+fi
 
 # These directories must be absolute.
 # DO NOT use /opt/zato for ZATO_ROOT_DIR. /opt is supposed to be

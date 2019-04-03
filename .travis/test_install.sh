@@ -26,14 +26,18 @@ if [ "$(type -p apt-get)" ]; then
     ln -s /usr/share/zoneinfo/GMT /etc/localtime
   fi
 
-  for i in $(find "/tmp/packages/" -type f -name \*.deb); do
-    dpkg -i $i
-  done
+
+  find /tmp/packages/ -type f -name \*.rpm -exec dpkg -i  {} \;
+
+  # fix dependencies
   apt-get install -f -y || exit 1
+
+  # upgrade s3cmd, debian jessie (debian 8) version is too old
   if [ "$(lsb_release -r | awk '{print $2}' | cut -d . -f 1)" = 8 ]; then
     git clone https://github.com/s3tools/s3cmd.git /opt/s3cmd
     ln -fs /opt/s3cmd/s3cmd /usr/bin/s3cmd
   fi
+
 elif [ "$(type -p yum)" ]; then
   RHEL_VERSION=el7
   if [[ ${PY_BINARY} == "python3" ]]; then
@@ -52,15 +56,23 @@ elif [ "$(type -p yum)" ]; then
     source /opt/rh/rh-python36/enable
   fi
 
-  for i in $(find /tmp/packages/ -type f -name \*.rpm); do
-    yum install -y $i
-  done
+  find /tmp/packages/ -type f -name \*.rpm -exec yum install -y {} \;
 elif [ "$(type -p apk)" ]; then
   apk update
   apk add python py-pip py-setuptools git ca-certificates
   pip install python-dateutil
   git clone https://github.com/s3tools/s3cmd.git /opt/s3cmd
   ln -s /opt/s3cmd/s3cmd /usr/bin/s3cmd
+
+  abuild-keygen -ani || exit 1
+  ALPINE_VERSION="$(cat /etc/alpine-release)"
+
+  echo "@custom /tmp/packages/alpine/${ALPINE_VERSION%.*}/" >> /etc/apk/repositories
+  pushd /tmp/packages/alpine/${ALPINE_VERSION%.*}/ || exit 1
+      apk index -o APKINDEX.tar.gz *.apk
+      abuild-sign APKINDEX.tar.gz
+  popd || exit 1
+  apk add zato@custom
 else
   echo "install.sh: Unsupported OS: could not detect apt-get, yum, or apk." >&2
   exit 1

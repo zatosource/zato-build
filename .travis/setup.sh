@@ -73,7 +73,7 @@ if [[ -n "$IMAGE" ]]; then
     -e ZATO_S3_SECRET_KEY=${ZATO_S3_SECRET_KEY} \
     -e ZATO_S3_BUCKET_NAME=${ZATO_S3_BUCKET_NAME} \
     --volume $TRAVIS_BUILD_DIR:/tmp/zato-build \
-    --volume /tmp/travis-cache/abuild:/root/.abuild/ \
+    --volume /tmp/travis-cache/abuild:/root/.keys/ \
     --volume /tmp/travis-cache/packages:/tmp/packages \
     --volume /tmp/travis-cache/root/.cache/pip:/root/.cache/pip \
     --volume /tmp/travis-cache/var/cache/apk:/var/cache/apk \
