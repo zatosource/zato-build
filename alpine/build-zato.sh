@@ -101,7 +101,8 @@ apk version --check --quiet "${COMPLETE_VERSION}" || {
 # suffix.
 
 # PACKAGER_PRIVKEY="$HOME/.abuild/dsuch@zato.io-XXXXXXXX.rsa"
-PACKAGER_PRIVKEY=${PACKAGER_PRIVKEY:-$HOME/.abuild/ska-devel@skarnet.org-56139463.rsa}
+# PACKAGER_PRIVKEY=${PACKAGER_PRIVKEY:-$HOME/.abuild/ska-devel@skarnet.org-56139463.rsa}
+PACKAGER_PRIVKEY=${PACKAGER_PRIVKEY:-$HOME/.abuild/-56139463.rsa}
 
 # Where we get Alpine from, and what version
 
