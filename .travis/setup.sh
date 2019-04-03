@@ -95,7 +95,7 @@ if [[ -n "$IMAGE" ]]; then
 
     # testing
     run_checking apk update
-    run_checking apk add sudo bash git abuild s3cmd
+    run_checking apk add sudo bash git abuild
     run_checking abuild-keygen -an
   elif [ "${IMAGE:0:6}" = "ubuntu" -o "${IMAGE:0:6}" = "debian" ]; then
     run apt-get update
