@@ -64,7 +64,6 @@ if [ "${PY_BINARY}" != "python3" ]; then
   echo "Unsupported Python version"
   exit 1
 fi
-PACKAGE_VERSION="$3"
 
 if test -z "${PACKAGE_VERSION}" || test "${PACKAGE_VERSION}" = "stable" ; then
   COMPLETE_VERSION="${ZATO_VERSION}"
@@ -73,7 +72,6 @@ else
 fi
 
 apk version --check --quiet "${COMPLETE_VERSION}" || { echo "build-zato.sh: version $COMPLETE_VERSION is not valid for apk: suffixes must be {alpha|beta|pre|rc}[0-9]+" 1>&2 ; exit 100 ; }
-
 
 # This is the file where the packager's private key (to sign the apk)
 # is stored. The public key must be in the same place, with a ".rsa.pub"
@@ -87,7 +85,6 @@ PACKAGER_PRIVKEY=${PACKAGER_PRIVKEY:-$HOME/.abuild/ska-devel@skarnet.org-5613946
 
 PREFERRED_REPOSITORY=${PREFERRED_REPOSITORY:-http://dl-cdn.alpinelinux.org/alpine}
 ALPINE_FLAVOUR=${ALPINE_FLAVOUR:-v3.8}
-
 
 # These directories must be absolute.
 # DO NOT use /opt/zato for ZATO_ROOT_DIR. /opt is supposed to be
