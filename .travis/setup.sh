@@ -92,10 +92,10 @@ if [[ -n "$IMAGE" ]]; then
     run_checking yum -y install sudo git epel-release
     run_checking yum -y install s3cmd
   elif [ "${IMAGE:0:6}" = "alpine" ]; then
-    run /bin/sh -ec "apk update && apk upgrade && apk add sudo bash && exec abuild-keygen -an"
+    run /bin/sh -ec "apk update && apk upgrade && apk add sudo bash alpine-sdk && exec abuild-keygen -an"
 
     # testing
-    run /bin/sh -ec "apk update && apk upgrade && apk add sudo bash git bash && exec abuild-keygen -an"
+    run /bin/sh -ec "apk update && apk upgrade && apk add sudo bash git bash alpine-sdk && exec abuild-keygen -an"
   elif [ "${IMAGE:0:6}" = "ubuntu" -o "${IMAGE:0:6}" = "debian" ]; then
     run apt-get update
     run apt-get -y install sudo git lsb-release
