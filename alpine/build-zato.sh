@@ -6,124 +6,42 @@
 # instructions to do so are available at
 # https://gitlab.com/zatosource/alpine-linux/wikis/how-to-manage-an-alpine-linux-repository
 
-test -n "$HOME" || {
-  echo "build-zato.sh: HOME not set; abuild needs to run as a user with a home directory!" 1>&2
-  exit 100
-}
 
-usage() {
-  echo "$0 BRANCH_NAME ZATO_VERSION PYTHON_EXECUTABLE [PACKAGE_VERSION] [PROCESS]"
-  echo ""
-  echo "BRANCH_NAME: zatosource/zato branch name to build (e.g. master)"
-  echo "ZATO_VERSION: zato version to build (e.g. 3.0.0)"
-  echo "PYTHON_EXECUTABLE: Python executable to use (e.g. python, python2 or python3)"
-  echo "PACKAGE_VERSION: (optional) package version to build. The acceptable values for package-version are:"
-  echo "                 * \"\" (empty) or \"stable\", for stable versions."
-  echo "                 * \"alpha\", \"beta\", \"pre\" or \"rc\" followed by one or more digits."
-  echo "PROCESS: (optional) should be \"travis\" if run inside TravisCI"
-}
-
-if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
-  usage
-  exit 0
-fi
-
-if [ -z "$1" ]; then
-  echo Argument 1 must be the branch name from zatosource/zato used to build the package.
-  exit 1
-fi
-
-if [ -z "$2" ] || [ -z "$(echo $2 | grep -E '^[0-9]+\.[0-9]+\.[0-9]+')" ]; then
-  echo Argument 2 must be the Zato version to build.
-  exit 1
-fi
-
-if [ -z "$3" ] || [ -z "$(echo $3 | grep -E '^python[2,3]?\.?')" ]; then
-  echo Argument 3 must be the Python executable to use e.g. python, python2 or python3.
-  exit 1
-fi
-
-if [ -n "$4" ] && [ -z "$(echo $4 | grep -E '^(stable|alpha|beta|pre|rc)')" ]; then
-  echo Argument 4 is the release level of the build. The value has to be empty or be one of: stable, alpha, beta, pre or rc.
-  exit 1
-fi
+test "$#" -ge 2 || { echo "build-zato.sh: usage: ./build-zato.sh branch-name zato-version [ package-version ]" 1>&2 ; exit 100 ; }
+test -n "$HOME" || { echo "build-zato.sh: HOME not set; abuild needs to run as a user with a home directory!" 1>&2 ; exit 100 ; }
 
 BRANCH_NAME="$1"
 ZATO_VERSION="$2"
-PY_BINARY="${3:-python3}"
-PACKAGE_VERSION="${4}"
-TRAVIS_PROCESS_NAME="$5"
-
-if test -z "${PACKAGER}"; then
-    PACKAGER="Anielkis Herrera <aherrera@zato.io>"
-fi
-ALPINE_VERSION=$(cat /etc/alpine-release)
-
-if [ "${PY_BINARY}" != "python3" ]; then
-  echo "Unsupported Python version"
-  exit 1
-fi
 
 # The acceptable values for package-version are:
 # * nothing or "stable", for stable versions. (The Alpine version will then have no suffix.)
 # * "alpha", "beta", "pre" or "rc" followed by one or more digits.
 # This is a versioning convention coming from Gentoo, that Alpine also follows.
 
-PY_BINARY=$3
+PACKAGE_VERSION="$3"
 
-apk add $PY_BINARY
-
-if ! [ -x "$(command -v $PY_BINARY)" ]; then
-  sudo apk add $PY_BINARY
-fi
-
-PYTHON_DEPENDENCIES="python3 python3-dev"
-# # Python 2 dependencies
-# PYTHON_DEPENDENCIES="python2 python2-dev"
-# # PACKAGE_VERSION="python27"
-# if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][0])') -eq 3 ]]
-# then
-#     # Python 3 dependencies
-#     PYTHON_DEPENDENCIES="python3 python3-dev"
-#     # PACKAGE_VERSION="python3"
-# fi
-
-if test -z "${PACKAGE_VERSION}" || test "${PACKAGE_VERSION}" = "stable"; then
+if test -z "${PACKAGE_VERSION}" || test "${PACKAGE_VERSION}" = "stable" ; then
   COMPLETE_VERSION="${ZATO_VERSION}"
 else
   COMPLETE_VERSION="${ZATO_VERSION}_${PACKAGE_VERSION}"
 fi
 
-apk version --check --quiet "${COMPLETE_VERSION}" || {
-  echo "build-zato.sh: version $COMPLETE_VERSION is not valid for apk: suffixes must be {alpha|beta|pre|rc}[0-9]+" 1>&2
-  exit 100
-}
+apk version --check --quiet "${COMPLETE_VERSION}" || { echo "build-zato.sh: version $COMPLETE_VERSION is not valid for apk: suffixes must be {alpha|beta|pre|rc}[0-9]+" 1>&2 ; exit 100 ; }
+
 
 # This is the file where the packager's private key (to sign the apk)
 # is stored. The public key must be in the same place, with a ".rsa.pub"
 # suffix.
 
 # PACKAGER_PRIVKEY="$HOME/.abuild/dsuch@zato.io-XXXXXXXX.rsa"
-# PACKAGER_PRIVKEY=${PACKAGER_PRIVKEY:-$HOME/.abuild/ska-devel@skarnet.org-56139463.rsa}
-if test -n "${PACKAGER}"; then
-    emailaddr=${PACKAGER##*<}
-    emailaddr=${emailaddr%%>*}
-fi
-echo "looking for key with ${emailaddr}"
-if test -n "$(find $HOME/.abuild -type f -name ${emailaddr}\*.rsa)"; then
-    PACKAGER_PRIVKEY="$(find $HOME/.abuild -type f -name ${emailaddr}\*.rsa|head -n 1)"
-fi
+PACKAGER_PRIVKEY=${PACKAGER_PRIVKEY:-$HOME/.abuild/ska-devel@skarnet.org-56139463.rsa}
 
-abuild-keygen -an
-# copy keys, they will be used in the testing process
-find $HOME/.abuild -type f -name \*.rsa\* -exec cp {} /root/.keys/ \;
 
 # Where we get Alpine from, and what version
+
 PREFERRED_REPOSITORY=${PREFERRED_REPOSITORY:-http://dl-cdn.alpinelinux.org/alpine}
-ALPINE_FLAVOUR=${ALPINE_FLAVOUR}
-if test -z "${ALPINE_FLAVOUR}"; then
-    ALPINE_FLAVOUR="v${ALPINE_VERSION%.*}"
-fi
+ALPINE_FLAVOUR=${ALPINE_FLAVOUR:-v3.8}
+
 
 # These directories must be absolute.
 # DO NOT use /opt/zato for ZATO_ROOT_DIR. /opt is supposed to be
@@ -136,12 +54,9 @@ fi
 ZATO_ROOT_DIR=/pkg/zato
 ZATO_TARGET_DIR="$ZATO_ROOT_DIR/$COMPLETE_VERSION"
 
-CURDIR=$(readlink -f .)
+CURDIR=`readlink -f .`
 sudo mkdir -p "$ZATO_TARGET_DIR"
-test "$ZATO_TARGET_DIR" = "$(readlink -f "$ZATO_TARGET_DIR")" || {
-  echo "build-zato.sh: $ZATO_TARGET_DIR must be a fully resolved path!" 1>&2
-  exit 100
-}
+test "$ZATO_TARGET_DIR" = `readlink -f "$ZATO_TARGET_DIR"` || { echo "build-zato.sh: $ZATO_TARGET_DIR must be a fully resolved path!" 1>&2 ; exit 100 ; }
 
 echo "Building zato-$COMPLETE_VERSION-r0.apk"
 
@@ -150,18 +65,20 @@ TARGETS="zato-$COMPLETE_VERSION.tar bash-completion $ABUILD_FILES"
 
 prepare_abuild() {
 
-  # Ensure abuild can access the packager's keypair
+# Ensure abuild can access the packager's keypair
+
   mkdir -p "$HOME/.abuild"
-  echo "PACKAGER_PRIVKEY=$PACKAGER_PRIVKEY" >"$HOME/.abuild/abuild.conf"
-  pubkey=$(basename $PACKAGER_PRIVKEY).pub
-  if test -f "/etc/apk/keys/$pubkey"; then
+  echo "PACKAGER_PRIVKEY=$PACKAGER_PRIVKEY" > "$HOME/.abuild/abuild.conf"
+  pubkey=`basename $PACKAGER_PRIVKEY`.pub
+  if test -f "/etc/apk/keys/$pubkey" ; then
     :
   else
     sudo cp -f ${PACKAGER_PRIVKEY}.pub /etc/apk/keys
   fi
 
-  # We build a maximum of dependencies via wheels, but there are still
-  # a few system packages we depend on.
+
+# We build a maximum of dependencies via wheels, but there are still
+# a few system packages we depend on.
 
   sudo sh -c "cat > /etc/apk/repositories.new && cp -f /etc/apk/repositories /etc/apk/repositories.old && mv -f /etc/apk/repositories.new /etc/apk/repositories && apk update && apk add tar alpine-sdk" <<EOF
 $PREFERRED_REPOSITORY/$ALPINE_FLAVOUR/main
@@ -169,22 +86,24 @@ $PREFERRED_REPOSITORY/$ALPINE_FLAVOUR/community
 EOF
 }
 
+
 cleanup() {
-  for i in $TARGETS; do
+  for i in $TARGETS ; do
     rm -f "$CURDIR/package-base/$i"
   done
 }
 
+
 checkout_and_make_archive() {
 
-  # abuild cannot fetch directly from a git repository.
-  # We fetch here, and prepare the clone, then archive it into a
-  # local file. The APKBUILD uses that file as its main source.
+# abuild cannot fetch directly from a git repository.
+# We fetch here, and prepare the clone, then archive it into a
+# local file. The APKBUILD uses that file as its main source.
 
   rm -rf "zato-$COMPLETE_VERSION"
   git clone --depth 1 --no-single-branch https://github.com/zatosource/zato.git "zato-$COMPLETE_VERSION"
   cd "zato-$COMPLETE_VERSION"
-  for branch in $(git branch -a | grep -F remotes/ | grep -vF -e HEAD -e master -e main); do
+  for branch in `git branch -a | grep -F remotes/ | grep -vF -e HEAD -e master -e main` ; do
     git branch --track "${branch#remotes/origin/}" "$branch"
   done
   git checkout "$BRANCH_NAME"
@@ -193,9 +112,10 @@ checkout_and_make_archive() {
   rm -rf "zato-$COMPLETE_VERSION"
 }
 
+
 make_apkbuild_dir() {
-  for i in $ABUILD_FILES; do
-    sed -e "s|@@ZATO_ROOT_DIR@@|$ZATO_ROOT_DIR|g;s|@@ZATO_TARGET_DIR@@|$ZATO_TARGET_DIR|g;s|@@ZATO_VERSION@@|$ZATO_VERSION|g;s|@@PACKAGE_VERSION@@|$PACKAGE_VERSION|g;s|@@COMPLETE_VERSION@@|$COMPLETE_VERSION|g;s|@@PYTHON_DEPENDENCIES@@|$PYTHON_DEPENDENCIES|g;" <"$CURDIR/package-base/$i.in" >"$CURDIR/package-base/$i"
+  for i in $ABUILD_FILES ; do
+    sed -e "s|@@ZATO_ROOT_DIR@@|$ZATO_ROOT_DIR|g;s|@@ZATO_TARGET_DIR@@|$ZATO_TARGET_DIR|g;s|@@ZATO_VERSION@@|$ZATO_VERSION|g;s|@@PACKAGE_VERSION@@|$PACKAGE_VERSION|g;s|@@COMPLETE_VERSION@@|$COMPLETE_VERSION|g;" < "$CURDIR/package-base/$i.in" > "$CURDIR/package-base/$i"
   done
   cp $CURDIR/../bash_completion/zato $CURDIR/package-base/bash-completion
   cd package-base
@@ -203,20 +123,19 @@ make_apkbuild_dir() {
   cd ..
 }
 
+
 call_abuild() {
   cd package-base
   abuild -r
   cd ..
 }
 
+
 isolate_package() {
-  if [ -n "$TRAVIS_PROCESS_NAME" ] && [ $TRAVIS_PROCESS_NAME = "travis" ]; then
-    [ -d "/tmp/packages/alpine/${ALPINE_VERSION%.*}" ] || mkdir -p /tmp/packages/alpine/${ALPINE_VERSION%.*}/
-    cp "$CURDIR/alpine/x86_64/zato-$COMPLETE_VERSION-r0.apk" /tmp/packages/alpine/${ALPINE_VERSION%.*}/
-  fi
   mv "$CURDIR/alpine/x86_64/zato-$COMPLETE_VERSION-r0.apk" "$CURDIR"
   rm -rf "$CURDIR/alpine"
 }
+
 
 prepare_abuild
 cleanup
