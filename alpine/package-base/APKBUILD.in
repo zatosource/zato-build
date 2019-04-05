@@ -34,7 +34,7 @@ build() {
   # Distro-agnostic build prep
   cd $ZATO_TARGET_DIR/code
   cp ../LICENSE.txt .
-  cp ../licenses_3rd_party.txt . || true
+  if test -f ../licenses_3rd_party.txt; then cp ../licenses_3rd_party.txt . || true ;fi
   mv -f `ls -a -1 | grep -vFx -e . -e ..` ..
   cd ..
   rmdir code

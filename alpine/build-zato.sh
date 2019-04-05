@@ -161,6 +161,7 @@ checkout_and_make_archive() {
     git branch --track "${branch#remotes/origin/}" "$branch"
   done
   git checkout "$BRANCH_NAME"
+  sed -i '/# pip install pipdeptree/a if [ "$(type -p apk)" ];then $PY_BINARY -m pip install cryptography --no-binary cryptography;fi' code/_postinstall.sh
   cd ..
   tar -cf "package-base/zato-$COMPLETE_VERSION.tar" "zato-$COMPLETE_VERSION"
   rm -rf "zato-$COMPLETE_VERSION"
