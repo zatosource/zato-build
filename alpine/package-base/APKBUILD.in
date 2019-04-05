@@ -14,7 +14,7 @@ depends="bash-completion gcc g++ gfortran haproxy libbz2 \
 libgfortran libsasl libuuid swig libressl"
 makedepends="file findutils git libev-dev libevent-dev libffi-dev \
 libxml2-dev libxslt-dev linux-headers musl-dev openldap-dev postgresql-dev \
-python3-dev yaml-dev redis libressl-dev py-numpy-dev openblas-dev>=0.3.0 cython-dev py-setuptools"
+python3-dev yaml-dev redis libressl-dev py-numpy-dev cython-dev py-setuptools"
 subpackages=
 source="zato-$pkgver.tar bash-completion zato.initd zato.bashrc zato.profile"
 install="zato.post-deinstall zato.post-install zato.post-upgrade zato.pre-deinstall zato.pre-install zato.pre-upgrade"
