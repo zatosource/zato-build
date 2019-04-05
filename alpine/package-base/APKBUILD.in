@@ -11,7 +11,7 @@ arch="all"
 license="LGPL"
 options=
 depends="bash-completion gcc g++ gfortran haproxy libbz2 \
-libgfortran libsasl libuuid swig libressl"
+libgfortran libsasl libuuid swig libressl py3-cryptography"
 makedepends="file findutils git libev-dev libevent-dev libffi-dev \
 libxml2-dev libxslt-dev linux-headers musl-dev openldap-dev postgresql-dev \
 python3-dev yaml-dev redis libressl-dev"
@@ -107,4 +107,3 @@ package() {
   chown zato:zato "$pkgdir$ZATO_ROOT_DIR/.bashrc"
   ln -s .bashrc "$pkgdir$ZATO_ROOT_DIR/.shrc"
 }
-
