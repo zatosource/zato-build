@@ -78,9 +78,16 @@ apk version --check --quiet "${COMPLETE_VERSION}" || { echo "build-zato.sh: vers
 # suffix.
 
 # PACKAGER_PRIVKEY="$HOME/.abuild/dsuch@zato.io-XXXXXXXX.rsa"
-PACKAGER_PRIVKEY=${PACKAGER_PRIVKEY:-$HOME/.abuild/ska-devel@skarnet.org-56139463.rsa}
 
+PACKAGER="$(grep '# Maintainer:' package-base/APKBUILD.in|sed -e 's|.*Maintainer: ||')"
+abuild-keygen -an
 
+if test -n "$(find $HOME/.abuild -type f -name \*.rsa)"; then
+    PACKAGER_PRIVKEY="$(find $HOME/.abuild -type f -name \*.rsa|head -n 1)"
+else
+    echo "no sign key found"
+    exit 1
+fi
 # Where we get Alpine from, and what version
 
 PREFERRED_REPOSITORY=${PREFERRED_REPOSITORY:-http://dl-cdn.alpinelinux.org/alpine}
