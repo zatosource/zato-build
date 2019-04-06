@@ -11,7 +11,7 @@ arch="all"
 license="LGPL"
 options=
 depends="bash-completion gcc g++ gfortran haproxy libbz2 \
-libgfortran libsasl libuuid swig libressl lapack libuuid"
+libgfortran libsasl libuuid swig libressl lapack libuuid libc6-compat musl libgcc libstdc++"
 makedepends="file findutils git libev-dev libevent-dev libffi-dev \
 libxml2-dev libxslt-dev linux-headers musl-dev openldap-dev postgresql-dev \
 python3-dev yaml-dev redis libressl-dev suitesparse swig yaml-dev autoconf automake libtool"
