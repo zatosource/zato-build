@@ -161,6 +161,7 @@ checkout_and_make_archive() {
     git branch --track "${branch#remotes/origin/}" "$branch"
   done
   git checkout "$BRANCH_NAME"
+  sed -i -e 's/lapack-dev/openblas-dev/' code/_install-alpine.sh
   sed -i -e 's/scipy==.*/scipy/' code/requirements.txt
   cd ..
   tar -cf "package-base/zato-$COMPLETE_VERSION.tar" "zato-$COMPLETE_VERSION"
