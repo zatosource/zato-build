@@ -161,8 +161,8 @@ checkout_and_make_archive() {
     git branch --track "${branch#remotes/origin/}" "$branch"
   done
   git checkout "$BRANCH_NAME"
-  sed -i -e 's/lapack/openblas/' -e 's/ libtool/ libtool py-setuptools gfortran py-numpy-dev openblas-dev>=0.3.0 cython-dev/' code/_install-alpine.sh
-  sed -i -e 's/numpy==.*/numpy==1.15.4/' -e 's/scipy==.*/scipy==1.0.1/' code/requirements.txt
+  # sed -i -e 's/ libtool/ libtool py-setuptools gfortran cython-dev/' code/_install-alpine.sh
+  # sed -i -e 's/numpy==.*/numpy==1.15.4/' -e 's/scipy==.*/scipy==1.0.1/' code/requirements.txt
   cd ..
   tar -cf "package-base/zato-$COMPLETE_VERSION.tar" "zato-$COMPLETE_VERSION"
   rm -rf "zato-$COMPLETE_VERSION"
