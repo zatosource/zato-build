@@ -11,10 +11,10 @@ arch="all"
 license="LGPL"
 options=
 depends="bash-completion gcc g++ gfortran haproxy libbz2 python3 libstdc++ \
-libgfortran libsasl libuuid swig libressl libuuid libc6-compat musl libgcc libstdc++ suitesparse"
-makedepends="file findutils git libev-dev libevent-dev libffi-dev \
+libgfortran libsasl libuuid swig libressl lapack libuuid libc6-compat musl libgcc libstdc++ suitesparse"
+makedepends="file findutils git libev-dev libevent-dev libffi-dev lapack-dev \
 libxml2-dev libxslt-dev linux-headers musl-dev openldap-dev postgresql-dev \
-python3-dev yaml-dev redis libressl-dev gmp-dev suitesparse-dev swig yaml-dev autoconf automake libtool py3-scipy py3-numpy"
+python3-dev yaml-dev redis libressl-dev gmp-dev suitesparse-dev swig yaml-dev autoconf automake libtool"
 subpackages=
 source="zato-$pkgver.tar bash-completion zato.initd zato.bashrc zato.profile"
 install="zato.post-deinstall zato.post-install zato.post-upgrade zato.pre-deinstall zato.pre-install zato.pre-upgrade"
