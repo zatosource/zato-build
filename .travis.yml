@@ -20,7 +20,7 @@ env:
   # - MODE=packaging IMAGE=alpine:3.8
   # - MODE=packaging IMAGE=alpine:3.8 PY_BINARY=python3
   # - MODE=packaging IMAGE=alpine:3.9
-  - MODE=packaging IMAGE=alpine:3.9 PY_BINARY=python3
+  # - MODE=packaging IMAGE=alpine:3.9 PY_BINARY=python3
 
 sudo: required
 
