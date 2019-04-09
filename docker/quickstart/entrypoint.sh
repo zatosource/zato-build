@@ -78,7 +78,7 @@ if [[ ! -x "/opt/zato/env/qs-1/zato-qs-restart.sh" ]]; then
     if [[ "${ODB_TYPE}" == "postgresql" && "${ODB_HOSTNAME}" == "localhost" && -z "$(ls /var/lib/postgresql/data)" ]]; then
         echo "Initializing Postgresql database"
         export PGPASSWORD="${ODB_PASSWORD}"
-        su postgres -c "$PGBINPATH/initdb -E 'UTF-8' --lc-collate='en_US.UTF-8' --lc-ctype='en_US.UTF-8' --username=\"${ODB_USERNAME:-postgres}\" --pwfile=<(echo \"$ODB_PASSWORD\") -D \"$PGDATA\";PGUSER=\"${PGUSER:-$POSTGRES_USER}\" $PGBINPATH/pg_ctl -D \"$PGDATA\" -o \"-c listen_addresses='127.0.0.1'\"  -w start"
+        su postgres -c "$PGBINPATH/initdb -E 'UTF-8' --username=\"${ODB_USERNAME:-postgres}\" --pwfile=<(echo \"$ODB_PASSWORD\") -D \"$PGDATA\";PGUSER=\"${PGUSER:-$POSTGRES_USER}\" $PGBINPATH/pg_ctl -D \"$PGDATA\" -o \"-c listen_addresses='127.0.0.1'\"  -w start"
         psql=( psql -v ON_ERROR_STOP=1 --username "${ODB_USERNAME:-postgres}" --no-password )
         "${psql[@]}" --dbname postgres --set db="${ODB_NAME:-zato}" <<-'EOSQL'
 CREATE DATABASE :"db" ;
