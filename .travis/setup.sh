@@ -69,6 +69,7 @@ if [[ -n "$IMAGE" ]]; then
   docker run \
     --name target-testing \
     -e DEBIAN_FRONTEND=noninteractive \
+    -e ZATO_UPLOAD_PACKAGES=${ZATO_UPLOAD_PACKAGES} \
     -e ZATO_S3_ACCESS_KEY=${ZATO_S3_ACCESS_KEY} \
     -e ZATO_S3_SECRET_KEY=${ZATO_S3_SECRET_KEY} \
     -e ZATO_S3_BUCKET_NAME=${ZATO_S3_BUCKET_NAME} \
