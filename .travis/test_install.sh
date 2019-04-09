@@ -92,8 +92,7 @@ cat /tmp/zato-version
 if [[ -n "$(grep 'Zato ' /tmp/zato-version | grep $PY_VERSION)" ]]; then
   [[ -n "$(grep 'Zato ' /tmp/zato-version)" ]] && echo "Zato execution: ok"
   [[ -n "$(grep 'Zato ' /tmp/zato-version | grep $PY_VERSION)" ]] && echo "Python version: ok"
-  echo "Zato command output:"
-  cat /tmp/zato-version
+  echo "Zato version output: $(cat /tmp/zato-version)"
   if [[ -n "${ZATO_UPLOAD_PACKAGES}" && "${ZATO_UPLOAD_PACKAGES}" == "y" ]]; then
       echo "Tests passed..Uploading packages"
       s3cmd sync \
@@ -122,7 +121,6 @@ else
   else
     echo "error"
   fi
-  echo "Zato command output:"
-  cat /tmp/zato-version
+  echo "Zato version output: $(cat /tmp/zato-version)"
   exit 1
 fi
