@@ -94,6 +94,7 @@ EOSQL
     if [[ "${ODB_TYPE}" == "postgresql" && "${ODB_HOSTNAME}" == "localhost" ]]; then
         echo "Stopping initialization of Postgresql"
         su postgres -c "PGUSER=\"${PGUSER:-$POSTGRES_USER}\" $PGBINPATH/pg_ctl -D \"$PGDATA\" -m fast -w stop"
+        sed -i -e "s|#log_destination = 'stderr'|log_destination = 'stderr'|" -e "s|#logging_collector = off|logging_collector = on|" /var/lib/postgresql/data/postgresql.conf
         unset PGPASSWORD
     fi
 fi

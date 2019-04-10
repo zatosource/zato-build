@@ -33,6 +33,7 @@ command=postgres
 user=postgres
 environment=PGDATA="{{ .Env.PGDATA }}"
 autorestart=true
+stderr_logfile=/var/log/postgresql/main.log
 {{ end }}
 
 {{ if .Env.ZATO_IDE_PUBLISHER_PASSWORD }}
