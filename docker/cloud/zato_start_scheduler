@@ -1,0 +1,9 @@
+#!/bin/bash
+
+cd /opt/zato
+
+# To give servers ample time to start
+sleep 30
+
+rm -f /opt/zato/env/qs-1/scheduler/pidfile
+/opt/zato/current/bin/zato start /opt/zato/env/qs-1/scheduler --fg
