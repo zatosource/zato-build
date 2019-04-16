@@ -4,6 +4,9 @@ FROM ubuntu:18.04
 LABEL maintainer="Anielkis Herrera <aherrera@zato.io>, Dariusz Suchojad <dsuch@zato.io>"
 
 ENV ZATO_BIN /opt/zato/current/bin/zato
+ARG ZATO_URL
+ARG ZATO_BRANCH
+ARG ZATO_COMMIT
 
 # Install helper programs used during Zato installation
 RUN apt-get update && apt-get install -y \
@@ -21,16 +24,18 @@ RUN DEBIAN_FRONTEND=noninteractive \
 RUN add-apt-repository universe
 
 # Add the package signing key
-RUN curl -s https://zato.io/repo/zato-0CBD7F72.pgp.asc | sudo apt-key add -
+RUN curl -s https://zato.io/repo/zato-0CBD7F72.pgp.asc | apt-key add -
 
 # Add Zato repo and install the package
 # update sources and install Zato
 ENV DOCKERIZE_VERSION v0.11.0
-RUN apt-add-repository https://zato.io/repo/stable/3.0/ubuntu && apt-get update && apt-get install -y zato
+RUN if [[ -z ${ZATO_URL} ]];then apt-add-repository https://zato.io/repo/stable/3.0/ubuntu && apt-get update && apt-get install -y zato;else wget -O /tmp/zato.deb ${ZATO_URL} && apt-get install -f -y;fi
 
 # Install latest updates
 WORKDIR /opt/zato/current
-RUN git pull && ./update.sh &&  mkdir -p /var/log/supervisor /var/run/sshd/
+RUN if [[ -n $ZATO_BRANCH && $ZATO_BRANCH != "main" ]];then git fetch origin --all;git -b checkout $ZATO_BRANCH origin/$ZATO_BRANCH;fi
+RUN git pull && if [[ -n $ZATO_COMMIT ]];then git checkout $ZATO_COMMIT;fi
+RUN ./update.sh && mkdir -p /var/log/supervisor /var/run/sshd/
 
 # Download Dockerize
 RUN curl -sfL https://github.com/powerman/dockerize/releases/download/${DOCKERIZE_VERSION}/dockerize-`uname -s`-`uname -m` | install /dev/stdin /usr/local/bin/dockerize
@@ -46,19 +51,18 @@ RUN set -x \
 USER root
 
 # Copy Docker basic structure
+# COPY zato_start_load_balancer /opt/zato/zato_start_load_balancer
+# COPY zato_start_server /opt/zato/zato_start_server
+# COPY zato_start_web_admin /opt/zato/zato_start_web_admin
+# COPY zato_start_scheduler /opt/zato/zato_start_scheduler
 COPY entrypoint.sh /entrypoint.sh
-COPY zato_start_load_balancer /opt/zato/zato_start_load_balancer
-COPY zato_start_server1 /opt/zato/zato_start_server1
-COPY zato_start_server2 /opt/zato/zato_start_server2
-COPY zato_start_web_admin /opt/zato/zato_start_web_admin
-COPY zato_start_scheduler /opt/zato/zato_start_scheduler
 
-RUN chmod 755 /entrypoint.sh \
-    /opt/zato/zato_start_load_balancer \
-    /opt/zato/zato_start_server1 \
-    /opt/zato/zato_start_server2 \
-    /opt/zato/zato_start_web_admin \
-    /opt/zato/zato_start_scheduler
+RUN chmod 755 /entrypoint.sh
+ # \
+ #    /opt/zato/zato_start_load_balancer \
+ #    /opt/zato/zato_start_server \
+ #    /opt/zato/zato_start_web_admin \
+ #    /opt/zato/zato_start_scheduler
 
 EXPOSE 22 6379 8183 17010 17011 11223
 CMD [ "/entrypoint.sh" ]

@@ -6,36 +6,26 @@ set -e
 cd /opt/zato/ || exit 1
 # touch /opt/zato/zato_user_password /opt/zato/change_zato_password && \
 
-    if [[ -z "${ZATO_SSH_PASSWORD}" ]]; then
-    if [[ -f /opt/zato/zato_user_password ]];then
-        echo "Reading the password for zato user from the file"
-        ZATO_SSH_PASSWORD="$(cat /opt/zato/zato_user_password)"
-    else
-        echo "Generating a password for zato user"
-        ZATO_SSH_PASSWORD="$(uuidgen)"
-    fi
-fi
-if [[ -z "${ZATO_WEB_ADMIN_PASSWORD}" ]]; then
-    if [[ -f /opt/zato/zato_user_password ]];then
-        echo "Reading the password for web admin from the file"
-        ZATO_WEB_ADMIN_PASSWORD="$(cat /opt/zato/web_admin_password)"
-    else
-        echo "Generating a password for web admin"
-        ZATO_WEB_ADMIN_PASSWORD="$(uuidgen)"
-    fi
+if [[ -z ${CLUSTER_NAME} ]]; then
+    echo "CLUSTER_NAME can't be empty"
+    exit 1
 fi
 
-su zato <<EOF
-# Set a password for web admin and append it to a config file
-echo "${ZATO_WEB_ADMIN_PASSWORD}" > /opt/zato/web_admin_password
-echo "password=${ZATO_WEB_ADMIN_PASSWORD}" >> /opt/zato/update_password.config
-EOF
+if [[ -z ${SECRET_KEY} ]]; then
+    echo "SECRET_KEY can't be empty"
+    exit 1
+fi
+
+if [[ -z ${JWT_SECRET_KEY} ]]; then
+    echo "JWT_SECRET_KEY can't be empty"
+    exit 1
+fi
 
 if [[ -n "${REDIS_HOSTNAME}" ]]; then
     WAITS="${WAITS} -wait tcp://${REDIS_HOSTNAME}:6379 -timeout 10m "
 else
-    export REDIS_HOSTNAME="localhost"
-    echo "REDIS_HOSTNAME=\"${REDIS_HOSTNAME}\"" >> /etc/environment
+    echo "REDIS_HOSTNAME can't be empty"
+    exit 1
 fi
 
 if [[ -n "${ODB_HOSTNAME}" ]]; then
@@ -51,49 +41,75 @@ if [[ -n "${ODB_HOSTNAME}" ]]; then
     WAITS="${WAITS} -wait tcp://${ODB_HOSTNAME}:${ODB_PORT} -timeout 10m "
     echo "ODB_DATA=\"--odb_host ${ODB_HOSTNAME} --odb_port ${ODB_PORT} --odb_user ${ODB_USERNAME} --odb_db_name ${ODB_NAME} --odb_password ${ODB_PASSWORD}\"" >> /etc/environment
 else
-    export ODB_TYPE="postgresql"
-    export ODB_PORT="5432"
-    export ODB_HOSTNAME="localhost"
-    [[ -z "${ODB_USERNAME}" ]] && ODB_USERNAME="postgres"
-    [[ -z "${ODB_PASSWORD}" ]] && ODB_PASSWORD=""$(uuidgen)""
-    echo "ODB_TYPE=\"${ODB_TYPE}\"" >> /etc/environment
-    echo "ODB_DATA=\"--odb_host ${ODB_HOSTNAME:-localhost} --odb_port ${ODB_PORT:-5432} --odb_user ${ODB_USERNAME:-postgres} --odb_db_name ${ODB_NAME:-zato} --odb_password ${ODB_PASSWORD}\"" >> /etc/environment
+    echo "ODB_HOSTNAME can't be empty"
+    exit 1
 fi
 
-/usr/local/bin/dockerize ${WAITS} -template /opt/zato/supervisord.conf.template:/opt/zato/supervisord.conf
-
-# Set a password for zato user
-echo "${ZATO_SSH_PASSWORD}" > /opt/zato/zato_user_password && \
-    chown zato:zato /opt/zato/zato_user_password && \
-    echo "zato:$(cat /opt/zato/zato_user_password)" > /opt/zato/change_zato_password && \
-    chpasswd < /opt/zato/change_zato_password
+#
+# # Set a password for zato user
+# echo "${ZATO_SSH_PASSWORD}" > /opt/zato/zato_user_password && \
+#     chown zato:zato /opt/zato/zato_user_password && \
+#     echo "zato:$(cat /opt/zato/zato_user_password)" > /opt/zato/change_zato_password && \
+#     chpasswd < /opt/zato/change_zato_password
 
 if [[ ! -d /opt/zato/env/qs-1 ]];then
     mkdir -p /opt/zato/env/qs-1
     chown zato. /opt/zato/env/qs-1
 fi
 
-if [[ ! -x "/opt/zato/env/qs-1/zato-qs-restart.sh" ]]; then
-    # quickstart-bootstrap
-    if [[ "${ODB_TYPE}" == "postgresql" && "${ODB_HOSTNAME}" == "localhost" && -z "$(ls /var/lib/postgresql/data)" ]]; then
-        echo "Initializing Postgresql database"
-        export PGPASSWORD="${ODB_PASSWORD}"
-        su postgres -c "$PGBINPATH/initdb -E 'UTF-8' --username=\"${ODB_USERNAME:-postgres}\" --pwfile=<(echo \"$ODB_PASSWORD\") -D \"$PGDATA\";PGUSER=\"${PGUSER:-$POSTGRES_USER}\" $PGBINPATH/pg_ctl -D \"$PGDATA\" -o \"-c listen_addresses='127.0.0.1'\"  -w start"
-        psql=( psql -v ON_ERROR_STOP=1 --username "${ODB_USERNAME:-postgres}" --no-password )
-        "${psql[@]}" --dbname postgres --set db="${ODB_NAME:-zato}" <<-'EOSQL'
-CREATE DATABASE :"db" ;
-EOSQL
-        psql+=( --dbname "$POSTGRES_DB" )
-        # create wait instruction for internal postgresql
-        WAITS="${WAITS} -wait tcp://localhost:5432 -timeout 10m "
-    fi
-    # wait for ODB again
-    /usr/local/bin/dockerize ${WAITS}
+/usr/local/bin/dockerize ${WAITS}
+
+if [[ "$ZATO_POSITION" != "load-balancer" ]]; then
+    sleep 30
 fi
 
-# Hot deploy configuration
-[[ -d /opt/hot-deploy ]] || mkdir -p /opt/hot-deploy
-chmod 777 /opt/hot-deploy
-sed -i -e 's|pickup_dir=.*|pickup_dir=/opt/hot-deploy|' /opt/zato/env/qs-1/server1/config/repo/server.conf
+case "$ZATO_POSITION" in
+    "load-balancer" )
+    if [[ -z ${REDIS_HOSTNAME} ]]; then
+        echo "REDIS_HOSTNAME not defined"
+        exit 1
+    fi
+    gosu zato bash -c "${ZATO_BIN} create odb ${ODB_DATA} ${ODB_TYPE}"
+    [[ -n "${ZATO_WEB_ADMIN_PASSWORD}" ]] && ZATO_WEB_ADMIN_PASSWORD="--tech_account_password ${ZATO_WEB_ADMIN_PASSWORD}"
+    gosu zato bash -c "${ZATO_BIN} create cluster ${ODB_DATA} ${ZATO_WEB_ADMIN_PASSWORD} ${ODB_TYPE} ${LB_HOST:-zato.localhost} ${LB_PORT:-11223} ${LB_AGENT_PORT:-20151} ${REDIS_HOSTNAME} ${REDIS_PORT:-6379} ${CLUSTER_NAME} ${TECH_ACCOUNT_NAME:-admin}"
+    gosu zato bash -c "${ZATO_BIN} create load_balancer /opt/zato/env/qs-1/load-balancer"
+    export ZATO_SERVICE="${ZATO_BIN} start /opt/zato/env/qs-1/load-balancer --fg"
+    ;;
+    "scheduler" )
+    if [[ -z ${REDIS_HOSTNAME} ]]; then
+        echo "REDIS_HOSTNAME not defined"
+        exit 1
+    fi
 
-exec /usr/bin/supervisord -c /opt/zato/supervisord.conf
+    [[ -n "${SECRET_KEY}" ]] && SECRET_KEY="--secret_key ${SECRET_KEY}"
+
+    gosu zato bash -c "${ZATO_BIN} create scheduler ${ODB_DATA} ${SECRET_KEY} /opt/zato/env/qs-1/scheduler ${ODB_TYPE} ${REDIS_HOSTNAME} ${REDIS_PORT:-6379} ${CLUSTER_NAME}"
+
+    export ZATO_SERVICE="${ZATO_BIN} start /opt/zato/env/qs-1/scheduler --fg"
+    ;;
+    "server" )
+    if [[ -z ${REDIS_HOSTNAME} ]]; then
+        echo "REDIS_HOSTNAME not defined"
+        exit 1
+    fi
+
+    [[ -n "${JWT_SECRET_KEY}" ]] && JWT_SECRET_KEY="--jwt_secret ${JWT_SECRET_KEY}"
+    [[ -n "${SECRET_KEY}" ]] && SECRET_KEY="--secret_key ${SECRET_KEY}"
+
+    gosu zato bash -c "${ZATO_BIN} create server ${ODB_DATA} ${JWT_SECRET_KEY} ${SECRET_KEY} --http_port 17010 /opt/zato/env/qs-1/server ${ODB_TYPE} ${REDIS_HOSTNAME} ${REDIS_PORT:-6379} ${CLUSTER_NAME} ${SERVER_NAME}"
+
+    export ZATO_SERVICE="${ZATO_BIN} start /opt/zato/env/qs-1/server --fg"
+    ;;
+    "webadmin" )
+    if [[ -z ${REDIS_HOSTNAME} ]]; then
+        echo "REDIS_HOSTNAME not defined"
+        exit 1
+    fi
+
+    [[ -n "${ZATO_WEB_ADMIN_PASSWORD}" ]] && ZATO_WEB_ADMIN_PASSWORD="--tech_account_password ${ZATO_WEB_ADMIN_PASSWORD}"
+    gosu zato bash -c "${ZATO_BIN} create web_admin ${ODB_DATA} ${ZATO_WEB_ADMIN_PASSWORD} /opt/zato/env/qs-1/webadmin ${ODB_TYPE} ${TECH_ACCOUNT_NAME:-admin}"
+    export ZATO_SERVICE="${ZATO_BIN} start /opt/zato/env/qs-1/webadmin --fg"
+    ;;
+esac
+
+exec gosu zato bash -c "$ZATO_SERVICE"
