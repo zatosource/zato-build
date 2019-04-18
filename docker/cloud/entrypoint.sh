@@ -28,6 +28,10 @@ else
     exit 1
 fi
 
+if [[ -n "${VERBOSE}" && "${VERBOSE}" == "y" ]]; then
+    OPTIONS="--verbose"
+fi
+
 if [[ -n "${ODB_HOSTNAME}" ]]; then
     if [[ -z "${ODB_TYPE}" && "${ODB_HOSTNAME}" == "postgres" ]]; then
         ODB_TYPE="postgresql"
@@ -54,7 +58,7 @@ fi
 
 if [[ ! -d /opt/zato/env/qs-1 ]];then
     mkdir -p /opt/zato/env/qs-1
-    chown zato. /opt/zato/env/qs-1
+    chown -R zato. /opt/zato/env/qs-1
 fi
 
 /usr/local/bin/dockerize ${WAITS}
@@ -75,8 +79,8 @@ case "$ZATO_POSITION" in
         echo "Checking ODB status"
         QUERY="\dt"
         if [[ -z "$(PGPASSWORD=${ODB_PASSWORD} psql --command="${QUERY}" --host=${ODB_HOSTNAME} --port=${ODB_PORT} --username=${ODB_USERNAME} ${ODB_NAME} |grep -v 'Did not find any relations'|grep ' | table | ')" ]]; then
-            echo "${ZATO_BIN} create odb ${ODB_DATA} ${ODB_TYPE}"
-            gosu zato bash -c "${ZATO_BIN} create odb ${ODB_DATA} ${ODB_TYPE}"
+            echo "${ZATO_BIN} ${OPTIONS} create odb ${ODB_DATA} ${ODB_TYPE}"
+            gosu zato bash -c "${ZATO_BIN} ${OPTIONS} create odb ${ODB_DATA} ${ODB_TYPE}"
         else
             echo "ODB was created"
         fi
@@ -84,15 +88,15 @@ case "$ZATO_POSITION" in
         echo "Cluster ODB status"
         [[ -n "${ZATO_WEB_ADMIN_PASSWORD}" ]] && ZATO_WEB_ADMIN_PASSWORD="--tech_account_password ${ZATO_WEB_ADMIN_PASSWORD}"
         if [[ -n "$(PGPASSWORD=${ODB_PASSWORD} psql --command="${QUERY}" --host=${ODB_HOSTNAME} --port=${ODB_PORT} --username=${ODB_USERNAME} ${ODB_NAME} |grep '(0 rows)')" ]]; then
-            echo "${ZATO_BIN} create cluster ${ODB_DATA} ${ZATO_WEB_ADMIN_PASSWORD} ${ODB_TYPE} ${LB_HOST:-zato.localhost} ${LB_PORT:-11223} ${LB_AGENT_PORT:-20151} ${REDIS_HOSTNAME} ${REDIS_PORT:-6379} ${CLUSTER_NAME} ${TECH_ACCOUNT_NAME:-admin}"
-            gosu zato bash -c "${ZATO_BIN} create cluster ${ODB_DATA} ${ZATO_WEB_ADMIN_PASSWORD} ${ODB_TYPE} ${LB_HOST:-zato.localhost} ${LB_PORT:-11223} ${LB_AGENT_PORT:-20151} ${REDIS_HOSTNAME} ${REDIS_PORT:-6379} ${CLUSTER_NAME} ${TECH_ACCOUNT_NAME:-admin}"
+            echo "${ZATO_BIN} ${OPTIONS} create cluster ${ODB_DATA} ${ZATO_WEB_ADMIN_PASSWORD} ${ODB_TYPE} ${LB_HOST:-zato.localhost} ${LB_PORT:-11223} ${LB_AGENT_PORT:-20151} ${REDIS_HOSTNAME} ${REDIS_PORT:-6379} ${CLUSTER_NAME} ${TECH_ACCOUNT_NAME:-admin}"
+            gosu zato bash -c "${ZATO_BIN} ${OPTIONS} create cluster ${ODB_DATA} ${ZATO_WEB_ADMIN_PASSWORD} ${ODB_TYPE} ${LB_HOST:-zato.localhost} ${LB_PORT:-11223} ${LB_AGENT_PORT:-20151} ${REDIS_HOSTNAME} ${REDIS_PORT:-6379} ${CLUSTER_NAME} ${TECH_ACCOUNT_NAME:-admin}"
         else
             echo "Cluster was created"
         fi
 
-        echo "${ZATO_BIN} create load_balancer /opt/zato/env/qs-1/load-balancer"
-        gosu zato bash -c "${ZATO_BIN} create load_balancer /opt/zato/env/qs-1/load-balancer"
-        export ZATO_SERVICE="${ZATO_BIN} start /opt/zato/env/qs-1/load-balancer --fg"
+        echo "${ZATO_BIN} ${OPTIONS} create load_balancer /opt/zato/env/qs-1/load-balancer"
+        gosu zato bash -c "mkdir -p /opt/zato/env/qs-1/load-balancer;${ZATO_BIN} ${OPTIONS} create load_balancer /opt/zato/env/qs-1/load-balancer"
+        export ZATO_SERVICE="${ZATO_BIN} ${OPTIONS} start /opt/zato/env/qs-1/load-balancer --fg"
     ;;
     "scheduler" )
         if [[ -z ${REDIS_HOSTNAME} ]]; then
@@ -102,10 +106,10 @@ case "$ZATO_POSITION" in
 
         [[ -n "${SECRET_KEY}" ]] && SECRET_KEY="--secret_key ${SECRET_KEY}"
 
-        echo "${ZATO_BIN} create scheduler ${ODB_DATA} ${SECRET_KEY} /opt/zato/env/qs-1/scheduler ${ODB_TYPE} ${REDIS_HOSTNAME} ${REDIS_PORT:-6379} ${CLUSTER_NAME}"
-        gosu zato bash -c "${ZATO_BIN} create scheduler ${ODB_DATA} ${SECRET_KEY} /opt/zato/env/qs-1/scheduler ${ODB_TYPE} ${REDIS_HOSTNAME} ${REDIS_PORT:-6379} ${CLUSTER_NAME}"
+        echo "${ZATO_BIN} ${OPTIONS} create scheduler ${ODB_DATA} ${SECRET_KEY} /opt/zato/env/qs-1/scheduler ${ODB_TYPE} ${REDIS_HOSTNAME} ${REDIS_PORT:-6379} ${CLUSTER_NAME}"
+        gosu zato bash -c "${ZATO_BIN} ${OPTIONS} create scheduler ${ODB_DATA} ${SECRET_KEY} /opt/zato/env/qs-1/scheduler ${ODB_TYPE} ${REDIS_HOSTNAME} ${REDIS_PORT:-6379} ${CLUSTER_NAME}"
 
-        export ZATO_SERVICE="${ZATO_BIN} start /opt/zato/env/qs-1/scheduler --fg"
+        export ZATO_SERVICE="${ZATO_BIN} ${OPTIONS} start /opt/zato/env/qs-1/scheduler --fg"
     ;;
     "server" )
         if [[ -z ${REDIS_HOSTNAME} ]]; then
@@ -116,16 +120,16 @@ case "$ZATO_POSITION" in
         [[ -n "${JWT_SECRET_KEY}" ]] && JWT_SECRET_KEY="--jwt_secret ${JWT_SECRET_KEY}"
         [[ -n "${SECRET_KEY}" ]] && SECRET_KEY="--secret_key ${SECRET_KEY}"
 
-        echo "${ZATO_BIN} create server ${ODB_DATA} ${JWT_SECRET_KEY} ${SECRET_KEY} --http_port 17010 /opt/zato/env/qs-1/server ${ODB_TYPE} ${REDIS_HOSTNAME} ${REDIS_PORT:-6379} ${CLUSTER_NAME} ${SERVER_NAME}"
-        gosu zato bash -c "${ZATO_BIN} create server ${ODB_DATA} ${JWT_SECRET_KEY} ${SECRET_KEY} --http_port 17010 /opt/zato/env/qs-1/server ${ODB_TYPE} ${REDIS_HOSTNAME} ${REDIS_PORT:-6379} ${CLUSTER_NAME} ${SERVER_NAME}"
+        echo "${ZATO_BIN} ${OPTIONS} create server ${ODB_DATA} ${JWT_SECRET_KEY} ${SECRET_KEY} --http_port 17010 /opt/zato/env/qs-1/server ${ODB_TYPE} ${REDIS_HOSTNAME} ${REDIS_PORT:-6379} ${CLUSTER_NAME} ${SERVER_NAME}"
+        gosu zato bash -c "${ZATO_BIN} ${OPTIONS} create server ${ODB_DATA} ${JWT_SECRET_KEY} ${SECRET_KEY} --http_port 17010 /opt/zato/env/qs-1/server ${ODB_TYPE} ${REDIS_HOSTNAME} ${REDIS_PORT:-6379} ${CLUSTER_NAME} ${SERVER_NAME}"
 
-        export ZATO_SERVICE="${ZATO_BIN} start /opt/zato/env/qs-1/server --fg"
+        export ZATO_SERVICE="${ZATO_BIN} ${OPTIONS} start /opt/zato/env/qs-1/server --fg"
     ;;
     "webadmin" )
         [[ -n "${ZATO_WEB_ADMIN_PASSWORD}" ]] && ZATO_WEB_ADMIN_PASSWORD="--tech_account_password ${ZATO_WEB_ADMIN_PASSWORD}"
-        echo "${ZATO_BIN} create web_admin ${ODB_DATA} ${ZATO_WEB_ADMIN_PASSWORD} /opt/zato/env/qs-1/webadmin ${ODB_TYPE} ${TECH_ACCOUNT_NAME:-admin}"
-        gosu zato bash -c "${ZATO_BIN} create web_admin ${ODB_DATA} ${ZATO_WEB_ADMIN_PASSWORD} /opt/zato/env/qs-1/webadmin ${ODB_TYPE} ${TECH_ACCOUNT_NAME:-admin}"
-        export ZATO_SERVICE="${ZATO_BIN} start /opt/zato/env/qs-1/webadmin --fg"
+        echo "${ZATO_BIN} ${OPTIONS} create web_admin ${ODB_DATA} ${ZATO_WEB_ADMIN_PASSWORD} /opt/zato/env/qs-1/webadmin ${ODB_TYPE} ${TECH_ACCOUNT_NAME:-admin}"
+        gosu zato bash -c "${ZATO_BIN} ${OPTIONS} create web_admin ${ODB_DATA} ${ZATO_WEB_ADMIN_PASSWORD} /opt/zato/env/qs-1/webadmin ${ODB_TYPE} ${TECH_ACCOUNT_NAME:-admin}"
+        export ZATO_SERVICE="${ZATO_BIN} ${OPTIONS} start /opt/zato/env/qs-1/webadmin --fg"
     ;;
 esac
 
