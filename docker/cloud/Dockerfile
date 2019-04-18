@@ -22,7 +22,7 @@ RUN curl -s https://zato.io/repo/zato-0CBD7F72.pgp.asc | apt-key add -
 
 # Add Zato repo and install the package
 # update sources and install Zato
-RUN apt-add-repository https://zato.io/repo/stable/3.0/ubuntu && apt-get update && apt-get install -y zato libsasl2-dev python-dev libldap2-dev libssl-dev
+RUN apt-add-repository https://zato.io/repo/stable/3.0/ubuntu && apt-get update && apt-get install -y zato libsasl2-dev python-dev libldap2-dev libssl-dev postgresql-client
 
 # Install latest updates
 WORKDIR /opt/zato/current
