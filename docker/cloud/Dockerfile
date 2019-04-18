@@ -43,18 +43,9 @@ RUN set -x \
 USER root
 
 # Copy Docker basic structure
-# COPY zato_start_load_balancer /opt/zato/zato_start_load_balancer
-# COPY zato_start_server /opt/zato/zato_start_server
-# COPY zato_start_web_admin /opt/zato/zato_start_web_admin
-# COPY zato_start_scheduler /opt/zato/zato_start_scheduler
 COPY entrypoint.sh /entrypoint.sh
 
 RUN chmod 755 /entrypoint.sh
- # \
- #    /opt/zato/zato_start_load_balancer \
- #    /opt/zato/zato_start_server \
- #    /opt/zato/zato_start_web_admin \
- #    /opt/zato/zato_start_scheduler
 
 EXPOSE 22 6379 8183 17010 17011 11223
 CMD [ "/entrypoint.sh" ]
