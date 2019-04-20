@@ -75,6 +75,7 @@ case "$ZATO_POSITION" in
             echo "REDIS_HOSTNAME not defined"
             exit 1
         fi
+        [[ -n "${ZATO_WEB_ADMIN_PASSWORD}" ]] && WEB_ADMIN_PASSWORD="--tech_account_password ${ZATO_WEB_ADMIN_PASSWORD}"
 
         echo "Checking ODB status"
         QUERY="\dt"
@@ -87,15 +88,36 @@ case "$ZATO_POSITION" in
 
         echo "Cluster ODB status"
         [[ -n "${ZATO_WEB_ADMIN_PASSWORD}" ]] && ZATO_WEB_ADMIN_PASSWORD="--tech_account_password ${ZATO_WEB_ADMIN_PASSWORD}"
+        QUERY="SELECT id FROM cluster WHERE name = '${CLUSTER_NAME}'"
+        PGPASSWORD=${ODB_PASSWORD} psql --command="${QUERY}" --host=${ODB_HOSTNAME} --port=${ODB_PORT} --username=${ODB_USERNAME} ${ODB_NAME}
         if [[ -n "$(PGPASSWORD=${ODB_PASSWORD} psql --command="${QUERY}" --host=${ODB_HOSTNAME} --port=${ODB_PORT} --username=${ODB_USERNAME} ${ODB_NAME} |grep '(0 rows)')" ]]; then
             echo "${ZATO_BIN} create cluster ${OPTIONS} ${ODB_DATA} ${ZATO_WEB_ADMIN_PASSWORD} ${ODB_TYPE} ${LB_HOST:-zato.localhost} ${LB_PORT:-11223} ${LB_AGENT_PORT:-20151} ${REDIS_HOSTNAME} ${REDIS_PORT:-6379} ${CLUSTER_NAME} ${TECH_ACCOUNT_NAME:-admin}"
             gosu zato bash -c "${ZATO_BIN} create cluster ${OPTIONS} ${ODB_DATA} ${ZATO_WEB_ADMIN_PASSWORD} ${ODB_TYPE} ${LB_HOST:-zato.localhost} ${LB_PORT:-11223} ${LB_AGENT_PORT:-20151} ${REDIS_HOSTNAME} ${REDIS_PORT:-6379} ${CLUSTER_NAME} ${TECH_ACCOUNT_NAME:-admin}"
+#
+#             # Run only the first time
+#             cat > update_password.config <<-EOF
+# # Zato update password
+# command=update_password
+# path=/opt/zato/env/qs-1/web-admin
+# store_config=True
+# username=admin
+# password=${ZATO_WEB_ADMIN_PASSWORD}
+# EOF
+#             gosu zato bash -c "${ZATO_BIN} from-config /opt/zato/update_password.config"
         else
-            echo "Cluster was created"
+            echo "Cluster was created before"
         fi
+        # echo "${ZATO_BIN} create odb ${OPTIONS} ${ODB_DATA} --skip-if-exists=y ${ODB_TYPE}"
+        # gosu zato bash -c "${ZATO_BIN} create odb ${OPTIONS} ${ODB_DATA} --skip-if-exists=y ${ODB_TYPE}"
+        #
+        # echo "${ZATO_BIN} create cluster ${OPTIONS} ${ODB_DATA} --skip-if-exists=y ${WEB_ADMIN_PASSWORD} ${ODB_TYPE} ${LB_HOST:-zato.localhost} ${LB_PORT:-11223} ${LB_AGENT_PORT:-20151} ${REDIS_HOSTNAME} ${REDIS_PORT:-6379} ${CLUSTER_NAME} ${TECH_ACCOUNT_NAME:-admin}"
+        # gosu zato bash -c "${ZATO_BIN} create cluster ${OPTIONS} ${ODB_DATA} --skip-if-exists=y ${WEB_ADMIN_PASSWORD} ${ODB_TYPE} ${LB_HOST:-zato.localhost} ${LB_PORT:-11223} ${LB_AGENT_PORT:-20151} ${REDIS_HOSTNAME} ${REDIS_PORT:-6379} ${CLUSTER_NAME} ${TECH_ACCOUNT_NAME:-admin}"
 
         echo "${ZATO_BIN} create load_balancer ${OPTIONS} /opt/zato/env/qs-1/"
         gosu zato bash -c "${ZATO_BIN} create load_balancer ${OPTIONS} /opt/zato/env/qs-1/"
+
+        # echo "${ZATO_BIN} update password --password ${ZATO_WEB_ADMIN_PASSWORD} /opt/zato/env/qs-1/ ${TECH_ACCOUNT_NAME:-admin}"
+        # gosu zato bash -c "${ZATO_BIN} update password --password ${ZATO_WEB_ADMIN_PASSWORD} /opt/zato/env/qs-1/ ${TECH_ACCOUNT_NAME:-admin}"
     ;;
     "scheduler" )
         if [[ -z ${REDIS_HOSTNAME} ]]; then
@@ -105,8 +127,9 @@ case "$ZATO_POSITION" in
 
         [[ -n "${SECRET_KEY}" ]] && SECRET_KEY="--secret_key ${SECRET_KEY}"
 
-        echo "${ZATO_BIN} create scheduler ${ODB_DATA} ${SECRET_KEY} /opt/zato/env/qs-1/ ${ODB_TYPE} ${REDIS_HOSTNAME} ${REDIS_PORT:-6379} ${CLUSTER_NAME}"
-        gosu zato bash -c "${ZATO_BIN} create scheduler ${ODB_DATA} ${SECRET_KEY} /opt/zato/env/qs-1/ ${ODB_TYPE} ${REDIS_HOSTNAME} ${REDIS_PORT:-6379} ${CLUSTER_NAME}"
+        find /opt/zato/env/qs-1/
+        echo "${ZATO_BIN} create scheduler ${OPTIONS} ${ODB_DATA} --kvdb_password '${REDIS_PASSWORD}' ${SECRET_KEY} /opt/zato/env/qs-1/ ${ODB_TYPE} ${REDIS_HOSTNAME} ${REDIS_PORT:-6379} ${CLUSTER_NAME}"
+        gosu zato bash -c "${ZATO_BIN} create scheduler ${OPTIONS} ${ODB_DATA} --kvdb_password '${REDIS_PASSWORD}' ${SECRET_KEY} /opt/zato/env/qs-1/ ${ODB_TYPE} ${REDIS_HOSTNAME} ${REDIS_PORT:-6379} ${CLUSTER_NAME}"
     ;;
     "server" )
         if [[ -z ${REDIS_HOSTNAME} ]]; then
@@ -117,13 +140,13 @@ case "$ZATO_POSITION" in
         [[ -n "${JWT_SECRET_KEY}" ]] && JWT_SECRET_KEY="--jwt_secret ${JWT_SECRET_KEY}"
         [[ -n "${SECRET_KEY}" ]] && SECRET_KEY="--secret_key ${SECRET_KEY}"
 
-        echo "${ZATO_BIN} create server ${ODB_DATA} ${JWT_SECRET_KEY} ${SECRET_KEY} --http_port 17010 /opt/zato/env/qs-1/ ${ODB_TYPE} ${REDIS_HOSTNAME} ${REDIS_PORT:-6379} ${CLUSTER_NAME} ${SERVER_NAME}"
-        gosu zato bash -c "${ZATO_BIN} create server ${ODB_DATA} ${JWT_SECRET_KEY} ${SECRET_KEY} --http_port 17010 /opt/zato/env/qs-1/ ${ODB_TYPE} ${REDIS_HOSTNAME} ${REDIS_PORT:-6379} ${CLUSTER_NAME} ${SERVER_NAME}"
+        echo "${ZATO_BIN} create server ${OPTIONS} ${ODB_DATA} --kvdb_password '${REDIS_PASSWORD}' ${JWT_SECRET_KEY} ${SECRET_KEY} --http_port 17010 /opt/zato/env/qs-1/ ${ODB_TYPE} ${REDIS_HOSTNAME} ${REDIS_PORT:-6379} ${CLUSTER_NAME} ${SERVER_NAME}"
+        gosu zato bash -c "${ZATO_BIN} create server ${OPTIONS} ${ODB_DATA} --kvdb_password '${REDIS_PASSWORD}' ${JWT_SECRET_KEY} ${SECRET_KEY} --http_port 17010 /opt/zato/env/qs-1/ ${ODB_TYPE} ${REDIS_HOSTNAME} ${REDIS_PORT:-6379} ${CLUSTER_NAME} ${SERVER_NAME}"
     ;;
     "webadmin" )
-        [[ -n "${ZATO_WEB_ADMIN_PASSWORD}" ]] && ZATO_WEB_ADMIN_PASSWORD="--tech_account_password ${ZATO_WEB_ADMIN_PASSWORD}"
-        echo "${ZATO_BIN} create web_admin ${ODB_DATA} ${ZATO_WEB_ADMIN_PASSWORD} /opt/zato/env/qs-1/ ${ODB_TYPE} ${TECH_ACCOUNT_NAME:-admin}"
-        gosu zato bash -c "${ZATO_BIN} create web_admin ${ODB_DATA} ${ZATO_WEB_ADMIN_PASSWORD} /opt/zato/env/qs-1/ ${ODB_TYPE} ${TECH_ACCOUNT_NAME:-admin}"
+        [[ -n "${ZATO_WEB_ADMIN_PASSWORD}" ]] && WEB_ADMIN_PASSWORD="--tech_account_password ${ZATO_WEB_ADMIN_PASSWORD}"
+        echo "${ZATO_BIN} create web_admin ${OPTIONS} ${ODB_DATA} ${WEB_ADMIN_PASSWORD} /opt/zato/env/qs-1/ ${ODB_TYPE} ${TECH_ACCOUNT_NAME:-admin}"
+        gosu zato bash -c "${ZATO_BIN} create web_admin ${OPTIONS} ${ODB_DATA} ${WEB_ADMIN_PASSWORD} /opt/zato/env/qs-1/ ${ODB_TYPE} ${TECH_ACCOUNT_NAME:-admin}"
     ;;
 esac
 

@@ -24,13 +24,13 @@ RUN curl -s https://zato.io/repo/zato-0CBD7F72.pgp.asc | apt-key add -
 # update sources and install Zato
 RUN apt-add-repository https://zato.io/repo/stable/3.0/ubuntu && apt-get update && apt-get install -y zato libsasl2-dev python-dev libldap2-dev libssl-dev postgresql-client
 
-# Install latest updates
-WORKDIR /opt/zato/current
-RUN git checkout main && git pull && pip install --upgrade future && ./update.sh && mkdir -p /var/log/supervisor /var/run/sshd/
-
 # Download Dockerize
 ENV DOCKERIZE_VERSION v0.11.0
 RUN curl -sfL https://github.com/powerman/dockerize/releases/download/${DOCKERIZE_VERSION}/dockerize-`uname -s`-`uname -m` | install /dev/stdin /usr/local/bin/dockerize
+
+ENV TINI_VERSION v0.18.0
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
+RUN chmod +x /tini
 
 # Install gosu for easy step-down from root
 ENV GOSU_VERSION 1.11
@@ -40,6 +40,11 @@ RUN set -x \
     && chmod +x /usr/local/bin/gosu \
     && gosu nobody true
 
+# Install latest updates
+WORKDIR /opt/zato/current
+RUN git checkout main && git pull && pip install --upgrade future && ./update.sh && mkdir -p /var/log/supervisor /var/run/sshd/
+
+
 USER root
 
 # Copy Docker basic structure
@@ -47,5 +52,6 @@ COPY entrypoint.sh /entrypoint.sh
 
 RUN chmod 755 /entrypoint.sh
 
-EXPOSE 22 6379 8183 17010 17011 11223
+EXPOSE 8183 17010 17011 11223
+ENTRYPOINT ["/tini", "--"]
 CMD [ "/entrypoint.sh" ]
