@@ -68,6 +68,7 @@ if [[ "$ZATO_POSITION" != "load-balancer" ]]; then
 fi
 
 gosu zato bash -c  "${ZATO_BIN} --version"
+SERVER_NAME="$(hostname)"
 
 case "$ZATO_POSITION" in
     "load-balancer" )
