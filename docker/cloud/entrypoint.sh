@@ -89,23 +89,11 @@ case "$ZATO_POSITION" in
         fi
 
         echo "Cluster ODB status"
-        [[ -n "${ZATO_WEB_ADMIN_PASSWORD}" ]] && ZATO_WEB_ADMIN_PASSWORD="--tech_account_password ${ZATO_WEB_ADMIN_PASSWORD}"
         QUERY="SELECT id FROM cluster WHERE name = '${CLUSTER_NAME}'"
         # PGPASSWORD=${ODB_PASSWORD} psql --command="${QUERY}" --host=${ODB_HOSTNAME} --port=${ODB_PORT} --username=${ODB_USERNAME} ${ODB_NAME}
         if [[ -n "$(PGPASSWORD=${ODB_PASSWORD} psql --command="${QUERY}" --host=${ODB_HOSTNAME} --port=${ODB_PORT} --username=${ODB_USERNAME} ${ODB_NAME} |grep '(0 rows)')" ]]; then
-            echo "${ZATO_BIN} create cluster ${OPTIONS} ${ODB_DATA} ${ZATO_WEB_ADMIN_PASSWORD} ${ODB_TYPE} ${LB_HOST:-zato.localhost} ${LB_PORT:-11223} ${LB_AGENT_PORT:-20151} ${REDIS_HOSTNAME} ${REDIS_PORT:-6379} ${CLUSTER_NAME} ${TECH_ACCOUNT_NAME:-admin}"
-            gosu zato bash -c "${ZATO_BIN} create cluster ${OPTIONS} ${ODB_DATA} ${ZATO_WEB_ADMIN_PASSWORD} ${ODB_TYPE} ${LB_HOST:-zato.localhost} ${LB_PORT:-11223} ${LB_AGENT_PORT:-20151} ${REDIS_HOSTNAME} ${REDIS_PORT:-6379} ${CLUSTER_NAME} ${TECH_ACCOUNT_NAME:-admin}"
-#
-#             # Run only the first time
-#             cat > update_password.config <<-EOF
-# # Zato update password
-# command=update_password
-# path=/opt/zato/env/qs-1/web-admin
-# store_config=True
-# username=admin
-# password=${ZATO_WEB_ADMIN_PASSWORD}
-# EOF
-#             gosu zato bash -c "${ZATO_BIN} from-config /opt/zato/update_password.config"
+            echo "${ZATO_BIN} create cluster ${OPTIONS} ${ODB_DATA} ${WEB_ADMIN_PASSWORD} ${ODB_TYPE} ${LB_HOST:-zato.localhost} ${LB_PORT:-11223} ${LB_AGENT_PORT:-20151} ${REDIS_HOSTNAME} ${REDIS_PORT:-6379} ${CLUSTER_NAME} ${TECH_ACCOUNT_NAME:-admin}"
+            gosu zato bash -c "${ZATO_BIN} create cluster ${OPTIONS} ${ODB_DATA} ${WEB_ADMIN_PASSWORD} ${ODB_TYPE} ${LB_HOST:-zato.localhost} ${LB_PORT:-11223} ${LB_AGENT_PORT:-20151} ${REDIS_HOSTNAME} ${REDIS_PORT:-6379} ${CLUSTER_NAME} ${TECH_ACCOUNT_NAME:-admin}"
         else
             echo "Cluster was created before"
         fi
@@ -118,8 +106,7 @@ case "$ZATO_POSITION" in
         echo "${ZATO_BIN} create load_balancer ${OPTIONS} /opt/zato/env/qs-1/"
         gosu zato bash -c "${ZATO_BIN} create load_balancer ${OPTIONS} /opt/zato/env/qs-1/"
 
-        # echo "${ZATO_BIN} update password --password ${ZATO_WEB_ADMIN_PASSWORD} /opt/zato/env/qs-1/ ${TECH_ACCOUNT_NAME:-admin}"
-        # gosu zato bash -c "${ZATO_BIN} update password --password ${ZATO_WEB_ADMIN_PASSWORD} /opt/zato/env/qs-1/ ${TECH_ACCOUNT_NAME:-admin}"
+        sed -i 's/127.0.0.1:11223/0.0.0.0:11223/g' /opt/zato/env/qs-1/config/repo/zato.config
     ;;
     "scheduler" )
         if [[ -z ${REDIS_HOSTNAME} ]]; then
@@ -144,11 +131,18 @@ case "$ZATO_POSITION" in
 
         echo "${ZATO_BIN} create server ${OPTIONS} ${ODB_DATA} --kvdb_password '${REDIS_PASSWORD}' ${JWT_SECRET_KEY} ${SECRET_KEY} --http_port 17010 /opt/zato/env/qs-1/ ${ODB_TYPE} ${REDIS_HOSTNAME} ${REDIS_PORT:-6379} ${CLUSTER_NAME} ${SERVER_NAME}"
         gosu zato bash -c "${ZATO_BIN} create server ${OPTIONS} ${ODB_DATA} --kvdb_password '${REDIS_PASSWORD}' ${JWT_SECRET_KEY} ${SECRET_KEY} --http_port 17010 /opt/zato/env/qs-1/ ${ODB_TYPE} ${REDIS_HOSTNAME} ${REDIS_PORT:-6379} ${CLUSTER_NAME} ${SERVER_NAME}"
+        sed -i 's/gunicorn_workers=2/gunicorn_workers=1/g' /opt/zato/env/qs-1/config/repo/server.conf
     ;;
     "webadmin" )
         [[ -n "${ZATO_WEB_ADMIN_PASSWORD}" ]] && WEB_ADMIN_PASSWORD="--tech_account_password ${ZATO_WEB_ADMIN_PASSWORD}"
         echo "${ZATO_BIN} create web_admin ${OPTIONS} ${ODB_DATA} ${WEB_ADMIN_PASSWORD} /opt/zato/env/qs-1/ ${ODB_TYPE} ${TECH_ACCOUNT_NAME:-admin}"
         gosu zato bash -c "${ZATO_BIN} create web_admin ${OPTIONS} ${ODB_DATA} ${WEB_ADMIN_PASSWORD} /opt/zato/env/qs-1/ ${ODB_TYPE} ${TECH_ACCOUNT_NAME:-admin}"
+
+        # TODO: Run only the first time
+        echo "Updating password"
+        echo "${ZATO_BIN} update password ${OPTIONS} --password ${ZATO_WEB_ADMIN_PASSWORD} /opt/zato/env/qs-1/ ${TECH_ACCOUNT_NAME:-admin}"
+        gosu zato bash -c "${ZATO_BIN} update password ${OPTIONS} --password ${ZATO_WEB_ADMIN_PASSWORD} /opt/zato/env/qs-1/ ${TECH_ACCOUNT_NAME:-admin}"
+        echo "Password updated"
     ;;
 esac
 
