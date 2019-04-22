@@ -43,7 +43,7 @@ RUN set -x \
 # Install latest updates
 WORKDIR /opt/zato/current
 ADD patcher.sh /opt/zato/current/patcher.sh
-RUN git checkout main && git pull && pip install --upgrade future sh && ./update.sh && bash ./patcher.sh && mkdir -p /var/log/supervisor /var/run/sshd/
+RUN git checkout main && git pull && pip install --upgrade future sh && sed -i -e 's|pg8000==1.13.1|pg8000==1.12.5|' /opt/zato/3.0/code/requirements.txt && ./update.sh && bash ./patcher.sh && mkdir -p /var/log/supervisor /var/run/sshd/
 
 
 USER root
