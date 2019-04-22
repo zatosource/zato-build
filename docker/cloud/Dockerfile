@@ -42,7 +42,8 @@ RUN set -x \
 
 # Install latest updates
 WORKDIR /opt/zato/current
-RUN git checkout main && git pull && pip install --upgrade future sh && ./update.sh && mkdir -p /var/log/supervisor /var/run/sshd/
+ADD patcher.sh /opt/zato/current/patcher.sh
+RUN git checkout main && git pull && pip install --upgrade future sh && ./update.sh && bash ./patcher.sh && mkdir -p /var/log/supervisor /var/run/sshd/
 
 
 USER root
