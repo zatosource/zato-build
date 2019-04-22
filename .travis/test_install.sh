@@ -83,7 +83,6 @@ else
   PY_VERSION="py2."
 fi
 
-find /opt/zato/
 head -n 1 /opt/zato/current/bin/zato
 
 su - zato -c 'zato --version 1>/tmp/zato-version 2>&1'
