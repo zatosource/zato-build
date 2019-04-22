@@ -143,6 +143,7 @@ function build_rpm {
     cp $SOURCE_DIR/zato.spec.template $SOURCE_DIR/zato.spec
     sed -i.bak "s/ZATO_VERSION/$ZATO_VERSION/g" $SOURCE_DIR/zato.spec
     sed -i.bak "s/ZATO_RELEASE/$PACKAGE_VERSION.$RHEL_VERSION/g" $SOURCE_DIR/zato.spec
+    cat $SOURCE_DIR/zato.spec
     mkdir -p $RPM_BUILD_DIR/SPECS/
     cp $SOURCE_DIR/zato.spec $RPM_BUILD_DIR/SPECS/
 
