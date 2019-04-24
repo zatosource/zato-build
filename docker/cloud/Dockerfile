@@ -22,15 +22,16 @@ RUN curl -s https://zato.io/repo/zato-0CBD7F72.pgp.asc | apt-key add -
 
 # Add Zato repo and install the package
 # update sources and install Zato
-RUN apt-add-repository https://zato.io/repo/stable/3.0/ubuntu && apt-get update && apt-get install -y zato libsasl2-dev python-dev libldap2-dev libssl-dev postgresql-client
+RUN apt-add-repository https://zato.io/repo/stable/3.0/ubuntu && apt-get update && apt-get install -y libsasl2-dev python-dev libldap2-dev libssl-dev postgresql-client
+ADD zato-3.1.0-python_amd64-bionic.deb /zato-3.1.0-python_amd64-bionic.deb
+RUN dpkg -i /zato-3.1.0-python_amd64-bionic.deb ; apt-get install -f -y && rm -f /zato-3.1.0-python3_amd64-bionic.deb
 
 # Download Dockerize
 ENV DOCKERIZE_VERSION v0.11.0
 RUN curl -sfL https://github.com/powerman/dockerize/releases/download/${DOCKERIZE_VERSION}/dockerize-`uname -s`-`uname -m` | install /dev/stdin /usr/local/bin/dockerize
 
 ENV TINI_VERSION v0.18.0
-ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
-RUN chmod +x /tini
+RUN curl -sfL https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini | install /dev/stdin /tini
 
 # Install gosu for easy step-down from root
 ENV GOSU_VERSION 1.11
@@ -43,7 +44,7 @@ RUN set -x \
 # Install latest updates
 WORKDIR /opt/zato/current
 ADD patcher.sh /opt/zato/current/patcher.sh
-RUN git checkout main && git pull && pip install --upgrade future sh && sed -i -e 's|pg8000==1.13.1|pg8000==1.12.5|' /opt/zato/3.0/code/requirements.txt && ./update.sh && bash ./patcher.sh && mkdir -p /var/log/supervisor /var/run/sshd/
+RUN git pull && ./update.sh && bash ./patcher.sh && mkdir -p /var/log/supervisor /var/run/sshd/
 
 
 USER root
