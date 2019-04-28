@@ -44,6 +44,15 @@ user=zato
 autorestart=unexpected
 {{ end }}
 
+{{ if .Env.ZATO_ENMASSE_FILE }}
+[program:enmasse]
+command=/opt/zato/enmasse-utility.sh
+directory=/opt/zato/
+user=zato
+autorestart=unexpected
+numprocs=1
+{{ end }}
+
 [program:zato-load-balancer]
 command = /opt/zato/zato_start_load_balancer
 user = zato
