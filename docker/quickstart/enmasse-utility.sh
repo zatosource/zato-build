@@ -9,7 +9,7 @@ sleep 5
 cd /opt/zato/env/qs-1 || exit 1
 [[ -z ${ZATO_SERVER_PATH} ]] && ZATO_SERVER_PATH="/opt/zato/env/qs-1/server1/"
 if [[ ! -d ${ZATO_SERVER_PATH} ]]; then
-    echo "Zato server path at ${ZATO_SERVER_PATH} doesn't exists"
+    echo "Zato server path at ${ZATO_SERVER_PATH} doesn't exist"
     exit 1
 fi
 set -x # enable show commands
