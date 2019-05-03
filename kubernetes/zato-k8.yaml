@@ -1,0 +1,383 @@
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: traefik-ingress-controller
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - services
+      - endpoints
+      - secrets
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - extensions
+    resources:
+      - ingresses
+    verbs:
+      - get
+      - list
+      - watch
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: traefik-ingress-controller
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: traefik-ingress-controller
+subjects:
+- kind: ServiceAccount
+  name: traefik-ingress-controller
+  namespace: kube-system
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: traefik-ingress-controller
+  namespace: kube-system
+---
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: traefik-ingress-controller
+  namespace: kube-system
+  labels:
+    k8s-app: traefik-ingress-lb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      k8s-app: traefik-ingress-lb
+  template:
+    metadata:
+      labels:
+        k8s-app: traefik-ingress-lb
+        name: traefik-ingress-lb
+    spec:
+      serviceAccountName: traefik-ingress-controller
+      terminationGracePeriodSeconds: 60
+      containers:
+      - image: traefik
+        name: traefik-ingress-lb
+        ports:
+        - name: http
+          containerPort: 80
+        - name: admin
+          containerPort: 8080
+        args:
+        - --api
+        - --kubernetes
+        - --logLevel=INFO
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: traefik-ingress-service
+  namespace: kube-system
+spec:
+  selector:
+    k8s-app: traefik-ingress-lb
+  ports:
+    - protocol: TCP
+      port: 80
+      name: web
+    - protocol: TCP
+      port: 8080
+      name: admin
+  type: NodePort
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config
+  labels:
+    app: postgres
+data:
+  POSTGRES_USER: zato
+  POSTGRES_PASSWORD: admin123
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cmap-zato
+  labels:
+    app: zato
+data:
+    LB_HOSTNAME: "api.192.168.99.114.nip.io"
+    LB_PORT: "80"
+    LB_AGENT_PORT: "20151"
+    CLUSTER_NAME: "zato"
+    SECRET_KEY: "hS4KVhIMPUGxoS1M6xYLq1UW0_lZOFe5eDoRs9Q9Hy0:"
+    JWT_SECRET_KEY: "po2ZjFmNFeVK1o1tcyKzBYiCUjnAUYgJM_j5rRP5XoE:"
+    ZATO_WEB_ADMIN_PASSWORD: "admin123"
+    ZATO_IDE_PUBLISHER_PASSWORD: "ide_publisher_password"
+    REDIS_HOSTNAME: "redis.default.svc.cluster.local"
+    ODB_TYPE: "postgresql"
+    ODB_HOSTNAME: "postgres.default.svc.cluster.local"
+    ODB_PORT: "5432"
+    ODB_NAME: "zato"
+    ODB_USERNAME: "zato"
+    ODB_PASSWORD: "admin123"
+---
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:11.2
+          imagePullPolicy: "IfNotPresent"
+          ports:
+            - containerPort: 5432
+              name: postgres
+          envFrom:
+            - configMapRef:
+                name: postgres-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  labels:
+    app: postgres
+spec:
+  ports:
+  - port: 5432
+  selector:
+    app: postgres
+---
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:5.0.4
+          imagePullPolicy: "IfNotPresent"
+          ports:
+            - containerPort: 6379
+              name: redis
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  labels:
+    app: redis
+spec:
+  ports:
+  - port: 6379
+  selector:
+    app: redis
+---
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: scheduler
+  labels:
+    app: scheduler
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: scheduler
+  template:
+    metadata:
+      labels:
+        app: scheduler
+    spec:
+      containers:
+      - name: scheduler
+        image: dimshadowww/cloud
+        env:
+          - name: ZATO_POSITION
+            value: "scheduler"
+        envFrom:
+        - configMapRef:
+            name: cmap-zato
+        # resources:
+        #   limits:
+        #     cpu: "300m"
+        #     memory: "200Mi"
+---
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: bootstrap
+  labels:
+    app: bootstrap
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bootstrap
+  template:
+    metadata:
+      labels:
+        app: bootstrap
+    spec:
+      containers:
+      - name: bootstrap
+        image: dimshadowww/cloud
+        env:
+          - name: ZATO_POSITION
+            value: "bootstrap"
+        envFrom:
+        - configMapRef:
+            name: cmap-zato
+        # resources:
+        #   limits:
+        #     cpu: "300m"
+        #     memory: "200Mi"
+---
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: webadmin
+  labels:
+    app: webadmin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webadmin
+  template:
+    metadata:
+      labels:
+        app: webadmin
+    spec:
+      containers:
+      - name: webadmin
+        image: dimshadowww/cloud
+        env:
+          - name: ZATO_POSITION
+            value: "webadmin"
+        ports:
+        - containerPort: 8183
+          name: webadmin
+        envFrom:
+        - configMapRef:
+            name: cmap-zato
+        # resources:
+        #   limits:
+        #     cpu: "300m"
+        #     memory: "200Mi"
+---
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: server
+  labels:
+    app: server
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: server
+  template:
+    metadata:
+      labels:
+        app: server
+    spec:
+      containers:
+      - name: server
+        image: dimshadowww/cloud
+        env:
+          - name: ZATO_POSITION
+            value: "server"
+        ports:
+        - containerPort: 17010
+          name: api
+        envFrom:
+        - configMapRef:
+            name: cmap-zato
+        # resources:
+        #   limits:
+        #     cpu: "300m"
+        #     memory: "200Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webadmin
+spec:
+  ports:
+    - name: web
+      protocol: TCP
+      port: 8183
+      targetPort: 8183
+  selector:
+    app: webadmin
+  # type: ClusterIP
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: server
+spec:
+  ports:
+    - name: api
+      protocol: TCP
+      port: 17010
+      targetPort: 17010
+  selector:
+    app: server
+  # type: ClusterIP
+  type: LoadBalancer
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: server
+  namespace: kube-system
+spec:
+  rules:
+  - host: api.192.168.99.114.nip.io
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: server
+          servicePort: api
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: traefik-web-ui
+  namespace: kube-system
+spec:
+  rules:
+  - host: webadmin.192.168.99.114.nip.io
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: webadmin
+          servicePort: web
