@@ -53,6 +53,12 @@ autorestart=unexpected
 numprocs=1
 {{ end }}
 
+[program:hotdeploy]
+command=/opt/zato/hotdeploy-utility.sh
+directory=/opt/zato/
+autorestart=unexpected
+numprocs=1
+
 [program:zato-load-balancer]
 command = /opt/zato/zato_start_load_balancer
 user = zato
