@@ -1,0 +1,185 @@
+version: '3'
+
+services:
+  adminerzato:
+    image: adminer:standalone
+    restart: on-failure
+    environment:
+      VIRTUAL_HOST: adminerzato.nirvana.local|adminerzato
+      ADMINER_DEFAULT_SERVER: postgres
+      ADMINER_PLUGINS: 'tables-filter tinymce version-noverify'
+      ADMINER_DESIGN: arcs-material
+    depends_on:
+      - postgres
+    ports:
+      - 8081:8080
+  postgres:
+    image: 'postgres:alpine'
+    restart: on-failure
+    environment:
+      - POSTGRES_PASSWORD={{ default "mysecretpassword" .Env.ODB_PASSWORD }}
+      - POSTGRES_USER=zato
+  redis:
+    image: redis
+    restart: on-failure
+    deploy:
+      resources:
+        limits:
+          memory: 300M
+        reservations:
+          memory: 20M
+  zato_scheduler:
+    image: registry.gitlab.com/zatosource/zato-core/cloud/testing
+    restart: on-failure
+    environment:
+      - VERBOSE={{ default "n" .Env.VERBOSE }}
+      - LB_HOSTNAME=api.{{ default "127.0.0.1" .Env.IP_ADDRESS }}.nip.io
+      - LB_PORT={{ default 80 .Env.LB_PORT }}
+      - LB_AGENT_PORT={{ default 20151 .Env.LB_AGENT_PORT }}
+      - CLUSTER_NAME={{ default "zato" .Env.CLUSTER_NAME }}
+      - SECRET_KEY={{ .Env.SECRET_KEY }}
+      - JWT_SECRET_KEY={{ .Env.JWT_SECRET_KEY }}
+      - ZATO_POSITION=scheduler
+      - ZATO_WEB_ADMIN_PASSWORD={{ default "mysecretpassword" .Env.ZATO_WEB_ADMIN_PASSWORD }}
+      - ZATO_IDE_PUBLISHER_PASSWORD={{ default "ide_publisher_password" .Env.IDE_PUBLISHER_PASSWORD }}
+      - REDIS_HOSTNAME=redis
+      - ODB_TYPE=postgresql
+      - ODB_HOSTNAME=postgres
+      - ODB_PORT=5432
+      - ODB_NAME=zato
+      - ODB_USERNAME=zato
+      - ODB_PASSWORD={{ .Env.ODB_PASSWORD }}
+    depends_on:
+      - redis
+      - postgres
+  zato_bootstrap:
+    image: registry.gitlab.com/zatosource/zato-core/cloud/testing
+    restart: on-failure
+    environment:
+      - VERBOSE={{ default "n" .Env.VERBOSE }}
+      - LB_HOSTNAME=api.{{ default "127.0.0.1" .Env.IP_ADDRESS }}.nip.io
+      - LB_PORT={{ default 80 .Env.LB_PORT }}
+      - LB_AGENT_PORT={{ default 20151 .Env.LB_AGENT_PORT }}
+      - CLUSTER_NAME={{ default "zato" .Env.CLUSTER_NAME }}
+      - SECRET_KEY={{ .Env.SECRET_KEY }}
+      - JWT_SECRET_KEY={{ .Env.JWT_SECRET_KEY }}
+      - ZATO_POSITION=load-balancer
+      - ZATO_WEB_ADMIN_PASSWORD={{ default "mysecretpassword" .Env.ZATO_WEB_ADMIN_PASSWORD }}
+      - ZATO_IDE_PUBLISHER_PASSWORD={{ default "ide_publisher_password" .Env.IDE_PUBLISHER_PASSWORD }}
+      - REDIS_HOSTNAME=redis
+      - ODB_TYPE=postgresql
+      - ODB_HOSTNAME=postgres
+      - ODB_PORT=5432
+      - ODB_NAME=zato
+      - ODB_USERNAME=zato
+      - ODB_PASSWORD={{ .Env.ODB_PASSWORD }}
+    depends_on:
+      - redis
+      - postgres
+      - zato_scheduler
+  zato_server:
+    deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.port=17010
+        - traefik.basic.frontend.rule=Host:api.{{ default "127.0.0.1" .Env.IP_ADDRESS }}.nip.io
+        - traefik.basic.port=17010
+        - traefik.docker.network=zato_default
+    labels:
+      - traefik.enable=true
+      - traefik.port=17010
+      - traefik.basic.frontend.rule=Host:api.{{ default "127.0.0.1" .Env.IP_ADDRESS }}.nip.io
+      - traefik.basic.port=17010
+      - traefik.docker.network=zato_default
+    image: registry.gitlab.com/zatosource/zato-core/cloud/testing
+    restart: on-failure
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+    environment:
+      - VERBOSE={{ default "n" .Env.VERBOSE }}
+      - LB_HOSTNAME=api.{{ default "127.0.0.1" .Env.IP_ADDRESS }}.nip.io
+      - LB_PORT={{ default 80 .Env.LB_PORT }}
+      - LB_AGENT_PORT={{ default 20151 .Env.LB_AGENT_PORT }}
+      - CLUSTER_NAME={{ default "zato" .Env.CLUSTER_NAME }}
+      - SECRET_KEY={{ .Env.SECRET_KEY }}
+      - JWT_SECRET_KEY={{ .Env.JWT_SECRET_KEY }}
+      - ZATO_POSITION=server
+      - SERVER_NAME=server1
+      - ZATO_WEB_ADMIN_PASSWORD={{ default "mysecretpassword" .Env.ZATO_WEB_ADMIN_PASSWORD }}
+      - ZATO_IDE_PUBLISHER_PASSWORD={{ default "ide_publisher_password" .Env.IDE_PUBLISHER_PASSWORD }}
+      - REDIS_HOSTNAME=redis
+      - ODB_TYPE=postgresql
+      - ODB_HOSTNAME=postgres
+      - ODB_PORT=5432
+      - ODB_NAME=zato
+      - ODB_USERNAME=zato
+      - ODB_PASSWORD={{ .Env.ODB_PASSWORD }}
+    depends_on:
+      - redis
+      - postgres
+      - zato_scheduler
+      - zato_lb
+    ports:
+      - 17010
+  zato_webadmin:
+    deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.port=8183
+        - traefik.basic.frontend.rule=Host:webadmin.{{ default "127.0.0.1" .Env.IP_ADDRESS }}.nip.io
+        - traefik.basic.port=8183
+        - traefik.docker.network=zato_default
+    labels:
+      - traefik.enable=true
+      - traefik.port=8183
+      - traefik.basic.frontend.rule=Host:webadmin.{{ default "127.0.0.1" .Env.IP_ADDRESS }}.nip.io
+      - traefik.basic.port=8183
+      - traefik.docker.network=zato_default
+    image: registry.gitlab.com/zatosource/zato-core/cloud/testing
+    restart: on-failure
+    environment:
+      - VERBOSE={{ default "n" .Env.VERBOSE }}
+      - LB_HOSTNAME=api.{{ default "127.0.0.1" .Env.IP_ADDRESS }}.nip.io
+      - LB_PORT={{ default "80" .Env.LB_PORT }}
+      - LB_AGENT_PORT={{ default "20151" .Env.LB_AGENT_PORT }}
+      - CLUSTER_NAME={{ default "zato" .Env.CLUSTER_NAME }}
+      - SECRET_KEY={{ .Env.SECRET_KEY }}
+      - JWT_SECRET_KEY={{ .Env.JWT_SECRET_KEY }}
+      - ZATO_POSITION=webadmin
+      - ZATO_WEB_ADMIN_PASSWORD={{ default "mysecretpassword" .Env.ZATO_WEB_ADMIN_PASSWORD }}
+      - ZATO_IDE_PUBLISHER_PASSWORD={{ default "ide_publisher_password" .Env.IDE_PUBLISHER_PASSWORD }}
+      - REDIS_HOSTNAME=redis
+      - ODB_TYPE=postgresql
+      - ODB_HOSTNAME=postgres
+      - ODB_PORT=5432
+      - ODB_NAME=zato
+      - ODB_USERNAME=zato
+      - ODB_PASSWORD={{ .Env.ODB_PASSWORD }}
+    depends_on:
+      - redis
+      - postgres
+      - zato_scheduler
+      - zato_lb
+    ports:
+      - 8183
+  zato_lb:
+    image: traefik
+    restart: on-failure
+    command: -l DEBUG -c /dev/null --docker --docker.domain=traefik --docker.endpoint=unix:///var/run/docker.sock --docker.watch --docker.exposedByDefault=false --api --respondingTimeouts --respondingTimeouts.readTimeout="5s" --respondingTimeouts.writeTimeout="5s" --respondingTimeouts.idleTimeout="15s"
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 30s
+      restart_policy:
+        condition: on-failure
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 80:80
+      - 8080:8080
