@@ -58,10 +58,10 @@ $ docker logs -f zato_zato_server.1.c21pmddnwlh0vh0wt8ap6cw8j
 ```
 - Check access to Zato servers
 ```
-$ curl http://api.$(docker-machine ip default).nip.io/zato/ping
+$ curl http://$(docker-machine ip default):17010/zato/ping
 {"zato_env": {"details": "", "result": "ZATO_OK", "cid": "93bf40452dc0cc2a9d548614"}, "zato_ping_response": {"pong": "zato"}}
 ```
 - Get Zato's Web Admin interface URL
 ```
-$ echo http://webadmin.$(docker-machine ip default).nip.io
+$ echo http://$(docker-machine ip default):8183
 ```
