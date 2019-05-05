@@ -33,7 +33,7 @@ services:
     restart: on-failure
     environment:
       - VERBOSE={{ default "n" .Env.VERBOSE }}
-      - LB_HOSTNAME=api.{{ default "127.0.0.1" .Env.IP_ADDRESS }}.nip.io
+      - LB_HOSTNAME={{ default "zato_lb" .Env.LB_HOSTNAME }}
       - LB_PORT={{ default 80 .Env.LB_PORT }}
       - LB_AGENT_PORT={{ default 20151 .Env.LB_AGENT_PORT }}
       - CLUSTER_NAME={{ default "zato" .Env.CLUSTER_NAME }}
@@ -57,7 +57,7 @@ services:
     restart: on-failure
     environment:
       - VERBOSE={{ default "n" .Env.VERBOSE }}
-      - LB_HOSTNAME=api.{{ default "127.0.0.1" .Env.IP_ADDRESS }}.nip.io
+      - LB_HOSTNAME={{ default "zato_lb" .Env.LB_HOSTNAME }}
       - LB_PORT={{ default 80 .Env.LB_PORT }}
       - LB_AGENT_PORT={{ default 20151 .Env.LB_AGENT_PORT }}
       - CLUSTER_NAME={{ default "zato" .Env.CLUSTER_NAME }}
@@ -81,16 +81,23 @@ services:
     deploy:
       labels:
         - traefik.enable=true
-        - traefik.port=17010
-        - traefik.basic.frontend.rule=Host:api.{{ default "127.0.0.1" .Env.IP_ADDRESS }}.nip.io
-        - traefik.basic.port=17010
-        - traefik.docker.network=zato_default
+        - traefik.port={{ default 17010 .Env.LB_PORT }}
+        - traefik.basic.frontend.rule=Host:{{ default "zato_lb" .Env.LB_HOSTNAME }}
+        # - traefik.frontend.entryPoints=server
+        # - "traefik.frontend.rule=Headers: Content-Type, application/json"
+        # - traefik.frontend.rule='HostRegexp:{catchall:.*}"
+        # - traefik.frontend.priority=1
+        - traefik.basic.port={{ default 17010 .Env.LB_PORT }}
+        - traefik.backend.healthcheck.path=/zato/ping
     labels:
       - traefik.enable=true
-      - traefik.port=17010
-      - traefik.basic.frontend.rule=Host:api.{{ default "127.0.0.1" .Env.IP_ADDRESS }}.nip.io
-      - traefik.basic.port=17010
-      - traefik.docker.network=zato_default
+      - traefik.port={{ default 17010 .Env.LB_PORT }}
+      - traefik.basic.frontend.rule=Host:{{ default "zato_lb" .Env.LB_HOSTNAME }}
+      # - traefik.frontend.entryPoints=server
+      # - "traefik.frontend.rule=Headers: Content-Type, application/json"
+      # - traefik.frontend.priority=1
+      - traefik.basic.port={{ default 17010 .Env.LB_PORT }}
+      - traefik.backend.healthcheck.path=/zato/ping
     image: registry.gitlab.com/zatosource/zato-core/cloud/testing
     restart: on-failure
     deploy:
@@ -102,7 +109,7 @@ services:
         condition: on-failure
     environment:
       - VERBOSE={{ default "n" .Env.VERBOSE }}
-      - LB_HOSTNAME=api.{{ default "127.0.0.1" .Env.IP_ADDRESS }}.nip.io
+      - LB_HOSTNAME={{ default "zato_lb" .Env.LB_HOSTNAME }}
       - LB_PORT={{ default 80 .Env.LB_PORT }}
       - LB_AGENT_PORT={{ default 20151 .Env.LB_AGENT_PORT }}
       - CLUSTER_NAME={{ default "zato" .Env.CLUSTER_NAME }}
@@ -125,27 +132,31 @@ services:
       - zato_scheduler
       - zato_lb
     ports:
-      - 17010
+      - {{ default 17010 .Env.LB_PORT }}
   zato_webadmin:
-    deploy:
-      labels:
-        - traefik.enable=true
-        - traefik.port=8183
-        - traefik.basic.frontend.rule=Host:webadmin.{{ default "127.0.0.1" .Env.IP_ADDRESS }}.nip.io
-        - traefik.basic.port=8183
-        - traefik.docker.network=zato_default
-    labels:
-      - traefik.enable=true
-      - traefik.port=8183
-      - traefik.basic.frontend.rule=Host:webadmin.{{ default "127.0.0.1" .Env.IP_ADDRESS }}.nip.io
-      - traefik.basic.port=8183
-      - traefik.docker.network=zato_default
+    # deploy:
+    #   labels:
+    #     - traefik.enable=true
+    #     - traefik.port={{ default 8183 .Env.ZATO_WEB_ADMIN_PORT }}
+    #     # - traefik.basic.frontend.rule=Host:webadmin.traefik
+    #     - traefik.frontend.entryPoints=webadmin
+    #     # - traefik.frontend.rule='HostRegexp:{catchall:.*}"
+    #     # - traefik.frontend.priority=1
+    #     # - traefik.basic.port={{ default 8183 .Env.ZATO_WEB_ADMIN_PORT }}
+    # labels:
+    #   - traefik.enable=true
+    #   - traefik.port={{ default 8183 .Env.ZATO_WEB_ADMIN_PORT }}
+    #   # - traefik.basic.frontend.rule=Host:webadmin.traefik
+    #   - traefik.frontend.entryPoints=webadmin
+    #   # - traefik.frontend.rule='HostRegexp:{catchall:.*}"
+    #   # - traefik.frontend.priority=1
+    #   # - traefik.basic.port={{ default 8183 .Env.ZATO_WEB_ADMIN_PORT }}
     image: registry.gitlab.com/zatosource/zato-core/cloud/testing
     restart: on-failure
     environment:
       - VERBOSE={{ default "n" .Env.VERBOSE }}
-      - LB_HOSTNAME=api.{{ default "127.0.0.1" .Env.IP_ADDRESS }}.nip.io
-      - LB_PORT={{ default "80" .Env.LB_PORT }}
+      - LB_HOSTNAME={{ default "zato_lb" .Env.LB_HOSTNAME }}
+      - LB_PORT={{ default 80 .Env.LB_PORT }}
       - LB_AGENT_PORT={{ default "20151" .Env.LB_AGENT_PORT }}
       - CLUSTER_NAME={{ default "zato" .Env.CLUSTER_NAME }}
       - SECRET_KEY={{ .Env.SECRET_KEY }}
@@ -166,11 +177,12 @@ services:
       - zato_scheduler
       - zato_lb
     ports:
-      - 8183
+      - {{ default 8183 .Env.ZATO_WEB_ADMIN_PORT }}:8183
   zato_lb:
     image: traefik
     restart: on-failure
-    command: -l DEBUG -c /dev/null --docker --docker.domain=traefik --docker.endpoint=unix:///var/run/docker.sock --docker.watch --docker.exposedByDefault=false --api --respondingTimeouts --respondingTimeouts.readTimeout="5s" --respondingTimeouts.writeTimeout="5s" --respondingTimeouts.idleTimeout="15s"
+    command: -l DEBUG -c /dev/null --docker --docker.domain=traefik --docker.endpoint=unix:///var/run/docker.sock --docker.watch --docker.exposedByDefault=false --api --respondingTimeouts --respondingTimeouts.readTimeout=5s --respondingTimeouts.writeTimeout=5s
+    # --respondingTimeouts.idleTimeout=15s --entryPoints="Name:server Address::{{ default 17010 .Env.LB_PORT }}" --entryPoints="Name:webadmin Address::{{ default 8183 .Env.ZATO_WEB_ADMIN_PORT }}"
     deploy:
       replicas: 1
       update_config:
@@ -183,3 +195,5 @@ services:
     ports:
       - 80:80
       - 8080:8080
+      # - {{ default 8183 .Env.ZATO_WEB_ADMIN_PORT }}:{{ default 8183 .Env.ZATO_WEB_ADMIN_PORT }}
+      # - {{ default 17010 .Env.LB_PORT }}:{{ default 17010 .Env.LB_PORT }}
