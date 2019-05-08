@@ -99,7 +99,7 @@ spec:
     spec:
       containers:
       - name: scheduler
-        image: dimshadowww/cloud
+        image: registry.gitlab.com/zatosource/docker-registry/cloud:3.1
         imagePullPolicy: "Always"
         env:
           - name: ZATO_POSITION
@@ -156,7 +156,7 @@ spec:
     spec:
       containers:
       - name: bootstrap
-        image: dimshadowww/cloud:latest
+        image: registry.gitlab.com/zatosource/docker-registry/cloud:3.1:latest
         imagePullPolicy: "Always"
         env:
           - name: ZATO_POSITION
@@ -213,7 +213,7 @@ spec:
     spec:
       containers:
       - name: webadmin
-        image: dimshadowww/cloud:latest
+        image: registry.gitlab.com/zatosource/docker-registry/cloud:3.1:latest
         imagePullPolicy: "Always"
         env:
           - name: ZATO_POSITION
@@ -272,7 +272,7 @@ spec:
     spec:
       containers:
       - name: server
-        image: dimshadowww/cloud:latest
+        image: registry.gitlab.com/zatosource/docker-registry/cloud:3.1:latest
         imagePullPolicy: "Always"
         env:
           - name: ZATO_POSITION
