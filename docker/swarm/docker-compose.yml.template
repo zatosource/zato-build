@@ -29,7 +29,7 @@ services:
         reservations:
           memory: 20M
   zato_scheduler:
-    image: registry.gitlab.com/zatosource/zato-core/cloud/testing
+    image: registry.gitlab.com/zatosource/docker-registry/cloud:3.1
     restart: on-failure
     environment:
       - VERBOSE={{ default "n" .Env.VERBOSE }}
@@ -53,7 +53,7 @@ services:
       - redis
       - postgres
   zato_bootstrap:
-    image: registry.gitlab.com/zatosource/zato-core/cloud/testing
+    image: registry.gitlab.com/zatosource/docker-registry/cloud:3.1
     restart: on-failure
     environment:
       - VERBOSE={{ default "n" .Env.VERBOSE }}
@@ -98,7 +98,7 @@ services:
       # - traefik.frontend.priority=1
       - traefik.basic.port={{ default 17010 .Env.LB_PORT }}
       - traefik.backend.healthcheck.path=/zato/ping
-    image: registry.gitlab.com/zatosource/zato-core/cloud/testing
+    image: registry.gitlab.com/zatosource/docker-registry/cloud:3.1
     restart: on-failure
     deploy:
       replicas: 2
@@ -151,7 +151,7 @@ services:
     #   # - traefik.frontend.rule='HostRegexp:{catchall:.*}"
     #   # - traefik.frontend.priority=1
     #   # - traefik.basic.port={{ default 8183 .Env.ZATO_WEB_ADMIN_PORT }}
-    image: registry.gitlab.com/zatosource/zato-core/cloud/testing
+    image: registry.gitlab.com/zatosource/docker-registry/cloud:3.1
     restart: on-failure
     environment:
       - VERBOSE={{ default "n" .Env.VERBOSE }}
