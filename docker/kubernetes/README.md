@@ -46,11 +46,6 @@ kubectl config use-context minikube
 ```
 $ kubectl logs --namespace=zato server-85bcf4ccbd-2lw45
 ```
-- Check access to Zato servers
-```
-$ curl http://$(docker-machine ip default):17010/zato/ping
-{"zato_env": {"details": "", "result": "ZATO_OK", "cid": "93bf40452dc0cc2a9d548614"}, "zato_ping_response": {"pong": "zato"}}
-```
 - Get Zato's Web Admin interface URL
 ```
 $ minikube service --namespace zato webadmin --url
