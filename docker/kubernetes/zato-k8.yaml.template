@@ -156,7 +156,7 @@ spec:
     spec:
       containers:
       - name: bootstrap
-        image: registry.gitlab.com/zatosource/docker-registry/cloud:3.1:latest
+        image: registry.gitlab.com/zatosource/docker-registry/cloud:3.1
         imagePullPolicy: "Always"
         env:
           - name: ZATO_POSITION
@@ -213,7 +213,7 @@ spec:
     spec:
       containers:
       - name: webadmin
-        image: registry.gitlab.com/zatosource/docker-registry/cloud:3.1:latest
+        image: registry.gitlab.com/zatosource/docker-registry/cloud:3.1
         imagePullPolicy: "Always"
         env:
           - name: ZATO_POSITION
@@ -272,7 +272,7 @@ spec:
     spec:
       containers:
       - name: server
-        image: registry.gitlab.com/zatosource/docker-registry/cloud:3.1:latest
+        image: registry.gitlab.com/zatosource/docker-registry/cloud:3.1
         imagePullPolicy: "Always"
         env:
           - name: ZATO_POSITION
