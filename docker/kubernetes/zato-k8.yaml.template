@@ -1,0 +1,344 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: zato
+---
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: postgres
+  namespace: {{ default "zato" .Env.NAMESPACE }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:11.2
+          imagePullPolicy: "IfNotPresent"
+          ports:
+            - containerPort: 5432
+              name: postgres
+          env:
+            - name: POSTGRES_USER
+              value: "zato"
+            - name: POSTGRES_PASSWORD
+              value: "{{ default "mysecretpassword" .Env.ODB_PASSWORD }}"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: {{ default "zato" .Env.NAMESPACE }}
+  labels:
+    app: postgres
+spec:
+  ports:
+  - port: 5432
+  selector:
+    app: postgres
+---
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: redis
+  namespace: {{ default "zato" .Env.NAMESPACE }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:5.0.4
+          imagePullPolicy: "IfNotPresent"
+          ports:
+            - containerPort: 6379
+              name: redis
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  namespace: {{ default "zato" .Env.NAMESPACE }}
+  labels:
+    app: redis
+spec:
+  ports:
+  - port: 6379
+  selector:
+    app: redis
+---
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: scheduler
+  namespace: {{ default "zato" .Env.NAMESPACE }}
+  labels:
+    app: scheduler
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: scheduler
+  template:
+    metadata:
+      labels:
+        app: scheduler
+    spec:
+      containers:
+      - name: scheduler
+        image: registry.gitlab.com/zatosource/docker-registry/cloud:3.1
+        imagePullPolicy: "Always"
+        env:
+          - name: ZATO_POSITION
+            value: "scheduler"
+          - name: LB_HOSTNAME
+            value: "server.{{ default "zato" .Env.NAMESPACE }}.svc.cluster.local"
+          - name: LB_PORT
+            value: "80"
+          - name: LB_AGENT_PORT
+            value: "{{ default 20151 .Env.LB_AGENT_PORT }}"
+          - name: CLUSTER_NAME
+            value: "{{ default "zato" .Env.CLUSTER_NAME }}"
+          - name: SECRET_KEY
+            value: "{{ .Env.SECRET_KEY }}"
+          - name: JWT_SECRET_KEY
+            value: "{{ .Env.JWT_SECRET_KEY }}"
+          - name: ZATO_WEB_ADMIN_PASSWORD
+            value: "{{ default "mysecretpassword" .Env.ZATO_WEB_ADMIN_PASSWORD }}"
+          - name: ZATO_IDE_PUBLISHER_PASSWORD
+            value: "{{ default "ide_publisher_password" .Env.IDE_PUBLISHER_PASSWORD }}"
+          - name: REDIS_HOSTNAME
+            value: "redis.{{ default "zato" .Env.NAMESPACE }}.svc.cluster.local"
+          - name: REDIS_PORT
+            value: "6379"
+          - name: ODB_TYPE
+            value: "postgresql"
+          - name: ODB_HOSTNAME
+            value: "postgres.{{ default "zato" .Env.NAMESPACE }}.svc.cluster.local"
+          - name: ODB_PORT
+            value: "5432"
+          - name: ODB_NAME
+            value: "zato"
+          - name: ODB_USERNAME
+            value: "zato"
+          - name: ODB_PASSWORD
+            value: "{{ default "mysecretpassword" .Env.ODB_PASSWORD }}"
+---
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: bootstrap
+  namespace: {{ default "zato" .Env.NAMESPACE }}
+  labels:
+    app: bootstrap
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bootstrap
+  template:
+    metadata:
+      labels:
+        app: bootstrap
+    spec:
+      containers:
+      - name: bootstrap
+        image: registry.gitlab.com/zatosource/docker-registry/cloud:3.1
+        imagePullPolicy: "Always"
+        env:
+          - name: ZATO_POSITION
+            value: "load-balancer"
+          - name: LB_HOSTNAME
+            value: "server.{{ default "zato" .Env.NAMESPACE }}.svc.cluster.local"
+          - name: LB_PORT
+            value: "80"
+          - name: LB_AGENT_PORT
+            value: "{{ default 20151 .Env.LB_AGENT_PORT }}"
+          - name: CLUSTER_NAME
+            value: "{{ default "zato" .Env.CLUSTER_NAME }}"
+          - name: SECRET_KEY
+            value: "{{ .Env.SECRET_KEY }}"
+          - name: JWT_SECRET_KEY
+            value: "{{ .Env.JWT_SECRET_KEY }}"
+          - name: ZATO_WEB_ADMIN_PASSWORD
+            value: "{{ default "mysecretpassword" .Env.ZATO_WEB_ADMIN_PASSWORD }}"
+          - name: ZATO_IDE_PUBLISHER_PASSWORD
+            value: "{{ default "ide_publisher_password" .Env.IDE_PUBLISHER_PASSWORD }}"
+          - name: REDIS_HOSTNAME
+            value: "redis.{{ default "zato" .Env.NAMESPACE }}.svc.cluster.local"
+          - name: REDIS_PORT
+            value: "6379"
+          - name: ODB_TYPE
+            value: "postgresql"
+          - name: ODB_HOSTNAME
+            value: "postgres.{{ default "zato" .Env.NAMESPACE }}.svc.cluster.local"
+          - name: ODB_PORT
+            value: "5432"
+          - name: ODB_NAME
+            value: "zato"
+          - name: ODB_USERNAME
+            value: "zato"
+          - name: ODB_PASSWORD
+            value: "{{ default "mysecretpassword" .Env.ODB_PASSWORD }}"
+---
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: webadmin
+  namespace: {{ default "zato" .Env.NAMESPACE }}
+  labels:
+    app: webadmin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webadmin
+  template:
+    metadata:
+      labels:
+        app: webadmin
+    spec:
+      containers:
+      - name: webadmin
+        image: registry.gitlab.com/zatosource/docker-registry/cloud:3.1
+        imagePullPolicy: "Always"
+        env:
+          - name: ZATO_POSITION
+            value: "webadmin"
+          - name: LB_HOSTNAME
+            value: "server.{{ default "zato" .Env.NAMESPACE }}.svc.cluster.local"
+          - name: LB_PORT
+            value: "80"
+          - name: LB_AGENT_PORT
+            value: "{{ default 20151 .Env.LB_AGENT_PORT }}"
+          - name: CLUSTER_NAME
+            value: "{{ default "zato" .Env.CLUSTER_NAME }}"
+          - name: SECRET_KEY
+            value: "{{ .Env.SECRET_KEY }}"
+          - name: JWT_SECRET_KEY
+            value: "{{ .Env.JWT_SECRET_KEY }}"
+          - name: ZATO_WEB_ADMIN_PASSWORD
+            value: "{{ default "mysecretpassword" .Env.ZATO_WEB_ADMIN_PASSWORD }}"
+          - name: ZATO_IDE_PUBLISHER_PASSWORD
+            value: "{{ default "ide_publisher_password" .Env.IDE_PUBLISHER_PASSWORD }}"
+          - name: REDIS_HOSTNAME
+            value: "redis.{{ default "zato" .Env.NAMESPACE }}.svc.cluster.local"
+          - name: REDIS_PORT
+            value: "6379"
+          - name: ODB_TYPE
+            value: "postgresql"
+          - name: ODB_HOSTNAME
+            value: "postgres.{{ default "zato" .Env.NAMESPACE }}.svc.cluster.local"
+          - name: ODB_PORT
+            value: "5432"
+          - name: ODB_NAME
+            value: "zato"
+          - name: ODB_USERNAME
+            value: "zato"
+          - name: ODB_PASSWORD
+            value: "{{ default "mysecretpassword" .Env.ODB_PASSWORD }}"
+        ports:
+        - containerPort: 8183
+          name: webadmin
+---
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: server
+  namespace: {{ default "zato" .Env.NAMESPACE }}
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: server
+  template:
+    metadata:
+      name: server
+      labels:
+        app: server
+    spec:
+      containers:
+      - name: server
+        image: registry.gitlab.com/zatosource/docker-registry/cloud:3.1
+        imagePullPolicy: "Always"
+        env:
+          - name: ZATO_POSITION
+            value: "server"
+          - name: LB_HOSTNAME
+            value: "server.{{ default "zato" .Env.NAMESPACE }}.svc.cluster.local"
+          - name: LB_PORT
+            value: "80"
+          - name: LB_AGENT_PORT
+            value: "{{ default 20151 .Env.LB_AGENT_PORT }}"
+          - name: CLUSTER_NAME
+            value: "{{ default "zato" .Env.CLUSTER_NAME }}"
+          - name: SECRET_KEY
+            value: "{{ .Env.SECRET_KEY }}"
+          - name: JWT_SECRET_KEY
+            value: "{{ .Env.JWT_SECRET_KEY }}"
+          - name: ZATO_WEB_ADMIN_PASSWORD
+            value: "{{ default "mysecretpassword" .Env.ZATO_WEB_ADMIN_PASSWORD }}"
+          - name: ZATO_IDE_PUBLISHER_PASSWORD
+            value: "{{ default "ide_publisher_password" .Env.IDE_PUBLISHER_PASSWORD }}"
+          - name: REDIS_HOSTNAME
+            value: "redis.{{ default "zato" .Env.NAMESPACE }}.svc.cluster.local"
+          - name: REDIS_PORT
+            value: "6379"
+          - name: ODB_TYPE
+            value: "postgresql"
+          - name: ODB_HOSTNAME
+            value: "postgres.{{ default "zato" .Env.NAMESPACE }}.svc.cluster.local"
+          - name: ODB_PORT
+            value: "5432"
+          - name: ODB_NAME
+            value: "zato"
+          - name: ODB_USERNAME
+            value: "zato"
+          - name: ODB_PASSWORD
+            value: "{{ default "mysecretpassword" .Env.ODB_PASSWORD }}"
+        ports:
+        - containerPort: 17010
+          name: api
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webadmin
+  namespace: {{ default "zato" .Env.NAMESPACE }}
+spec:
+  ports:
+    - name: web
+      protocol: TCP
+      port: 8183
+      targetPort: 8183
+  selector:
+    app: webadmin
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: server
+  namespace: {{ default "zato" .Env.NAMESPACE }}
+spec:
+  ports:
+    - name: api
+      protocol: TCP
+      port: 80
+      targetPort: 17010
+  selector:
+    app: server
+  type: LoadBalancer
