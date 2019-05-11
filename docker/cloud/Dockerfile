@@ -46,7 +46,6 @@ WORKDIR /opt/zato/current
 ADD patcher.sh /opt/zato/current/patcher.sh
 RUN git pull && ./update.sh && bash ./patcher.sh && mkdir -p /var/log/supervisor /var/run/sshd/
 
-
 USER root
 
 # Copy Docker basic structure
