@@ -110,6 +110,29 @@ case "$ZATO_POSITION" in
             sed -i -e 's|INFO|DEBUG|' /opt/zato/env/qs-1/config/repo/logging.conf
         fi
         sed -i 's/gunicorn_workers=2/gunicorn_workers=1/g' /opt/zato/env/qs-1/config/repo/server.conf
+
+        # If there is a file in the hot-deploy folder
+        if [[ -n "$(find /opt/hot-deploy/ -type f)" ]]; then
+            cat > /etc/supervisor/conf.d/zato_hotdeploy.conf <<-EOF
+[program:hotdeploy]
+command=/opt/zato/hotdeploy-utility.sh
+directory=/opt/zato/
+autorestart=unexpected
+numprocs=1
+EOF
+        fi
+
+        # If variable ZATO_ENMASSE_FILE is not empty
+        if [[ -n "${ZATO_ENMASSE_FILE}" ]]; then
+            cat > /etc/supervisor/conf.d/zato_enmasse.conf <<-EOF
+[program:enmasse]
+command=/opt/zato/enmasse-utility.sh
+directory=/opt/zato/
+autorestart=unexpected
+numprocs=1
+EOF
+        fi
+
     ;;
     "webadmin" )
         [[ -n "${ZATO_WEB_ADMIN_PASSWORD}" ]] && WEB_ADMIN_PASSWORD="--admin-invoke-password ${ZATO_WEB_ADMIN_PASSWORD}"
@@ -126,4 +149,4 @@ case "$ZATO_POSITION" in
     ;;
 esac
 
-exec gosu zato bash -c "${ZATO_BIN} start /opt/zato/env/qs-1/ --fg"
+exec /usr/bin/supervisord -n -c /etc/supervisor/supervisord.conf

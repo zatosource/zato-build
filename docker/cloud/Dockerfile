@@ -12,6 +12,7 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     git \
     libcurl4-openssl-dev \
     software-properties-common \
+    supervisor \
     tzdata
 
 # Enable additional repository
@@ -50,8 +51,11 @@ USER root
 
 # Copy Docker basic structure
 COPY entrypoint.sh /entrypoint.sh
+COPY hotdeploy-utility.sh /opt/zato/hotdeploy-utility.sh
+COPY enmasse-utility.sh /opt/zato/enmasse-utility.sh
+COPY zato.conf /etc/supervisor/conf.d/zato.conf
 
-RUN chmod 755 /entrypoint.sh
+RUN chmod 755 /entrypoint.sh /opt/zato/hotdeploy-utility.sh /opt/zato/enmasse-utility.sh
 
 EXPOSE 8183 17010 17011 11223
 ENTRYPOINT ["/tini", "--"]
