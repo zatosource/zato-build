@@ -2,6 +2,7 @@
 
 FROM ubuntu:18.04
 LABEL maintainer="Anielkis Herrera <aherrera@zato.io>, Dariusz Suchojad <dsuch@zato.io>"
+LABEL Description="Zato's Docker image for cloud environments" Version="3.1.0"
 
 ENV ZATO_BIN /opt/zato/current/bin/zato
 
@@ -25,7 +26,7 @@ RUN curl -s https://zato.io/repo/zato-0CBD7F72.pgp.asc | apt-key add -
 # update sources and install Zato
 RUN apt-add-repository https://zato.io/repo/stable/3.0/ubuntu && apt-get update && apt-get install -y libsasl2-dev python-dev libldap2-dev libssl-dev postgresql-client
 ADD zato-3.1.0-python_amd64-bionic.deb /zato-3.1.0-python_amd64-bionic.deb
-RUN dpkg -i /zato-3.1.0-python_amd64-bionic.deb ; apt-get install -f -y && rm -f /zato-3.1.0-python3_amd64-bionic.deb
+RUN dpkg -i /zato-3.1.0-python_amd64-bionic.deb ; apt-get install -f -y && rm -f /zato-3.1.0-python_amd64-bionic.deb
 
 # Download Dockerize
 ENV DOCKERIZE_VERSION v0.11.0
