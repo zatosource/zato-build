@@ -3,6 +3,14 @@ kind: Namespace
 metadata:
   name: zato
 ---
+{{ $ZATO_WEB_ADMIN_PASSWORD := .Env.ZATO_WEB_ADMIN_PASSWORD }}
+{{ $IDE_PUBLISHER_PASSWORD := .Env.IDE_PUBLISHER_PASSWORD }}
+{{ $ZATO_ADMIN_INVOKE_PASSWORD := .Env.ZATO_ADMIN_INVOKE_PASSWORD }}
+{{ $ODB_PASSWORD := .Env.ODB_PASSWORD }}
+{{ if empty $ZATO_WEB_ADMIN_PASSWORD }}{{ $ZATO_WEB_ADMIN_PASSWORD = uuidv4 }}{{ end }}
+{{ if empty $IDE_PUBLISHER_PASSWORD }}{{ $IDE_PUBLISHER_PASSWORD = uuidv4 }}{{ end }}
+{{ if empty $ZATO_ADMIN_INVOKE_PASSWORD }}{{ $ZATO_ADMIN_INVOKE_PASSWORD = uuidv4 }}{{ end }}
+{{ if empty $ODB_PASSWORD }}{{ $ODB_PASSWORD = uuidv4 }}{{ end }}
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
@@ -29,7 +37,7 @@ spec:
             - name: POSTGRES_USER
               value: "zato"
             - name: POSTGRES_PASSWORD
-              value: "{{ .Env.ODB_PASSWORD }}"
+              value: "{{ $ODB_PASSWORD }}"
 ---
 apiVersion: v1
 kind: Service
@@ -111,15 +119,17 @@ spec:
           - name: LB_AGENT_PORT
             value: "{{ default 20151 .Env.LB_AGENT_PORT }}"
           - name: CLUSTER_NAME
-            value: "{{ default "zato" .Env.CLUSTER_NAME }}"
+            value: "{{ if .Env.CLUSTER_NAME }}{{ .Env.CLUSTER_NAME }}{{ else }}{{ uuidv4 }}{{ end }}"
           - name: SECRET_KEY
             value: "{{ .Env.SECRET_KEY }}"
           - name: JWT_SECRET_KEY
             value: "{{ .Env.JWT_SECRET_KEY }}"
           - name: ZATO_WEB_ADMIN_PASSWORD
-            value: "{{ .Env.ZATO_WEB_ADMIN_PASSWORD }}"
+            value: "{{ $ZATO_WEB_ADMIN_PASSWORD }}"
           - name: ZATO_IDE_PUBLISHER_PASSWORD
-            value: "{{ .Env.IDE_PUBLISHER_PASSWORD }}"
+            value: "{{ $IDE_PUBLISHER_PASSWORD }}"
+          - name: ZATO_ADMIN_INVOKE_PASSWORD
+            value: "{{ $ZATO_ADMIN_INVOKE_PASSWORD }}"
           - name: REDIS_HOSTNAME
             value: "redis.{{ default "zato" .Env.NAMESPACE }}.svc.cluster.local"
           - name: REDIS_PORT
@@ -135,7 +145,7 @@ spec:
           - name: ODB_USERNAME
             value: "zato"
           - name: ODB_PASSWORD
-            value: "{{ .Env.ODB_PASSWORD }}"
+            value: "{{ $ODB_PASSWORD }}"
 ---
 apiVersion: apps/v1beta2
 kind: Deployment
@@ -168,15 +178,17 @@ spec:
           - name: LB_AGENT_PORT
             value: "{{ default 20151 .Env.LB_AGENT_PORT }}"
           - name: CLUSTER_NAME
-            value: "{{ default "zato" .Env.CLUSTER_NAME }}"
+            value: "{{ if .Env.CLUSTER_NAME }}{{ .Env.CLUSTER_NAME }}{{ else }}{{ uuidv4 }}{{ end }}"
           - name: SECRET_KEY
             value: "{{ .Env.SECRET_KEY }}"
           - name: JWT_SECRET_KEY
             value: "{{ .Env.JWT_SECRET_KEY }}"
           - name: ZATO_WEB_ADMIN_PASSWORD
-            value: "{{ .Env.ZATO_WEB_ADMIN_PASSWORD }}"
+            value: "{{ $ZATO_WEB_ADMIN_PASSWORD }}"
           - name: ZATO_IDE_PUBLISHER_PASSWORD
-            value: "{{ .Env.IDE_PUBLISHER_PASSWORD }}"
+            value: "{{ $IDE_PUBLISHER_PASSWORD }}"
+          - name: ZATO_ADMIN_INVOKE_PASSWORD
+            value: "{{ $ZATO_ADMIN_INVOKE_PASSWORD }}"
           - name: REDIS_HOSTNAME
             value: "redis.{{ default "zato" .Env.NAMESPACE }}.svc.cluster.local"
           - name: REDIS_PORT
@@ -192,7 +204,7 @@ spec:
           - name: ODB_USERNAME
             value: "zato"
           - name: ODB_PASSWORD
-            value: "{{ .Env.ODB_PASSWORD }}"
+            value: "{{ $ODB_PASSWORD }}"
 ---
 apiVersion: apps/v1beta2
 kind: Deployment
@@ -225,15 +237,17 @@ spec:
           - name: LB_AGENT_PORT
             value: "{{ default 20151 .Env.LB_AGENT_PORT }}"
           - name: CLUSTER_NAME
-            value: "{{ default "zato" .Env.CLUSTER_NAME }}"
+            value: "{{ if .Env.CLUSTER_NAME }}{{ .Env.CLUSTER_NAME }}{{ else }}{{ uuidv4 }}{{ end }}"
           - name: SECRET_KEY
             value: "{{ .Env.SECRET_KEY }}"
           - name: JWT_SECRET_KEY
             value: "{{ .Env.JWT_SECRET_KEY }}"
           - name: ZATO_WEB_ADMIN_PASSWORD
-            value: "{{ .Env.ZATO_WEB_ADMIN_PASSWORD }}"
+            value: "{{ $ZATO_WEB_ADMIN_PASSWORD }}"
           - name: ZATO_IDE_PUBLISHER_PASSWORD
-            value: "{{ .Env.IDE_PUBLISHER_PASSWORD }}"
+            value: "{{ $IDE_PUBLISHER_PASSWORD }}"
+          - name: ZATO_ADMIN_INVOKE_PASSWORD
+            value: "{{ $ZATO_ADMIN_INVOKE_PASSWORD }}"
           - name: REDIS_HOSTNAME
             value: "redis.{{ default "zato" .Env.NAMESPACE }}.svc.cluster.local"
           - name: REDIS_PORT
@@ -249,7 +263,7 @@ spec:
           - name: ODB_USERNAME
             value: "zato"
           - name: ODB_PASSWORD
-            value: "{{ .Env.ODB_PASSWORD }}"
+            value: "{{ $ODB_PASSWORD }}"
         ports:
         - containerPort: 8183
           name: webadmin
@@ -284,15 +298,17 @@ spec:
           - name: LB_AGENT_PORT
             value: "{{ default 20151 .Env.LB_AGENT_PORT }}"
           - name: CLUSTER_NAME
-            value: "{{ default "zato" .Env.CLUSTER_NAME }}"
+            value: "{{ if .Env.CLUSTER_NAME }}{{ .Env.CLUSTER_NAME }}{{ else }}{{ uuidv4 }}{{ end }}"
           - name: SECRET_KEY
             value: "{{ .Env.SECRET_KEY }}"
           - name: JWT_SECRET_KEY
             value: "{{ .Env.JWT_SECRET_KEY }}"
           - name: ZATO_WEB_ADMIN_PASSWORD
-            value: "{{ .Env.ZATO_WEB_ADMIN_PASSWORD }}"
+            value: "{{ $ZATO_WEB_ADMIN_PASSWORD }}"
           - name: ZATO_IDE_PUBLISHER_PASSWORD
-            value: "{{ .Env.IDE_PUBLISHER_PASSWORD }}"
+            value: "{{ $IDE_PUBLISHER_PASSWORD }}"
+          - name: ZATO_ADMIN_INVOKE_PASSWORD
+            value: "{{ $ZATO_ADMIN_INVOKE_PASSWORD }}"
           - name: REDIS_HOSTNAME
             value: "redis.{{ default "zato" .Env.NAMESPACE }}.svc.cluster.local"
           - name: REDIS_PORT
@@ -308,7 +324,7 @@ spec:
           - name: ODB_USERNAME
             value: "zato"
           - name: ODB_PASSWORD
-            value: "{{ .Env.ODB_PASSWORD }}"
+            value: "{{ $ODB_PASSWORD }}"
         ports:
         - containerPort: 17010
           name: api
