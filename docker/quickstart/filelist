@@ -1,6 +1,8 @@
 https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/Dockerfile
 https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/entrypoint.sh
 https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/quickstart-bootstrap.sh
+https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/enmasse-utility.sh
+https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/hotdeploy-utility.sh
 https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/ide_password_update.sh
 https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/supervisord.conf.template
 https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/update_password.config

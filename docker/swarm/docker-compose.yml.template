@@ -1,0 +1,208 @@
+version: '3'
+{{ $ZATO_WEB_ADMIN_PASSWORD := .Env.ZATO_WEB_ADMIN_PASSWORD }}{{ $IDE_PUBLISHER_PASSWORD := .Env.IDE_PUBLISHER_PASSWORD }}{{ $ZATO_ADMIN_INVOKE_PASSWORD := .Env.ZATO_ADMIN_INVOKE_PASSWORD }}{{ $ODB_PASSWORD := .Env.ODB_PASSWORD }}
+{{ if empty $ZATO_WEB_ADMIN_PASSWORD }}{{ $ZATO_WEB_ADMIN_PASSWORD = uuidv4 }}{{ end }}
+{{ if empty $IDE_PUBLISHER_PASSWORD }}{{ $IDE_PUBLISHER_PASSWORD = uuidv4 }}{{ end }}
+{{ if empty $ZATO_ADMIN_INVOKE_PASSWORD }}{{ $ZATO_ADMIN_INVOKE_PASSWORD = uuidv4 }}{{ end }}
+{{ if empty $ODB_PASSWORD }}{{ $ODB_PASSWORD = uuidv4 }}{{ end }}
+services:
+  adminerzato:
+    image: adminer:standalone
+    deploy:
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    environment:
+      VIRTUAL_HOST: adminerzato.nirvana.local|adminerzato
+      ADMINER_DEFAULT_SERVER: postgres
+      ADMINER_PLUGINS: 'tables-filter tinymce version-noverify'
+      ADMINER_DESIGN: arcs-material
+    depends_on:
+      - postgres
+    ports:
+      - 8081:8080
+  postgres:
+    image: 'postgres:alpine'
+    deploy:
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    environment:
+      - POSTGRES_PASSWORD={{ $ODB_PASSWORD }}
+      - POSTGRES_USER=zato
+  redis:
+    image: redis
+    deploy:
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      resources:
+        limits:
+          memory: 300M
+        reservations:
+          memory: 20M
+  zato_scheduler:
+    image: registry.gitlab.com/zatosource/docker-registry/cloud/testing:3.1.0
+    deploy:
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    environment:
+      - VERBOSE={{ default "n" .Env.VERBOSE }}
+      - LB_HOSTNAME={{ default "zato_lb" .Env.LB_HOSTNAME }}
+      - LB_PORT={{ default 80 .Env.LB_PORT }}
+      - LB_AGENT_PORT={{ default 20151 .Env.LB_AGENT_PORT }}
+      - CLUSTER_NAME={{ if .Env.CLUSTER_NAME }}{{ .Env.CLUSTER_NAME }}{{ else }}{{ uuidv4 }}{{ end }}
+      - SECRET_KEY={{ .Env.SECRET_KEY }}
+      - JWT_SECRET_KEY={{ .Env.JWT_SECRET_KEY }}
+      - ZATO_POSITION=scheduler
+      - ZATO_WEB_ADMIN_PASSWORD={{ $ZATO_WEB_ADMIN_PASSWORD }}
+      - ZATO_ADMIN_INVOKE_PASSWORD={{ $ZATO_ADMIN_INVOKE_PASSWORD }}
+      - ZATO_IDE_PUBLISHER_PASSWORD={{ $IDE_PUBLISHER_PASSWORD }}
+      - REDIS_HOSTNAME=redis
+      - ODB_TYPE=postgresql
+      - ODB_HOSTNAME=postgres
+      - ODB_PORT=5432
+      - ODB_NAME=zato
+      - ODB_USERNAME=zato
+      - ODB_PASSWORD={{ $ODB_PASSWORD }}
+    depends_on:
+      - redis
+      - postgres
+  zato_bootstrap:
+    image: registry.gitlab.com/zatosource/docker-registry/cloud/testing:3.1.0
+    environment:
+      - VERBOSE={{ default "n" .Env.VERBOSE }}
+      - LB_HOSTNAME={{ default "zato_lb" .Env.LB_HOSTNAME }}
+      - LB_PORT={{ default 80 .Env.LB_PORT }}
+      - LB_AGENT_PORT={{ default 20151 .Env.LB_AGENT_PORT }}
+      - CLUSTER_NAME={{ if .Env.CLUSTER_NAME }}{{ .Env.CLUSTER_NAME }}{{ else }}{{ uuidv4 }}{{ end }}
+      - SECRET_KEY={{ .Env.SECRET_KEY }}
+      - JWT_SECRET_KEY={{ .Env.JWT_SECRET_KEY }}
+      - ZATO_POSITION=load-balancer
+      - ZATO_WEB_ADMIN_PASSWORD={{ $ZATO_WEB_ADMIN_PASSWORD }}
+      - ZATO_ADMIN_INVOKE_PASSWORD={{ $ZATO_ADMIN_INVOKE_PASSWORD }}
+      - ZATO_IDE_PUBLISHER_PASSWORD={{ $IDE_PUBLISHER_PASSWORD }}
+      - REDIS_HOSTNAME=redis
+      - ODB_TYPE=postgresql
+      - ODB_HOSTNAME=postgres
+      - ODB_PORT=5432
+      - ODB_NAME=zato
+      - ODB_USERNAME=zato
+      - ODB_PASSWORD={{ $ODB_PASSWORD }}
+    depends_on:
+      - redis
+      - postgres
+      - zato_scheduler
+  zato_server:
+    deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.port={{ default 17010 .Env.LB_PORT }}
+        - traefik.basic.frontend.rule=Host:{{ default "zato_lb" .Env.LB_HOSTNAME }}
+        - traefik.basic.port={{ default 17010 .Env.LB_PORT }}
+        - traefik.backend.healthcheck.path=/zato/ping
+        - traefik.http.middlewares.testHeader.Headers.CustomRequestHeaders.X-Auth-Token=True
+        - traefik.http.middlewares.testHeader.Headers.CustomResponseHeaders.X-Auth-Token=True
+    labels:
+      - traefik.enable=true
+      - traefik.port={{ default 17010 .Env.LB_PORT }}
+      - traefik.basic.frontend.rule=Host:{{ default "zato_lb" .Env.LB_HOSTNAME }}
+      - traefik.basic.port={{ default 17010 .Env.LB_PORT }}
+      - traefik.backend.healthcheck.path=/zato/ping
+      - traefik.http.middlewares.testHeader.Headers.CustomRequestHeaders.X-Auth-Token=True
+      - traefik.http.middlewares.testHeader.Headers.CustomResponseHeaders.X-Auth-Token=True
+    image: registry.gitlab.com/zatosource/docker-registry/cloud/testing:3.1.0
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    environment:
+      - VERBOSE={{ default "n" .Env.VERBOSE }}
+      - LB_HOSTNAME={{ default "zato_lb" .Env.LB_HOSTNAME }}
+      - LB_PORT={{ default 80 .Env.LB_PORT }}
+      - LB_AGENT_PORT={{ default 20151 .Env.LB_AGENT_PORT }}
+      - CLUSTER_NAME={{ if .Env.CLUSTER_NAME }}{{ .Env.CLUSTER_NAME }}{{ else }}{{ uuidv4 }}{{ end }}
+      - SECRET_KEY={{ .Env.SECRET_KEY }}
+      - JWT_SECRET_KEY={{ .Env.JWT_SECRET_KEY }}
+      - ZATO_POSITION=server
+      - SERVER_NAME=server1
+      - ZATO_WEB_ADMIN_PASSWORD={{ $ZATO_WEB_ADMIN_PASSWORD }}
+      - ZATO_ADMIN_INVOKE_PASSWORD={{ $ZATO_ADMIN_INVOKE_PASSWORD }}
+      - ZATO_IDE_PUBLISHER_PASSWORD={{ $IDE_PUBLISHER_PASSWORD }}
+      - REDIS_HOSTNAME=redis
+      - ODB_TYPE=postgresql
+      - ODB_HOSTNAME=postgres
+      - ODB_PORT=5432
+      - ODB_NAME=zato
+      - ODB_USERNAME=zato
+      - ODB_PASSWORD={{ $ODB_PASSWORD }}
+    depends_on:
+      - redis
+      - postgres
+      - zato_scheduler
+      - zato_lb
+    ports:
+      - {{ default 17010 .Env.LB_PORT }}
+  zato_webadmin:
+    image: registry.gitlab.com/zatosource/docker-registry/cloud/testing:3.1.0
+    environment:
+      - VERBOSE={{ default "n" .Env.VERBOSE }}
+      - LB_HOSTNAME={{ default "zato_lb" .Env.LB_HOSTNAME }}
+      - LB_PORT={{ default 80 .Env.LB_PORT }}
+      - LB_AGENT_PORT={{ default "20151" .Env.LB_AGENT_PORT }}
+      - CLUSTER_NAME={{ if .Env.CLUSTER_NAME }}{{ .Env.CLUSTER_NAME }}{{ else }}{{ uuidv4 }}{{ end }}
+      - SECRET_KEY={{ .Env.SECRET_KEY }}
+      - JWT_SECRET_KEY={{ .Env.JWT_SECRET_KEY }}
+      - ZATO_POSITION=webadmin
+      - ZATO_WEB_ADMIN_PASSWORD={{ $ZATO_WEB_ADMIN_PASSWORD }}
+      - ZATO_ADMIN_INVOKE_PASSWORD={{ $ZATO_ADMIN_INVOKE_PASSWORD }}
+      - ZATO_IDE_PUBLISHER_PASSWORD={{ $IDE_PUBLISHER_PASSWORD }}
+      - REDIS_HOSTNAME=redis
+      - ODB_TYPE=postgresql
+      - ODB_HOSTNAME=postgres
+      - ODB_PORT=5432
+      - ODB_NAME=zato
+      - ODB_USERNAME=zato
+      - ODB_PASSWORD={{ $ODB_PASSWORD }}
+    depends_on:
+      - redis
+      - postgres
+      - zato_scheduler
+      - zato_lb
+      - zato_server
+    ports:
+      - {{ default 8183 .Env.ZATO_WEB_ADMIN_PORT }}:8183
+  zato_lb:
+    image: traefik
+    command: -l DEBUG -c /dev/null --docker --docker.domain=traefik --docker.endpoint=unix:///var/run/docker.sock --docker.watch --docker.exposedByDefault=false --api --respondingTimeouts --respondingTimeouts.readTimeout=5s --respondingTimeouts.writeTimeout=5s
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 30s
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 8080:8080
+    depends_on:
+      - zato_webadmin
+      - zato_server
