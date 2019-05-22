@@ -139,8 +139,10 @@ function checkout_zato {
 function install_zato {
 
     cd $ZATO_TARGET_DIR/code
-    sed -i -e 's|pg8000==1.13.1|pg8000==1.12.5|' \
-           -e 's|dateparser==0.5.1|dateparser==0.7.1|' requirements.txt
+    sed -i -e 's|dateparser==0.5.1|dateparser==0.7.1|' requirements.txt
+    if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][1])') -eq 4 ]]; then
+        sed -i -e 's|pg8000==1.13.1|pg8000==1.12.3|' _req_py3.txt
+    fi
     ./install.sh -p ${PY_BINARY}
 
     find $ZATO_TARGET_DIR/. -name *.pyc -exec rm -f {} \;
