@@ -122,8 +122,8 @@ services:
       - traefik.http.middlewares.testHeader.Headers.CustomRequestHeaders.X-Auth-Token=True
       - traefik.http.middlewares.testHeader.Headers.CustomResponseHeaders.X-Auth-Token=True
     image: registry.gitlab.com/zatosource/docker-registry/cloud:3.1.0
-    volumes:
-      - /home/docker/hotdeploy/:/opt/hot-deploy/
+    {{ if .Env.HOTDEPLOY }}volumes:
+      - /home/docker/hotdeploy/:/opt/hot-deploy/{{ end }}
     deploy:
       replicas: 2
       update_config:
@@ -139,6 +139,7 @@ services:
       - LB_HOSTNAME={{ default "zato_lb" .Env.LB_HOSTNAME }}
       - LB_PORT={{ default 80 .Env.LB_PORT }}
       - LB_AGENT_PORT={{ default 20151 .Env.LB_AGENT_PORT }}
+      {{ if .Env.ZATO_ENMASSE_FILE }}- ZATO_ENMASSE_FILE={{ .Env.ZATO_ENMASSE_FILE }}{{ end }}
       - CLUSTER_NAME={{ if .Env.CLUSTER_NAME }}{{ .Env.CLUSTER_NAME }}{{ else }}{{ uuidv4 }}{{ end }}
       - SECRET_KEY={{ .Env.SECRET_KEY }}
       - JWT_SECRET_KEY={{ .Env.JWT_SECRET_KEY }}
