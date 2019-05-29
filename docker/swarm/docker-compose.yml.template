@@ -109,7 +109,7 @@ services:
         - traefik.basic.frontend.rule=Host:{{ default "zato_lb" .Env.LB_HOSTNAME }}
         - traefik.basic.port={{ default 17010 .Env.LB_PORT }}
         - traefik.backend.healthcheck.path=/zato/ping
-        # - traefik.docker.network=zato_backend
+        - traefik.docker.network=zato_backend
         - traefik.http.middlewares.testHeader.Headers.CustomRequestHeaders.X-Auth-Token=True
         - traefik.http.middlewares.testHeader.Headers.CustomResponseHeaders.X-Auth-Token=True
     labels:
@@ -118,7 +118,7 @@ services:
       - traefik.basic.frontend.rule=Host:{{ default "zato_lb" .Env.LB_HOSTNAME }}
       - traefik.basic.port={{ default 17010 .Env.LB_PORT }}
       - traefik.backend.healthcheck.path=/zato/ping
-      # - traefik.docker.network=zato_backend
+      - traefik.docker.network=zato_backend
       - traefik.http.middlewares.testHeader.Headers.CustomRequestHeaders.X-Auth-Token=True
       - traefik.http.middlewares.testHeader.Headers.CustomResponseHeaders.X-Auth-Token=True
     image: registry.gitlab.com/zatosource/docker-registry/cloud:3.1.0
@@ -163,7 +163,7 @@ services:
       - {{ default 17010 .Env.LB_PORT }}
     networks:
       - default
-      # - backend
+      - backend
   zato_webadmin:
     image: registry.gitlab.com/zatosource/docker-registry/cloud:3.1.0
     deploy:
@@ -221,8 +221,8 @@ services:
       - zato_server
     networks:
       - default
-      # - backend
+      - backend
 
 networks:
   default:
-  # backend:
+  backend:
