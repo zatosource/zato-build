@@ -9,6 +9,9 @@ sleep 60
 
 set -x
 if [[ -n "$(find /opt/hot-deploy/ -type f)" ]]; then
-    find /opt/hot-deploy/ -type f -exec touch {} \;
+    for (( i = 0; i < 3; i++ )); do
+        find /opt/hot-deploy/ -type f -exec touch {} \;
+        sleep 20
+    done
 fi
 set +x
