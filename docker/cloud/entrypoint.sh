@@ -154,4 +154,9 @@ EOF
     ;;
 esac
 
+# Hot deploy configuration
+[[ -d /opt/hot-deploy ]] || mkdir -p /opt/hot-deploy
+chmod 777 /opt/hot-deploy
+[[ -f /opt/zato/env/qs-1/config/repo/server.conf ]] && sed -i -e 's|pickup_dir=.*|pickup_dir=/opt/hot-deploy|' /opt/zato/env/qs-1/config/repo/server.conf
+
 exec /usr/bin/supervisord -n -c /etc/supervisor/supervisord.conf
