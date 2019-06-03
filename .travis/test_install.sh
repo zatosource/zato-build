@@ -95,7 +95,8 @@ if [[ -n "$(grep 'Zato ' /tmp/zato-version | grep $PY_VERSION)" ]]; then
   echo "Zato version output: $(cat /tmp/zato-version)"
   if [[ -n "${ZATO_UPLOAD_PACKAGES}" && "${ZATO_UPLOAD_PACKAGES}" == "y" ]]; then
       echo "Tests passed..Uploading packages"
-      s3cmd sync --acl-public \
+      # --acl-public \
+      s3cmd sync \
         --access_key=$ZATO_S3_ACCESS_KEY \
         --secret_key=$ZATO_S3_SECRET_KEY \
           /tmp/packages/ "$ZATO_S3_BUCKET_NAME/"
