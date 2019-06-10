@@ -7,16 +7,18 @@ source /etc/environment
 sleep 5
 
 cd /opt/zato/env/qs-1 || exit 1
-[[ -z ${ZATO_SERVER_PATH} ]] && ZATO_SERVER_PATH="/opt/zato/env/qs-1/server1/"
-if [[ ! -d ${ZATO_SERVER_PATH} ]]; then
-    echo "Zato server path at ${ZATO_SERVER_PATH} doesn't exist"
+[[ -z ${ZATO_SERVER_PATH} ]] && ZATO_SERVER_PATH="/opt/zato/env/qs-1/"
+if [[ ! -f ${ZATO_SERVER_PATH}/config/repo/server.conf ]]; then
+    echo "Zato server configuration not found at ${ZATO_SERVER_PATH}"
     exit 1
 fi
+
 if [[ -n "$(echo "${ZATO_ENMASSE_FILE}"|grep -Eo '(http|https)://[^/"]+')" ]];then
     echo "Downloading enmasse file from ${ZATO_ENMASSE_FILE}"
-    TMPFILE="$(mktemp)"
-    curl "${ZATO_ENMASSE_FILE}" > ${TMPFILE}
-    ZATO_ENMASSE_FILE="${TMPFILE}"
+    TMPFILE="$(mktemp -d)"
+    ZATO_ENMASSE_FILE_NAME=$(basename ${ZATO_ENMASSE_FILE})
+    curl "${ZATO_ENMASSE_FILE}" > ${TMPFILE}/${ZATO_ENMASSE_FILE_NAME}
+    ZATO_ENMASSE_FILE="${TMPFILE}/${ZATO_ENMASSE_FILE_NAME}"
 fi
 
 set -x # enable show commands
