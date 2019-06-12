@@ -49,7 +49,8 @@ echo "Build images"
 package_name="$(basename ${PACKAGE_PATH})"
 pushd $basepath/../docker/cloud/ || exit 1
     cp "${PACKAGE_PATH}" "${package_name}"
-    sed -i -e "s|zato-3.1.0-python_amd64-bionic.deb|${package_name}|" Dockerfile
+    sed -i -e "s|zato-3.1.0-python_amd64-bionic.deb|${package_name}|" \
+        -e "s|RUN git pull && ./update.sh &&|RUN|" Dockerfile
 
     docker login registry.gitlab.com -u "${GITLAB_USER}" -p "${GITLAB_TOKEN}"
 

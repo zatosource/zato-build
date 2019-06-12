@@ -5,7 +5,7 @@ if [ -z "$1" ]; then
   exit 2
 fi
 
-basepath=$(dirname $(readlink -e $0))
+basepath="$(dirname "$(readlink -e $0)")"
 
 ZATO_VERSION=$1
 PY_BINARY=${2:-python}
@@ -125,8 +125,4 @@ else
   fi
   echo "Zato version output: $(cat /tmp/zato-version)"
   exit 1
-fi
-
-if [[ -n "${CREATE_DOCKER_IMAGES}" && -n "${GITLAB_USER}" && -n "${GITLAB_TOKEN}" ]]; then
-    $basepath/upload_docker.sh "${GITLAB_USER}" "${GITLAB_TOKEN}" $(find /tmp/packages/ -type f -name \*.deb | head -n 1) "${CREATE_DOCKER_IMAGES}"
 fi
