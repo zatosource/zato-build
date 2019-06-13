@@ -10,15 +10,60 @@
 test "$#" -ge 2 || { echo "build-zato.sh: usage: ./build-zato.sh branch-name zato-version [ package-version ]" 1>&2 ; exit 100 ; }
 test -n "$HOME" || { echo "build-zato.sh: HOME not set; abuild needs to run as a user with a home directory!" 1>&2 ; exit 100 ; }
 
+usage() {
+  echo "$0 BRANCH_NAME ZATO_VERSION PYTHON_EXECUTABLE [PACKAGE_VERSION] [PROCESS]"
+  echo ""
+  echo "BRANCH_NAME: zatosource/zato branch name to build (e.g. master)"
+  echo "ZATO_VERSION: zato version to build (e.g. 3.0.0)"
+  echo "PYTHON_EXECUTABLE: Python executable to use (e.g. python, python2 or python3)"
+  echo "PACKAGE_VERSION: (optional) package version to build. The acceptable values for package-version are:"
+  echo "                 * \"\" (empty) or \"stable\", for stable versions."
+  echo "                 * \"alpha\", \"beta\", \"pre\" or \"rc\" followed by one or more digits."
+  echo "PROCESS: (optional) should be \"travis\" if run inside TravisCI"
+}
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  usage
+  exit 0
+fi
+
+if [ -z "$1" ]; then
+  echo Argument 1 must be the branch name from zatosource/zato used to build the package.
+  exit 1
+fi
+
+if [ -z "$2" ] || [ -z "$(echo $2 | grep -E '^[0-9]+\.[0-9]+\.[0-9]+')" ]; then
+  echo Argument 2 must be the Zato version to build.
+  exit 1
+fi
+
+if [ -z "$3" ] || [ -z "$(echo $3 | grep -E '^python[2,3]?\.?')" ]; then
+  echo Argument 3 must be the Python executable to use e.g. python, python2 or python3.
+  exit 1
+fi
+
+if [ -n "$4" ] && [ -z "$(echo $4 | grep -E '^(stable|alpha|beta|pre|rc)')" ]; then
+  echo Argument 4 is the release level of the build. The value has to be empty or be one of: stable, alpha, beta, pre or rc.
+  exit 1
+fi
+
 BRANCH_NAME="$1"
 ZATO_VERSION="$2"
+PY_BINARY="${3:-python3}"
 
 # The acceptable values for package-version are:
 # * nothing or "stable", for stable versions. (The Alpine version will then have no suffix.)
 # * "alpha", "beta", "pre" or "rc" followed by one or more digits.
 # This is a versioning convention coming from Gentoo, that Alpine also follows.
+PACKAGE_VERSION="${4}"
+TRAVIS_PROCESS_NAME="$5"
 
-PACKAGE_VERSION="$3"
+ALPINE_VERSION=$(cat /etc/alpine-release)
+
+if [ "${PY_BINARY}" != "python3" ]; then
+  echo "Unsupported Python version"
+  exit 1
+fi
 
 if test -z "${PACKAGE_VERSION}" || test "${PACKAGE_VERSION}" = "stable" ; then
   COMPLETE_VERSION="${ZATO_VERSION}"
@@ -28,19 +73,28 @@ fi
 
 apk version --check --quiet "${COMPLETE_VERSION}" || { echo "build-zato.sh: version $COMPLETE_VERSION is not valid for apk: suffixes must be {alpha|beta|pre|rc}[0-9]+" 1>&2 ; exit 100 ; }
 
-
 # This is the file where the packager's private key (to sign the apk)
 # is stored. The public key must be in the same place, with a ".rsa.pub"
 # suffix.
 
 # PACKAGER_PRIVKEY="$HOME/.abuild/dsuch@zato.io-XXXXXXXX.rsa"
-PACKAGER_PRIVKEY=${PACKAGER_PRIVKEY:-$HOME/.abuild/ska-devel@skarnet.org-56139463.rsa}
 
+PACKAGER="$(grep '# Maintainer:' package-base/APKBUILD.in|sed -e 's|.*Maintainer: ||')"
+abuild-keygen -an
 
+if test -n "$(find $HOME/.abuild -type f -name \*.rsa)"; then
+    PACKAGER_PRIVKEY="$(find $HOME/.abuild -type f -name \*.rsa|head -n 1)"
+else
+    echo "no sign key found"
+    exit 1
+fi
 # Where we get Alpine from, and what version
 
 PREFERRED_REPOSITORY=${PREFERRED_REPOSITORY:-http://dl-cdn.alpinelinux.org/alpine}
-ALPINE_FLAVOUR=${ALPINE_FLAVOUR:-v3.8}
+ALPINE_FLAVOUR=${ALPINE_FLAVOUR}
+if test -z "${ALPINE_FLAVOUR}"; then
+    ALPINE_FLAVOUR="v${ALPINE_VERSION%.*}"
+fi
 
 
 # These directories must be absolute.
@@ -115,7 +169,7 @@ checkout_and_make_archive() {
 
 make_apkbuild_dir() {
   for i in $ABUILD_FILES ; do
-    sed -e "s|@@ZATO_ROOT_DIR@@|$ZATO_ROOT_DIR|g;s|@@ZATO_TARGET_DIR@@|$ZATO_TARGET_DIR|g;s|@@ZATO_VERSION@@|$ZATO_VERSION|g;s|@@PACKAGE_VERSION@@|$PACKAGE_VERSION|g;s|@@COMPLETE_VERSION@@|$COMPLETE_VERSION|g;" < "$CURDIR/package-base/$i.in" > "$CURDIR/package-base/$i"
+    sed -e "s|@@ZATO_ROOT_DIR@@|$ZATO_ROOT_DIR|g;s|@@ZATO_TARGET_DIR@@|$ZATO_TARGET_DIR|g;s|@@ZATO_VERSION@@|$ZATO_VERSION|g;s|@@PACKAGE_VERSION@@|$PACKAGE_VERSION|g;s|@@COMPLETE_VERSION@@|$COMPLETE_VERSION|g;s|@@PY_BINARY@@|$PY_BINARY|g;" < "$CURDIR/package-base/$i.in" > "$CURDIR/package-base/$i"
   done
   cp $CURDIR/../bash_completion/zato $CURDIR/package-base/bash-completion
   cd package-base
@@ -132,6 +186,10 @@ call_abuild() {
 
 
 isolate_package() {
+  if [ -n "$TRAVIS_PROCESS_NAME" ] && [ $TRAVIS_PROCESS_NAME = "travis" ]; then
+    [ -d "/tmp/packages/alpine/${ALPINE_VERSION%.*}" ] || mkdir -p /tmp/packages/alpine/${ALPINE_VERSION%.*}/
+    cp "$CURDIR/alpine/x86_64/zato-$COMPLETE_VERSION-r0.apk" /tmp/packages/alpine/${ALPINE_VERSION%.*}/
+  fi
   mv "$CURDIR/alpine/x86_64/zato-$COMPLETE_VERSION-r0.apk" "$CURDIR"
   rm -rf "$CURDIR/alpine"
 }
