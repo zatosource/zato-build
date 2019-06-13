@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from os.path import abspath
 import argparse
 import json
 import sys
@@ -37,7 +38,7 @@ if __name__ == "__main__":
         print("Branch name can't be empty")
         sys.exit(1)
 
-    with open(args.file) as f:
+    with open(abspath(args.file)) as f:
         # use safe_load instead load
         travisConfig = yaml.safe_load(f)
 
