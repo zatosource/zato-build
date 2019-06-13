@@ -1,23 +1,61 @@
 #!/bin/bash
 
-if [ -z "$1" ] ; then
-    echo Argument 1 must be branch name
+function usage(){
+    echo "$0 BRANCH_NAME ZATO_VERSION PYTHON_EXECUTABLE [PACKAGE_VERSION] [PROCESS]"
+    echo ""
+    echo "BRANCH_NAME: zatosource/zato branch name to build (e.g. master)"
+    echo "ZATO_VERSION: zato version to build (e.g. 3.0.0)"
+    echo "PYTHON_EXECUTABLE: Python executable to use (e.g. python, python2 or python3)"
+    echo "PACKAGE_VERSION: (optional) package version to build. The acceptable values for package-version are:"
+    echo "                 * \"\" (empty) or \"stable\", for stable versions."
+    echo "                 * \"alpha\", \"beta\", \"pre\" or \"rc\" followed by one or more digits."
+    echo "PROCESS: (optional) should be \"travis\" if run inside TravisCI"
+}
+
+if [[ "$1" == "-h" || "$1" == "--help" ]] ; then
+    usage
+    exit 0
+fi
+
+if [[ -z "$1" ]] ; then
+    echo Argument 1 must be the branch name from zatosource/zato used to build the package.
     exit 1
 fi
 
-if [ -z "$2" ] ; then
-    echo Argument 2 must be Zato version
-    exit 2
+if [[ -z "$2" || -z "$(echo $2| grep -E '^[0-9]+\.[0-9]+\.[0-9]+')" ]] ; then
+    echo Argument 2 must be the Zato version to build.
+    exit 1
 fi
 
-if [ -z "$3" ] ; then
-    echo Argument 3 must be package version
-    exit 3
+if [[ -z "$3" || -z "$(echo $3| grep -E '^python[2,3]?\.?')" ]] ; then
+    echo Argument 3 must be the Python executable to use e.g. python, python2 or python3.
+    exit 1
+fi
+
+if [[ -n "$4" && -z "$(echo $4| grep -E '^(stable|alpha|beta|pre|rc)')" ]] ; then
+    echo Argument 4 is the release level of the build. The value has to be empty or be one of: stable, alpha, beta, pre or rc.
+    exit 1
 fi
 
 BRANCH_NAME=$1
 ZATO_VERSION=$2
-PACKAGE_VERSION=$3
+PY_BINARY=$3
+[[ -n "$4" ]] && PACKAGE_VERSION_SUFFIX="_${4}"
+TRAVIS_PROCESS_NAME=$5
+
+if ! [ -x "$(command -v $PY_BINARY)" ]; then
+  sudo apt-get install -y $PY_BINARY
+fi
+
+# Python 2 dependencies
+PYTHON_DEPENDENCIES="python2.7, python-pip"
+PACKAGE_VERSION="${PACKAGE_VERSION_SUFFIX}python27"
+if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][0])') -eq 3 ]]
+then
+    # Python 3 dependencies
+    PACKAGE_VERSION="${PACKAGE_VERSION_SUFFIX}python3"
+    PYTHON_DEPENDENCIES="python3, python3-pip"
+fi
 
 CURDIR="${BASH_SOURCE[0]}";RL="readlink";([[ `uname -s`=='Darwin' ]] || RL="$RL -f")
 while([ -h "${CURDIR}" ]) do CURDIR=`$RL "${CURDIR}"`; done
@@ -29,6 +67,10 @@ RELEASE_NAME=`lsb_release -cs`
 
 ZATO_ROOT_DIR=/opt/zato
 ZATO_TARGET_DIR=$ZATO_ROOT_DIR/$ZATO_VERSION
+
+if ! [ -x "$(command -v lsb_release)" ]; then
+  sudo apt-get install -y lsb-release
+fi
 
 # Ubuntu and Debian require different versions of packages.
 if command -v lsb_release > /dev/null; then
@@ -97,7 +139,11 @@ function checkout_zato {
 function install_zato {
 
     cd $ZATO_TARGET_DIR/code
-    ./install.sh
+    sed -i -e 's|dateparser==0.5.1|dateparser==0.7.1|' requirements.txt
+    if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][1])') -eq 4 ]]; then
+        sed -i -e 's|pg8000==1.13.1|pg8000==1.12.3|' _req_py3.txt
+    fi
+    ./install.sh -p ${PY_BINARY}
 
     find $ZATO_TARGET_DIR/. -name *.pyc -exec rm -f {} \;
     find $ZATO_TARGET_DIR/. ! -perm /004 -exec chmod 644 {} \;
@@ -135,12 +181,18 @@ function build_deb {
     sed -i "s/LIBUMFPACK_VERSION/$LIBUMFPACK_VERSION/g" $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/control
     sed -i "s/LIBEVENT_VERSION/$LIBEVENT_VERSION/g" $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/control
     sed -i "s/RELEASE_NAME/$RELEASE_NAME/g" $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/control
+    sed -i "s/PYTHON_DEPENDENCIES/$PYTHON_DEPENDENCIES/g" $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/control
     sed -i "s/ZATO_VERSION/$ZATO_VERSION/g" $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/postinst
     sed -i "s/ZATO_VERSION/$ZATO_VERSION/g" $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/postrm
 
-
+    cat $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/control
     cd $CURDIR/BUILDROOT
     dpkg-deb --build zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH
+
+    if [[ -n $TRAVIS_PROCESS_NAME && $TRAVIS_PROCESS_NAME == "travis" ]]; then
+        [[ -d "/tmp/packages/$(lsb_release -c | cut -f2)/" ]] || mkdir -p "/tmp/packages/$(lsb_release -c | cut -f2)/"
+        cp $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH.deb "/tmp/packages/$(lsb_release -c | cut -f2)/"
+    fi
 
     mv $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH.deb $CURDIR/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH-$RELEASE_NAME.deb
 }
