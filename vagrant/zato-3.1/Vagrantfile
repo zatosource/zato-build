@@ -1,0 +1,54 @@
+# encoding: utf-8
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+$set_environment_variables = <<SCRIPT
+tee "/opt/zato-env.sh" > "/dev/null" <<EOF
+ZATO_WEB_ADMIN_PASSWORD=#{ENV['ZATO_WEB_ADMIN_PASSWORD']}
+ZATO_IDE_PUBLISHER_PASSWORD=#{ENV['ZATO_IDE_PUBLISHER_PASSWORD']}
+ZATO_SSH_PASSWORD=#{ENV['ZATO_SSH_PASSWORD']}
+ZATO_ENMASSE_FILE=#{ENV['ZATO_ENMASSE_FILE']}
+EOF
+SCRIPT
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "geerlingguy/ubuntu1804"
+  config.vm.network :private_network, ip: "192.168.33.39"
+  config.ssh.forward_agent = true
+
+  config.vm.hostname = "zato.localhost"
+  config.vm.network :forwarded_port, guest: 22, host: 9098
+  config.vm.network :forwarded_port, guest: 6379, host: 6379
+  config.vm.network :forwarded_port, guest: 8183, host: 8183
+  config.vm.network :forwarded_port, guest: 17010, host: 17010
+  config.vm.network :forwarded_port, guest: 17011, host: 17011
+  config.vm.network :forwarded_port, guest: 11223, host: 11223
+
+  config.vm.provider :virtualbox do |v|
+    v.name = "zato.localhost"
+    v.memory = 1024
+    v.cpus = 2
+    v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+    v.customize ["modifyvm", :id, "--ioapic", "on"]
+  end
+
+  config.vm.provision "shell", inline: $set_environment_variables, run: "always"
+
+  # Enable provisioning with Ansible.
+  config.vm.provision 'ansible_local' do |ansible|
+    ansible.compatibility_mode = "2.0"
+    ansible.galaxy_role_file = 'provisioning/requirements.yml'
+    ansible.playbook = "provisioning/main.yml"
+    ansible.extra_vars = {
+      "allow_world_readable_tmpfiles": true
+    }
+    if ENV.has_key?('ANSIBLE_VERBOSE')
+      ansible.verbose = "#{ENV.fetch('ANSIBLE_VERBOSE', false)}"
+    end
+  end
+
+  if ENV.has_key?('ZATO_HOST_DEPLOY_DIR')
+      config.vm.synced_folder "#{ENV['ZATO_HOST_DEPLOY_DIR']}", "/opt/hot-deploy", owner: "zato",
+      group: "zato", mount_options: ["uid=1000", "gid=1000"]
+  end
+end
