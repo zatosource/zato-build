@@ -82,7 +82,7 @@
 
 - name: Zato | Download /opt/zato/dockerize
   get_url:
-    url: https://api.github.com/repos/powerman/dockerize/releases/latest
+    url: https://github.com/powerman/dockerize/releases/download/v0.11.0/dockerize-linux-x86_64
     dest: /usr/local/bin/dockerize
     mode: 0755
 
@@ -126,13 +126,13 @@
 
 - name: Zato | Download /opt/zato/hotdeploy-utility.sh
   get_url:
-    url: https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/hotdeploy-utility.sh
+    url: https://raw.githubusercontent.com/zatosource/zato-build/master/docker/cloud/hotdeploy-utility.sh
     dest: /opt/zato/hotdeploy-utility.sh
     mode: 0755
 
 - name: Zato | Download /opt/zato/enmasse-utility.sh
   get_url:
-    url: https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/enmasse-utility.sh
+    url: https://raw.githubusercontent.com/zatosource/zato-build/master/docker/cloud/enmasse-utility.sh
     dest: /opt/zato/enmasse-utility.sh
     mode: 0755
 
