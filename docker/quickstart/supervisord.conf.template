@@ -49,37 +49,46 @@ autorestart=unexpected
 command=/opt/zato/enmasse-utility.sh
 directory=/opt/zato/
 user=zato
-autorestart=unexpected
+autorestart=false
 numprocs=1
 {{ end }}
 
 [program:hotdeploy]
 command=/opt/zato/hotdeploy-utility.sh
 directory=/opt/zato/
-autorestart=unexpected
+autorestart=false
 numprocs=1
 
 [program:zato-load-balancer]
 command = /opt/zato/zato_start_load_balancer
 user = zato
 autorestart = true
+stopasgroup = true
+killasgroup = true
 
 [program:zato-server1]
 command = /opt/zato/zato_start_server1
 user = zato
 autorestart = true
+killasgroup = true
 
 [program:zato-server2]
 command = /opt/zato/zato_start_server2
 user = zato
 autorestart = true
+stopasgroup = true
+killasgroup = true
 
 [program:zato-web-admin]
 command = /opt/zato/zato_start_web_admin
 user = zato
 autorestart = true
+stopasgroup = true
+killasgroup = true
 
 [program:zato-scheduler]
 command = /opt/zato/zato_start_scheduler
 user = zato
 autorestart = true
+stopasgroup = true
+killasgroup = true
