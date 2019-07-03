@@ -18,6 +18,7 @@ supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
 [program:ssh]
 command = /usr/sbin/sshd -D
 user = root
+numprocs=1
 
 {{ if or ( empty .Env.REDIS_HOSTNAME ) ( eq .Env.REDIS_HOSTNAME "localhost" ) }}
 [program:redis]
@@ -25,6 +26,7 @@ process_name = redis
 command = redis-server
 user = zato
 autorestart = false
+numprocs=1
 {{ end }}
 
 {{ if or ( empty .Env.ODB_HOSTNAME ) ( eq .Env.ODB_HOSTNAME "localhost" ) }}
@@ -34,6 +36,7 @@ user=postgres
 environment=PGDATA="{{ .Env.PGDATA }}"
 autorestart=true
 stderr_logfile=/var/log/postgresql/main.log
+numprocs=1
 {{ end }}
 
 {{ if .Env.ZATO_IDE_PUBLISHER_PASSWORD }}
@@ -42,6 +45,7 @@ command=/opt/zato/ide_password_update.sh
 directory=/opt/zato/
 user=zato
 autorestart=unexpected
+numprocs=1
 {{ end }}
 
 {{ if .Env.ZATO_ENMASSE_FILE }}
@@ -65,12 +69,14 @@ user = zato
 autorestart = true
 stopasgroup = true
 killasgroup = true
+numprocs=1
 
 [program:zato-server1]
 command = /opt/zato/zato_start_server1
 user = zato
 autorestart = true
 killasgroup = true
+numprocs=1
 
 [program:zato-server2]
 command = /opt/zato/zato_start_server2
@@ -78,6 +84,7 @@ user = zato
 autorestart = true
 stopasgroup = true
 killasgroup = true
+numprocs=1
 
 [program:zato-web-admin]
 command = /opt/zato/zato_start_web_admin
@@ -85,6 +92,7 @@ user = zato
 autorestart = true
 stopasgroup = true
 killasgroup = true
+numprocs=1
 
 [program:zato-scheduler]
 command = /opt/zato/zato_start_scheduler
@@ -92,3 +100,4 @@ user = zato
 autorestart = true
 stopasgroup = true
 killasgroup = true
+numprocs=1
