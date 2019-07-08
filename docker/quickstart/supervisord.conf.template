@@ -44,7 +44,9 @@ numprocs=1
 command=/opt/zato/ide_password_update.sh
 directory=/opt/zato/
 user=zato
-autorestart=unexpected
+autorestart = unexpected
+stopasgroup = true
+killasgroup = true
 numprocs=1
 {{ end }}
 
@@ -53,20 +55,24 @@ numprocs=1
 command=/opt/zato/enmasse-utility.sh
 directory=/opt/zato/
 user=zato
-autorestart=false
+autorestart = false
+stopasgroup = true
+killasgroup = true
 numprocs=1
 {{ end }}
 
 [program:hotdeploy]
 command=/opt/zato/hotdeploy-utility.sh
 directory=/opt/zato/
-autorestart=false
+autorestart = false
+stopasgroup = true
+killasgroup = true
 numprocs=1
 
 [program:zato-load-balancer]
 command = /opt/zato/zato_start_load_balancer
 user = zato
-autorestart = true
+autorestart = unexpected
 stopasgroup = true
 killasgroup = true
 numprocs=1
@@ -74,14 +80,15 @@ numprocs=1
 [program:zato-server1]
 command = /opt/zato/zato_start_server1
 user = zato
-autorestart = true
+autorestart = unexpected
+stopasgroup = true
 killasgroup = true
 numprocs=1
 
 [program:zato-server2]
 command = /opt/zato/zato_start_server2
 user = zato
-autorestart = true
+autorestart = unexpected
 stopasgroup = true
 killasgroup = true
 numprocs=1
@@ -89,7 +96,7 @@ numprocs=1
 [program:zato-web-admin]
 command = /opt/zato/zato_start_web_admin
 user = zato
-autorestart = true
+autorestart = unexpected
 stopasgroup = true
 killasgroup = true
 numprocs=1
@@ -97,7 +104,7 @@ numprocs=1
 [program:zato-scheduler]
 command = /opt/zato/zato_start_scheduler
 user = zato
-autorestart = true
+autorestart = unexpected
 stopasgroup = true
 killasgroup = true
 numprocs=1
