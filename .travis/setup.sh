@@ -103,7 +103,11 @@ if [[ -n "$IMAGE" ]]; then
 
     # testing
     run_checking apt-get update
-    run_checking apt-get -y install sudo git lsb-release s3cmd
+    if [[ "${IMAGE:0:6}" == "debian" && "${IMAGE:7:8}" == "10" ]]; then
+        run_checking apt-get -y install sudo git lsb-release s4cmd
+    else
+        run_checking apt-get -y install sudo git lsb-release s3cmd
+    fi
   fi
 
   # chown everything to Travis UID so caching succeeds.

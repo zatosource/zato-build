@@ -28,14 +28,19 @@ if [ "$(type -p apt-get)" ]; then
     ln -s /usr/share/zoneinfo/GMT /etc/localtime
   fi
 
+  if [[ $(dpkg -s apt | grep -i version|cut -d ' ' -f 2|cut -d '.' -f 1,2) > 1.0 ]];then
+      find /tmp/packages/ -type f -name \*.deb -exec apt-get install -y {} \;
+  else
+      find /tmp/packages/ -type f -name \*.deb -exec dpkg -i  {} \;
 
-  find /tmp/packages/ -type f -name \*.deb -exec dpkg -i  {} \;
+      # fix dependencies
+      dpkg --configure -a
+      apt-get install -f -y || exit 1
+  fi
 
-  # fix dependencies
-  apt-get install -f -y || exit 1
 
   # upgrade s3cmd, debian jessie (debian 8) version is too old
-  if [ "$(lsb_release -r | awk '{print $2}' | cut -d . -f 1)" = 8 ]; then
+  if [[ "$(lsb_release -r | awk '{print $2}' | cut -d . -f 1)" = 8 || "$(lsb_release -r | awk '{print $2}' | cut -d . -f 1)" = 10 ]]; then
     git clone https://github.com/s3tools/s3cmd.git /opt/s3cmd
     ln -fs /opt/s3cmd/s3cmd /usr/bin/s3cmd
   fi
@@ -87,6 +92,7 @@ fi
 
 head -n 1 /opt/zato/current/bin/zato
 
+su - zato -c "$(head -n 1 /opt/zato/current/bin/zato|cut -d '!' -f 2) -c 'import sys; print(sys.version_info)' 2>&1"
 su - zato -c 'zato --version 1>/tmp/zato-version 2>&1'
 
 cat /tmp/zato-version
