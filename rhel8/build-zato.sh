@@ -56,20 +56,6 @@ then
     # Python 3 dependencies
     PYTHON_DEPENDENCIES=", rh-python36, rh-python36-python-pip"
     PACKAGE_VERSION="python3${PACKAGE_VERSION_SUFFIX}"
-
-    sudo yum install -y centos-release-scl-rh
-    sudo yum-config-manager --enable centos-sclo-rh-testing
-
-    # On RHEL, enable RHSCL and RHSCL-beta repositories for you system:
-    sudo yum-config-manager --enable rhel-server-rhscl-7-rpms
-    sudo yum-config-manager --enable rhel-server-rhscl-beta-7-rpms
-
-    # 2. Install the collection:
-    sudo yum install -y rh-python36
-
-    # 3. Start using software collections:
-    # scl enable rh-python36 bash
-    source /opt/rh/rh-python36/enable
 fi
 
 CURDIR="${BASH_SOURCE[0]}";RL="readlink";([[ `uname -s`=='Darwin' ]] || RL="$RL -f")
