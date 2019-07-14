@@ -75,7 +75,7 @@ fi
 # Ubuntu and Debian require different versions of packages.
 if command -v lsb_release > /dev/null; then
     release=$(lsb_release -c | cut -f2)
-    if [[ "$release" == "precise" ]] || [[ "$release" == "wheezy" ]]; then
+    if [[ "$release" == "precise" ]] || [[ "$release" == "wheezy" ]] || [[ "$release" == "buster" ]]; then
         LIBATLAS3BASE=libatlas3gf-base
         LIBBLAS3=libblas3gf
         LIBLAPACK3=liblapack3gf
@@ -113,6 +113,14 @@ if command -v lsb_release > /dev/null; then
         sudo apt-add-repository 'deb http://ftp.is.debian.org/debian wheezy-backports main'
         sudo apt-get install --reinstall libffi5
     fi
+
+    if [[ "$release" == "buster" ]]; then
+        if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][0])') -eq 3 ]];then
+            PYTHON_DEPENDENCIES="${PYTHON_DEPENDENCIES}, cython3, python3-scipy"
+        else
+            PYTHON_DEPENDENCIES="${PYTHON_DEPENDENCIES}, cython, python-scipy"
+        fi
+    fi
 fi
 
 echo Building `lsb_release -is` DEB zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH-$RELEASE_NAME
@@ -143,6 +151,16 @@ function install_zato {
     if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][1])') -eq 4 ]]; then
         sed -i -e 's|pg8000==1.13.1|pg8000==1.12.3|' _req_py3.txt
     fi
+
+    if [[ "$release" == "buster" ]]; then
+        sed -i \
+            -e 's|numpy==.*|numpy==1.16.4|' \
+            -e 's|sarge==.*|sarge==0.1.5|' \
+            requirements.txt
+        sed -i -e 's|numpy==.*|numpy==1.16.4|' _postinstall.sh
+    fi
+
+    release=$(lsb_release -c | cut -f2)
     ./install.sh -p ${PY_BINARY}
 
     find $ZATO_TARGET_DIR/. -name *.pyc -exec rm -f {} \;
