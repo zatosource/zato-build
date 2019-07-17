@@ -67,7 +67,7 @@ TMP_DIR=$CURDIR/tmp
 HOME=${HOME:-$CURDIR}
 RPM_BUILD_DIR=$HOME/rpmbuild
 
-RHEL_VERSION=el7
+RHEL_VERSION=el8
 ARCH=`uname -i`
 
 ZATO_ROOT_DIR=/opt/zato
