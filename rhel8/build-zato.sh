@@ -111,6 +111,11 @@ function install_zato {
         -e "s|rh-python36|${PY_BINARY:-python2}|" \
         -e "s|source /opt/rh/rh-python36/enable|alternatives --set python /usr/bin/${PY_BINARY:-python2}|" \
         ./install.sh
+    sed -i \
+        -e 's|uuid-devel ||' \
+        -e "s|libyaml-devel ||" \
+        -e "s|python-devel |${PY_BINARY:-python2}-devel |" \
+        _install-rhel.sh
     ./install.sh -p ${PY_BINARY}
     find $ZATO_TARGET_DIR/. -name *.pyc -exec rm -f {} \;
     find $ZATO_TARGET_DIR/. ! -perm /004 -exec chmod 644 {} \;
