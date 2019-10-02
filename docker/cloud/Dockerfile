@@ -51,8 +51,7 @@ RUN apt-get update && apt-get install -y postgresql-client && rm -rf /var/lib/ap
 
 # Install latest updates
 WORKDIR /opt/zato/current
-ADD patcher.sh /opt/zato/current/patcher.sh
-RUN git pull && ./update.sh && bash ./patcher.sh && mkdir -p /var/log/supervisor /var/run/sshd/
+RUN git checkout -- ./requirements.txt && ./update.sh && mkdir -p /var/log/supervisor /var/run/sshd/
 
 USER root
 
