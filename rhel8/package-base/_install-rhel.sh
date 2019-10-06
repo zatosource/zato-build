@@ -3,6 +3,9 @@
 PY_BINARY=$1
 echo "*** Zato RHEL/CentOS installation using $PY_BINARY ***"
 
+if ! [ -x "$(command -v lsb_release)" ]; then
+  sudo yum install -y redhat-lsb-core
+fi
 if [[ -n "$(lsb_release -r|grep '\s8.')" ]]; then
     sudo yum -y install \
         bzip2 bzip2-devel curl cyrus-sasl-devel gcc-c++ git haproxy \
