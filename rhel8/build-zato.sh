@@ -102,19 +102,13 @@ function checkout_zato {
 }
 
 function install_zato {
+    cp $SOURCE_DIR/_install-rhel8.sh $ZATO_TARGET_DIR/code
+    cp $SOURCE_DIR/install.sh $ZATO_TARGET_DIR/code
     cd $ZATO_TARGET_DIR/code
     sed -i -e 's|pg8000==1.13.1|pg8000==1.12.5|' requirements.txt
     sed -i \
-        -e '/.*sudo yum install -y centos-rel.*/d' \
-        -e '/.*sudo yum-config-manager.*/d' \
-        -e "s|rh-python36|rh-${PY_BINARY:-python2}|" \
-        -e "s|source /opt/rh/rh-python36/enable|alternatives --set python /usr/bin/${PY_BINARY:-python2}|" \
-        ./install.sh
-    sed -i \
-        -e 's|uuid-devel ||' \
-        -e "s|libyaml-devel ||" \
         -e "s|python-devel |${PY_BINARY:-python2}-devel |" \
-        _install-rhel.sh
+        _install.sh
     ./install.sh -p ${PY_BINARY}
     find $ZATO_TARGET_DIR/. -name *.pyc -exec rm -f {} \;
     find $ZATO_TARGET_DIR/. ! -perm /004 -exec chmod 644 {} \;

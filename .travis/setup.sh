@@ -87,9 +87,11 @@ if [[ -n "$IMAGE" ]]; then
 
   # Some official images lack sudo, which breaks install.sh.
   if [ "${IMAGE:0:6}" = "centos" ]; then
+    run yum -y update
     run yum -y install sudo git
 
     # testing
+    run_checking yum -y update
     run_checking yum -y install sudo git epel-release
     run_checking yum -y install s3cmd || echo 'not found'
   elif [ "${IMAGE:0:6}" = "alpine" ]; then
