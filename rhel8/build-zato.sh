@@ -40,6 +40,7 @@ fi
 BRANCH_NAME=$1
 ZATO_VERSION=$2
 PY_BINARY=${3:-python2}
+[[ "${PY_BINARY}" == "python" ]] && PY_BINARY="python2"
 [[ -n "$4" ]] && PACKAGE_VERSION_SUFFIX="_${4}"
 TRAVIS_PROCESS_NAME=$5
 
