@@ -100,7 +100,9 @@ chmod +x minio-client
 ./minio-client config host add s3 https://s3.amazonaws.com "${ZATO_S3_ACCESS_KEY}" "${ZATO_S3_SECRET_KEY}" --api S3v4
 
 if [[ "$(type -p yum)" && -n "$(lsb_release -r|grep '\s8.')" ]]; then
-    ./minio-client cp --recursive /tmp/packages/* s3/$ZATO_S3_BUCKET_NAME/el8
+    set -x
+    ./minio-client cp --debug -r /tmp/packages/* s3/$ZATO_S3_BUCKET_NAME/el8/
+    set +x
 fi
 
 su - zato -c "$(head -n 1 /opt/zato/current/bin/zato|cut -d '!' -f 2) -c 'import sys; print(sys.version_info)' 2>&1"
