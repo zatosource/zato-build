@@ -95,7 +95,7 @@ fi
 
 head -n 1 /opt/zato/current/bin/zato
 
-wget -O minio-client https://dl.min.io/client/mc/release/linux-amd64/mc
+curl https://dl.min.io/client/mc/release/linux-amd64/mc > minio-client
 chmod +x minio-client
 ./minio-client config host add s3 https://s3.amazonaws.com "${ZATO_S3_ACCESS_KEY}" "${ZATO_S3_SECRET_KEY}" --api S3v4
 
