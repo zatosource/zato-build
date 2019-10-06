@@ -47,7 +47,10 @@ if [ "$(type -p apt-get)" ]; then
 
 elif [ "$(type -p yum)" ]; then
   RHEL_VERSION=el7
-  if [[ ${PY_BINARY} == "python3" ]]; then
+  if ! [ -x "$(command -v lsb_release)" ]; then
+      sudo yum install -y redhat-lsb-core
+  fi
+  if [[ ${PY_BINARY} == "python3" && -z "$(lsb_release -r|grep '\s8.')" ]]; then
     sudo yum install -y centos-release-scl-rh
     sudo yum-config-manager --enable centos-sclo-rh-testing
 
