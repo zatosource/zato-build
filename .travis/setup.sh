@@ -91,7 +91,7 @@ if [[ -n "$IMAGE" ]]; then
 
     # testing
     run_checking yum -y install sudo git epel-release
-    run_checking yum -y install s3cmd
+    run_checking yum -y install s3cmd || echo 'not found'
   elif [ "${IMAGE:0:6}" = "alpine" ]; then
     run /bin/sh -ec "apk update && apk upgrade && apk add sudo bash alpine-sdk && exec abuild-keygen -an"
 
