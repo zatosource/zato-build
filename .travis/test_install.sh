@@ -101,7 +101,7 @@ chmod +x minio-client
 
 if [[ "$(type -p yum)" && -n "$(lsb_release -r|grep '\s8.')" ]]; then
     set -x
-    ./minio-client cp --debug -r /tmp/packages/ s3/zato.travis.1/
+    ./minio-client cp --debug -r /tmp/packages/el8/ s3/zato.travis.1/el8/
     set +x
 fi
 

@@ -1,3 +1,7 @@
+
+# prevents the building of /usr/lib/.build-id directories and files:
+%global _build_id_links none
+
 Name:           zato
 Version:        ZATO_VERSION
 Release:        ZATO_RELEASE
