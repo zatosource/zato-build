@@ -101,7 +101,7 @@ chmod +x minio-client
 
 if [[ "$(type -p yum)" && -n "$(lsb_release -r|grep '\s8.')" ]]; then
     set -x
-    ./minio-client cp --debug -r /tmp/packages/ s3/${ZATO_S3_BUCKET_NAME_SHORT}/
+    ./minio-client cp --debug -r /tmp/packages/ s3/zato.travis.1/
     set +x
 fi
 
