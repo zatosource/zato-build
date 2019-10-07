@@ -114,6 +114,7 @@ function install_zato {
 }
 
 function build_rpm {
+    sudo yum install -y ${PY_BINARY:-python2}-devel
     rm -f $SOURCE_DIR/zato.spec
     cp $SOURCE_DIR/zato.spec.template $SOURCE_DIR/zato.spec
     sed -i.bak "s/ZATO_VERSION/$ZATO_VERSION/g" $SOURCE_DIR/zato.spec
