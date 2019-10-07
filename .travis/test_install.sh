@@ -95,15 +95,8 @@ fi
 
 head -n 1 /opt/zato/current/bin/zato
 
-curl https://dl.min.io/client/mc/release/linux-amd64/mc > minio-client
-chmod +x minio-client
-./minio-client config host add s3 https://s3.amazonaws.com "${ZATO_S3_ACCESS_KEY}" "${ZATO_S3_SECRET_KEY}" --api S3v4
-
-if [[ "$(type -p yum)" && -n "$(lsb_release -r|grep '\s8.')" ]]; then
-    set -x
-    ./minio-client cp --debug -r /tmp/packages/el8/ s3/zato.travis.1/el8/
-    set +x
-fi
+curl https://dl.min.io/client/mc/release/linux-amd64/mc > /tmp/minio-client && chmod +x /tmp/minio-client
+/tmp/minio-client config host add s3 https://s3.amazonaws.com "${ZATO_S3_ACCESS_KEY}" "${ZATO_S3_SECRET_KEY}" --api S3v4
 
 su - zato -c "$(head -n 1 /opt/zato/current/bin/zato|cut -d '!' -f 2) -c 'import sys; print(sys.version_info)' 2>&1"
 su - zato -c 'zato --version 1>/tmp/zato-version 2>&1'
@@ -116,10 +109,7 @@ if [[ -n "$(grep 'Zato ' /tmp/zato-version | grep $PY_VERSION)" ]]; then
   echo "Zato version output: $(cat /tmp/zato-version)"
   if [[ -n "${ZATO_UPLOAD_PACKAGES}" && "${ZATO_UPLOAD_PACKAGES}" == "y" ]]; then
       echo "Tests passed..Uploading packages"
-      s3cmd sync \
-        --access_key=$ZATO_S3_ACCESS_KEY \
-        --secret_key=$ZATO_S3_SECRET_KEY \
-          /tmp/packages/ "$ZATO_S3_BUCKET_NAME/"
+      /tmp/minio-client cp -r /tmp/packages/ s3/zato.travis.1/
       if [[ $? -eq 0 ]]; then
           echo "Package uploaded"
       else

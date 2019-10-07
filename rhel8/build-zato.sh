@@ -103,8 +103,6 @@ function checkout_zato {
 }
 
 function install_zato {
-    cp $SOURCE_DIR/_install-rhel.sh $ZATO_TARGET_DIR/code
-    cp $SOURCE_DIR/install.sh $ZATO_TARGET_DIR/code
     cd $ZATO_TARGET_DIR/code
     sed -i -e 's|pg8000==1.13.1|pg8000==1.12.5|' $ZATO_TARGET_DIR/code/requirements.txt
     sed -i \
