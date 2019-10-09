@@ -19,7 +19,7 @@ AutoReqProv: no
 Requires: tix, suitesparse, openssl, libpq, zlib, libevent, git, haproxy, atlas, libgfortran, lapack, swig, uuid, libxslt, bash-completion
 Provides: %{name} = %{version}-%{release}
 
-BuildRequires: /usr/bin/pathfix.py, cmake
+BuildRequires: /usr/bin/pathfix.py
 
 %description
 Zato - ESB, SOA, REST, APIs and Cloud Integrations in Python

@@ -111,6 +111,7 @@ function install_zato {
     sed -i \
         -e "s|python-devel |${PY_BINARY:-python2}-devel |" \
         $ZATO_TARGET_DIR/code/_install-rhel.sh
+    yum install -y cmake
     ./install.sh -p ${PY_BINARY}
     find $ZATO_TARGET_DIR/. -name *.pyc -exec rm -f {} \;
     find $ZATO_TARGET_DIR/. ! -perm /004 -exec chmod 644 {} \;
