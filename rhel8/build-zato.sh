@@ -108,9 +108,15 @@ function install_zato {
     if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][1])') -eq 4 ]]; then
         sed -i -e 's|pg8000==1.13.1|pg8000==1.12.3|' _req_py3.txt
     fi
-    sed -i \
-        -e "s|python-devel |${PY_BINARY:-python2}-devel |" \
-        $ZATO_TARGET_DIR/code/_install-rhel.sh
+    if [[ "${PY_BINARY}" == "python2" ]]; then
+        sed -i \
+            -e "s|python-devel |python2-devel python3-devel |" \
+            $ZATO_TARGET_DIR/code/_install-rhel.sh
+    else
+        sed -i \
+            -e "s|python-devel |python3-devel |" \
+            $ZATO_TARGET_DIR/code/_install-rhel.sh
+    fi
     yum install -y cmake
     ./install.sh -p ${PY_BINARY}
     find $ZATO_TARGET_DIR/. -name *.pyc -exec rm -f {} \;
