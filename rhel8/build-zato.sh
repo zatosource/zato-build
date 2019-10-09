@@ -115,7 +115,7 @@ function install_zato {
     else
         sed -i \
             -e "s|python-devel |python3-devel |" \
-            -e "s|virtualenv==15.1.0|virtualenv|" \
+            -e "s|virtualenv==15.1.0|virtualenv==16.7.5|" \
             $ZATO_TARGET_DIR/code/_install-rhel.sh
     fi
     ./install.sh -p ${PY_BINARY}

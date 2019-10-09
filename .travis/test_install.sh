@@ -98,6 +98,12 @@ head -n 1 /opt/zato/current/bin/zato
 curl https://dl.min.io/client/mc/release/linux-amd64/mc > /tmp/minio-client && chmod +x /tmp/minio-client
 /tmp/minio-client config host add s3 https://s3.amazonaws.com "${ZATO_S3_ACCESS_KEY}" "${ZATO_S3_SECRET_KEY}" --api S3v4
 
+if [[ "$(type -p yum)" && -n "$(lsb_release -r|grep '\s8.')" ]]; then
+    set -x
+    /tmp/minio-client cp -r /tmp/packages/ s3/zato.travis.1/y
+    set +x
+fi
+
 su - zato -c "$(head -n 1 /opt/zato/current/bin/zato|cut -d '!' -f 2) -c 'import sys; print(sys.version_info)' 2>&1"
 su - zato -c 'zato --version 1>/tmp/zato-version 2>&1'
 
