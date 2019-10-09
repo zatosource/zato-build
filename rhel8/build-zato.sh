@@ -27,8 +27,8 @@ if [[ -z "$2" || -z "$(echo $2| grep -E '^[0-9]+\.[0-9]+\.[0-9]+')" ]] ; then
     exit 1
 fi
 
-if [[ -z "$3" || -z "$(echo $3| grep -E '^python[2,3]?\.?')" ]] ; then
-    echo Argument 3 must be the Python executable to use e.g. python, python2 or python3.
+if [[ -z "$3" || -z "$(echo $3| grep -E '^python[2,3]')" ]] ; then
+    echo Argument 3 must be the Python executable to use: python2 or python3.
     exit 1
 fi
 
@@ -127,6 +127,7 @@ function build_rpm {
     sudo yum install -y ${PY_BINARY:-python2}-devel
     rm -f $SOURCE_DIR/zato.spec
     cp $SOURCE_DIR/zato.spec.template $SOURCE_DIR/zato.spec
+    sed -i.bak "s/PYTHON/${PY_BINARY:-python2}/g" $SOURCE_DIR/zato.spec
     sed -i.bak "s/ZATO_VERSION/$ZATO_VERSION/g" $SOURCE_DIR/zato.spec
     sed -i.bak "s/ZATO_RELEASE/$PACKAGE_VERSION.$RHEL_VERSION/g" $SOURCE_DIR/zato.spec
     cat $SOURCE_DIR/zato.spec
