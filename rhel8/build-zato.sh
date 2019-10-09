@@ -105,12 +105,10 @@ function install_zato {
     cd $ZATO_TARGET_DIR/code
 
     sed -i -e 's|dateparser==0.5.1|dateparser==0.7.1|' \
-           -e 's|librabbitmq==.*|librabbitmq==2.0.0|' \
            requirements.txt
-    if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][1])') -eq 4 ]]; then
-        sed -i -e 's|pg8000==1.13.1|pg8000==1.12.3|' _req_py3.txt
-    fi
     if [[ "${PY_BINARY}" == "python2" ]]; then
+        sed -i -e 's|librabbitmq==.*|librabbitmq==2.0.0|' \
+            _req_py27.txt
         sed -i \
             -e "s|python-devel |python2-devel python3-devel |" \
             $ZATO_TARGET_DIR/code/_install-rhel.sh
@@ -119,7 +117,6 @@ function install_zato {
             -e "s|python-devel |python3-devel |" \
             $ZATO_TARGET_DIR/code/_install-rhel.sh
     fi
-    yum install -y cmake
     ./install.sh -p ${PY_BINARY}
     find $ZATO_TARGET_DIR/. -name *.pyc -exec rm -f {} \;
     find $ZATO_TARGET_DIR/. ! -perm /004 -exec chmod 644 {} \;
