@@ -5,7 +5,7 @@ function usage(){
     echo ""
     echo "BRANCH_NAME: zatosource/zato branch name to build (e.g. master)"
     echo "ZATO_VERSION: zato version to build (e.g. 3.0.0)"
-    echo "PYTHON_EXECUTABLE: Python executable to use (e.g. python, python2 or python3)"
+    echo "PYTHON_EXECUTABLE: Python executable to use (with the version e.g. python2 or python3)"
     echo "PACKAGE_VERSION: (optional) package version to build. The acceptable values for package-version are:"
     echo "                 * \"\" (empty) or \"stable\", for stable versions."
     echo "                 * \"alpha\", \"beta\", \"pre\" or \"rc\" followed by one or more digits."
@@ -27,8 +27,8 @@ if [[ -z "$2" || -z "$(echo $2| grep -E '^[0-9]+\.[0-9]+\.[0-9]+')" ]] ; then
     exit 1
 fi
 
-if [[ -z "$3" || -z "$(echo $3| grep -E '^python[2,3]')" ]] ; then
-    echo Argument 3 must be the Python executable to use: python2 or python3.
+if [[ -z "$3" || -z "$(echo $3| grep -E '^python[2,3]?')" ]] ; then
+    echo Argument 3 must be the Python executable to use with the version: python2 or python3.
     exit 1
 fi
 
