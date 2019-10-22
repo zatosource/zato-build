@@ -75,7 +75,15 @@ fi
 # Ubuntu and Debian require different versions of packages.
 if command -v lsb_release > /dev/null; then
     release=$(lsb_release -c | cut -f2)
-    if [[ "$release" == "precise" ]] || [[ "$release" == "wheezy" ]]; then
+    LIBGFORTRAN=libgfortran3
+    if [[ "$release" == "buster" ]]; then
+        LIBATLAS3BASE=libatlas3-base
+        LIBGFORTRAN=libgfortran4
+        LIBBLAS3=libblas3
+        LIBLAPACK3=liblapack3
+        LIBUMFPACK_VERSION=5
+        LIBEVENT_VERSION=2.1-6
+    elif [[ "$release" == "precise" ]] || [[ "$release" == "wheezy" ]]; then
         LIBATLAS3BASE=libatlas3gf-base
         LIBBLAS3=libblas3gf
         LIBLAPACK3=liblapack3gf
@@ -109,9 +117,17 @@ if command -v lsb_release > /dev/null; then
 
     # Add Debian-specific dependencies
     if [[ "$release" == "wheezy" ]]; then
-        sudo apt-get install apt-transport-https python-software-properties
+        sudo apt-get install -y apt-transport-https python-software-properties
         sudo apt-add-repository 'deb http://ftp.is.debian.org/debian wheezy-backports main'
-        sudo apt-get install --reinstall libffi5
+        sudo apt-get install -y --reinstall libffi5
+    fi
+
+    if [[ "$release" == "buster" ]]; then
+        if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][0])') -eq 3 ]];then
+            PYTHON_DEPENDENCIES="${PYTHON_DEPENDENCIES}, cython3, python3-scipy"
+        else
+            PYTHON_DEPENDENCIES="${PYTHON_DEPENDENCIES}, cython, python-scipy"
+        fi
     fi
 fi
 
@@ -143,6 +159,27 @@ function install_zato {
     if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][1])') -eq 4 ]]; then
         sed -i -e 's|pg8000==1.13.1|pg8000==1.12.3|' _req_py3.txt
     fi
+
+    if [[ "$release" == "buster" ]]; then
+        if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][0])') -eq 3 ]];then
+            sed -i \
+                -e 's|toolz==0.8.2|toolz==0.10.0|' \
+                -e 's|lxml==.*|lxml==4.3.4|' \
+                requirements.txt
+        fi
+    fi
+
+    if [[ "$release" == "buster" ]]; then
+        sed -i \
+            -e 's|numpy==.*|numpy==1.16.4|' \
+            -e 's|sarge==.*|sarge==0.1.5|' \
+            -e 's|pyyaml==.*|pyyaml==5.1.1|' \
+            requirements.txt
+        sed -i -e 's|numpy==.*|numpy==1.16.4|' _postinstall.sh
+        sudo apt-get install -y pkg-config libtool cmake
+    fi
+
+    release=$(lsb_release -c | cut -f2)
     ./install.sh -p ${PY_BINARY}
 
     find $ZATO_TARGET_DIR/. -name *.pyc -exec rm -f {} \;
@@ -178,6 +215,7 @@ function build_deb {
     sed -i "s/LIBATLAS3BASE/$LIBATLAS3BASE/g" $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/control
     sed -i "s/LIBBLAS3/$LIBBLAS3/g" $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/control
     sed -i "s/LIBLAPACK3/$LIBLAPACK3/g" $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/control
+    sed -i "s/LIBGFORTRAN/$LIBGFORTRAN/g" $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/control
     sed -i "s/LIBUMFPACK_VERSION/$LIBUMFPACK_VERSION/g" $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/control
     sed -i "s/LIBEVENT_VERSION/$LIBEVENT_VERSION/g" $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/control
     sed -i "s/RELEASE_NAME/$RELEASE_NAME/g" $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/control

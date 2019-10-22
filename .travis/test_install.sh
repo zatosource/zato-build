@@ -28,21 +28,29 @@ if [ "$(type -p apt-get)" ]; then
     ln -s /usr/share/zoneinfo/GMT /etc/localtime
   fi
 
+  if [[ $(dpkg -s apt | grep -i version|cut -d ' ' -f 2|cut -d '.' -f 1,2) > 1.0 ]];then
+      find /tmp/packages/ -type f -name \*.deb -exec apt-get install -y {} \;
+  else
+      find /tmp/packages/ -type f -name \*.deb -exec dpkg -i  {} \;
 
-  find /tmp/packages/ -type f -name \*.deb -exec dpkg -i  {} \;
+      # fix dependencies
+      dpkg --configure -a
+      apt-get install -f -y || exit 1
+  fi
 
-  # fix dependencies
-  apt-get install -f -y || exit 1
 
   # upgrade s3cmd, debian jessie (debian 8) version is too old
-  if [ "$(lsb_release -r | awk '{print $2}' | cut -d . -f 1)" = 8 ]; then
+  if [[ "$(lsb_release -r | awk '{print $2}' | cut -d . -f 1)" = 8 || "$(lsb_release -r | awk '{print $2}' | cut -d . -f 1)" = 10 ]]; then
     git clone https://github.com/s3tools/s3cmd.git /opt/s3cmd
     ln -fs /opt/s3cmd/s3cmd /usr/bin/s3cmd
   fi
 
 elif [ "$(type -p yum)" ]; then
   RHEL_VERSION=el7
-  if [[ ${PY_BINARY} == "python3" ]]; then
+  if ! [ -x "$(command -v lsb_release)" ]; then
+      sudo yum install -y redhat-lsb-core
+  fi
+  if [[ ${PY_BINARY} == "python3" && -z "$(lsb_release -r|grep '\s8.')" ]]; then
     sudo yum install -y centos-release-scl-rh
     sudo yum-config-manager --enable centos-sclo-rh-testing
 
@@ -87,6 +95,10 @@ fi
 
 head -n 1 /opt/zato/current/bin/zato
 
+curl https://dl.min.io/client/mc/release/linux-amd64/mc > /tmp/minio-client && chmod +x /tmp/minio-client
+/tmp/minio-client config host add s3 https://s3.amazonaws.com "${ZATO_S3_ACCESS_KEY}" "${ZATO_S3_SECRET_KEY}" --api S3v4
+
+su - zato -c "$(head -n 1 /opt/zato/current/bin/zato|cut -d '!' -f 2) -c 'import sys; print(sys.version_info)' 2>&1"
 su - zato -c 'zato --version 1>/tmp/zato-version 2>&1'
 
 cat /tmp/zato-version
@@ -97,10 +109,7 @@ if [[ -n "$(grep 'Zato ' /tmp/zato-version | grep $PY_VERSION)" ]]; then
   echo "Zato version output: $(cat /tmp/zato-version)"
   if [[ -n "${ZATO_UPLOAD_PACKAGES}" && "${ZATO_UPLOAD_PACKAGES}" == "y" ]]; then
       echo "Tests passed..Uploading packages"
-      s3cmd sync \
-        --access_key=$ZATO_S3_ACCESS_KEY \
-        --secret_key=$ZATO_S3_SECRET_KEY \
-          /tmp/packages/ "$ZATO_S3_BUCKET_NAME/"
+      /tmp/minio-client cp -r /tmp/packages/ s3/zato.travis.1/
       if [[ $? -eq 0 ]]; then
           echo "Package uploaded"
       else
