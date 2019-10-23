@@ -38,7 +38,8 @@ RUN add-apt-repository "deb [arch=amd64] https://zato.io/repo/stable/3.1/${ZATO_
 
 # Install latest updates
 WORKDIR /opt/zato/current
-RUN git pull && ./update.sh &&  mkdir -p /var/log/supervisor /var/run/sshd/
+RUN git checkout -- ./requirements.txt && ./update.sh && mkdir -p /var/log/supervisor /var/run/sshd/
+RUN ./bin/pip install supervisord-dependent-startup && sed -i '/^\[include\]/i [eventlistener:dependentstartup]\ncommand=python -m supervisord_dependent_startup\nautostart=true\nautorestart=unexpected\nstartretries=0\nexitcodes=0,3\nevents=PROCESS_STATE\n' /etc/supervisor/supervisord.conf
 
 # Download Dockerize
 ENV DOCKERIZE_VERSION v0.11.0

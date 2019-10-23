@@ -15,6 +15,14 @@ prompt = mysupervisor
 [rpcinterface:supervisor]
 supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
 
+[eventlistener:dependentstartup]
+command=/opt/zato/current/bin/python -m supervisord_dependent_startup
+autostart=true
+autorestart=unexpected
+startretries=0
+exitcodes=0,3
+events=PROCESS_STATE
+
 [program:ssh]
 command = /usr/sbin/sshd -D
 user = root
@@ -25,8 +33,10 @@ numprocs=1
 process_name = redis
 command = redis-server
 user = zato
+autostart=false
 autorestart = false
 numprocs=1
+dependent_startup=true
 {{ end }}
 
 {{ if or ( empty .Env.ODB_HOSTNAME ) ( eq .Env.ODB_HOSTNAME "localhost" ) }}
@@ -34,77 +44,102 @@ numprocs=1
 command=postgres
 user=postgres
 environment=PGDATA="{{ .Env.PGDATA }}"
+autostart=false
 autorestart=true
 stderr_logfile=/var/log/postgresql/main.log
 numprocs=1
+dependent_startup=true
 {{ end }}
 
-{{ if .Env.ZATO_IDE_PUBLISHER_PASSWORD }}
-[program:ide_password_update]
-command=/opt/zato/ide_password_update.sh
-directory=/opt/zato/
-user=zato
+[program:zato-load-balancer]
+command = /opt/zato/zato_start_load_balancer
+user = zato
+autostart=false
 autorestart = unexpected
 stopasgroup = true
 killasgroup = true
 numprocs=1
-{{ end }}
+dependent_startup=true
+
+[program:zatoserver1]
+command = /opt/zato/zato_start_server1
+user = zato
+autostart=false
+autorestart = unexpected
+stopasgroup = true
+killasgroup = true
+numprocs=1
+dependent_startup=true
+
+[program:zatoserver2]
+command = /opt/zato/zato_start_server2
+user = zato
+autostart=false
+autorestart = unexpected
+stopasgroup = true
+killasgroup = true
+numprocs=1
+dependent_startup=true
+dependent_startup_wait_for=zatoserver1:running
+
+[program:zatowebadmin]
+command = /opt/zato/zato_start_web_admin
+user = zato
+autostart=false
+autorestart = unexpected
+stopasgroup = true
+killasgroup = true
+numprocs=1
+dependent_startup=true
+dependent_startup_wait_for=zatoserver1:running
+
+[program:zatoscheduler]
+command = /opt/zato/zato_start_scheduler
+user = zato
+autostart=false
+autorestart = unexpected
+stopasgroup = true
+killasgroup = true
+numprocs=1
+dependent_startup=true
+dependent_startup_wait_for=zatoserver1:running
+
+[program:hotdeploy]
+command=/opt/zato/hotdeploy-utility.sh
+directory=/opt/zato/
+autostart=false
+autorestart = false
+stopasgroup = true
+killasgroup = true
+numprocs=1
+dependent_startup=true
+dependent_startup_wait_for=zatoserver1:running
 
 {{ if .Env.ZATO_ENMASSE_FILE }}
 [program:enmasse]
 command=/opt/zato/enmasse-utility.sh
 directory=/opt/zato/
 user=zato
+autostart=false
 autorestart = false
 stopasgroup = true
 killasgroup = true
 numprocs=1
+dependent_startup=true
+; only after hotdeploy exited
+dependent_startup_wait_for=hotdeploy:exited zatoserver1:running
 {{ end }}
 
-[program:hotdeploy]
-command=/opt/zato/hotdeploy-utility.sh
+{{ if .Env.ZATO_IDE_PUBLISHER_PASSWORD }}
+[program:idepasswordupdate]
+command=/opt/zato/ide_password_update.sh
 directory=/opt/zato/
-autorestart = false
-stopasgroup = true
-killasgroup = true
-numprocs=1
-
-[program:zato-load-balancer]
-command = /opt/zato/zato_start_load_balancer
-user = zato
+user=zato
+autostart=false
 autorestart = unexpected
 stopasgroup = true
 killasgroup = true
 numprocs=1
-
-[program:zato-server1]
-command = /opt/zato/zato_start_server1
-user = zato
-autorestart = unexpected
-stopasgroup = true
-killasgroup = true
-numprocs=1
-
-[program:zato-server2]
-command = /opt/zato/zato_start_server2
-user = zato
-autorestart = unexpected
-stopasgroup = true
-killasgroup = true
-numprocs=1
-
-[program:zato-web-admin]
-command = /opt/zato/zato_start_web_admin
-user = zato
-autorestart = unexpected
-stopasgroup = true
-killasgroup = true
-numprocs=1
-
-[program:zato-scheduler]
-command = /opt/zato/zato_start_scheduler
-user = zato
-autorestart = unexpected
-stopasgroup = true
-killasgroup = true
-numprocs=1
+dependent_startup=true
+dependent_startup_wait_for=zatoserver1:running
+{{ end }}
