@@ -4,7 +4,15 @@ source /etc/environment
 /usr/local/bin/dockerize -wait tcp://localhost:17010 -timeout 10m || exit 1
 
 # add a new wait time
-sleep 5
+sleep 60
+
+set -x
+if [[ -n "$(find /opt/hot-deploy/ -type f)" ]]; then
+    find /opt/hot-deploy/ -type f -exec touch {} \;
+fi
+
+# add a new wait time
+sleep 10
 
 cd /opt/zato/env/qs-1 || exit 1
 [[ -z ${ZATO_SERVER_PATH} ]] && ZATO_SERVER_PATH="/opt/zato/env/qs-1/server1/"

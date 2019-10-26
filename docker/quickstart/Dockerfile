@@ -67,8 +67,7 @@ USER root
 # Copy Docker basic structure
 COPY entrypoint.sh /entrypoint.sh
 COPY quickstart-bootstrap.sh /opt/zato/quickstart-bootstrap.sh
-COPY enmasse-utility.sh /opt/zato/enmasse-utility.sh
-COPY hotdeploy-utility.sh /opt/zato/hotdeploy-utility.sh
+COPY import-utility.sh /opt/zato/import-utility.sh
 COPY supervisord.conf.template /opt/zato/supervisord.conf.template
 COPY update_password.config /opt/zato/update_password.config
 COPY zato_start_load_balancer /opt/zato/zato_start_load_balancer
