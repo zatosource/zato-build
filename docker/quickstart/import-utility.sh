@@ -4,7 +4,7 @@ source /etc/environment
 /usr/local/bin/dockerize -wait tcp://localhost:17010 -timeout 10m || exit 1
 
 # add a new wait time
-sleep 60
+sleep 20
 
 if [[ -d /opt/hot-deploy/ && -n "$(find /opt/hot-deploy/ -type f)" ]]; then
     find /opt/hot-deploy/ -type f -exec touch {} \;
@@ -12,8 +12,7 @@ fi
 
 if [[ -n ${ZATO_ENMASSE_FILE} ]]; then
     # add a new wait time and check server access
-    sleep 10
-    /usr/local/bin/dockerize -wait tcp://localhost:17010 -timeout 10m || exit 1
+    sleep ${ZATO_ENMASSE_SLEEP_TIME:-30}
 
     cd /opt/zato/env/qs-1 || exit 1
     [[ -z ${ZATO_SERVER_PATH} ]] && ZATO_SERVER_PATH="/opt/zato/env/qs-1/server1/"
