@@ -104,8 +104,8 @@ numprocs=1
 dependent_startup=true
 dependent_startup_wait_for=zatoserver1:running
 
-[program:hotdeploy]
-command=/opt/zato/hotdeploy-utility.sh
+[program:import]
+command=/opt/zato/import-utility.sh
 directory=/opt/zato/
 autostart=false
 autorestart = false
@@ -114,21 +114,6 @@ killasgroup = true
 numprocs=1
 dependent_startup=true
 dependent_startup_wait_for=zatoserver1:running
-
-{{ if .Env.ZATO_ENMASSE_FILE }}
-[program:enmasse]
-command=/opt/zato/enmasse-utility.sh
-directory=/opt/zato/
-user=zato
-autostart=false
-autorestart = false
-stopasgroup = true
-killasgroup = true
-numprocs=1
-dependent_startup=true
-; only after hotdeploy exited
-dependent_startup_wait_for=hotdeploy:exited zatoserver1:running
-{{ end }}
 
 {{ if .Env.ZATO_IDE_PUBLISHER_PASSWORD }}
 [program:idepasswordupdate]
