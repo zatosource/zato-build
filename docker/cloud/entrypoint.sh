@@ -138,6 +138,9 @@ case "$ZATO_POSITION" in
             sed -i -e 's|INFO|DEBUG|' /opt/zato/env/qs-1/config/repo/logging.conf
         fi
         sed -i 's/gunicorn_workers=2/gunicorn_workers=1/g' /opt/zato/env/qs-1/config/repo/server.conf
+        if [[ -n "${ZATO_SSO}" && "${ZATO_SSO}" == "y" ]]; then
+            sed -i 's/sso=False/sso=True/g' /opt/zato/env/qs-1/config/repo/server.conf
+        fi
 
         # If there is a file in the hot-deploy folder
         if [[ -n "$(find /opt/hot-deploy/ -type f)" ]]; then
