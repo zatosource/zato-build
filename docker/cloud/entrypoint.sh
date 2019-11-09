@@ -141,6 +141,9 @@ case "$ZATO_POSITION" in
         if [[ -n "${ZATO_SSO}" && "${ZATO_SSO}" == "y" ]]; then
             sed -i 's/sso=False/sso=True/g' /opt/zato/env/qs-1/config/repo/server.conf
         fi
+        if [[ -n "${ZATO_SSO_IS_APPROVAL_NEEDED}" && "${ZATO_SSO_IS_APPROVAL_NEEDED}" == "n" ]]; then
+            sed -i 's/is_approval_needed=True/is_approval_needed=False/g' /opt/zato/env/qs-1/config/repo/sso.conf
+        fi
 
         # If there is a file in the hot-deploy folder
         if [[ -n "$(find /opt/hot-deploy/ -type f)" ]]; then
