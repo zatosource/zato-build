@@ -17,9 +17,6 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     supervisor \
     tzdata
 
-# Install configobj (dependecy for configset.py)
-RUN pip3 install configobj
-
 # Enable additional repository
 RUN add-apt-repository universe
 
@@ -57,6 +54,9 @@ WORKDIR /opt/zato/current
 RUN git checkout -- ./requirements.txt && ./update.sh && mkdir -p /var/log/supervisor /var/run/sshd/
 
 USER root
+
+# Install configobj (dependecy for configset.py)
+RUN /usr/bin/pip3 install configobj
 
 # Copy Docker basic structure
 COPY configset.py /usr/local/bin/configset.py
