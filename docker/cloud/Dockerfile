@@ -55,9 +55,6 @@ RUN git checkout -- ./requirements.txt && ./update.sh && mkdir -p /var/log/super
 
 USER root
 
-# Install configobj (dependecy for configset.py)
-RUN /usr/bin/pip3 install configobj
-
 # Copy Docker basic structure
 COPY configset.py /usr/local/bin/configset.py
 COPY entrypoint.sh /entrypoint.sh
