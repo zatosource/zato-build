@@ -1,4 +1,4 @@
-#!#!/opt/zato/3.1.0/code/bin/python
+#!/opt/zato/3.1.0/code/bin/python
 
 import os
 import configobj
