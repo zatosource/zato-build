@@ -1,15 +1,15 @@
-#!/usr/bin/python3
+#!#!/opt/zato/3.1.0/code/bin/python
 
 import os
 import configobj
 
 server_config_changed = False
 server_config_path = '/opt/zato/env/qs-1/config/repo/server.conf'
-server_config = configobj.ConfigObj(server_config_path)
+server_config = configobj.ConfigObj(server_config_path, use_zato=False)
 
 sso_config_changed = False
 sso_config_path = '/opt/zato/env/qs-1/config/repo/sso.conf'
-sso_config = configobj.ConfigObj(sso_config_path)
+sso_config = configobj.ConfigObj(sso_config_path, use_zato=False)
 
 def patch(key, value):
     parts = key.split('__')
