@@ -1,4 +1,17 @@
 #!/opt/zato/3.1.0/code/bin/python
+# -*- coding: utf-8 -*-
+
+"""
+Copyright (C) 2019, Zato Source s.r.o. https://zato.io
+Licensed under LGPLv3, see LICENSE.txt for terms and conditions.
+
+configset.py is used to dockerize Zato components. This script allows you to configure Zato's server.conf and sso.conf by environment variables.
+
+Examples:
+server__component_enabled__sso=True configures server.conf [component_enabled] sso with value 'True'
+sso__signup__is_approval_needed=False configures sso.conf [signup] is_approval_needed with value 'False'
+
+"""
 
 import os
 import configobj
