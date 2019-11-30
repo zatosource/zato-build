@@ -56,12 +56,13 @@ RUN git checkout -- ./requirements.txt && ./update.sh && mkdir -p /var/log/super
 USER root
 
 # Copy Docker basic structure
+COPY configset.py /usr/local/bin/configset.py
 COPY entrypoint.sh /entrypoint.sh
 COPY hotdeploy-utility.sh /opt/zato/hotdeploy-utility.sh
 COPY enmasse-utility.sh /opt/zato/enmasse-utility.sh
 COPY zato.conf /etc/supervisor/conf.d/zato.conf
 
-RUN chmod 755 /entrypoint.sh /opt/zato/hotdeploy-utility.sh /opt/zato/enmasse-utility.sh
+RUN chmod 755 /usr/local/bin/configset.py /entrypoint.sh /opt/zato/hotdeploy-utility.sh /opt/zato/enmasse-utility.sh
 
 EXPOSE 8183 17010 17011 11223
 ENTRYPOINT ["/tini", "--"]

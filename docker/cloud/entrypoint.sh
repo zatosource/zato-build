@@ -116,7 +116,7 @@ case "$ZATO_POSITION" in
         echo "${ZATO_BIN} create load_balancer ${OPTIONS} /opt/zato/env/qs-1/"
         gosu zato bash -c "${ZATO_BIN} create load_balancer ${OPTIONS} /opt/zato/env/qs-1/"
 
-        sed -i 's/127.0.0.1:11223/0.0.0.0:11223/g' /opt/zato/env/qs-1/config/repo/zato.config
+        server__main__gunicorn_bind=0.0.0.0:17010 configset.py
     ;;
     "scheduler" )
         SECRET_KEY="--secret_key ${SECRET_KEY}"
@@ -137,13 +137,7 @@ case "$ZATO_POSITION" in
         if [[ -n "${VERBOSE}" && "${VERBOSE}" == "y" ]]; then
             sed -i -e 's|INFO|DEBUG|' /opt/zato/env/qs-1/config/repo/logging.conf
         fi
-        sed -i 's/gunicorn_workers=2/gunicorn_workers=1/g' /opt/zato/env/qs-1/config/repo/server.conf
-        if [[ -n "${ZATO_SSO}" && "${ZATO_SSO}" == "y" ]]; then
-            sed -i 's/sso=False/sso=True/g' /opt/zato/env/qs-1/config/repo/server.conf
-        fi
-        if [[ -n "${ZATO_SSO_IS_APPROVAL_NEEDED}" && "${ZATO_SSO_IS_APPROVAL_NEEDED}" == "n" ]]; then
-            sed -i 's/is_approval_needed=True/is_approval_needed=False/g' /opt/zato/env/qs-1/config/repo/sso.conf
-        fi
+        server__main__gunicorn_workers=1 configset.py
 
         # If there is a file in the hot-deploy folder
         if [[ -n "$(find /opt/hot-deploy/ -type f)" ]]; then
@@ -187,6 +181,6 @@ esac
 # Hot deploy configuration
 [[ -d /opt/hot-deploy ]] || mkdir -p /opt/hot-deploy
 chmod 777 /opt/hot-deploy
-[[ -f /opt/zato/env/qs-1/config/repo/server.conf ]] && sed -i -e 's|pickup_dir=.*|pickup_dir=/opt/hot-deploy|' /opt/zato/env/qs-1/config/repo/server.conf
+[[ -f /opt/zato/env/qs-1/config/repo/server.conf ]] && server__hot_deploy__pickup_dir=/opt/hot-deploy configset.py
 
 exec /usr/bin/supervisord -n -c /etc/supervisor/supervisord.conf
