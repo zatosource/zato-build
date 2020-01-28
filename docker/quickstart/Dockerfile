@@ -4,6 +4,7 @@ FROM ubuntu:18.04
 LABEL maintainer="Anielkis Herrera <aherrera@zato.io>, Dariusz Suchojad <dsuch@zato.io>"
 
 ENV ZATO_BIN /opt/zato/current/bin/zato
+ARG zato_py_version
 
 # Install helper programs used during Zato installation
 RUN apt-get update && apt-get install -y \
@@ -28,18 +29,20 @@ RUN DEBIAN_FRONTEND=noninteractive \
 RUN add-apt-repository universe
 
 # Add the package signing key
-RUN curl -s https://zato.io/repo/zato-0CBD7F72.pgp.asc | sudo apt-key add -
+RUN curl -s https://zato.io/repo/zato-3.1-C9B13DF28CFE287D.pgp.txt | sudo apt-key add -
 
 # Add Zato repo and install the package
 # update sources and install Zato
-ENV DOCKERIZE_VERSION v0.11.0
-RUN apt-add-repository https://zato.io/repo/stable/3.0/ubuntu && apt-get update && apt-get install -y zato
+ENV ZATO_PY_VERSION=$zato_py_version
+RUN add-apt-repository "deb [arch=amd64] https://zato.io/repo/stable/3.1/${ZATO_PY_VERSION:-py3}/ubuntu $(lsb_release -cs) main" && apt-get update && apt-get install -y zato
 
 # Install latest updates
 WORKDIR /opt/zato/current
-RUN git pull && ./update.sh &&  mkdir -p /var/log/supervisor /var/run/sshd/
+RUN git checkout -- ./requirements.txt && ./update.sh && mkdir -p /var/log/supervisor /var/run/sshd/
+RUN ./bin/pip install supervisord-dependent-startup && sed -i '/^\[include\]/i [eventlistener:dependentstartup]\ncommand=python -m supervisord_dependent_startup\nautostart=true\nautorestart=unexpected\nstartretries=0\nexitcodes=0,3\nevents=PROCESS_STATE\n' /etc/supervisor/supervisord.conf
 
 # Download Dockerize
+ENV DOCKERIZE_VERSION v0.11.0
 RUN curl -sfL https://github.com/powerman/dockerize/releases/download/${DOCKERIZE_VERSION}/dockerize-`uname -s`-`uname -m` | install /dev/stdin /usr/local/bin/dockerize
 
 # Install gosu for easy step-down from root
@@ -64,8 +67,7 @@ USER root
 # Copy Docker basic structure
 COPY entrypoint.sh /entrypoint.sh
 COPY quickstart-bootstrap.sh /opt/zato/quickstart-bootstrap.sh
-COPY enmasse-utility.sh /opt/zato/enmasse-utility.sh
-COPY hotdeploy-utility.sh /opt/zato/hotdeploy-utility.sh
+COPY import-utility.sh /opt/zato/import-utility.sh
 COPY supervisord.conf.template /opt/zato/supervisord.conf.template
 COPY update_password.config /opt/zato/update_password.config
 COPY zato_start_load_balancer /opt/zato/zato_start_load_balancer

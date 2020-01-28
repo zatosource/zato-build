@@ -5,6 +5,7 @@ LABEL maintainer="Anielkis Herrera <aherrera@zato.io>, Dariusz Suchojad <dsuch@z
 LABEL Description="Zato's Docker image for cloud environments" Version="3.1.0"
 
 ENV ZATO_BIN /opt/zato/current/bin/zato
+ARG zato_py_version
 
 # Install helper programs used during Zato installation
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
@@ -20,13 +21,12 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
 RUN add-apt-repository universe
 
 # Add the package signing key
-RUN curl -s https://zato.io/repo/zato-0CBD7F72.pgp.asc | apt-key add -
+RUN curl -s https://zato.io/repo/zato-3.1-C9B13DF28CFE287D.pgp.txt | apt-key add -
 
 # Add Zato repo and install the package
 # update sources and install Zato
-RUN apt-add-repository https://zato.io/repo/stable/3.0/ubuntu && apt-get update && apt-get install -y libsasl2-dev python-dev libldap2-dev libssl-dev postgresql-client
-ADD zato-3.1.0-python_amd64-bionic.deb /zato-3.1.0-python_amd64-bionic.deb
-RUN dpkg -i /zato-3.1.0-python_amd64-bionic.deb ; apt-get install -f -y && rm -f /zato-3.1.0-python_amd64-bionic.deb
+ENV ZATO_PY_VERSION=$zato_py_version
+RUN add-apt-repository "deb [arch=amd64] https://zato.io/repo/stable/3.1/${ZATO_PY_VERSION:-py3}/ubuntu $(lsb_release -cs) main" && apt-get update && apt-get install -y zato
 
 # Download Dockerize
 ENV DOCKERIZE_VERSION v0.11.0
@@ -43,20 +43,26 @@ RUN set -x \
     && chmod +x /usr/local/bin/gosu \
     && gosu nobody true
 
+ENV PG_MAJOR 10
+ENV PGBINPATH /usr/lib/postgresql/$PG_MAJOR/bin
+ENV PATH $PATH:$PGBINPATH
+ENV PGDATA /var/lib/postgresql/data
+RUN apt-get update && apt-get install -y postgresql-client && rm -rf /var/lib/apt/lists/*
+
 # Install latest updates
 WORKDIR /opt/zato/current
-ADD patcher.sh /opt/zato/current/patcher.sh
-RUN git pull && ./update.sh && bash ./patcher.sh && mkdir -p /var/log/supervisor /var/run/sshd/
+RUN git checkout -- ./requirements.txt && ./update.sh && mkdir -p /var/log/supervisor /var/run/sshd/
 
 USER root
 
 # Copy Docker basic structure
+COPY configset.py /usr/local/bin/configset.py
 COPY entrypoint.sh /entrypoint.sh
 COPY hotdeploy-utility.sh /opt/zato/hotdeploy-utility.sh
 COPY enmasse-utility.sh /opt/zato/enmasse-utility.sh
 COPY zato.conf /etc/supervisor/conf.d/zato.conf
 
-RUN chmod 755 /entrypoint.sh /opt/zato/hotdeploy-utility.sh /opt/zato/enmasse-utility.sh
+RUN chmod 755 /usr/local/bin/configset.py /entrypoint.sh /opt/zato/hotdeploy-utility.sh /opt/zato/enmasse-utility.sh
 
 EXPOSE 8183 17010 17011 11223
 ENTRYPOINT ["/tini", "--"]

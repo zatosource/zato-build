@@ -3,6 +3,8 @@
 env | grep _ >> /etc/environment
 set -e
 
+cd /opt/zato/current || exit 1
+git checkout -- ./requirements.txt && ./update.sh || exit 1
 cd /opt/zato/ || exit 1
 # touch /opt/zato/zato_user_password /opt/zato/change_zato_password && \
 
@@ -102,6 +104,6 @@ fi
 # Hot deploy configuration
 [[ -d /opt/hot-deploy ]] || mkdir -p /opt/hot-deploy
 chmod 777 /opt/hot-deploy
-sed -i -e 's|pickup_dir=.*|pickup_dir=/opt/hot-deploy|' /opt/zato/env/qs-1/config/repo/server.conf
+sed -i -e 's|pickup_dir=.*|pickup_dir=/opt/hot-deploy|' /opt/zato/env/qs-1/server1/config/repo/server.conf
 
 exec /usr/bin/supervisord -c /opt/zato/supervisord.conf

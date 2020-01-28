@@ -31,9 +31,13 @@ patch -p0 -d eggs < patches/requests/sessions.py.diff
 patch -p0 -d eggs < patches/sqlalchemy/sql/crud.py.diff
 patch -p0 -d eggs < patches/ws4py/server/geventserver.py.diff
 
-if [ $HAS_PYTHON2 == 1 ]
+if [ $EXTRA_REQ_VERSION == 27 ]
 then
     patch -p0 -d eggs < patches/jsonpointer/jsonpointer.py.diff
     patch -p0 -d eggs < patches/anyjson/__init__.py.diff
     patch -p0 -d eggs < patches/oauth/oauth.py.diff
 fi
+
+sed -i -e 's|numpy==.*|numpy|' \
+    -e 's|toolz==.*|https://github.com/pytoolz/toolz/archive/main.zip#egg=toolz|' \
+    requirements.txt

@@ -71,28 +71,52 @@ SERVER_NAME="$(hostname)"
 
 case "$ZATO_POSITION" in
     "load-balancer" )
-        echo "Checking ODB status"
-        QUERY="\dt"
-        if [[ -z "$(PGPASSWORD=${ODB_PASSWORD} psql --command="${QUERY}" --host=${ODB_HOSTNAME} --port=${ODB_PORT} --username=${ODB_USERNAME} ${ODB_NAME} |grep -v 'Did not find any relations'|grep ' | table | ')" ]]; then
-            echo "${ZATO_BIN} create odb ${OPTIONS} ${ODB_DATA} ${ODB_TYPE}"
-            gosu zato bash -c "${ZATO_BIN} create odb ${OPTIONS} ${ODB_DATA} ${ODB_TYPE}"
-        else
-            echo "ODB was created"
-        fi
+        if [[ "$ODB_TYPE" == "postgresql" ]]; then
+
+            echo "Checking ODB status before"
+            QUERY="\dt"
+            if [[ -z "$(PGPASSWORD=${ODB_PASSWORD} psql --command="${QUERY}" --host=${ODB_HOSTNAME} --port=${ODB_PORT} --username=${ODB_USERNAME} ${ODB_NAME} |grep -v 'Did not find any relations'|grep ' | table | ')" ]]; then
+                echo "${ZATO_BIN} create odb ${OPTIONS} ${ODB_DATA} ${ODB_TYPE}"
+                gosu zato bash -c "${ZATO_BIN} create odb ${OPTIONS} ${ODB_DATA} ${ODB_TYPE}"
+            else
+                echo "ODB was created before"
+            fi
+
+            echo "Cluster ODB status"
+            QUERY="SELECT id FROM cluster WHERE name = '${CLUSTER_NAME}'"
+            if [[ -n "$(PGPASSWORD=${ODB_PASSWORD} psql --command="${QUERY}" --host=${ODB_HOSTNAME} --port=${ODB_PORT} --username=${ODB_USERNAME} ${ODB_NAME} |grep '(0 rows)')" ]]; then
+                echo "${ZATO_BIN} create cluster ${OPTIONS} ${ODB_DATA} ${ZATO_ADMIN_INVOKE_PASSWORD_PARAMS} ${ODB_TYPE} ${LB_HOSTNAME:-zato.localhost} ${LB_PORT:-11223} ${LB_AGENT_PORT:-20151} ${REDIS_HOSTNAME} ${REDIS_PORT:-6379} ${CLUSTER_NAME}"
+                gosu zato bash -c "${ZATO_BIN} create cluster ${OPTIONS} ${ODB_DATA} ${ZATO_ADMIN_INVOKE_PASSWORD_PARAMS} ${ODB_TYPE} ${LB_HOSTNAME:-zato.localhost} ${LB_PORT:-11223} ${LB_AGENT_PORT:-20151} ${REDIS_HOSTNAME} ${REDIS_PORT:-6379} ${CLUSTER_NAME}"
+            else
+                echo "Cluster was created before"
+            fi
+
+        elif [[ "$ODB_TYPE" == "mysql" ]]; then
+
+            echo "Checking ODB status"
+            QUERY="show tables"
+            if [[ "$(mysql --host=${ODB_HOSTNAME} --port=${ODB_PORT} -u ${ODB_USERNAME} -p${ODB_PASSWORD} ${ODB_NAME} --disable-column-names -B -e "${QUERY}" | wc -l)" == "0" ]]; then
+                echo "${ZATO_BIN} create odb ${OPTIONS} ${ODB_DATA} ${ODB_TYPE}"
+                gosu zato bash -c "${ZATO_BIN} create odb ${OPTIONS} ${ODB_DATA} ${ODB_TYPE}"
+            else
+                echo "ODB was created"
+            fi
 
         echo "Cluster ODB status"
-        QUERY="SELECT id FROM cluster WHERE name = '${CLUSTER_NAME}'"
-        if [[ -n "$(PGPASSWORD=${ODB_PASSWORD} psql --command="${QUERY}" --host=${ODB_HOSTNAME} --port=${ODB_PORT} --username=${ODB_USERNAME} ${ODB_NAME} |grep '(0 rows)')" ]]; then
-            echo "${ZATO_BIN} create cluster ${OPTIONS} ${ODB_DATA} ${ZATO_ADMIN_INVOKE_PASSWORD_PARAMS} ${ODB_TYPE} ${LB_HOSTNAME:-zato.localhost} ${LB_PORT:-11223} ${LB_AGENT_PORT:-20151} ${REDIS_HOSTNAME} ${REDIS_PORT:-6379} ${CLUSTER_NAME}"
-            gosu zato bash -c "${ZATO_BIN} create cluster ${OPTIONS} ${ODB_DATA} ${ZATO_ADMIN_INVOKE_PASSWORD_PARAMS} ${ODB_TYPE} ${LB_HOSTNAME:-zato.localhost} ${LB_PORT:-11223} ${LB_AGENT_PORT:-20151} ${REDIS_HOSTNAME} ${REDIS_PORT:-6379} ${CLUSTER_NAME}"
-        else
-            echo "Cluster was created before"
+            QUERY="SELECT id FROM cluster WHERE name = '${CLUSTER_NAME}'"
+            if [[ "$(mysql --host=${ODB_HOSTNAME} --port=${ODB_PORT} -u ${ODB_USERNAME} -p${ODB_PASSWORD} ${ODB_NAME} --disable-column-names -B -e "${QUERY}" | wc -l)" == "0" ]]; then
+                echo "${ZATO_BIN} create cluster ${OPTIONS} ${ODB_DATA} ${ZATO_ADMIN_INVOKE_PASSWORD_PARAMS} ${ODB_TYPE} ${LB_HOSTNAME:-zato.localhost} ${LB_PORT:-11223} ${LB_AGENT_PORT:-20151} ${REDIS_HOSTNAME} ${REDIS_PORT:-6379} ${CLUSTER_NAME}"
+                gosu zato bash -c "${ZATO_BIN} create cluster ${OPTIONS} ${ODB_DATA} ${ZATO_ADMIN_INVOKE_PASSWORD_PARAMS} ${ODB_TYPE} ${LB_HOSTNAME:-zato.localhost} ${LB_PORT:-11223} ${LB_AGENT_PORT:-20151} ${REDIS_HOSTNAME} ${REDIS_PORT:-6379} ${CLUSTER_NAME}"
+            else
+                echo "Cluster was created before"
+            fi
+
         fi
 
         echo "${ZATO_BIN} create load_balancer ${OPTIONS} /opt/zato/env/qs-1/"
         gosu zato bash -c "${ZATO_BIN} create load_balancer ${OPTIONS} /opt/zato/env/qs-1/"
 
-        sed -i 's/127.0.0.1:11223/0.0.0.0:11223/g' /opt/zato/env/qs-1/config/repo/zato.config
+        server__main__gunicorn_bind=0.0.0.0:17010 configset.py
     ;;
     "scheduler" )
         SECRET_KEY="--secret_key ${SECRET_KEY}"
@@ -113,7 +137,7 @@ case "$ZATO_POSITION" in
         if [[ -n "${VERBOSE}" && "${VERBOSE}" == "y" ]]; then
             sed -i -e 's|INFO|DEBUG|' /opt/zato/env/qs-1/config/repo/logging.conf
         fi
-        sed -i 's/gunicorn_workers=2/gunicorn_workers=1/g' /opt/zato/env/qs-1/config/repo/server.conf
+        server__main__gunicorn_workers=1 configset.py
 
         # If there is a file in the hot-deploy folder
         if [[ -n "$(find /opt/hot-deploy/ -type f)" ]]; then
@@ -157,6 +181,6 @@ esac
 # Hot deploy configuration
 [[ -d /opt/hot-deploy ]] || mkdir -p /opt/hot-deploy
 chmod 777 /opt/hot-deploy
-[[ -f /opt/zato/env/qs-1/config/repo/server.conf ]] && sed -i -e 's|pickup_dir=.*|pickup_dir=/opt/hot-deploy|' /opt/zato/env/qs-1/config/repo/server.conf
+[[ -f /opt/zato/env/qs-1/config/repo/server.conf ]] && server__hot_deploy__pickup_dir=/opt/hot-deploy configset.py
 
 exec /usr/bin/supervisord -n -c /etc/supervisor/supervisord.conf

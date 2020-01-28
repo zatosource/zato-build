@@ -11,7 +11,7 @@ metadata:
 {{ if empty $IDE_PUBLISHER_PASSWORD }}{{ $IDE_PUBLISHER_PASSWORD = uuidv4 }}{{ end }}
 {{ if empty $ZATO_ADMIN_INVOKE_PASSWORD }}{{ $ZATO_ADMIN_INVOKE_PASSWORD = uuidv4 }}{{ end }}
 {{ if empty $ODB_PASSWORD }}{{ $ODB_PASSWORD = uuidv4 }}{{ end }}
-apiVersion: apps/v1beta2
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: postgres
@@ -52,7 +52,7 @@ spec:
   selector:
     app: postgres
 ---
-apiVersion: apps/v1beta2
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: redis
@@ -88,7 +88,7 @@ spec:
   selector:
     app: redis
 ---
-apiVersion: apps/v1beta2
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: scheduler
@@ -130,6 +130,8 @@ spec:
             value: "{{ $IDE_PUBLISHER_PASSWORD }}"
           - name: ZATO_ADMIN_INVOKE_PASSWORD
             value: "{{ $ZATO_ADMIN_INVOKE_PASSWORD }}"
+          {{ if .Env.ZATO_ENMASSE_FILE }}- name: ZATO_ENMASSE_FILE
+            value: "{{ .Env.ZATO_ENMASSE_FILE }}"{{ end }}
           - name: REDIS_HOSTNAME
             value: "redis.{{ default "zato" .Env.NAMESPACE }}.svc.cluster.local"
           - name: REDIS_PORT
@@ -147,7 +149,7 @@ spec:
           - name: ODB_PASSWORD
             value: "{{ $ODB_PASSWORD }}"
 ---
-apiVersion: apps/v1beta2
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: bootstrap
@@ -189,6 +191,8 @@ spec:
             value: "{{ $IDE_PUBLISHER_PASSWORD }}"
           - name: ZATO_ADMIN_INVOKE_PASSWORD
             value: "{{ $ZATO_ADMIN_INVOKE_PASSWORD }}"
+          {{ if .Env.ZATO_ENMASSE_FILE }}- name: ZATO_ENMASSE_FILE
+            value: "{{ .Env.ZATO_ENMASSE_FILE }}"{{ end }}
           - name: REDIS_HOSTNAME
             value: "redis.{{ default "zato" .Env.NAMESPACE }}.svc.cluster.local"
           - name: REDIS_PORT
@@ -206,7 +210,7 @@ spec:
           - name: ODB_PASSWORD
             value: "{{ $ODB_PASSWORD }}"
 ---
-apiVersion: apps/v1beta2
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: webadmin
@@ -248,6 +252,8 @@ spec:
             value: "{{ $IDE_PUBLISHER_PASSWORD }}"
           - name: ZATO_ADMIN_INVOKE_PASSWORD
             value: "{{ $ZATO_ADMIN_INVOKE_PASSWORD }}"
+          {{ if .Env.ZATO_ENMASSE_FILE }}- name: ZATO_ENMASSE_FILE
+            value: "{{ .Env.ZATO_ENMASSE_FILE }}"{{ end }}
           - name: REDIS_HOSTNAME
             value: "redis.{{ default "zato" .Env.NAMESPACE }}.svc.cluster.local"
           - name: REDIS_PORT
@@ -268,7 +274,7 @@ spec:
         - containerPort: 8183
           name: webadmin
 ---
-apiVersion: apps/v1beta2
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: server
@@ -309,6 +315,8 @@ spec:
             value: "{{ $IDE_PUBLISHER_PASSWORD }}"
           - name: ZATO_ADMIN_INVOKE_PASSWORD
             value: "{{ $ZATO_ADMIN_INVOKE_PASSWORD }}"
+          {{ if .Env.ZATO_ENMASSE_FILE }}- name: ZATO_ENMASSE_FILE
+            value: "{{ .Env.ZATO_ENMASSE_FILE }}"{{ end }}
           - name: REDIS_HOSTNAME
             value: "redis.{{ default "zato" .Env.NAMESPACE }}.svc.cluster.local"
           - name: REDIS_PORT
