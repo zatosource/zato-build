@@ -47,7 +47,7 @@ services:
         reservations:
           memory: 20M
   zato_scheduler:
-    image: registry.gitlab.com/zatosource/docker-registry/cloud:3.1.0
+    image: registry.gitlab.com/zatosource/docker-registry/cloud:3.1
     deploy:
       restart_policy:
         condition: any
@@ -77,7 +77,7 @@ services:
       - redis
       - postgres
   zato_bootstrap:
-    image: registry.gitlab.com/zatosource/docker-registry/cloud:3.1.0
+    image: registry.gitlab.com/zatosource/docker-registry/cloud:3.1
     environment:
       - VERBOSE={{ default "n" .Env.VERBOSE }}
       - LB_HOSTNAME={{ default "zato_lb" .Env.LB_HOSTNAME }}
@@ -121,7 +121,7 @@ services:
       - traefik.docker.network=zato_backend
       - traefik.http.middlewares.testHeader.Headers.CustomRequestHeaders.X-Auth-Token=True
       - traefik.http.middlewares.testHeader.Headers.CustomResponseHeaders.X-Auth-Token=True
-    image: registry.gitlab.com/zatosource/docker-registry/cloud:3.1.0
+    image: registry.gitlab.com/zatosource/docker-registry/cloud:3.1
     {{ if .Env.HOTDEPLOY }}volumes:
       - /home/docker/hotdeploy/:/opt/hot-deploy/{{ end }}
     deploy:
@@ -166,7 +166,7 @@ services:
       - default
       - backend
   zato_webadmin:
-    image: registry.gitlab.com/zatosource/docker-registry/cloud:3.1.0
+    image: registry.gitlab.com/zatosource/docker-registry/cloud:3.1
     deploy:
       restart_policy:
         condition: any
