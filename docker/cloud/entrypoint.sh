@@ -3,8 +3,9 @@
 env | grep _ >> /etc/environment
 set -e
 
+cd /opt/zato/current || exit 1
+git checkout -- ./requirements.txt && ./update.sh
 cd /opt/zato/ || exit 1
-# touch /opt/zato/zato_user_password /opt/zato/change_zato_password && \
 
 if [[ -z ${CLUSTER_NAME} ]]; then
     echo "CLUSTER_NAME can't be empty"
@@ -140,7 +141,7 @@ case "$ZATO_POSITION" in
         server__main__gunicorn_workers=1 configset.py
 
         # If there is a file in the hot-deploy folder
-        if [[ -n "$(find /opt/hot-deploy/ -type f)" ]]; then
+        if [[ -d "/opt/hot-deploy" && -n "$(find /opt/hot-deploy/ -type f)" ]]; then
             cat > /etc/supervisor/conf.d/zato_hotdeploy.conf <<-EOF
 [program:hotdeploy]
 command=/opt/zato/hotdeploy-utility.sh
@@ -148,6 +149,8 @@ directory=/opt/zato/
 autorestart=unexpected
 numprocs=1
 EOF
+            chmod 777 /opt/hot-deploy
+            [[ -f /opt/zato/env/qs-1/config/repo/server.conf ]] && server__hot_deploy__pickup_dir=/opt/hot-deploy configset.py
         fi
 
         # If variable ZATO_ENMASSE_FILE is not empty
@@ -177,10 +180,5 @@ EOF
         fi
     ;;
 esac
-
-# Hot deploy configuration
-[[ -d /opt/hot-deploy ]] || mkdir -p /opt/hot-deploy
-chmod 777 /opt/hot-deploy
-[[ -f /opt/zato/env/qs-1/config/repo/server.conf ]] && server__hot_deploy__pickup_dir=/opt/hot-deploy configset.py
 
 exec /usr/bin/supervisord -n -c /etc/supervisor/supervisord.conf
