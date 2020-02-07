@@ -3,8 +3,9 @@
 env | grep _ >> /etc/environment
 set -e
 
+cd /opt/zato/current || exit 1
+git checkout -- ./requirements.txt && ./update.sh
 cd /opt/zato/ || exit 1
-# touch /opt/zato/zato_user_password /opt/zato/change_zato_password && \
 
 if [[ -z ${CLUSTER_NAME} ]]; then
     echo "CLUSTER_NAME can't be empty"
