@@ -8,7 +8,7 @@ source /etc/environment
 sleep 60
 
 set -x
-if [[ -n "$(find /opt/hot-deploy/ -type f)" ]]; then
+if [[ -d "/opt/hot-deploy" && -n "$(find /opt/hot-deploy/ -type f)" ]]; then
     for (( i = 0; i < 3; i++ )); do
         find /opt/hot-deploy/ -type f -exec touch {} \;
         sleep 20

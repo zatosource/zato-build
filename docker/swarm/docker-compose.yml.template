@@ -201,8 +201,8 @@ services:
     ports:
       - {{ default 8183 .Env.ZATO_WEB_ADMIN_PORT }}:8183
   zato_lb:
-    image: traefik:2.1
-    command: --providers.docker --providers.docker.swarmmode --providers.docker.swarmmoderefreshseconds=5 --providers.docker.endpoint=unix:///var/run/docker.sock --providers.docker.watch --providers.docker.exposedbydefault=false --api
+    image: traefik:1.7-alpine
+    command: -l DEBUG -c /dev/null --docker --docker.domain=traefik --docker.endpoint=unix:///var/run/docker.sock --docker.watch --docker.exposedByDefault=false --api --respondingTimeouts --respondingTimeouts.readTimeout=5s --respondingTimeouts.writeTimeout=5s
     deploy:
       replicas: 1
       update_config:
@@ -217,6 +217,9 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
       - 8080:8080
+    depends_on:
+      - zato_webadmin
+      - zato_server
     networks:
       - default
       - backend
