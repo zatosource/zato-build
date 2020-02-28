@@ -13,6 +13,8 @@ spec:
     metadata:
       labels:
         {{- include "zato.postgresql.selectorLabels" . | nindent 8 }}
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
     spec:
     {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -28,8 +30,8 @@ spec:
           image: "{{ .Values.postgresql.image.repository }}:{{ .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.postgresql.image.pullPolicy }}
           ports:
-            - name: postgres
-              containerPort: 5432
+            - name: {{ .Values.postgresql.fullname }}
+              containerPort: {{ default 5432 .Values.odb_port }}
               protocol: TCP
           env:
             {{- toYaml .Values.postgresql.env | nindent 12 }}
@@ -63,6 +65,8 @@ spec:
     metadata:
       labels:
         {{- include "zato.redis.selectorLabels" . | nindent 8 }}
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
     spec:
     {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -79,7 +83,7 @@ spec:
           imagePullPolicy: {{ .Values.redis.image.pullPolicy }}
           ports:
             - name: redis
-              containerPort: 6379
+              containerPort: {{ default 6379 .Values.redis_port }}
               protocol: TCP
           resources:
             {{- toYaml .Values.redis.resources | nindent 12 }}
@@ -111,6 +115,8 @@ spec:
     metadata:
       labels:
         {{- include "zato.zatoscheduler.selectorLabels" . | nindent 8 }}
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
     spec:
     {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -127,7 +133,7 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: postgres
-              containerPort: 5432
+              containerPort: {{ default 5432 .Values.odb_port }}
               protocol: TCP
           resources:
             {{- toYaml .Values.zatoscheduler.resources | nindent 12 }}
@@ -160,6 +166,8 @@ spec:
     metadata:
       labels:
         {{- include "zato.zatobootstrap.selectorLabels" . | nindent 8 }}
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
     spec:
     {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -174,10 +182,6 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          ports:
-            - name: postgres
-              containerPort: 5432
-              protocol: TCP
           resources:
             {{- toYaml .Values.zatobootstrap.resources | nindent 12 }}
       {{- with .Values.zatobootstrap.nodeSelector }}
@@ -209,6 +213,8 @@ spec:
     metadata:
       labels:
         {{- include "zato.zatowebadmin.selectorLabels" . | nindent 8 }}
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
     spec:
     {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -224,8 +230,8 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
-            - name: postgres
-              containerPort: 5432
+            - name: {{ default "web" .Values.zatowebadmin.service.name }}
+              containerPort: {{ default 8183 .Values.zatowebadmin.service.port }}
               protocol: TCP
           resources:
             {{- toYaml .Values.zatowebadmin.resources | nindent 12 }}
@@ -258,6 +264,8 @@ spec:
     metadata:
       labels:
         {{- include "zato.zatoserver.selectorLabels" . | nindent 8 }}
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
     spec:
     {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -273,8 +281,8 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
-            - name: postgres
-              containerPort: 5432
+            - name: {{ default "server" .Values.zatoserver.service.name }}
+              containerPort: {{ default 17010 .Values.zatoserver.service.port }}
               protocol: TCP
           resources:
             {{- toYaml .Values.zatoserver.resources | nindent 12 }}

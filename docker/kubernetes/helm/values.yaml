@@ -4,6 +4,7 @@
 
 replicaCount: 1
 namespace: "zato"
+
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
@@ -11,39 +12,23 @@ image:
   repository: registry.gitlab.com/zatosource/docker-registry/cloud
   pullPolicy: IfNotPresent
 
-env:
-  - name: LB_PORT
-    value: "80"
-  - name: LB_AGENT_PORT
-    value: "20151"
-  - name: CLUSTER_NAME
-    value: "zato"
-  - name: SECRET_KEY
-    value: "hS4KVhIMPUGxoS1M6xYLq1UW0_lZOFe5eDoRs9Q9Hy0="
-  - name: JWT_SECRET_KEY
-    value: "p5m2wJxDF3xxFrZLdDu8m15fRUak4eZDPJl5Bfz_wm8="
-  - name: ZATO_WEB_ADMIN_PASSWORD
-    value: "zato"
-  - name: ZATO_IDE_PUBLISHER_PASSWORD
-    value: "zato"
-  - name: ZATO_ADMIN_INVOKE_PASSWORD
-    value: "c97f1aa4-8a20-441e-b46d-d37711a06afc"
-  - name: REDIS_HOSTNAME
-    value: "redis.zato.svc.cluster.local"
-  - name: REDIS_PORT
-    value: {{ .Values.redis.service.port }}
-  - name: ODB_TYPE
-    value: "postgresql"
-  - name: ODB_HOSTNAME
-    value: "postgres.zato.svc.cluster.local"
-  - name: ODB_PORT
-    value: {{ .Values.postgresql.service.port }}
-  - name: ODB_NAME
-    value: "zato"
-  - name: ODB_USERNAME
-    value: "zato"
-  - name: ODB_PASSWORD
-    value: "zato"
+# Zato's secret variables:
+secret_key: hS4KVhIMPUGxoS1M6xYLq1UW0_lZOFe5eDoRs9Q9Hy0=
+jwt_secret_key: p5m2wJxDF3xxFrZLdDu8m15fRUak4eZDPJl5Bfz_wm8=
+zato_web_admin_password: zato
+zato_ide_publisher_password: "zato"
+zato_admin_invoke_password: "c97f1aa4-8a20-441e-b46d-d37711a06afc"
+odb_password: "zato"
+
+# Zato's customization variables:
+lb_port: 80
+lb_agent_port: "20151"
+cluster_name: "zato"
+odb_type: "postgresql"
+redis_port: 6379
+odb_port: 5432
+odb_name: "zato"
+odb_username: "zato"
 
 postgresql:
   replicaCount: 1
@@ -70,7 +55,6 @@ postgresql:
     # runAsUser: 1000
   service:
     type: LoadBalancer
-    port: 5432
   resources: {}
     # We usually recommend not to specify default resources and to leave this as a conscious
     # choice for the user. This also increases chances charts run on environments with little
@@ -154,12 +138,6 @@ zatoscheduler:
   env:
     - name: ZATO_POSITION
       value: "scheduler"
-    - name: LB_HOSTNAME
-      value: "server.zato.svc.cluster.local"
-    - name: LB_PORT
-      value: "80"
-    - name: LB_AGENT_PORT
-      value: "20151"
 
 zatobootstrap:
   replicaCount: 1

@@ -7,7 +7,7 @@ metadata:
 spec:
   type: {{ .Values.postgresql.service.type }}
   ports:
-    - port: {{ .Values.postgresql.service.port }}
+    - port: {{ default 5432 .Values.odb_port }}
       protocol: TCP
       name: {{ .Values.postgresql.fullname }}
   selector:
@@ -22,7 +22,7 @@ metadata:
 spec:
   type: {{ .Values.redis.service.type }}
   ports:
-    - port: {{ .Values.redis.service.port }}
+    - port: {{ .Values.redis_port }}
       protocol: TCP
       name: {{ .Values.redis.fullname }}
   selector:
@@ -37,8 +37,8 @@ metadata:
 spec:
   type: {{ .Values.zatowebadmin.service.type }}
   ports:
-    - port: {{ .Values.zatowebadmin.service.port }}
-      targetPort: {{ .Values.zatowebadmin.service.port }}
+    - port: {{ default 8183 .Values.zatowebadmin.service.port }}
+      targetPort: {{ default 8183 .Values.zatowebadmin.service.port }}
       protocol: TCP
       name: {{ .Values.zatowebadmin.service.name }}
   selector:
@@ -53,9 +53,9 @@ metadata:
 spec:
   type: {{ .Values.zatoserver.service.type }}
   ports:
-    - port: {{ .Values.zatoserver.service.port }}
-      targetPort: {{ .Values.zatoserver.service.port }}
+    - port: {{ default 17010 .Values.zatoserver.service.port }}
+      targetPort: {{ default 17010 .Values.zatoserver.service.port }}
       protocol: TCP
-      name: {{ .Values.zatoserver.service.name }}
+      name: {{ default "server" .Values.zatoserver.service.name }}
   selector:
     {{- include "zato.zatoserver.selectorLabels" . | nindent 4 }}
