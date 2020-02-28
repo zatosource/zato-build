@@ -1,41 +1,41 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Values.postgresql.fullname }}
+  name: {{ include "zato.postgresql.fullname" . | quote }}
   labels:
     {{- include "zato.postgresql.labels" . | nindent 4 }}
 spec:
-  type: {{ .Values.postgresql.service.type }}
+  type: {{ .Values.postgresql.service.type | quote }}
   ports:
     - port: {{ default 5432 .Values.odb_port }}
       protocol: TCP
-      name: {{ .Values.postgresql.fullname }}
+      name: {{ .Values.postgresql.fullname | quote }}
   selector:
     {{- include "zato.postgresql.selectorLabels" . | nindent 4 }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Values.redis.fullname }}
+  name: {{ include "zato.redis.fullname" . | quote }}
   labels:
     {{- include "zato.redis.labels" . | nindent 4 }}
 spec:
-  type: {{ .Values.redis.service.type }}
+  type: {{ .Values.redis.service.type | quote }}
   ports:
     - port: {{ .Values.redis_port }}
       protocol: TCP
-      name: {{ .Values.redis.fullname }}
+      name: {{ .Values.redis.fullname | quote }}
   selector:
     {{- include "zato.redis.selectorLabels" . | nindent 4 }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Values.zatowebadmin.fullname }}
+  name: {{ include "zato.zatowebadmin.fullname" . | quote }}
   labels:
     {{- include "zato.zatowebadmin.labels" . | nindent 4 }}
 spec:
-  type: {{ .Values.zatowebadmin.service.type }}
+  type: {{ .Values.zatowebadmin.service.type | quote }}
   ports:
     - port: {{ default 8183 .Values.zatowebadmin.service.port }}
       targetPort: {{ default 8183 .Values.zatowebadmin.service.port }}
@@ -47,11 +47,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Values.zatoserver.fullname }}
+  name: {{ include "zato.zatoserver.fullname" . | quote }}
   labels:
     {{- include "zato.zatoserver.labels" . | nindent 4 }}
 spec:
-  type: {{ .Values.zatoserver.service.type }}
+  type: {{ .Values.zatoserver.service.type | quote }}
   ports:
     - port: {{ default 17010 .Values.zatoserver.service.port }}
       targetPort: {{ default 17010 .Values.zatoserver.service.port }}

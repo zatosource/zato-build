@@ -13,20 +13,20 @@ image:
   pullPolicy: IfNotPresent
 
 # Zato's secret variables:
-secret_key: hS4KVhIMPUGxoS1M6xYLq1UW0_lZOFe5eDoRs9Q9Hy0=
-jwt_secret_key: p5m2wJxDF3xxFrZLdDu8m15fRUak4eZDPJl5Bfz_wm8=
-zato_web_admin_password: zato
-zato_ide_publisher_password: "zato"
-zato_admin_invoke_password: "c97f1aa4-8a20-441e-b46d-d37711a06afc"
-odb_password: "zato"
+secret_key: ""
+jwt_secret_key: ""
+zato_web_admin_password: ""
+zato_ide_publisher_password: ""
+zato_admin_invoke_password: ""
+odb_password: ""
 
 # Zato's customization variables:
-lb_port: 80
+lb_port: "80"
 lb_agent_port: "20151"
 cluster_name: "zato"
 odb_type: "postgresql"
-redis_port: 6379
-odb_port: 5432
+redis_port: "6379"
+odb_port: "5432"
 odb_name: "zato"
 odb_username: "zato"
 
@@ -244,7 +244,7 @@ serviceAccount:
   annotations: {}
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
-  name: zatoServiceAccount
+  name: zatoserviceaccount
 
 ingress:
   enabled: false

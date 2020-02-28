@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "zato.postgresql.fullname" . }}
+  name: {{ include "zato.postgresql.fullname" . | quote }}
   labels:
     {{- include "zato.postgresql.labels" . | nindent 4 }}
 spec:
@@ -14,23 +14,23 @@ spec:
       labels:
         {{- include "zato.postgresql.selectorLabels" . | nindent 8 }}
       annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        checksum/config: {{ printf "%s%s%s%s" (print $.Template.BasePath "/deployment.yaml") (print $.Template.BasePath "/service.yaml") (print $.Template.BasePath "/../values.yaml") (print $.Template.BasePath "/../Chart.yaml") | sha256sum | quote }}
     spec:
     {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
     {{- end }}
-      serviceAccountName: {{ include "zato.serviceAccountName" . }}
+      serviceAccountName: {{ include "zato.serviceAccountName" . | quote }}
       securityContext:
         {{- toYaml .Values.postgresql.podSecurityContext | nindent 8 }}
       containers:
-        - name: {{ .Values.postgresql.fullname }}
+        - name: {{ .Values.postgresql.fullname | quote }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.postgresql.image.repository }}:{{ .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.postgresql.image.pullPolicy }}
           ports:
-            - name: {{ .Values.postgresql.fullname }}
+            - name: {{ .Values.postgresql.fullname | quote }}
               containerPort: {{ default 5432 .Values.odb_port }}
               protocol: TCP
           env:
@@ -53,7 +53,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "zato.redis.fullname" . }}
+  name: {{ include "zato.redis.fullname" . | quote }}
   labels:
     {{- include "zato.redis.labels" . | nindent 4 }}
 spec:
@@ -66,17 +66,17 @@ spec:
       labels:
         {{- include "zato.redis.selectorLabels" . | nindent 8 }}
       annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        checksum/config: {{ printf "%s%s%s%s" (print $.Template.BasePath "/deployment.yaml") (print $.Template.BasePath "/service.yaml") (print $.Template.BasePath "/../values.yaml") (print $.Template.BasePath "/../Chart.yaml") | sha256sum | quote }}
     spec:
     {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
     {{- end }}
-      serviceAccountName: {{ include "zato.serviceAccountName" . }}
+      serviceAccountName: {{ include "zato.serviceAccountName" . | quote }}
       securityContext:
         {{- toYaml .Values.redis.podSecurityContext | nindent 8 }}
       containers:
-        - name: {{ .Values.redis.fullname }}
+        - name: {{ .Values.redis.fullname | quote }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.redis.image.repository }}:{{ .Chart.AppVersion }}"
@@ -103,7 +103,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "zato.zatoscheduler.fullname" . }}
+  name: {{ include "zato.zatoscheduler.fullname" . | quote }}
   labels:
     {{- include "zato.zatoscheduler.labels" . | nindent 4 }}
 spec:
@@ -116,25 +116,25 @@ spec:
       labels:
         {{- include "zato.zatoscheduler.selectorLabels" . | nindent 8 }}
       annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        checksum/config: {{ printf "%s%s%s%s" (print $.Template.BasePath "/deployment.yaml") (print $.Template.BasePath "/service.yaml") (print $.Template.BasePath "/../values.yaml") (print $.Template.BasePath "/../Chart.yaml") | sha256sum | quote }}
     spec:
     {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
     {{- end }}
-      serviceAccountName: {{ include "zato.serviceAccountName" . }}
+      serviceAccountName: {{ include "zato.serviceAccountName" . | quote }}
       securityContext:
         {{- toYaml .Values.zatoscheduler.podSecurityContext | nindent 8 }}
       containers:
-        - name: {{ .Values.zatoscheduler.fullname }}
+        - name: {{ .Values.zatoscheduler.fullname | quote }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
-          ports:
-            - name: postgres
-              containerPort: {{ default 5432 .Values.odb_port }}
-              protocol: TCP
+          imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
+          env:
+            - name: ZATO_POSITION
+              value: "scheduler"
+            {{- include "zato.variables" . | nindent 12 }}
           resources:
             {{- toYaml .Values.zatoscheduler.resources | nindent 12 }}
       {{- with .Values.zatoscheduler.nodeSelector }}
@@ -154,7 +154,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "zato.zatobootstrap.fullname" . }}
+  name: {{ include "zato.zatobootstrap.fullname" . | quote }}
   labels:
     {{- include "zato.zatobootstrap.labels" . | nindent 4 }}
 spec:
@@ -167,21 +167,25 @@ spec:
       labels:
         {{- include "zato.zatobootstrap.selectorLabels" . | nindent 8 }}
       annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        checksum/config: {{ printf "%s%s%s%s" (print $.Template.BasePath "/deployment.yaml") (print $.Template.BasePath "/service.yaml") (print $.Template.BasePath "/../values.yaml") (print $.Template.BasePath "/../Chart.yaml") | sha256sum | quote }}
     spec:
     {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
     {{- end }}
-      serviceAccountName: {{ include "zato.serviceAccountName" . }}
+      serviceAccountName: {{ include "zato.serviceAccountName" . | quote }}
       securityContext:
         {{- toYaml .Values.zatobootstrap.podSecurityContext | nindent 8 }}
       containers:
-        - name: {{ .Values.zatobootstrap.fullname }}
+        - name: {{ .Values.zatobootstrap.fullname | quote }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
+          env:
+            - name: ZATO_POSITION
+              value: "bootstrap"
+            {{- include "zato.variables" . | nindent 12 }}
           resources:
             {{- toYaml .Values.zatobootstrap.resources | nindent 12 }}
       {{- with .Values.zatobootstrap.nodeSelector }}
@@ -201,7 +205,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "zato.zatowebadmin.fullname" . }}
+  name: {{ include "zato.zatowebadmin.fullname" . | quote }}
   labels:
     {{- include "zato.zatowebadmin.labels" . | nindent 4 }}
 spec:
@@ -214,23 +218,27 @@ spec:
       labels:
         {{- include "zato.zatowebadmin.selectorLabels" . | nindent 8 }}
       annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        checksum/config: {{ printf "%s%s%s%s" (print $.Template.BasePath "/deployment.yaml") (print $.Template.BasePath "/service.yaml") (print $.Template.BasePath "/../values.yaml") (print $.Template.BasePath "/../Chart.yaml") | sha256sum | quote }}
     spec:
     {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
     {{- end }}
-      serviceAccountName: {{ include "zato.serviceAccountName" . }}
+      serviceAccountName: {{ include "zato.serviceAccountName" . | quote }}
       securityContext:
         {{- toYaml .Values.zatowebadmin.podSecurityContext | nindent 8 }}
       containers:
-        - name: {{ .Values.zatowebadmin.fullname }}
+        - name: {{ .Values.zatowebadmin.fullname | quote }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
+          env:
+            - name: ZATO_POSITION
+              value: "webadmin"
+            {{- include "zato.variables" . | nindent 12 }}
           ports:
-            - name: {{ default "web" .Values.zatowebadmin.service.name }}
+            - name: {{ default "web" .Values.zatowebadmin.service.name | quote }}
               containerPort: {{ default 8183 .Values.zatowebadmin.service.port }}
               protocol: TCP
           resources:
@@ -252,7 +260,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "zato.zatoserver.fullname" . }}
+  name: {{ include "zato.zatoserver.fullname" . | quote }}
   labels:
     {{- include "zato.zatoserver.labels" . | nindent 4 }}
 spec:
@@ -265,23 +273,27 @@ spec:
       labels:
         {{- include "zato.zatoserver.selectorLabels" . | nindent 8 }}
       annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        checksum/config: {{ printf "%s%s%s%s" (print $.Template.BasePath "/deployment.yaml") (print $.Template.BasePath "/service.yaml") (print $.Template.BasePath "/../values.yaml") (print $.Template.BasePath "/../Chart.yaml") | sha256sum | quote }}
     spec:
     {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
     {{- end }}
-      serviceAccountName: {{ include "zato.serviceAccountName" . }}
+      serviceAccountName: {{ include "zato.serviceAccountName" . | quote }}
       securityContext:
         {{- toYaml .Values.zatoserver.podSecurityContext | nindent 8 }}
       containers:
-        - name: {{ .Values.zatoserver.fullname }}
+        - name: {{ .Values.zatoserver.fullname | quote }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
+          env:
+            - name: ZATO_POSITION
+              value: "server"
+            {{- include "zato.variables" . | nindent 12 }}
           ports:
-            - name: {{ default "server" .Values.zatoserver.service.name }}
+            - name: {{ default "server" .Values.zatoserver.service.name | quote }}
               containerPort: {{ default 17010 .Values.zatoserver.service.port }}
               protocol: TCP
           resources:

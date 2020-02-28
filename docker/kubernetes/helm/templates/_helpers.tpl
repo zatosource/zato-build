@@ -166,26 +166,25 @@ Create the name of the service account to use
 - name: LB_HOSTNAME
   value: "{{ .Values.zatoserver.fullname }}.{{ .Release.Namespace }}.svc.cluster.local"
 - name: LB_PORT
-  value: {{ default 80 .Values.lb_port }}
+  value: {{ default 80 .Values.lb_port | quote }}
 - name: LB_AGENT_PORT
-  value: {{ default 20151 .Values.lb_agent_port }}
+  value: {{ default 20151 .Values.lb_agent_port | quote }}
 - name: CLUSTER_NAME
   value: {{ default "zato" .Values.cluster_name | quote  }}
 - name: REDIS_HOSTNAME
   value: "{{ .Values.redis.fullname }}.{{ .Release.Namespace }}.svc.cluster.local"
 - name: REDIS_PORT
-  value: {{ default 6379 .Values.redis_port }}
+  value: {{ default 6379 .Values.redis_port | quote }}
 - name: ODB_TYPE
   value: {{ default "postgresql" .Values.odb_type | quote }}
 - name: ODB_HOSTNAME
   value: "{{ .Values.postgresql.fullname }}.{{ .Release.Namespace }}.svc.cluster.local"
 - name: ODB_PORT
-  value: {{ default 5432 .Values.postgresql.service.port }}
+  value: {{ default 5432 .Values.postgresql.service.port | quote }}
 - name: ODB_NAME
   value: {{ default "zato" .Values.odb_name | quote }}
 - name: ODB_USERNAME
   value: {{ default "zato" .Values.odb_username | quote }}
-
 - name: "SECRET_KEY"
   valueFrom:
     secretKeyRef:
@@ -216,5 +215,4 @@ Create the name of the service account to use
     secretKeyRef:
       key:  odb_password
       name: {{ .Release.Name }}-auth
-
 {{- end -}}
