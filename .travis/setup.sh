@@ -87,11 +87,12 @@ if [[ -n "$IMAGE" ]]; then
 
   # Some official images lack sudo, which breaks install.sh.
   if [ "${IMAGE:0:6}" = "centos" ]; then
-    run yum -y install sudo git
+    run yum -y update
+    run yum -y install sudo git wget curl
 
     # testing
-    run_checking yum -y install sudo git epel-release
-    run_checking yum -y install s3cmd
+    run_checking yum -y update
+    run_checking yum -y install sudo git epel-release wget curl
   elif [ "${IMAGE:0:6}" = "alpine" ]; then
     run /bin/sh -ec "apk update && apk upgrade && apk add sudo bash alpine-sdk && exec abuild-keygen -an"
 
@@ -99,11 +100,11 @@ if [[ -n "$IMAGE" ]]; then
     run /bin/sh -ec "apk update && apk upgrade && apk add sudo bash git bash alpine-sdk && exec abuild-keygen -an"
   elif [ "${IMAGE:0:6}" = "ubuntu" -o "${IMAGE:0:6}" = "debian" ]; then
     run apt-get update
-    run apt-get -y install sudo git lsb-release
+    run apt-get -y install sudo git lsb-release wget curl
 
     # testing
     run_checking apt-get update
-    run_checking apt-get -y install sudo git lsb-release s3cmd
+    run_checking apt-get -y install sudo git lsb-release wget curl
   fi
 
   # chown everything to Travis UID so caching succeeds.
