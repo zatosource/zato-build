@@ -164,6 +164,7 @@ zatowebadmin:
     # runAsNonRoot: true
     # runAsUser: 1000
   service:
+    name: web
     type: LoadBalancer
     port: 8183
   resources: {}
@@ -197,6 +198,7 @@ zatoserver:
     # runAsNonRoot: true
     # runAsUser: 1000
   service:
+    name: server
     type: LoadBalancer
     port: 17010
   resources: {}

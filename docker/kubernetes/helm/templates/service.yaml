@@ -47,7 +47,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Values.zatoserver.service.name }}
+  name: {{ .Values.zatoserver.fullname }}
   labels:
     {{- include "zato.zatoserver.labels" . | nindent 4 }}
 spec:
