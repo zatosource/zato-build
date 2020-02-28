@@ -11,6 +11,40 @@ image:
   repository: registry.gitlab.com/zatosource/docker-registry/cloud
   pullPolicy: IfNotPresent
 
+env:
+  - name: LB_PORT
+    value: "80"
+  - name: LB_AGENT_PORT
+    value: "20151"
+  - name: CLUSTER_NAME
+    value: "zato"
+  - name: SECRET_KEY
+    value: "hS4KVhIMPUGxoS1M6xYLq1UW0_lZOFe5eDoRs9Q9Hy0="
+  - name: JWT_SECRET_KEY
+    value: "p5m2wJxDF3xxFrZLdDu8m15fRUak4eZDPJl5Bfz_wm8="
+  - name: ZATO_WEB_ADMIN_PASSWORD
+    value: "zato"
+  - name: ZATO_IDE_PUBLISHER_PASSWORD
+    value: "zato"
+  - name: ZATO_ADMIN_INVOKE_PASSWORD
+    value: "c97f1aa4-8a20-441e-b46d-d37711a06afc"
+  - name: REDIS_HOSTNAME
+    value: "redis.zato.svc.cluster.local"
+  - name: REDIS_PORT
+    value: {{ .Values.redis.service.port }}
+  - name: ODB_TYPE
+    value: "postgresql"
+  - name: ODB_HOSTNAME
+    value: "postgres.zato.svc.cluster.local"
+  - name: ODB_PORT
+    value: {{ .Values.postgresql.service.port }}
+  - name: ODB_NAME
+    value: "zato"
+  - name: ODB_USERNAME
+    value: "zato"
+  - name: ODB_PASSWORD
+    value: "zato"
+
 postgresql:
   replicaCount: 1
   fullname: postgres
@@ -117,6 +151,15 @@ zatoscheduler:
   nodeSelector: {}
   tolerations: []
   affinity: {}
+  env:
+    - name: ZATO_POSITION
+      value: "scheduler"
+    - name: LB_HOSTNAME
+      value: "server.zato.svc.cluster.local"
+    - name: LB_PORT
+      value: "80"
+    - name: LB_AGENT_PORT
+      value: "20151"
 
 zatobootstrap:
   replicaCount: 1
