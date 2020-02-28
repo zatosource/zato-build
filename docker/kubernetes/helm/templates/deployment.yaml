@@ -1,0 +1,303 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+    name: {{ include "zato.namespace" . }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "zato.postgresql.fullname" . }}
+  labels:
+    {{- include "zato.postgresql.labels" . | nindent 4 }}
+  namespace: {{ include "zato.namespace" . }}
+spec:
+  replicas: {{ include "zato.postgresql.replicaCount" . }}
+  selector:
+    matchLabels:
+      {{- include "zato.postgresql.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "zato.postgresql.selectorLabels" . | nindent 8 }}
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      serviceAccountName: {{ include "zato.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml  zato.postgresql.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{  zato.postgresql.fullname }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{  zato.postgresql.image.repository }}:{{ .Chart.AppVersion }}"
+          imagePullPolicy: {{  zato.postgresql.image.pullPolicy }}
+          ports:
+            - name: postgres
+              containerPort: 5432
+              protocol: TCP
+          env:
+            {{- toYaml  zato.postgresql.env | nindent 12 }}
+          resources:
+            {{- toYaml  zato.postgresql.resources | nindent 12 }}
+      {{- with  zato.postgresql.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with  zato.postgresql.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with  zato.postgresql.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "zato.redis.fullname" . }}
+  labels:
+    {{- include "zato.redis.labels" . | nindent 4 }}
+  namespace: {{ include "zato.namespace" . }}
+spec:
+  replicas: {{  include "zato.redis.replicaCount" . }}
+  selector:
+    matchLabels:
+      {{- include "zato.redis.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "zato.redis.selectorLabels" . | nindent 8 }}
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      serviceAccountName: {{ include "zato.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml  zato.redis.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{  zato.redis.fullname }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{  zato.redis.image.repository }}:{{ .Chart.AppVersion }}"
+          imagePullPolicy: {{  zato.redis.image.pullPolicy }}
+          ports:
+            - name: redis
+              containerPort: 6379
+              protocol: TCP
+          resources:
+            {{- toYaml  zato.redis.resources | nindent 12 }}
+      {{- with  zato.redis.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with  zato.redis.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with  zato.redis.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "zato.zatoscheduler.fullname" . }}
+  labels:
+    {{- include "zato.zatoscheduler.labels" . | nindent 4 }}
+  namespace: {{ include "zato.namespace" . }}
+spec:
+  replicas: {{  include "zato.zatoscheduler.replicaCount" . }}
+  selector:
+    matchLabels:
+      {{- include "zato.zatoscheduler.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "zato.zatoscheduler.selectorLabels" . | nindent 8 }}
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      serviceAccountName: {{ include "zato.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml  zato.zatoscheduler.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{  zato.zatoscheduler.fullname }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{  zato.image.repository }}:{{ .Chart.AppVersion }}"
+          imagePullPolicy: {{  zato.image.pullPolicy }}
+          ports:
+            - name: postgres
+              containerPort: 5432
+              protocol: TCP
+          resources:
+            {{- toYaml  zato.zatoscheduler.resources | nindent 12 }}
+      {{- with  zato.zatoscheduler.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with  zato.zatoscheduler.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with  zato.zatoscheduler.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "zato.zatobootstrap.fullname" . }}
+  labels:
+    {{- include "zato.zatobootstrap.labels" . | nindent 4 }}
+  namespace: {{ include "zato.namespace" . }}
+spec:
+  replicas: {{  include "zato.zatobootstrap.replicaCount" . }}
+  selector:
+    matchLabels:
+      {{- include "zato.zatobootstrap.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "zato.zatobootstrap.selectorLabels" . | nindent 8 }}
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      serviceAccountName: {{ include "zato.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml  zato.zatobootstrap.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{  zato.zatobootstrap.fullname }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{  zato.image.repository }}:{{ .Chart.AppVersion }}"
+          imagePullPolicy: {{  zato.image.pullPolicy }}
+          ports:
+            - name: postgres
+              containerPort: 5432
+              protocol: TCP
+          resources:
+            {{- toYaml  zato.zatobootstrap.resources | nindent 12 }}
+      {{- with  zato.zatobootstrap.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with  zato.zatobootstrap.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with  zato.zatobootstrap.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "zato.zatowebadmin.fullname" . }}
+  labels:
+    {{- include "zato.zatowebadmin.labels" . | nindent 4 }}
+  namespace: {{ include "zato.namespace" . }}
+spec:
+  replicas: {{  include "zato.zatowebadmin.replicaCount" . }}
+  selector:
+    matchLabels:
+      {{- include "zato.zatowebadmin.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "zato.zatowebadmin.selectorLabels" . | nindent 8 }}
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      serviceAccountName: {{ include "zato.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml  zato.zatowebadmin.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{  zato.zatowebadmin.fullname }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{  zato.image.repository }}:{{ .Chart.AppVersion }}"
+          imagePullPolicy: {{  zato.image.pullPolicy }}
+          ports:
+            - name: postgres
+              containerPort: 5432
+              protocol: TCP
+          resources:
+            {{- toYaml  zato.zatowebadmin.resources | nindent 12 }}
+      {{- with  zato.zatowebadmin.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with  zato.zatowebadmin.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with  zato.zatowebadmin.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "zato.zatoserver.fullname" . }}
+  labels:
+    {{- include "zato.zatoserver.labels" . | nindent 4 }}
+  namespace: {{ include "zato.namespace" . }}
+spec:
+  replicas: {{  include "zato.zatoserver.replicaCount" . }}
+  selector:
+    matchLabels:
+      {{- include "zato.zatoserver.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "zato.zatoserver.selectorLabels" . | nindent 8 }}
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      serviceAccountName: {{ include "zato.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml  zato.zatoserver.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{  zato.zatoserver.fullname }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{  zato.image.repository }}:{{ .Chart.AppVersion }}"
+          imagePullPolicy: {{  zato.image.pullPolicy }}
+          ports:
+            - name: postgres
+              containerPort: 5432
+              protocol: TCP
+          resources:
+            {{- toYaml  zato.zatoserver.resources | nindent 12 }}
+      {{- with  zato.zatoserver.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with  zato.zatoserver.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with  zato.zatoserver.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
