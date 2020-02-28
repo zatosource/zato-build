@@ -1,65 +1,61 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "zato.postgresql.fullname" . }}
+  name: {{ .Values.postgresql.fullname }}
   labels:
     {{- include "zato.postgresql.labels" . | nindent 4 }}
-  namespace: {{ include "zato.namespace" . }}
 spec:
-  type: {{ include "zato.postgresql.service.type" . }}
+  type: {{ .Values.postgresql.service.type }}
   ports:
-    - port: {{ include "zato.postgresql.service.port" . }}
+    - port: {{ .Values.postgresql.service.port }}
       protocol: TCP
-      name: {{ include "zato.postgresql.fullname" . }}
+      name: {{ .Values.postgresql.fullname }}
   selector:
     {{- include "zato.postgresql.selectorLabels" . | nindent 4 }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "zato.redis.fullname" . }}
+  name: {{ .Values.redis.fullname }}
   labels:
     {{- include "zato.redis.labels" . | nindent 4 }}
-  namespace: {{ include "zato.namespace" . }}
 spec:
-  type: {{ include "zato.redis.service.type" . }}
+  type: {{ .Values.redis.service.type }}
   ports:
-    - port: {{ include "zato.redis.service.port" . }}
+    - port: {{ .Values.redis.service.port }}
       protocol: TCP
-      name: {{ include "zato.redis.fullname" . }}
+      name: {{ .Values.redis.fullname }}
   selector:
     {{- include "zato.redis.selectorLabels" . | nindent 4 }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "zato.zatowebadmin.fullname" . }}
+  name: {{ .Values.zatowebadmin.fullname }}
   labels:
     {{- include "zato.zatowebadmin.labels" . | nindent 4 }}
-  namespace: {{ include "zato.zatowebadmin.namespace" . }}
 spec:
-  type: {{ include "zato.zatowebadmin.service.type" . }}
+  type: {{ .Values.zatowebadmin.service.type }}
   ports:
-    - port: {{ include "zato.zatowebadmin.service.port" . }}
-      targetPort: {{ include "zato.zatowebadmin.service.port" . }}
+    - port: {{ .Values.zatowebadmin.service.port }}
+      targetPort: {{ .Values.zatowebadmin.service.port }}
       protocol: TCP
-      name: {{ include "zato.zatowebadmin.service.name" . }}
+      name: {{ .Values.zatowebadmin.service.name }}
   selector:
     {{- include "zato.zatowebadmin.selectorLabels" . | nindent 4 }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "zato.zatoserver.fullname" . }}
+  name: {{ .Values.zatoserver.service.name }}
   labels:
     {{- include "zato.zatoserver.labels" . | nindent 4 }}
-  namespace: {{ include "zato.zatoserver.namespace" . }}
 spec:
-  type: {{ include "zato.zatoserver.service.type" . }}
+  type: {{ .Values.zatoserver.service.type }}
   ports:
-    - port: {{ include "zato.zatoserver.service.port" . }}
-      targetPort: {{ include "zato.zatoserver.service.port" . }}
+    - port: {{ .Values.zatoserver.service.port }}
+      targetPort: {{ .Values.zatoserver.service.port }}
       protocol: TCP
-      name: {{ include "zato.zatoserver.service.name" . }}
+      name: {{ .Values.zatoserver.service.name }}
   selector:
     {{- include "zato.zatoserver.selectorLabels" . | nindent 4 }}

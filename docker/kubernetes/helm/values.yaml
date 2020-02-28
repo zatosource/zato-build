@@ -4,10 +4,11 @@
 
 replicaCount: 1
 namespace: "zato"
+imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 image:
-  repository: registry.gitlab.com/zatosource/docker-registry/cloud:3.1
+  repository: registry.gitlab.com/zatosource/docker-registry/cloud
   pullPolicy: IfNotPresent
 
 postgresql:
@@ -20,8 +21,10 @@ postgresql:
   selectorLabels:
       app: postgres
   env:
-    POSTGRES_USER: zato
-    POSTGRES_PASSWORD: zato
+    - name: POSTGRES_USER
+      value: zato
+    - name: POSTGRES_PASSWORD
+      value: zato
   podSecurityContext: {}
     # fsGroup: 2000
   securityContext: {}
@@ -218,7 +221,7 @@ serviceAccount:
   annotations: {}
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
-  name:
+  name: zatoServiceAccount
 
 ingress:
   enabled: false
