@@ -1,0 +1,72 @@
+# Default values for postgresql.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+# Zato's secret variables:
+secret_key: ""
+jwt_secret_key: ""
+zato_web_admin_password: ""
+zato_ide_publisher_password: ""
+zato_admin_invoke_password: ""
+odb_password: ""
+
+# Zato's customization variables:
+lb_port: "80"
+lb_agent_port: "20151"
+cluster_name: "zato"
+odb_type: "postgresql"
+redis_port: "6379"
+odb_port: "5432"
+odb_name: "zato"
+odb_username: "zato"
+
+redis:
+  replicaCount: 1
+  fullname: redis
+  image:
+    repository: redis
+    pullPolicy: IfNotPresent
+  replicaCount: 1
+  selectorLabels:
+      app: redis
+  podSecurityContext: {}
+    # fsGroup: 2000
+  securityContext: {}
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+    # runAsUser: 1000
+  service:
+    type: LoadBalancer
+    port: 6379
+  resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name:

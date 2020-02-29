@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "zato.redis.fullname" . | quote }}
+  labels:
+    {{- include "zato.redis.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.redis.service.type | quote }}
+  ports:
+    - port: {{ .Values.redis_port }}
+      protocol: TCP
+      name: {{ .Values.redis.fullname | quote }}
+  selector:
+    {{- include "zato.redis.selectorLabels" . | nindent 4 }}
