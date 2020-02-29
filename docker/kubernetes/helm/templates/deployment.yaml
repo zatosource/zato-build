@@ -82,7 +82,7 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
           env:
             - name: ZATO_POSITION
-              value: "bootstrap"
+              value: "load-balancer"
             {{- include "zato.variables" . | nindent 12 }}
           resources:
             {{- toYaml .Values.zatobootstrap.resources | nindent 12 }}

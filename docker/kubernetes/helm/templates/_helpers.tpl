@@ -195,7 +195,7 @@ Create the name of the service account to use
     secretKeyRef:
       key:  jwt_secret_key
       name: {{ .Release.Name }}-auth
-- name: "zato_web_admin_password"
+- name: "ZATO_WEB_ADMIN_PASSWORD"
   valueFrom:
     secretKeyRef:
       key:  zato_web_admin_password

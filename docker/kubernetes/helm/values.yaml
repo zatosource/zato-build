@@ -18,6 +18,7 @@ zato_web_admin_password: ""
 zato_ide_publisher_password: ""
 zato_admin_invoke_password: ""
 odb_password: ""
+redis_password: ""
 
 # Zato's customization variables:
 lb_port: "80"
@@ -30,19 +31,14 @@ odb_name: "zato"
 odb_username: "zato"
 
 postgresql:
+  enabled: true
   replicaCount: 1
   fullname: postgres
   image:
     repository: postgres
     pullPolicy: IfNotPresent
-  replicaCount: 1
   selectorLabels:
       app: postgres
-  env:
-    - name: POSTGRES_USER
-      value: zato
-    - name: POSTGRES_PASSWORD
-      value: zato
   podSecurityContext: {}
     # fsGroup: 2000
   securityContext: {}
@@ -70,12 +66,12 @@ postgresql:
   affinity: {}
 
 redis:
+  enabled: true
   replicaCount: 1
   fullname: redis
   image:
     repository: redis
     pullPolicy: IfNotPresent
-  replicaCount: 1
   selectorLabels:
       app: redis
   podSecurityContext: {}
