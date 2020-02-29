@@ -19,7 +19,6 @@ zato_ide_publisher_password: ""
 zato_admin_invoke_password: ""
 odb_password: ""
 redis_password: ""
-
 # Zato's customization variables:
 lb_port: "80"
 lb_agent_port: "20151"
@@ -29,6 +28,7 @@ redis_port: "6379"
 odb_port: "5432"
 odb_name: "zato"
 odb_username: "zato"
+zato_enmasse_file: ""
 
 postgresql:
   enabled: true

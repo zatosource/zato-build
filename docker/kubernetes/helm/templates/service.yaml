@@ -23,7 +23,7 @@ metadata:
 spec:
   type: {{ .Values.zatoserver.service.type | quote }}
   ports:
-    - port: {{ default 17010 .Values.zatoserver.service.port }}
+    - port: {{ default 80 .Values.lb_port }}
       targetPort: {{ default 17010 .Values.zatoserver.service.port }}
       protocol: TCP
       name: {{ default "server" .Values.zatoserver.service.name }}

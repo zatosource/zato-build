@@ -185,6 +185,8 @@ Create the name of the service account to use
   value: {{ default "zato" .Values.odb_name | quote }}
 - name: ODB_USERNAME
   value: {{ default "zato" .Values.odb_username | quote }}
+- name: ZATO_ENMASSE_FILE
+  value: {{ default "zato" .Values.zato_enmasse_file | quote }}
 - name: "SECRET_KEY"
   valueFrom:
     secretKeyRef:
