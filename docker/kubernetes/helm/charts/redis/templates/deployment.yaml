@@ -31,7 +31,7 @@ spec:
           imagePullPolicy: {{ .Values.redis.image.pullPolicy }}
           ports:
             - name: redis
-              containerPort: {{ default 6379 .Values.redis_port }}
+              containerPort: {{ default 6379 .Values.redisPort }}
               protocol: TCP
           resources:
             {{- toYaml .Values.redis.resources | nindent 12 }}

@@ -7,7 +7,7 @@ metadata:
 spec:
   type: {{ .Values.redis.service.type | quote }}
   ports:
-    - port: {{ .Values.redis_port }}
+    - port: {{ .Values.redisPort }}
       protocol: TCP
       name: {{ .Values.redis.fullname | quote }}
   selector:

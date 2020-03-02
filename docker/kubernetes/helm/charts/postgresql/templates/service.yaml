@@ -7,7 +7,7 @@ metadata:
 spec:
   type: {{ .Values.postgresql.service.type | quote }}
   ports:
-    - port: {{ default 5432 .Values.odb_port }}
+    - port: {{ default 5432 .Values.odbPort }}
       protocol: TCP
       name: {{ .Values.postgresql.fullname | quote }}
   selector:

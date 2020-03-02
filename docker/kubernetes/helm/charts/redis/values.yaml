@@ -9,22 +9,22 @@ nameOverride: ""
 fullnameOverride: ""
 
 # Zato's secret variables:
-secret_key: ""
-jwt_secret_key: ""
-zato_web_admin_password: ""
-zato_ide_publisher_password: ""
-zato_admin_invoke_password: ""
-odb_password: ""
+secretKey: ""
+jwtSecretKey: ""
+zatoWebAdminPassword: ""
+zatoIdePublisherPassword: ""
+zatoAdminInvokePassword: ""
+odbPassword: ""
 
 # Zato's customization variables:
-lb_port: "80"
-lb_agent_port: "20151"
-cluster_name: "zato"
-odb_type: "postgresql"
-redis_port: "6379"
-odb_port: "5432"
-odb_name: "zato"
-odb_username: "zato"
+lbPort: "80"
+lbAgentPort: "20151"
+clusterName: "zato"
+odbType: "postgresql"
+redisPort: "6379"
+odbPort: "5432"
+odbName: "zato"
+odbUsername: "zato"
 
 redis:
   replicaCount: 1

@@ -1,4 +1,8 @@
+{{- if .Values.ingress.enabled }}
+1. Ingress is enabled and the specified application URL is:
+{{- else }}
 1. Get the application URL by running these commands:
+{{- end }}
 {{- if .Values.ingress.enabled }}
 {{- range $host := .Values.ingress.hosts }}
   {{- range .paths }}

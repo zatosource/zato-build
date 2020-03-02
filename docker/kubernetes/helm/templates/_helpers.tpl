@@ -166,55 +166,55 @@ Create the name of the service account to use
 - name: LB_HOSTNAME
   value: "{{ .Values.zatoserver.fullname }}.{{ .Release.Namespace }}.svc.cluster.local"
 - name: LB_PORT
-  value: {{ default 80 .Values.lb_port | quote }}
+  value: {{ default 80 .Values.lbPort | quote }}
 - name: LB_AGENT_PORT
-  value: {{ default 20151 .Values.lb_agent_port | quote }}
+  value: {{ default 20151 .Values.lbAgentPort | quote }}
 - name: CLUSTER_NAME
-  value: {{ default "zato" .Values.cluster_name | quote  }}
+  value: {{ default "zato" .Values.clusterName | quote  }}
 - name: REDIS_HOSTNAME
   value: "{{ .Values.redis.fullname }}.{{ .Release.Namespace }}.svc.cluster.local"
 - name: REDIS_PORT
-  value: {{ default 6379 .Values.redis_port | quote }}
+  value: {{ default 6379 .Values.redisPort | quote }}
 - name: ODB_TYPE
-  value: {{ default "postgresql" .Values.odb_type | quote }}
+  value: {{ default "postgresql" .Values.odbType | quote }}
 - name: ODB_HOSTNAME
   value: "{{ .Values.postgresql.fullname }}.{{ .Release.Namespace }}.svc.cluster.local"
 - name: ODB_PORT
   value: {{ default 5432 .Values.postgresql.service.port | quote }}
 - name: ODB_NAME
-  value: {{ default "zato" .Values.odb_name | quote }}
+  value: {{ default "zato" .Values.odbName | quote }}
 - name: ODB_USERNAME
-  value: {{ default "zato" .Values.odb_username | quote }}
+  value: {{ default "zato" .Values.odbUsername | quote }}
 - name: ZATO_ENMASSE_FILE
-  value: {{ default "zato" .Values.zato_enmasse_file | quote }}
+  value: {{ default "zato" .Values.zatoEnmasseFile | quote }}
 - name: "SECRET_KEY"
   valueFrom:
     secretKeyRef:
-      key:  secret_key
+      key:  secretKey
       name: {{ .Release.Name }}-auth
 - name: "JWT_SECRET_KEY"
   valueFrom:
     secretKeyRef:
-      key:  jwt_secret_key
+      key:  jwtSecretKey
       name: {{ .Release.Name }}-auth
 - name: "ZATO_WEB_ADMIN_PASSWORD"
   valueFrom:
     secretKeyRef:
-      key:  zato_web_admin_password
+      key:  zatoWebAdminPassword
       name: {{ .Release.Name }}-auth
 - name: "ZATO_IDE_PUBLISHER_PASSWORD"
   valueFrom:
     secretKeyRef:
-      key:  zato_ide_publisher_password
+      key:  zatoIdePublisherPassword
       name: {{ .Release.Name }}-auth
 - name: "ZATO_ADMIN_INVOKE_PASSWORD"
   valueFrom:
     secretKeyRef:
-      key:  zato_admin_invoke_password
+      key:  zatoAdminInvokePassword
       name: {{ .Release.Name }}-auth
 - name: "ODB_PASSWORD"
   valueFrom:
     secretKeyRef:
-      key:  odb_password
+      key:  odbPassword
       name: {{ .Release.Name }}-auth
 {{- end -}}

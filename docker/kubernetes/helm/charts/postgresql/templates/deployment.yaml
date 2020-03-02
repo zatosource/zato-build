@@ -31,7 +31,7 @@ spec:
           imagePullPolicy: {{ .Values.postgresql.image.pullPolicy }}
           ports:
             - name: {{ .Values.postgresql.fullname | quote }}
-              containerPort: {{ default 5432 .Values.odb_port }}
+              containerPort: {{ default 5432 .Values.odbPort }}
               protocol: TCP
           env:
             {{- toYaml .Values.postgresql.env | nindent 12 }}
