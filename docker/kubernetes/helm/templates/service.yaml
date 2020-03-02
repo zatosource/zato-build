@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "zato.zatowebadmin.fullname" . | quote }}
+  labels:
+    {{- include "zato.zatowebadmin.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.zatowebadmin.service.type | quote }}
+  ports:
+    - port: {{ default 8183 .Values.zatowebadmin.service.port }}
+      targetPort: {{ default 8183 .Values.zatowebadmin.service.port }}
+      protocol: TCP
+      name: {{ .Values.zatowebadmin.service.name }}
+  selector:
+    {{- include "zato.zatowebadmin.selectorLabels" . | nindent 4 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "zato.zatoserver.fullname" . | quote }}
+  labels:
+    {{- include "zato.zatoserver.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.zatoserver.service.type | quote }}
+  ports:
+    - port: {{ default 80 .Values.lbPort }}
+      targetPort: {{ default 17010 .Values.zatoserver.service.port }}
+      protocol: TCP
+      name: {{ default "server" .Values.zatoserver.service.name }}
+  selector:
+    {{- include "zato.zatoserver.selectorLabels" . | nindent 4 }}

@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "zato.postgresql.fullname" . | quote }}
+  labels:
+    {{- include "zato.postgresql.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.postgresql.service.type | quote }}
+  ports:
+    - port: {{ default 5432 .Values.odbPort }}
+      protocol: TCP
+      name: {{ .Values.postgresql.fullname | quote }}
+  selector:
+    {{- include "zato.postgresql.selectorLabels" . | nindent 4 }}
