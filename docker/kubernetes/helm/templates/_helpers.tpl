@@ -172,13 +172,13 @@ Create the name of the service account to use
 - name: CLUSTER_NAME
   value: {{ default "zato" .Values.clusterName | quote  }}
 - name: REDIS_HOSTNAME
-  value: "{{ .Values.redis.fullname }}.{{ .Release.Namespace }}.svc.cluster.local"
+  value: "{{- if .Values.redis.enabled -}}{{ .Values.redis.fullname }}.{{ .Release.Namespace }}.svc.cluster.local{{- else -}}{{ required "A valid redisHostname is required if Redis is not enabled!" .Values.redisHostname }}{{- end -}}"
 - name: REDIS_PORT
   value: {{ default 6379 .Values.redisPort | quote }}
 - name: ODB_TYPE
   value: {{ default "postgresql" .Values.odbType | quote }}
 - name: ODB_HOSTNAME
-  value: "{{ .Values.postgresql.fullname }}.{{ .Release.Namespace }}.svc.cluster.local"
+  value: "{{- if .Values.postgresql.enabled -}}{{ .Values.postgresql.fullname }}.{{ .Release.Namespace }}.svc.cluster.local{{- else -}}{{ required "A valid odbHostname is required if PostgreSQL is not enabled!" .Values.odbHostname }}{{- end -}}"
 - name: ODB_PORT
   value: {{ default 5432 .Values.postgresql.service.port | quote }}
 - name: ODB_NAME
