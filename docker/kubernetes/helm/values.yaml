@@ -233,6 +233,19 @@ zatoserver:
   nodeSelector: {}
   tolerations: []
   affinity: {}
+  volumes:
+    # - name: hotdeploy
+    #   # volumeMounts information
+    #   mount:
+    #     name: hotdeploy
+    #     mountPath: /opt/hot-deploy
+    #   # volumes information
+    #   volume:
+    #     name: hotdeploy
+    #     # Example: Using hostPath volume for hot-deploy.
+    #     hostPath:
+    #       path: /hotdeploy/
+    #       type: Directory
 
 serviceAccount:
   # Specifies whether a service account should be created
