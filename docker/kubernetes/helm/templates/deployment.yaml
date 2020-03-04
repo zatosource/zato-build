@@ -194,8 +194,20 @@ spec:
             - name: {{ default "server" .Values.zatoserver.service.name | quote }}
               containerPort: {{ default 17010 .Values.zatoserver.service.port }}
               protocol: TCP
+          {{- if .Values.zatoserver.volumes }}
+          volumeMounts:
+            {{- range .Values.zatoserver.volumes }}
+            - {{- toYaml .mount | nindent 14 }}
+            {{- end }}
+          {{- end }}
           resources:
             {{- toYaml .Values.zatoserver.resources | nindent 12 }}
+      {{- if .Values.zatoserver.volumes }}
+      volumes:
+        {{- range .Values.zatoserver.volumes }}
+        - {{- toYaml .volume | nindent 10 }}
+        {{- end }}
+      {{- end }}
       {{- with .Values.zatoserver.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
