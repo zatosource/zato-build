@@ -68,7 +68,7 @@ if [[ "$ZATO_POSITION" != "load-balancer" ]]; then
 fi
 
 gosu zato bash -c  "${ZATO_BIN} --version"
-SERVER_NAME="$(hostname)"
+SERVER_NAME="$(hostname)-$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 10 | head -n 1)"
 
 case "$ZATO_POSITION" in
     "load-balancer" )
@@ -133,8 +133,8 @@ case "$ZATO_POSITION" in
         SECRET_KEY="--secret_key ${SECRET_KEY}"
         JWT_SECRET_KEY="--jwt_secret ${JWT_SECRET_KEY}"
 
-        echo "${ZATO_BIN} create server ${OPTIONS} ${ODB_DATA} --kvdb_password '${REDIS_PASSWORD}' ${JWT_SECRET_KEY} ${SECRET_KEY} --http_port 17010 /opt/zato/env/qs-1/ ${ODB_TYPE} ${REDIS_HOSTNAME} ${REDIS_PORT:-6379} ${CLUSTER_NAME} ${SERVER_NAME}"
-        gosu zato bash -c "${ZATO_BIN} create server ${OPTIONS} ${ODB_DATA} --kvdb_password '${REDIS_PASSWORD}' ${JWT_SECRET_KEY} ${SECRET_KEY} --http_port 17010 /opt/zato/env/qs-1/ ${ODB_TYPE} ${REDIS_HOSTNAME} ${REDIS_PORT:-6379} ${CLUSTER_NAME} ${SERVER_NAME}"
+        echo "${ZATO_BIN} create server ${OPTIONS} ${ODB_DATA} --skip-if-exists --kvdb_password '${REDIS_PASSWORD}' ${JWT_SECRET_KEY} ${SECRET_KEY} --http_port 17010 /opt/zato/env/qs-1/ ${ODB_TYPE} ${REDIS_HOSTNAME} ${REDIS_PORT:-6379} ${CLUSTER_NAME} ${SERVER_NAME}"
+        gosu zato bash -c "${ZATO_BIN} create server ${OPTIONS} ${ODB_DATA} --skip-if-exists --kvdb_password '${REDIS_PASSWORD}' ${JWT_SECRET_KEY} ${SECRET_KEY} --http_port 17010 /opt/zato/env/qs-1/ ${ODB_TYPE} ${REDIS_HOSTNAME} ${REDIS_PORT:-6379} ${CLUSTER_NAME} ${SERVER_NAME}"
         if [[ -n "${VERBOSE}" && "${VERBOSE}" == "y" ]]; then
             sed -i -e 's|INFO|DEBUG|' /opt/zato/env/qs-1/config/repo/logging.conf
         fi
