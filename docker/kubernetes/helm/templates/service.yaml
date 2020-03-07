@@ -10,7 +10,7 @@ spec:
     - port: {{ default 8183 .Values.zatowebadmin.service.port }}
       targetPort: {{ default 8183 .Values.zatowebadmin.service.port }}
       protocol: TCP
-      name: {{ .Values.zatowebadmin.service.name }}
+      name: {{ default "web" .Values.zatowebadmin.service.name }}
   selector:
     {{- include "zato.zatowebadmin.selectorLabels" . | nindent 4 }}
 ---
