@@ -223,15 +223,15 @@ Create the name of the service account to use
 httpGet:
   path: /accounts/login/
   port: {{ default "web" .Values.zatowebadmin.service.name | quote }}
-initialDelaySeconds: {{ default 80 .Values.zatowebadmin.livenessProbe.initialDelaySeconds }}
-failureThreshold: {{ default 2 .Values.zatowebadmin.livenessProbe.failureThreshold }}
+initialDelaySeconds: {{ default 150 .Values.zatowebadmin.livenessProbe.initialDelaySeconds }}
+failureThreshold: {{ default 10 .Values.zatowebadmin.livenessProbe.failureThreshold }}
 periodSeconds: {{ default 20 .Values.zatowebadmin.livenessProbe.periodSeconds }}
 {{- end -}}
 {{- define "zato.zatowebadmin.readinessProbe" -}}
 httpGet:
   path: /accounts/login/
   port: {{ default "web" .Values.zatowebadmin.service.name | quote }}
-initialDelaySeconds: {{ default 70 .Values.zatowebadmin.readinessProbe.initialDelaySeconds }}
+initialDelaySeconds: {{ default 110 .Values.zatowebadmin.readinessProbe.initialDelaySeconds }}
 failureThreshold: {{ default 2 .Values.zatowebadmin.readinessProbe.failureThreshold }}
 periodSeconds: {{ default 5 .Values.zatowebadmin.readinessProbe.periodSeconds }}
 {{- end -}}
@@ -239,8 +239,8 @@ periodSeconds: {{ default 5 .Values.zatowebadmin.readinessProbe.periodSeconds }}
 httpGet:
   path: /accounts/login/
   port: {{ default "web" .Values.zatowebadmin.service.name | quote }}
-initialDelaySeconds: {{ default 60 .Values.zatowebadmin.startupProbe.initialDelaySeconds }}
-failureThreshold: {{ default 1 .Values.zatowebadmin.startupProbe.failureThreshold }}
+initialDelaySeconds: {{ default 90 .Values.zatowebadmin.startupProbe.initialDelaySeconds }}
+failureThreshold: {{ default 2 .Values.zatowebadmin.startupProbe.failureThreshold }}
 periodSeconds: {{ default 30 .Values.zatowebadmin.startupProbe.periodSeconds }}
 {{- end -}}
 
@@ -248,8 +248,8 @@ periodSeconds: {{ default 30 .Values.zatowebadmin.startupProbe.periodSeconds }}
 httpGet:
   path: /zato/ping
   port: {{ default "server" .Values.zatoserver.service.name | quote }}
-initialDelaySeconds: {{ default 80 .Values.zatoserver.livenessProbe.initialDelaySeconds }}
-failureThreshold: {{ default 2 .Values.zatoserver.livenessProbe.failureThreshold }}
+initialDelaySeconds: {{ default 90 .Values.zatoserver.livenessProbe.initialDelaySeconds }}
+failureThreshold: {{ default 10 .Values.zatoserver.livenessProbe.failureThreshold }}
 periodSeconds: {{ default 20 .Values.zatoserver.livenessProbe.periodSeconds }}
 {{- end -}}
 {{- define "zato.zatoserver.readinessProbe" -}}
@@ -265,6 +265,6 @@ httpGet:
   path: /zato/ping
   port: {{ default "server" .Values.zatoserver.service.name | quote }}
 initialDelaySeconds: {{ default 60 .Values.zatoserver.startupProbe.initialDelaySeconds }}
-failureThreshold: {{ default 1 .Values.zatoserver.startupProbe.failureThreshold }}
+failureThreshold: {{ default 2 .Values.zatoserver.startupProbe.failureThreshold }}
 periodSeconds: {{ default 30 .Values.zatoserver.startupProbe.periodSeconds }}
 {{- end -}}

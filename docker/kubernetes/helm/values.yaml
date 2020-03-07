@@ -9,7 +9,7 @@ nameOverride: ""
 fullnameOverride: ""
 image:
   repository: registry.gitlab.com/zatosource/docker-registry/cloud
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
 
 # Zato's secret variables:
 secretKey: ""
@@ -202,16 +202,16 @@ zatowebadmin:
   affinity: {}
 
   livenessProbe:
-    initialDelaySeconds: 80
-    failureThreshold: 2
+    initialDelaySeconds: 150
+    failureThreshold: 10
     periodSeconds: 20
   readinessProbe:
-    initialDelaySeconds: 70
+    initialDelaySeconds: 110
     failureThreshold: 2
     periodSeconds: 5
   startupProbe:
-    initialDelaySeconds: 60
-    failureThreshold: 1
+    initialDelaySeconds: 90
+    failureThreshold: 2
     periodSeconds: 30
 
 zatoserver:
@@ -262,8 +262,8 @@ zatoserver:
     #       path: /hotdeploy/
     #       type: Directory
   livenessProbe:
-    initialDelaySeconds: 80
-    failureThreshold: 2
+    initialDelaySeconds: 90
+    failureThreshold: 10
     periodSeconds: 20
   readinessProbe:
     initialDelaySeconds: 70
@@ -271,7 +271,7 @@ zatoserver:
     periodSeconds: 5
   startupProbe:
     initialDelaySeconds: 60
-    failureThreshold: 1
+    failureThreshold: 2
     periodSeconds: 30
 
 serviceAccount:
