@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "helm.fullname" . }}-test-connection"
+  labels:
+    {{- include "helm.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test-success
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['{{ .Values.zatoserver.service.name }}:{{ .Values.zatoserver.service.port }}/zato/ping']
+  restartPolicy: Never
