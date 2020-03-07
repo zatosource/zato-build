@@ -167,6 +167,7 @@ zatobootstrap:
   affinity: {}
 
 zatowebadmin:
+  deploymentKind: "Deployment" # Deployment/StatefulSet
   replicaCount: 1
   fullname: webadmin
   replicaCount: 1
@@ -200,7 +201,21 @@ zatowebadmin:
   tolerations: []
   affinity: {}
 
+  livenessProbe:
+    initialDelaySeconds: 80
+    failureThreshold: 2
+    periodSeconds: 20
+  readinessProbe:
+    initialDelaySeconds: 70
+    failureThreshold: 2
+    periodSeconds: 5
+  startupProbe:
+    initialDelaySeconds: 60
+    failureThreshold: 1
+    periodSeconds: 30
+
 zatoserver:
+  deploymentKind: "Deployment" # Deployment/StatefulSet
   replicaCount: 1
   fullname: server
   replicaCount: 1
@@ -246,6 +261,18 @@ zatoserver:
     #     hostPath:
     #       path: /hotdeploy/
     #       type: Directory
+  livenessProbe:
+    initialDelaySeconds: 80
+    failureThreshold: 2
+    periodSeconds: 20
+  readinessProbe:
+    initialDelaySeconds: 70
+    failureThreshold: 2
+    periodSeconds: 5
+  startupProbe:
+    initialDelaySeconds: 60
+    failureThreshold: 1
+    periodSeconds: 30
 
 serviceAccount:
   # Specifies whether a service account should be created

@@ -101,13 +101,16 @@ spec:
 
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: {{ default "Deployment" .Values.zatoserver.deploymentKind | quote }}
 metadata:
   name: {{ include "zato.zatowebadmin.fullname" . | quote }}
   labels:
     {{- include "zato.zatowebadmin.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.zatowebadmin.replicaCount }}
+  {{- if eq .Values.zatowebadmin.deploymentKind "StatefulSet" }}
+  serviceName: {{ include "zato.zatowebadmin.fullname" . | quote }}
+  {{- end }}
   selector:
     matchLabels:
       {{- include "zato.zatowebadmin.selectorLabels" . | nindent 6 }}
@@ -139,6 +142,12 @@ spec:
             - name: {{ default "web" .Values.zatowebadmin.service.name | quote }}
               containerPort: {{ default 8183 .Values.zatowebadmin.service.port }}
               protocol: TCP
+          livenessProbe:
+            {{- include "zato.zatowebadmin.livenessProbe" . | nindent 12 }}
+          readinessProbe:
+            {{- include "zato.zatowebadmin.readinessProbe" . | nindent 12 }}
+          startupProbe:
+            {{- include "zato.zatowebadmin.startupProbe" . | nindent 12 }}
           resources:
             {{- toYaml .Values.zatowebadmin.resources | nindent 12 }}
       {{- with .Values.zatowebadmin.nodeSelector }}
@@ -156,13 +165,16 @@ spec:
 
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: {{ default "Deployment" .Values.zatoserver.deploymentKind | quote }}
 metadata:
   name: {{ include "zato.zatoserver.fullname" . | quote }}
   labels:
     {{- include "zato.zatoserver.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.zatoserver.replicaCount }}
+  {{- if eq .Values.zatoserver.deploymentKind "StatefulSet" }}
+  serviceName: {{ include "zato.zatoserver.fullname" . | quote }}
+  {{- end }}
   selector:
     matchLabels:
       {{- include "zato.zatoserver.selectorLabels" . | nindent 6 }}
@@ -194,6 +206,12 @@ spec:
             - name: {{ default "server" .Values.zatoserver.service.name | quote }}
               containerPort: {{ default 17010 .Values.zatoserver.service.port }}
               protocol: TCP
+          livenessProbe:
+            {{- include "zato.zatoserver.livenessProbe" . | nindent 12 }}
+          readinessProbe:
+            {{- include "zato.zatoserver.readinessProbe" . | nindent 12 }}
+          startupProbe:
+            {{- include "zato.zatoserver.startupProbe" . | nindent 12 }}
           {{- if .Values.zatoserver.volumes }}
           volumeMounts:
             {{- range .Values.zatoserver.volumes }}
