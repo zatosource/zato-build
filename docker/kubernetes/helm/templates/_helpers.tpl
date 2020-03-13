@@ -24,10 +24,10 @@ If release name contains chart name it will be used as a full name.
 {{- end -}}
 {{- end -}}
 {{- define "zato.postgresql.fullname" -}}
-{{- .Values.postgresql.fullname | trunc 63 | trimSuffix "-" -}}
+{{- .Values.global.postgresql.fullname | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 {{- define "zato.redis.fullname" -}}
-{{- .Values.redis.fullname | trunc 63 | trimSuffix "-" -}}
+{{- .Values.global.redis.fullname | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 {{- define "zato.zatoscheduler.fullname" -}}
 {{- .Values.zatoscheduler.fullname | trunc 63 | trimSuffix "-" -}}
@@ -155,10 +155,10 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 Create the name of the service account to use
 */}}
 {{- define "zato.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create -}}
-    {{ default (include "helm.fullname" .) .Values.serviceAccount.name }}
+{{- if .Values.global.serviceAccount.create -}}
+    {{ default (include "helm.fullname" .) .Values.global.serviceAccount.name }}
 {{- else -}}
-    {{ default "default" .Values.serviceAccount.name }}
+    {{ default "default" .Values.global.serviceAccount.name }}
 {{- end -}}
 {{- end -}}
 
@@ -172,19 +172,19 @@ Create the name of the service account to use
 - name: CLUSTER_NAME
   value: {{ default "zato" .Values.clusterName | quote  }}
 - name: REDIS_HOSTNAME
-  value: "{{- if .Values.redis.enabled -}}{{ .Values.redis.fullname }}.{{ .Release.Namespace }}.svc.cluster.local{{- else -}}{{ required "A valid redisHostname is required if Redis is not enabled!" .Values.redisHostname }}{{- end -}}"
+  value: "{{- if .Values.global.redis.enabled -}}{{ .Values.global.redis.fullname }}.{{ .Release.Namespace }}.svc.cluster.local{{- else -}}{{ required "A valid redisHostname is required if Redis is not enabled!" .Values.redisHostname }}{{- end -}}"
 - name: REDIS_PORT
-  value: {{ default 6379 .Values.redisPort | quote }}
+  value: "{{- if .Values.global.redis.enabled -}}6379{{- else -}}{{ default 6379 .Values.redisPort }}{{- end -}}"
 - name: ODB_TYPE
-  value: {{ default "postgresql" .Values.odbType | quote }}
+  value: "{{- if .Values.global.postgresql.enabled -}}postgresql{{- else -}}{{ default "postgresql" .Values.odbType }}{{- end -}}"
 - name: ODB_HOSTNAME
-  value: "{{- if .Values.postgresql.enabled -}}{{ .Values.postgresql.fullname }}.{{ .Release.Namespace }}.svc.cluster.local{{- else -}}{{ required "A valid odbHostname is required if PostgreSQL is not enabled!" .Values.odbHostname }}{{- end -}}"
+  value: "{{- if .Values.global.postgresql.enabled -}}{{ .Values.global.postgresql.fullname }}.{{ .Release.Namespace }}.svc.cluster.local{{- else -}}{{ required "A valid odbHostname is required if PostgreSQL is not enabled!" .Values.odbHostname }}{{- end -}}"
 - name: ODB_PORT
-  value: {{ default 5432 .Values.postgresql.service.port | quote }}
+  value: "{{- if .Values.global.postgresql.enabled -}}5432{{- else -}}{{ default 5432 .Values.odbPort }}{{- end -}}"
 - name: ODB_NAME
-  value: {{ default "zato" .Values.odbName | quote }}
+  value: "{{- if .Values.global.postgresql.enabled -}}zato{{- else -}}{{ default "zato" .Values.odbName }}{{- end -}}"
 - name: ODB_USERNAME
-  value: {{ default "zato" .Values.odbUsername | quote }}
+  value: "{{- if .Values.global.postgresql.enabled -}}zato{{- else -}}{{ default "zato" .Values.odbUsername }}{{- end -}}"
 - name: ZATO_ENMASSE_FILE
   value: {{ default "zato" .Values.zatoEnmasseFile | quote }}
 - name: "SECRET_KEY"
@@ -267,4 +267,36 @@ httpGet:
 initialDelaySeconds: {{ default 60 .Values.zatoserver.startupProbe.initialDelaySeconds }}
 failureThreshold: {{ default 2 .Values.zatoserver.startupProbe.failureThreshold }}
 periodSeconds: {{ default 30 .Values.zatoserver.startupProbe.periodSeconds }}
+{{- end -}}
+
+{{- define "postgresql.name" -}}
+{{- if .Values.global.postgresql.enabled -}}
+zato
+{{- else -}}
+{{ default "zato" .Values.odbName }}
+{{- end -}}
+{{- end -}}
+
+{{- define "postgresql.port" -}}
+{{- if .Values.global.postgresql.enabled -}}
+5432
+{{- else -}}
+{{ default 5432 .Values.odbPort }}
+{{- end -}}
+{{- end -}}
+
+{{- define "postgresql.username" -}}
+{{- if .Values.global.postgresql.enabled -}}
+zato
+{{- else -}}
+{{ default "zato" .Values.odbUsername }}
+{{- end -}}
+{{- end -}}
+
+{{- define "postgresql.password" -}}
+{{- if .Values.global.postgresql.enabled -}}
+zato
+{{- else -}}
+{{ default "zato" .Values.odbPassword }}
+{{- end -}}
 {{- end -}}

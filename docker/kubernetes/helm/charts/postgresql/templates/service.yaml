@@ -5,10 +5,10 @@ metadata:
   labels:
     {{- include "zato.postgresql.labels" . | nindent 4 }}
 spec:
-  type: {{ .Values.postgresql.service.type | quote }}
+  type: {{ .Values.service.type | quote }}
   ports:
-    - port: {{ default 5432 .Values.odbPort }}
+    - port: {{ default 5432 .Values.service.port }}
       protocol: TCP
-      name: {{ .Values.postgresql.fullname | quote }}
+      name: {{ .Values.fullname | quote }}
   selector:
     {{- include "zato.postgresql.selectorLabels" . | nindent 4 }}
