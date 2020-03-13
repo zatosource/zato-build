@@ -176,15 +176,15 @@ Create the name of the service account to use
 - name: REDIS_PORT
   value: "{{- if .Values.global.redis.enabled -}}6379{{- else -}}{{ default 6379 .Values.redisPort }}{{- end -}}"
 - name: ODB_TYPE
-  value: {{ default "postgresql" .Values.odbType | quote }}
+  value: "{{- if .Values.global.postgresql.enabled -}}postgresql{{- else -}}{{ default "postgresql" .Values.odbType }}{{- end -}}"
 - name: ODB_HOSTNAME
   value: "{{- if .Values.global.postgresql.enabled -}}{{ .Values.global.postgresql.fullname }}.{{ .Release.Namespace }}.svc.cluster.local{{- else -}}{{ required "A valid odbHostname is required if PostgreSQL is not enabled!" .Values.odbHostname }}{{- end -}}"
 - name: ODB_PORT
   value: "{{- if .Values.global.postgresql.enabled -}}5432{{- else -}}{{ default 5432 .Values.odbPort }}{{- end -}}"
 - name: ODB_NAME
-  value: {{ default "zato" .Values.odbName | quote }}
+  value: "{{- if .Values.global.postgresql.enabled -}}zato{{- else -}}{{ default "zato" .Values.odbName }}{{- end -}}"
 - name: ODB_USERNAME
-  value: {{ default "zato" .Values.odbUsername | quote }}
+  value: "{{- if .Values.global.postgresql.enabled -}}zato{{- else -}}{{ default "zato" .Values.odbUsername }}{{- end -}}"
 - name: ZATO_ENMASSE_FILE
   value: {{ default "zato" .Values.zatoEnmasseFile | quote }}
 - name: "SECRET_KEY"
@@ -270,14 +270,33 @@ periodSeconds: {{ default 30 .Values.zatoserver.startupProbe.periodSeconds }}
 {{- end -}}
 
 {{- define "postgresql.name" -}}
+{{- if .Values.global.postgresql.enabled -}}
+zato
+{{- else -}}
 {{ default "zato" .Values.odbName }}
 {{- end -}}
+{{- end -}}
+
 {{- define "postgresql.port" -}}
+{{- if .Values.global.postgresql.enabled -}}
+5432
+{{- else -}}
 {{ default 5432 .Values.odbPort }}
 {{- end -}}
-{{- define "postgresql.username" -}}
-{{ default "server" .Values.odbUsername }}
 {{- end -}}
+
+{{- define "postgresql.username" -}}
+{{- if .Values.global.postgresql.enabled -}}
+zato
+{{- else -}}
+{{ default "zato" .Values.odbUsername }}
+{{- end -}}
+{{- end -}}
+
 {{- define "postgresql.password" -}}
-{{ default "server" .Values.odbPassword }}
+{{- if .Values.global.postgresql.enabled -}}
+zato
+{{- else -}}
+{{ default "zato" .Values.odbPassword }}
+{{- end -}}
 {{- end -}}
