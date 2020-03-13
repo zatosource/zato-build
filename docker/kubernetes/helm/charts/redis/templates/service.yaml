@@ -5,10 +5,10 @@ metadata:
   labels:
     {{- include "zato.redis.labels" . | nindent 4 }}
 spec:
-  type: {{ .Values.redis.service.type | quote }}
+  type: {{ .Values.service.type | quote }}
   ports:
-    - port: {{ .Values.redisPort }}
+    - port: {{ default 6379 .Values.service.port }}
       protocol: TCP
-      name: {{ .Values.redis.fullname | quote }}
+      name: {{ .Values.fullname | quote }}
   selector:
     {{- include "zato.redis.selectorLabels" . | nindent 4 }}

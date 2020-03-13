@@ -24,10 +24,10 @@ If release name contains chart name it will be used as a full name.
 {{- end -}}
 {{- end -}}
 {{- define "zato.postgresql.fullname" -}}
-{{- .Values.postgresql.fullname | trunc 63 | trimSuffix "-" -}}
+{{- .Values.global.postgresql.fullname | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 {{- define "zato.redis.fullname" -}}
-{{- .Values.redis.fullname | trunc 63 | trimSuffix "-" -}}
+{{- .Values.global.redis.fullname | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 {{- define "zato.zatoscheduler.fullname" -}}
 {{- .Values.zatoscheduler.fullname | trunc 63 | trimSuffix "-" -}}
@@ -155,10 +155,10 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 Create the name of the service account to use
 */}}
 {{- define "zato.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create -}}
-    {{ default (include "helm.fullname" .) .Values.serviceAccount.name }}
+{{- if .Values.global.serviceAccount.create -}}
+    {{ default (include "helm.fullname" .) .Values.global.serviceAccount.name }}
 {{- else -}}
-    {{ default "default" .Values.serviceAccount.name }}
+    {{ default "default" .Values.global.serviceAccount.name }}
 {{- end -}}
 {{- end -}}
 
@@ -172,15 +172,15 @@ Create the name of the service account to use
 - name: CLUSTER_NAME
   value: {{ default "zato" .Values.clusterName | quote  }}
 - name: REDIS_HOSTNAME
-  value: "{{- if .Values.redis.enabled -}}{{ .Values.redis.fullname }}.{{ .Release.Namespace }}.svc.cluster.local{{- else -}}{{ required "A valid redisHostname is required if Redis is not enabled!" .Values.redisHostname }}{{- end -}}"
+  value: "{{- if .Values.global.redis.enabled -}}{{ .Values.global.redis.fullname }}.{{ .Release.Namespace }}.svc.cluster.local{{- else -}}{{ required "A valid redisHostname is required if Redis is not enabled!" .Values.redisHostname }}{{- end -}}"
 - name: REDIS_PORT
-  value: {{ default 6379 .Values.redisPort | quote }}
+  value: "{{- if .Values.global.redis.enabled -}}6379{{- else -}}{{ default 6379 .Values.redisPort }}{{- end -}}"
 - name: ODB_TYPE
   value: {{ default "postgresql" .Values.odbType | quote }}
 - name: ODB_HOSTNAME
-  value: "{{- if .Values.postgresql.enabled -}}{{ .Values.postgresql.fullname }}.{{ .Release.Namespace }}.svc.cluster.local{{- else -}}{{ required "A valid odbHostname is required if PostgreSQL is not enabled!" .Values.odbHostname }}{{- end -}}"
+  value: "{{- if .Values.global.postgresql.enabled -}}{{ .Values.global.postgresql.fullname }}.{{ .Release.Namespace }}.svc.cluster.local{{- else -}}{{ required "A valid odbHostname is required if PostgreSQL is not enabled!" .Values.odbHostname }}{{- end -}}"
 - name: ODB_PORT
-  value: {{ default 5432 .Values.postgresql.service.port | quote }}
+  value: "{{- if .Values.global.postgresql.enabled -}}5432{{- else -}}{{ default 5432 .Values.odbPort }}{{- end -}}"
 - name: ODB_NAME
   value: {{ default "zato" .Values.odbName | quote }}
 - name: ODB_USERNAME
@@ -267,4 +267,17 @@ httpGet:
 initialDelaySeconds: {{ default 60 .Values.zatoserver.startupProbe.initialDelaySeconds }}
 failureThreshold: {{ default 2 .Values.zatoserver.startupProbe.failureThreshold }}
 periodSeconds: {{ default 30 .Values.zatoserver.startupProbe.periodSeconds }}
+{{- end -}}
+
+{{- define "postgresql.name" -}}
+{{ default "zato" .Values.odbName }}
+{{- end -}}
+{{- define "postgresql.port" -}}
+{{ default 5432 .Values.odbPort }}
+{{- end -}}
+{{- define "postgresql.username" -}}
+{{ default "server" .Values.odbUsername }}
+{{- end -}}
+{{- define "postgresql.password" -}}
+{{ default "server" .Values.odbPassword }}
 {{- end -}}
