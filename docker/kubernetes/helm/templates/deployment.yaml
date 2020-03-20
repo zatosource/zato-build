@@ -78,7 +78,7 @@ spec:
         - name: {{ .Values.zatobootstrap.fullname | quote }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Chart.AppVersion }}"
+          image: "{{ .Values.image.repository }}:{{ default .Chart.AppVersion .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
           env:
             - name: ZATO_POSITION
@@ -132,7 +132,7 @@ spec:
         - name: {{ .Values.zatowebadmin.fullname | quote }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Chart.AppVersion }}"
+          image: "{{ .Values.image.repository }}:{{ default .Chart.AppVersion .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
           env:
             - name: ZATO_POSITION
@@ -196,7 +196,7 @@ spec:
         - name: {{ .Values.zatoserver.fullname | quote }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Chart.AppVersion }}"
+          image: "{{ .Values.image.repository }}:{{ default .Chart.AppVersion .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
           env:
             - name: ZATO_POSITION
