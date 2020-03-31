@@ -28,6 +28,7 @@ if [[ -z ${JWT_SECRET_KEY} ]]; then
     exit 1
 fi
 
+WAITS=""
 if [[ -n "${REDIS_HOSTNAME}" ]]; then
     WAITS="${WAITS} -wait tcp://${REDIS_HOSTNAME}:6379 -timeout 10m "
 else
@@ -61,7 +62,7 @@ if [[ ! -d /opt/zato/env/qs-1 ]];then
     chown -R zato. /opt/zato/env/qs-1
 fi
 
-/usr/local/bin/dockerize ${WAITS}
+[[ -n "${WAITS}" ]] && /usr/local/bin/dockerize ${WAITS}
 
 if [[ "$ZATO_POSITION" != "load-balancer" ]]; then
     sleep 30
