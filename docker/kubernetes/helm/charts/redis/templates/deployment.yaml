@@ -5,7 +5,7 @@ metadata:
   labels:
     {{- include "zato.redis.labels" . | nindent 4 }}
 spec:
-  replicas: {{ .Values.redis.replicaCount }}
+  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
       {{- include "zato.redis.selectorLabels" . | nindent 6 }}
@@ -22,28 +22,28 @@ spec:
     {{- end }}
       serviceAccountName: {{ include "zato.serviceAccountName" . | quote }}
       securityContext:
-        {{- toYaml .Values.redis.podSecurityContext | nindent 8 }}
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
-        - name: {{ .Values.redis.fullname | quote }}
+        - name: {{ .Values.fullname | quote }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.redis.image.repository }}:{{ .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.redis.image.pullPolicy }}
+          image: "{{ .Values.image.repository }}:{{ .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: redis
               containerPort: {{ default 6379 .Values.redisPort }}
               protocol: TCP
           resources:
-            {{- toYaml .Values.redis.resources | nindent 12 }}
-      {{- with .Values.redis.nodeSelector }}
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-    {{- with .Values.redis.affinity }}
+    {{- with .Values.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
     {{- end }}
-    {{- with .Values.redis.tolerations }}
+    {{- with .Values.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
     {{- end }}
