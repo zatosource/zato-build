@@ -8,7 +8,7 @@ ENV ZATO_BIN /opt/zato/current/bin/zato
 ARG zato_py_version
 
 # Install helper programs used during Zato installation
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+RUN apt-get update&& DEBIAN_FRONTEND=noninteractive apt-get upgrade -y && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     apt-transport-https \
     curl \
     git \
