@@ -78,7 +78,7 @@ if command -v lsb_release > /dev/null; then
     LIBGFORTRAN=libgfortran3
     if [[ "$release" == "buster" ]]; then
         LIBATLAS3BASE=libatlas3-base
-        LIBGFORTRAN=libgfortran4
+        LIBGFORTRAN=libgfortran-8
         LIBBLAS3=libblas3
         LIBLAPACK3=liblapack3
         LIBUMFPACK_VERSION=5
@@ -95,6 +95,12 @@ if command -v lsb_release > /dev/null; then
         LIBLAPACK3=liblapack3
         LIBUMFPACK_VERSION=5.7.1
         LIBEVENT_VERSION=2.0-5
+    elif [[ "$release" == "focal" ]]; then
+        LIBATLAS3BASE=libatlas3-base
+        LIBBLAS3=libblas3
+        LIBLAPACK3=liblapack3
+        LIBUMFPACK_VERSION=5
+        LIBEVENT_VERSION=2.1-7
     elif [[ "$release" == "bionic" ]]; then
         LIBATLAS3BASE=libatlas3-base
         LIBBLAS3=libblas3
