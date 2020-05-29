@@ -35,7 +35,7 @@ before_install:
 
 matrix:
   allow_failures:
-    - osx
+    os: osx
 
 notifications:
   email: false
