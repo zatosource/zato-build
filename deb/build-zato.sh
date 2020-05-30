@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -x
+
 function usage(){
     echo "$0 BRANCH_NAME ZATO_VERSION PYTHON_EXECUTABLE [PACKAGE_VERSION] [PROCESS]"
     echo ""
@@ -161,7 +163,7 @@ function checkout_zato {
 function install_zato {
 
     cd $ZATO_TARGET_DIR/code
-    sed -i -e 's|dateparser==0.5.1|dateparser==0.7.1|' requirements.txt
+    sed -i -e 's|dateparser==0.5.1|dateparser==0.7.1|' -e 's|pyasn1==0.4.5|pyasn1==0.4.8|' requirements.txt
     if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][1])') -eq 4 ]]; then
         sed -i -e 's|pg8000==1.13.1|pg8000==1.12.3|' _req_py3.txt
     fi
@@ -186,9 +188,7 @@ function install_zato {
     fi
 
     release=$(lsb_release -c | cut -f2)
-    cat requirements.txt
     ./install.sh -p ${PY_BINARY}
-    cat requirements.txt
 
     find $ZATO_TARGET_DIR/. -name *.pyc -exec rm -f {} \;
     find $ZATO_TARGET_DIR/. ! -perm /004 -exec chmod 644 {} \;
