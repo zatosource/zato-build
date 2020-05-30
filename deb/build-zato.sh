@@ -103,7 +103,7 @@ if command -v lsb_release > /dev/null; then
     elif [[ "$release" == "focal" ]]; then
         PYTHON_DEPENDENCIES="python, cython"
         if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][0])') -eq 3 ]];then
-            PYTHON_DEPENDENCIES="python3, python3-pip, cython3, python3-scipy"
+            PYTHON_DEPENDENCIES="python3, python3-pip, cython3, python3-scipy, python3-numpy"
         fi
         echo "PYTHON_DEPENDENCIES: ${PYTHON_DEPENDENCIES}"
         LIBATLAS3BASE=libatlas3-base
@@ -190,6 +190,15 @@ function install_zato {
 
     release=$(lsb_release -c | cut -f2)
     sed -i -e "s|sudo apt-get |sudo DEBIAN_FRONTEND=noninteractive apt-get |" ./install.sh ./_install-deb.sh
+    if [[ "$release" == "focal" ]]; then
+        if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][0])') -eq 3 ]];then
+            sed -i -e "s|\$PY_BINARY\-pip|python-pip-whl|" ./_install-deb.sh
+        else
+            sed -i -e "s|\$PY_BINARY\-pip||" ./_install-deb.sh
+        fi
+        sed -i -e 's|numpy==.*|numpy==1.16.4|' _postinstall.sh
+    fi
+
     cat ./_install-deb.sh
     ./install.sh -p ${PY_BINARY}
 
