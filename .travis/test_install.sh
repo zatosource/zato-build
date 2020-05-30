@@ -27,7 +27,6 @@ if [ "$(type -p apt-get)" ]; then
   if ! [ -e "/etc/localtime" ]; then
     ln -s /usr/share/zoneinfo/GMT /etc/localtime
   fi
-  set -x
 
   if [[ $(dpkg -s apt | grep -i version|cut -d ' ' -f 2|cut -d '.' -f 1,2) > 1.0 ]];then
       find /tmp/packages/ -type f -name \*.deb -exec apt-get install -y {} \;
@@ -38,8 +37,6 @@ if [ "$(type -p apt-get)" ]; then
       dpkg --configure -a
       DEBIAN_FRONTEND=noninteractive apt-get install -f -y || exit 1
   fi
-  dpkg-query -L zato
-  set +x
 
 elif [ "$(type -p yum)" ]; then
   RHEL_VERSION=el7
