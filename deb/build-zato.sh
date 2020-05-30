@@ -80,6 +80,7 @@ fi
 if command -v lsb_release > /dev/null; then
     release=$(lsb_release -c | cut -f2)
     LIBGFORTRAN=libgfortran3
+
     if [[ "$release" == "buster" ]]; then
         LIBATLAS3BASE=libatlas3-base
         LIBGFORTRAN=libgfortran-8
@@ -100,7 +101,13 @@ if command -v lsb_release > /dev/null; then
         LIBUMFPACK_VERSION=5.7.1
         LIBEVENT_VERSION=2.0-5
     elif [[ "$release" == "focal" ]]; then
+        if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][0])') -eq 3 ]];then
+            PYTHON_DEPENDENCIES="${PYTHON_DEPENDENCIES}, cython3, python3-scipy"
+        else
+            PYTHON_DEPENDENCIES="${PYTHON_DEPENDENCIES}, cython, python-scipy"
+        fi
         LIBATLAS3BASE=libatlas3-base
+        LIBGFORTRAN=libgfortran-10
         LIBBLAS3=libblas3
         LIBLAPACK3=liblapack3
         LIBUMFPACK_VERSION=5
@@ -130,14 +137,6 @@ if command -v lsb_release > /dev/null; then
         sudo apt-get install -y apt-transport-https python-software-properties
         sudo apt-add-repository 'deb http://ftp.is.debian.org/debian wheezy-backports main'
         sudo apt-get install -y --reinstall libffi5
-    fi
-
-    if [[ "$release" == "buster" ]]; then
-        if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][0])') -eq 3 ]];then
-            PYTHON_DEPENDENCIES="${PYTHON_DEPENDENCIES}, cython3, python3-scipy"
-        else
-            PYTHON_DEPENDENCIES="${PYTHON_DEPENDENCIES}, cython, python-scipy"
-        fi
     fi
 fi
 
@@ -190,7 +189,7 @@ function install_zato {
     fi
 
     release=$(lsb_release -c | cut -f2)
-    ./install.sh -p ${PY_BINARY}
+    DEBIAN_FRONTEND=noninteractive ./install.sh -p ${PY_BINARY}
 
     find $ZATO_TARGET_DIR/. -name *.pyc -exec rm -f {} \;
     find $ZATO_TARGET_DIR/. ! -perm /004 -exec chmod 644 {} \;
