@@ -104,7 +104,7 @@ if command -v lsb_release > /dev/null; then
         if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][0])') -eq 3 ]];then
             PYTHON_DEPENDENCIES="${PYTHON_DEPENDENCIES}, cython3, python3-scipy"
         else
-            PYTHON_DEPENDENCIES="${PYTHON_DEPENDENCIES}, cython, python-scipy"
+            PYTHON_DEPENDENCIES="python, cython"
         fi
         LIBATLAS3BASE=libatlas3-base
         LIBGFORTRAN=libgfortran-10-dev
