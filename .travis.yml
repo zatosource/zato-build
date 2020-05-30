@@ -7,6 +7,9 @@ cache:
   directories:
     - /tmp/travis-cache
 
+before_cache:
+  - sudo rm -rf /tmp/travis-cache/root/.cache/pip/http
+
 # https://zato.io/docs/admin/guide/install/index.html#operating-system-considerations
 env:
   - MODE=packaging IMAGE=centos:7
