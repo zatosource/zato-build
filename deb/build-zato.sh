@@ -83,7 +83,7 @@ if command -v lsb_release > /dev/null; then
 
     if [[ "$release" == "buster" ]]; then
         LIBATLAS3BASE=libatlas3-base
-        LIBGFORTRAN=libgfortran-8
+        LIBGFORTRAN=libgfortran-8-dev
         LIBBLAS3=libblas3
         LIBLAPACK3=liblapack3
         LIBUMFPACK_VERSION=5
@@ -107,7 +107,7 @@ if command -v lsb_release > /dev/null; then
             PYTHON_DEPENDENCIES="${PYTHON_DEPENDENCIES}, cython, python-scipy"
         fi
         LIBATLAS3BASE=libatlas3-base
-        LIBGFORTRAN=libgfortran-10
+        LIBGFORTRAN=libgfortran-10-dev
         LIBBLAS3=libblas3
         LIBLAPACK3=liblapack3
         LIBUMFPACK_VERSION=5
