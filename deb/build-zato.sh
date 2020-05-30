@@ -104,7 +104,6 @@ if command -v lsb_release > /dev/null; then
         PYTHON_DEPENDENCIES="python, cython"
         if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][0])') -eq 3 ]];then
             PYTHON_DEPENDENCIES="python3, python3-pip, cython3, python3-scipy"
-        else
         fi
         echo "PYTHON_DEPENDENCIES: ${PYTHON_DEPENDENCIES}"
         LIBATLAS3BASE=libatlas3-base
