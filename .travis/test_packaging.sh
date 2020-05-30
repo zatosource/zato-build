@@ -1,8 +1,9 @@
 #!/bin/bash
 
 set -xe
-env
-. $TRAVIS_BUILD_DIR/.travis/setup.sh
+if [[ -z "`docker ps -a|grep target`" ]]; then
+    . $TRAVIS_BUILD_DIR/.travis/setup.sh
+fi
 
 name="${IMAGE:0:6}"
 version="${IMAGE##${name}:}"
