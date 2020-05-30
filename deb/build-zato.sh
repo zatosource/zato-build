@@ -191,7 +191,7 @@ function install_zato {
 
     release=$(lsb_release -c | cut -f2)
     sed -i -e "s|sudo apt-get |sudo DEBIAN_FRONTEND=noninteractive apt-get |" ./install.sh ./_install-deb.sh
-    cat ./install.sh
+    cat ./_install-deb.sh
     ./install.sh -p ${PY_BINARY}
 
     find $ZATO_TARGET_DIR/. -name *.pyc -exec rm -f {} \;
