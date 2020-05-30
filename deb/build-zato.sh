@@ -189,7 +189,8 @@ function install_zato {
     fi
 
     release=$(lsb_release -c | cut -f2)
-    DEBIAN_FRONTEND=noninteractive ./install.sh -p ${PY_BINARY}
+    sed -i -e "s/sudo apt-get update/echo 'debconf debconf/frontend select Noninteractive'|debconf-set-selections\nsudo apt-get update/" ./install.sh
+    ./install.sh -p ${PY_BINARY}
 
     find $ZATO_TARGET_DIR/. -name *.pyc -exec rm -f {} \;
     find $ZATO_TARGET_DIR/. ! -perm /004 -exec chmod 644 {} \;
