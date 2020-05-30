@@ -169,6 +169,9 @@ function install_zato {
         sed -i -e 's|pg8000==1.13.1|pg8000==1.12.3|' _req_py3.txt
     fi
 
+    release=$(lsb_release -c | cut -f2)
+    sed -i -e "s|sudo apt-get |sudo DEBIAN_FRONTEND=noninteractive apt-get |" ./install.sh ./_install-deb.sh
+
     if [[ "$release" == "buster" ]]; then
         if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][0])') -eq 3 ]];then
             sed -i \
@@ -176,9 +179,7 @@ function install_zato {
                 -e 's|lxml==.*|lxml==4.3.4|' \
                 requirements.txt
         fi
-    fi
 
-    if [[ "$release" == "buster" ]]; then
         sed -i \
             -e 's|numpy==.*|numpy==1.16.4|' \
             -e 's|sarge==.*|sarge==0.1.5|' \
@@ -186,20 +187,22 @@ function install_zato {
             requirements.txt
         sed -i -e 's|numpy==.*|numpy==1.16.4|' _postinstall.sh
         sudo apt-get install -y pkg-config libtool cmake
-    fi
 
-    release=$(lsb_release -c | cut -f2)
-    sed -i -e "s|sudo apt-get |sudo DEBIAN_FRONTEND=noninteractive apt-get |" ./install.sh ./_install-deb.sh
-    if [[ "$release" == "focal" ]]; then
+    elif [[ "$release" == "focal" ]]; then
         if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][0])') -eq 3 ]];then
             sed -i -e "s|\$PY_BINARY\-pip|python-pip-whl|" ./_install-deb.sh
         else
             sed -i -e "s|\$PY_BINARY\-pip||" ./_install-deb.sh
         fi
-        sed -i -e 's|numpy==.*|numpy==1.16.4|' _postinstall.sh
+
+        sed -i \
+            -e 's|numpy==.*|numpy==1.16.4|' \
+            -e 's|sarge==.*|sarge==0.1.5|' \
+            -e 's|pyyaml==.*|pyyaml==5.1.2|' \
+            _postinstall.sh \
+            requirements.txt
     fi
 
-    cat ./_install-deb.sh
     ./install.sh -p ${PY_BINARY}
 
     find $ZATO_TARGET_DIR/. -name *.pyc -exec rm -f {} \;
