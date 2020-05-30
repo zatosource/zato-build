@@ -199,6 +199,8 @@ function install_zato {
             -e 's|numpy==.*|numpy==1.16.4|' \
             -e 's|sarge==.*|sarge==0.1.5|' \
             -e 's|pyyaml==.*|pyyaml==5.1.2|' \
+            -e 's|^toolz==.*|toolz==0.10.0|' \
+            -e 's|^cytoolz==.*|cytoolz==0.10.1|' \
             _postinstall.sh \
             requirements.txt
     fi
