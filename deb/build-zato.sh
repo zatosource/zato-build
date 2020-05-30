@@ -101,11 +101,12 @@ if command -v lsb_release > /dev/null; then
         LIBUMFPACK_VERSION=5.7.1
         LIBEVENT_VERSION=2.0-5
     elif [[ "$release" == "focal" ]]; then
+        PYTHON_DEPENDENCIES="python, cython"
         if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][0])') -eq 3 ]];then
-            PYTHON_DEPENDENCIES="${PYTHON_DEPENDENCIES}, cython3, python3-scipy"
+            PYTHON_DEPENDENCIES="python3, python3-pip, cython3, python3-scipy"
         else
-            PYTHON_DEPENDENCIES="python, cython"
         fi
+        echo "PYTHON_DEPENDENCIES: ${PYTHON_DEPENDENCIES}"
         LIBATLAS3BASE=libatlas3-base
         LIBGFORTRAN=libgfortran-10-dev
         LIBBLAS3=libblas3
@@ -189,7 +190,7 @@ function install_zato {
     fi
 
     release=$(lsb_release -c | cut -f2)
-    sed -i -e "s|sudo apt-get |sudo DEBIAN_FRONTEND=noninteractive apt-get |" ./install.sh
+    sed -i -e "s|sudo apt-get |sudo DEBIAN_FRONTEND=noninteractive apt-get |" ./install.sh ./_install-deb.sh
     cat ./install.sh
     ./install.sh -p ${PY_BINARY}
 
