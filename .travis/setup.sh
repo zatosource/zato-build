@@ -18,6 +18,8 @@
 #
 
 set -xe
+export SETUP_EXECUTED=true
+
 sudo mkdir -p /tmp/travis-cache/packages
 sudo mkdir -p /tmp/travis-cache/root/.cache/pip
 sudo mkdir -p /tmp/travis-cache/var/cache/apk

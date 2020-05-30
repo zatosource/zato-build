@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -xe
+env
 . $TRAVIS_BUILD_DIR/.travis/setup.sh
 
 name="${IMAGE:0:6}"
