@@ -2,7 +2,7 @@
 
 set -x
 
-env
+[[ -z "$USER" ]] && USER=`whoami`
 
 function usage(){
     echo "$0 BRANCH_NAME ZATO_VERSION PYTHON_EXECUTABLE [PACKAGE_VERSION] [PROCESS]"
