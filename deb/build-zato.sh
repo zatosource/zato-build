@@ -186,7 +186,9 @@ function install_zato {
     fi
 
     release=$(lsb_release -c | cut -f2)
+    cat requirements.txt
     ./install.sh -p ${PY_BINARY}
+    cat requirements.txt
 
     find $ZATO_TARGET_DIR/. -name *.pyc -exec rm -f {} \;
     find $ZATO_TARGET_DIR/. ! -perm /004 -exec chmod 644 {} \;
