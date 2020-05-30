@@ -14,7 +14,7 @@ PY_BINARY=${2:-python}
 cd /tmp/packages || exit 1
 
 if [ "$(type -p apt-get)" ]; then
-  apt-get update
+  apt-get update -y
 
   if ! [ -x "$(command -v lsb_release)" ]; then
     sudo apt-get install -y lsb-release
@@ -27,6 +27,7 @@ if [ "$(type -p apt-get)" ]; then
   if ! [ -e "/etc/localtime" ]; then
     ln -s /usr/share/zoneinfo/GMT /etc/localtime
   fi
+  set -x
 
   if [[ $(dpkg -s apt | grep -i version|cut -d ' ' -f 2|cut -d '.' -f 1,2) > 1.0 ]];then
       find /tmp/packages/ -type f -name \*.deb -exec apt-get install -y {} \;
@@ -35,15 +36,10 @@ if [ "$(type -p apt-get)" ]; then
 
       # fix dependencies
       dpkg --configure -a
-      apt-get install -f -y || exit 1
+      DEBIAN_FRONTEND=noninteractive apt-get install -f -y || exit 1
   fi
-
-
-  # upgrade s3cmd, debian jessie (debian 8) version is too old
-  if [[ "$(lsb_release -r | awk '{print $2}' | cut -d . -f 1)" = 8 || "$(lsb_release -r | awk '{print $2}' | cut -d . -f 1)" = 10 ]]; then
-    git clone https://github.com/s3tools/s3cmd.git /opt/s3cmd
-    ln -fs /opt/s3cmd/s3cmd /usr/bin/s3cmd
-  fi
+  dpkg-query -L zato
+  set +x
 
 elif [ "$(type -p yum)" ]; then
   RHEL_VERSION=el7
@@ -71,9 +67,6 @@ elif [ "$(type -p apk)" ]; then
   apk update
   apk add python py-pip py-setuptools git ca-certificates
   pip install python-dateutil
-  git clone https://github.com/s3tools/s3cmd.git /opt/s3cmd
-  ln -s /opt/s3cmd/s3cmd /usr/bin/s3cmd
-
   abuild-keygen -ani || exit 1
   ALPINE_VERSION="$(cat /etc/alpine-release)"
 
@@ -114,7 +107,6 @@ if [[ -n "$(grep 'Zato ' /tmp/zato-version | grep $PY_VERSION)" ]]; then
           echo "Package uploaded"
       else
           echo "Package upload failed"
-          s3cmd --version
           exit 1
       fi
   fi
