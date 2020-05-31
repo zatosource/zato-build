@@ -112,6 +112,7 @@ if command -v lsb_release > /dev/null; then
         LIBLAPACK3=liblapack3
         LIBUMFPACK_VERSION=5
         LIBEVENT_VERSION=2.1-7
+        sudo apt-get install -y --reinstall ${LIBLAPACK3}
     elif [[ "$release" == "bionic" ]]; then
         LIBATLAS3BASE=libatlas3-base
         LIBBLAS3=libblas3
