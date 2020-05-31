@@ -83,7 +83,7 @@ if command -v lsb_release > /dev/null; then
 
     if [[ "$release" == "buster" ]]; then
         LIBATLAS3BASE=libatlas3-base
-        LIBGFORTRAN=libgfortran-8-dev
+        LIBGFORTRAN=libgfortran5
         LIBBLAS3=libblas3
         LIBLAPACK3=liblapack3
         LIBUMFPACK_VERSION=5
@@ -107,12 +107,11 @@ if command -v lsb_release > /dev/null; then
         fi
         echo "PYTHON_DEPENDENCIES: ${PYTHON_DEPENDENCIES}"
         LIBATLAS3BASE=libatlas3-base
-        LIBGFORTRAN=libgfortran-10-dev
+        LIBGFORTRAN=libgfortran5
         LIBBLAS3=libblas3
-        LIBLAPACK3="liblapack3, lapack"
+        LIBLAPACK3=liblapack3
         LIBUMFPACK_VERSION=5
         LIBEVENT_VERSION=2.1-7
-        sudo apt-get install -y --reinstall ${LIBLAPACK3}
     elif [[ "$release" == "bionic" ]]; then
         LIBATLAS3BASE=libatlas3-base
         LIBBLAS3=libblas3
