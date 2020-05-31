@@ -38,7 +38,6 @@ dist: xenial
 
 before_install:
   - sudo apt-get update
-  - sudo apt-get install -y s3cmd
 
 matrix:
   allow_failures:
@@ -49,3 +48,6 @@ notifications:
 
 script:
   - source .travis/test_${MODE}.sh
+
+before_cache:
+  - sudo rm -rf /tmp/travis-cache/root/.cache/pip/http
