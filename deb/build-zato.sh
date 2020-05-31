@@ -184,8 +184,8 @@ function install_zato {
             -e 's|numpy==.*|numpy==1.16.4|' \
             -e 's|sarge==.*|sarge==0.1.5|' \
             -e 's|pyyaml==.*|pyyaml==5.1.1|' \
+            _postinstall.sh \
             requirements.txt
-        sed -i -e 's|numpy==.*|numpy==1.16.4|' _postinstall.sh
         sudo apt-get install -y pkg-config libtool cmake
 
     elif [[ "$release" == "focal" ]]; then
