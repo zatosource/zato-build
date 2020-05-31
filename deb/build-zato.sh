@@ -109,7 +109,7 @@ if command -v lsb_release > /dev/null; then
         LIBATLAS3BASE=libatlas3-base
         LIBGFORTRAN=libgfortran5
         LIBBLAS3=libblas3
-        LIBLAPACK3=liblapack3
+        LIBLAPACK3=liblapack.so.3
         LIBUMFPACK_VERSION=5
         LIBEVENT_VERSION=2.1-7
     elif [[ "$release" == "bionic" ]]; then
