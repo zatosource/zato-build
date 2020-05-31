@@ -109,7 +109,7 @@ if command -v lsb_release > /dev/null; then
         LIBATLAS3BASE=libatlas3-base
         LIBGFORTRAN=libgfortran-10-dev
         LIBBLAS3=libblas3
-        LIBLAPACK3=liblapack3
+        LIBLAPACK3="liblapack3, lapack"
         LIBUMFPACK_VERSION=5
         LIBEVENT_VERSION=2.1-7
         sudo apt-get install -y --reinstall ${LIBLAPACK3}
