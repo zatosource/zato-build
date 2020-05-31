@@ -201,6 +201,8 @@ function install_zato {
             -e 's|pyyaml==.*|pyyaml==5.1.2|' \
             -e 's|^toolz==.*|toolz==0.10.0|' \
             -e 's|^cytoolz==.*|cytoolz==0.10.1|' \
+            -e 's|cffi==.*|cffi==0.14.0|' \
+            -e 's|lxml==.*|lxml==4.4.3|' \
             _postinstall.sh \
             requirements.txt
     fi

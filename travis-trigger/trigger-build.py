@@ -61,9 +61,9 @@ if __name__ == "__main__":
         "Travis-API-Version": "3",
         "Authorization": "token {token}".format(token=args.token),
     }
-    if "env" in travisConfig.keys() and travisConfig["env"][0] != "":
+    if "env" in travisConfig.keys() and travisConfig["env"]["jobs"][0] != "":
         payload["request"]["message"] = "branch: '{}' environment '{}'".format(
-            args.branch, travisConfig["env"][0])
+            args.branch, travisConfig["env"]["jobs"][0])
     try:
         r = requests.post(endpoint, headers=headers, data=json.dumps(payload))
         resp = r.json()
