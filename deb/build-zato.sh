@@ -109,7 +109,7 @@ if command -v lsb_release > /dev/null; then
         LIBATLAS3BASE=libatlas3-base
         LIBGFORTRAN=libgfortran5
         LIBBLAS3=libblas3
-        LIBLAPACK3=liblapack.so.3
+        LIBLAPACK3=liblapack3
         LIBUMFPACK_VERSION=5
         LIBEVENT_VERSION=2.1-7
     elif [[ "$release" == "bionic" ]]; then
@@ -206,6 +206,9 @@ function install_zato {
             -e 's|psycopg2==.*|psycopg2==2.8.5|' \
             _postinstall.sh \
             requirements.txt
+        sed -i \
+            -e 's| lsb-release| lsb-release && sudo apt-get build-dep -y python3-numpy|' \
+            _install-deb.sh
     fi
 
     ./install.sh -p ${PY_BINARY}
