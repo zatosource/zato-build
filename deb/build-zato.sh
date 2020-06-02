@@ -112,7 +112,8 @@ if command -v lsb_release > /dev/null; then
         LIBLAPACK3=liblapack3
         LIBUMFPACK_VERSION=5
         LIBEVENT_VERSION=2.1-7
-        sudo sed -i -e 's|^# deb-src (.*)verse$|deb-src \1verse|' /etc/apt/sources.list
+        sudo sed -i -e 's|^# deb-src \(.*\)verse$|deb-src \1verse|' \
+                    -e 's|^# deb-src \(.*\)restricted$|deb-src \1restricted|' /etc/apt/sources.list
         sudo apt-get update -y
     elif [[ "$release" == "bionic" ]]; then
         LIBATLAS3BASE=libatlas3-base
