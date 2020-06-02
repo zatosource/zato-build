@@ -208,7 +208,7 @@ function install_zato {
             _postinstall.sh \
             requirements.txt
         sed -i \
-            -e 's| lsb-release| lsb-release && sudo apt-get build-dep -y python3-numpy|' \
+            -e 's| lsb-release| lsb-release\n sudo apt-get build-dep -y python3-numpy|' \
             _install-deb.sh
     fi
 
