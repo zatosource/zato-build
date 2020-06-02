@@ -197,6 +197,7 @@ function install_zato {
 
         sed -i \
             -e 's|numpy==.*|numpy==1.16.4|' \
+            -e 's|scipy==.*|scipy==1.3.3|' \
             -e 's|sarge==.*|sarge==0.1.5|' \
             -e 's|pyyaml==.*|pyyaml==5.1.2|' \
             -e 's|^toolz==.*|toolz==0.10.0|' \
