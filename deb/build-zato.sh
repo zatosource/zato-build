@@ -216,6 +216,9 @@ function install_zato {
         sed -i \
             -e 's| lsb-release| lsb-release\n sudo apt-get build-dep -y python3-numpy|' \
             _install-deb.sh
+        sed -i \
+            -e 's|librabbitmq.*|amqp==2.6.0|' \
+            _req_py27.txt _req_py3.txt
     fi
 
     ./install.sh -p ${PY_BINARY}
