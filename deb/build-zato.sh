@@ -190,6 +190,11 @@ function install_zato {
 
 }
 
+function run_tests_zato {
+    cd $ZATO_TARGET_DIR/
+    make run-tests || exit 1
+}
+
 function build_deb {
 
     mkdir $CURDIR/BUILDROOT
@@ -238,4 +243,5 @@ function build_deb {
 cleanup
 checkout_zato
 install_zato
+run_tests_zato
 build_deb

@@ -139,6 +139,11 @@ function install_zato {
     find $ZATO_TARGET_DIR/. ! -perm /004 -exec chmod 644 {} \;
 }
 
+function run_tests_zato {
+    cd $ZATO_TARGET_DIR/
+    make run-tests || exit 1
+}
+
 function build_rpm {
     rm -f $SOURCE_DIR/zato.spec
     cp $SOURCE_DIR/zato.spec.template $SOURCE_DIR/zato.spec
@@ -172,4 +177,5 @@ prepare
 cleanup
 checkout_zato
 install_zato
+run_tests_zato
 build_rpm
