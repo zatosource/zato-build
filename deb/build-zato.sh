@@ -219,6 +219,7 @@ function install_zato {
             _install-deb.sh
         sed -i \
             -e 's|librabbitmq.*|amqp==2.6.0|' \
+            -e 's|psycopg2==.*|psycopg2==2.8.5|' \
             _req_py27.txt _req_py3.txt
     fi
 
