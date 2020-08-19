@@ -211,7 +211,6 @@ function install_zato {
             -e 's|^cytoolz==.*|cytoolz==0.10.1|' \
             -e 's|cffi==.*|cffi==1.14.0|' \
             -e 's|lxml==.*|lxml==4.4.3|' \
-            -e 's|psycopg2==.*|psycopg2==2.8.5|' \
             _postinstall.sh \
             requirements.txt
         sed -i \
@@ -219,8 +218,11 @@ function install_zato {
             _install-deb.sh
         sed -i \
             -e 's|librabbitmq.*|amqp==2.6.0|' \
-            -e 's|psycopg2==.*|psycopg2==2.8.5|' \
             _req_py27.txt _req_py3.txt
+
+        sed -i '/.*psycopg2.*/d' \
+            _req_py27.txt _req_py3.txt _postinstall.sh \
+            requirements.txt
     fi
 
     ./install.sh -p ${PY_BINARY}
