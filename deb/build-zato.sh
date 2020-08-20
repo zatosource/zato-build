@@ -177,52 +177,48 @@ function install_zato {
     sed -i -e "s|sudo apt-get |sudo DEBIAN_FRONTEND=noninteractive apt-get |" ./install.sh ./_install-deb.sh
 
     if [[ "$release" == "buster" ]]; then
-        if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][0])') -eq 3 ]];then
-            sed -i \
-                -e 's|toolz==0.8.2|toolz==0.10.0|' \
-                -e 's|lxml==.*|lxml==4.3.4|' \
-                requirements.txt
-        fi
+        # if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][0])') -eq 3 ]];then
+        #     sed -i \
+        #         -e 's|toolz==0.8.2|toolz==0.10.0|' \
+        #         -e 's|lxml==.*|lxml==4.3.4|' \
+        #         requirements.txt
+        # fi
 
-        sed -i \
-            -e 's|numpy==.*|numpy==1.16.4|' \
-            -e 's|sarge==.*|sarge==0.1.5|' \
-            -e 's|pyyaml==.*|pyyaml==5.1.1|' \
-            _postinstall.sh \
-            requirements.txt
+        # sed -i \
+        #     -e 's|numpy==.*|numpy==1.16.4|' \
+        #     -e 's|sarge==.*|sarge==0.1.5|' \
+        #     -e 's|pyyaml==.*|pyyaml==5.1.1|' \
+        #     _postinstall.sh \
+        #     requirements.txt
         sudo apt-get install -y pkg-config libtool cmake
 
     elif [[ "$release" == "focal" ]]; then
         if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][0])') -eq 3 ]];then
             sed -i -e "s|\$PY_BINARY\-pip|python-pip-whl|" ./_install-deb.sh
-            sed -i \
-                -e 's|scipy==.*|scipy==1.3.3|' \
-                _postinstall.sh \
-                requirements.txt
+            # sed -i \
+            #     -e 's|scipy==.*|scipy==1.3.3|' \
+            #     _postinstall.sh \
+            #     requirements.txt
         else
             sed -i -e "s|\$PY_BINARY\-pip||" ./_install-deb.sh
         fi
 
-        sed -i \
-            -e 's|numpy==.*|numpy==1.16.4|' \
-            -e 's|sarge==.*|sarge==0.1.5|' \
-            -e 's|pyyaml==.*|pyyaml==5.1.2|' \
-            -e 's|^toolz==.*|toolz==0.10.0|' \
-            -e 's|^cytoolz==.*|cytoolz==0.10.1|' \
-            -e 's|cffi==.*|cffi==1.14.0|' \
-            -e 's|lxml==.*|lxml==4.4.3|' \
-            _postinstall.sh \
-            requirements.txt
-        sed -i \
-            -e 's| lsb-release| lsb-release\n sudo apt-get build-dep -y python3-numpy|' \
-            _install-deb.sh
-        sed -i \
-            -e 's|librabbitmq.*|amqp==2.6.0|' \
-            _req_py27.txt _req_py3.txt
-
-        sed -i '/.*psycopg2.*/d' \
-            _req_py27.txt _req_py3.txt _postinstall.sh \
-            requirements.txt
+        # sed -i \
+        #     -e 's|numpy==.*|numpy==1.16.4|' \
+        #     -e 's|sarge==.*|sarge==0.1.5|' \
+        #     -e 's|pyyaml==.*|pyyaml==5.1.2|' \
+        #     -e 's|^toolz==.*|toolz==0.10.0|' \
+        #     -e 's|^cytoolz==.*|cytoolz==0.10.1|' \
+        #     -e 's|cffi==.*|cffi==1.14.0|' \
+        #     -e 's|lxml==.*|lxml==4.4.3|' \
+        #     _postinstall.sh \
+        #     requirements.txt
+        # sed -i \
+        #     -e 's| lsb-release| lsb-release\n sudo apt-get build-dep -y python3-numpy|' \
+        #     _install-deb.sh
+        # sed -i \
+        #     -e 's|librabbitmq.*|amqp==2.6.0|' \
+        #     _req_py27.txt _req_py3.txt
     fi
 
     ./install.sh -p ${PY_BINARY}
