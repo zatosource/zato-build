@@ -20,7 +20,9 @@ if [ "$(type -p apt-get)" ]; then
     sudo apt-get install -y lsb-release
   fi
 
-  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends tzdata
+  if ! [ -e "/usr/share/zoneinfo/GMT" ]; then
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends tzdata
+  fi
 
   if ! [ -e "/etc/localtime" ]; then
     ln -s /usr/share/zoneinfo/GMT /etc/localtime
@@ -32,7 +34,7 @@ if [ "$(type -p apt-get)" ]; then
       find /tmp/packages/ -type f -name \*.deb -exec dpkg -i  {} \;
 
       # fix dependencies
-      dpkg --configure -a
+      DEBIAN_FRONTEND=noninteractive dpkg --configure -a
       DEBIAN_FRONTEND=noninteractive apt-get install -f -y || exit 1
   fi
 
