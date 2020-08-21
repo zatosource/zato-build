@@ -29,6 +29,7 @@ if [ "$(type -p apt-get)" ]; then
   fi
 
   if [[ $(dpkg -s apt | grep -i version|cut -d ' ' -f 2|cut -d '.' -f 1,2) > 1.0 ]];then
+      DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends tzdata
       find /tmp/packages/ -type f -name \*.deb -exec apt-get install -y {} \;
   else
       find /tmp/packages/ -type f -name \*.deb -exec dpkg -i  {} \;
