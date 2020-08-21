@@ -20,9 +20,7 @@ if [ "$(type -p apt-get)" ]; then
     sudo apt-get install -y lsb-release
   fi
 
-  if ! [ -e "/usr/share/zoneinfo/GMT" ]; then
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends tzdata
-  fi
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends tzdata
 
   if ! [ -e "/etc/localtime" ]; then
     ln -s /usr/share/zoneinfo/GMT /etc/localtime
