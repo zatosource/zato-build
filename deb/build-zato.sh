@@ -175,7 +175,7 @@ function install_zato {
 
     release=$(lsb_release -c | cut -f2)
     sed -i -e "s|sudo apt-get |sudo DEBIAN_FRONTEND=noninteractive apt-get |" ./install.sh ./_install-deb.sh
-    
+
     # if [[ "$release" == "buster" ]]; then
     #     if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][0])') -eq 3 ]];then
     #         # 

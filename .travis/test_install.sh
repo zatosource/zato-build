@@ -28,6 +28,8 @@ if [ "$(type -p apt-get)" ]; then
     ln -s /usr/share/zoneinfo/GMT /etc/localtime
   fi
 
+  sudo dpkg-reconfigure --frontend noninteractive tzdata
+
   if [[ $(dpkg -s apt | grep -i version|cut -d ' ' -f 2|cut -d '.' -f 1,2) > 1.0 ]];then
       DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends tzdata
       find /tmp/packages/ -type f -name \*.deb -exec apt-get install -y {} \;
