@@ -222,8 +222,12 @@ function install_zato {
         #     _postinstall.sh \
         #     requirements.txt
         sed -i \
-            -e 's| lsb-release| lsb-release\n sudo apt-get build-dep -y python3-numpy pkg-config libtool cmake build-essential cmake libtool autoconf|' \
+            -e 's| lsb-release| lsb-release\n sudo apt-get build-dep -y python3-numpy|' \
             _install-deb.sh
+        sed -i \
+            -e 's|librabbitmq.*|amqp==2.6.0|' \
+            _req_py27.txt _req_py3.txt
+        sudo apt-get install -y libsasl2-dev libldap2-dev libssl-dev pkg-config libtool cmake build-essential cmake autoconf
     fi
 
     ./install.sh -p ${PY_BINARY}
