@@ -176,7 +176,6 @@ function install_zato {
     release=$(lsb_release -c | cut -f2)
     sed -i -e "s|sudo apt-get |sudo DEBIAN_FRONTEND=noninteractive apt-get |" ./install.sh ./_install-deb.sh
     
-    export DEBIAN_FRONTEND=noninteractive 
     # if [[ "$release" == "buster" ]]; then
     #     # if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][0])') -eq 3 ]];then
     #     #     # 
@@ -223,12 +222,8 @@ function install_zato {
         #     _postinstall.sh \
         #     requirements.txt
         sed -i \
-            -e 's| lsb-release| lsb-release\n sudo apt-get build-dep -y python3-numpy|' \
+            -e 's| lsb-release| lsb-release\n sudo apt-get build-dep -y python3-numpy pkg-config libtool cmake build-essential cmake libtool autoconf|' \
             _install-deb.sh
-        sed -i \
-            -e 's|librabbitmq.*|amqp==2.6.0|' \
-            _req_py27.txt _req_py3.txt
-        sudo apt-get install -y pkg-config libtool cmake build-essential cmake libtool autoconf
     fi
 
     ./install.sh -p ${PY_BINARY}
