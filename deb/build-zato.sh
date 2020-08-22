@@ -228,6 +228,7 @@ function install_zato {
         sed -i \
             -e 's|librabbitmq.*|amqp==2.6.0|' \
             _req_py27.txt _req_py3.txt
+        sudo apt-get install -y pkg-config libtool cmake build-essential cmake libtool autoconf
     fi
 
     ./install.sh -p ${PY_BINARY}
