@@ -177,27 +177,28 @@ function install_zato {
     sed -i -e "s|sudo apt-get |sudo DEBIAN_FRONTEND=noninteractive apt-get |" ./install.sh ./_install-deb.sh
     
     export DEBIAN_FRONTEND=noninteractive 
-    if [[ "$release" == "buster" ]]; then
-        # if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][0])') -eq 3 ]];then
-        #     # 
-        #     sudo apt-get install -y python3-dev
-        # #     sed -i \
-        # #         -e 's|toolz==0.8.2|toolz==0.10.0|' \
-        # #         -e 's|lxml==.*|lxml==4.3.4|' \
-        # #         requirements.txt
-        # else
-        #     sudo apt-get install -y python-dev libffi-dev
-        # fi
+    # if [[ "$release" == "buster" ]]; then
+    #     # if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][0])') -eq 3 ]];then
+    #     #     # 
+    #     #     sudo apt-get install -y python3-dev
+    #     # #     sed -i \
+    #     # #         -e 's|toolz==0.8.2|toolz==0.10.0|' \
+    #     # #         -e 's|lxml==.*|lxml==4.3.4|' \
+    #     # #         requirements.txt
+    #     # else
+    #     #     sudo apt-get install -y python-dev libffi-dev
+    #     # fi
 
-        # # sed -i \
-        # #     -e 's|numpy==.*|numpy==1.16.4|' \
-        # #     -e 's|sarge==.*|sarge==0.1.5|' \
-        # #     -e 's|pyyaml==.*|pyyaml==5.1.1|' \
-        # #     _postinstall.sh \
-        # #     requirements.txt
-        # sudo apt-get install -y libsasl2-dev libldap2-dev libssl-dev pkg-config libtool cmake build-essential
+    #     # # sed -i \
+    #     # #     -e 's|numpy==.*|numpy==1.16.4|' \
+    #     # #     -e 's|sarge==.*|sarge==0.1.5|' \
+    #     # #     -e 's|pyyaml==.*|pyyaml==5.1.1|' \
+    #     # #     _postinstall.sh \
+    #     # #     requirements.txt
+    #     # sudo apt-get install -y libsasl2-dev libldap2-dev libssl-dev pkg-config libtool cmake build-essential
 
-    elif [[ "$release" == "focal" ]]; then
+    # el
+    if [[ "$release" == "focal" ]]; then
         # if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][0])') -eq 3 ]];then
         #     sed -i -e "s|\$PY_BINARY\-pip|python-pip-whl|" ./_install-deb.sh
         #     # sed -i \
