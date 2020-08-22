@@ -176,7 +176,7 @@ function install_zato {
     release=$(lsb_release -c | cut -f2)
     sed -i -e "s|sudo apt-get |sudo DEBIAN_FRONTEND=noninteractive apt-get |" ./install.sh ./_install-deb.sh
     
-    # if [[ "$release" == "buster" ]]; then
+    if [[ "$release" == "buster" ]]; then
     #     # if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][0])') -eq 3 ]];then
     #     #     # 
     #     #     sudo apt-get install -y python3-dev
@@ -194,10 +194,9 @@ function install_zato {
     #     # #     -e 's|pyyaml==.*|pyyaml==5.1.1|' \
     #     # #     _postinstall.sh \
     #     # #     requirements.txt
-    #     # sudo apt-get install -y libsasl2-dev libldap2-dev libssl-dev pkg-config libtool cmake build-essential
+        sudo apt-get install -y libsasl2-dev libldap2-dev libssl-dev pkg-config libtool cmake build-essential cmake autoconf
 
-    # el
-    if [[ "$release" == "focal" ]]; then
+    elif [[ "$release" == "focal" ]]; then
         # if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][0])') -eq 3 ]];then
         #     sed -i -e "s|\$PY_BINARY\-pip|python-pip-whl|" ./_install-deb.sh
         #     # sed -i \
