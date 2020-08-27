@@ -107,7 +107,7 @@ spec:
     spec:
       containers:
       - name: scheduler
-        image: registry.gitlab.com/zatosource/docker-registry/cloud:3.1
+        image: registry.gitlab.com/zatosource/docker-registry/cloud:3.1-py3
         imagePullPolicy: "Always"
         env:
           - name: ZATO_POSITION
@@ -168,7 +168,7 @@ spec:
     spec:
       containers:
       - name: bootstrap
-        image: registry.gitlab.com/zatosource/docker-registry/cloud:3.1
+        image: registry.gitlab.com/zatosource/docker-registry/cloud:3.1-py3
         imagePullPolicy: "Always"
         env:
           - name: ZATO_POSITION
@@ -229,7 +229,7 @@ spec:
     spec:
       containers:
       - name: webadmin
-        image: registry.gitlab.com/zatosource/docker-registry/cloud:3.1
+        image: registry.gitlab.com/zatosource/docker-registry/cloud:3.1-py3
         imagePullPolicy: "Always"
         env:
           - name: ZATO_POSITION
@@ -292,7 +292,7 @@ spec:
     spec:
       containers:
       - name: server
-        image: registry.gitlab.com/zatosource/docker-registry/cloud:3.1
+        image: registry.gitlab.com/zatosource/docker-registry/cloud:3.1-py3
         imagePullPolicy: "Always"
         env:
           - name: ZATO_POSITION
