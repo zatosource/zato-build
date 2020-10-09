@@ -27,8 +27,8 @@ if [[ -z "$2" || -z "$(echo $2| grep -E '^[0-9]+\.[0-9]+\.[0-9]+')" ]] ; then
     exit 1
 fi
 
-if [[ -z "$3" || -z "$(echo $3| grep -E '^python[2,3]?')" ]] ; then
-    echo Argument 3 must be the Python executable to use with the version: python2 or python3.
+if [[ -z "$3" || -z "$(echo $3| grep -E '^python3')" ]] ; then
+    echo Argument 3 must be the Python executable to use with the version: python3.
     exit 1
 fi
 
@@ -37,27 +37,27 @@ if [[ -n "$4" && -z "$(echo $4| grep -E '^(stable|alpha|beta|pre|rc)')" ]] ; the
     exit 1
 fi
 
+INSTALL_CMD="yum"
+
+if [ "$(type -p dnf)" ]
+then
+    INSTALL_CMD="dnf"
+fi
+
 BRANCH_NAME=$1
 ZATO_VERSION=$2
-PY_BINARY=${3:-python2}
-[[ "${PY_BINARY}" == "python" ]] && PY_BINARY="python2"
+PY_BINARY=python3
+[[ "${PY_BINARY}" == "python" ]] && PY_BINARY="python3"
 [[ -n "$4" ]] && PACKAGE_VERSION_SUFFIX="_${4}"
 TRAVIS_PROCESS_NAME=$5
 
 if ! [ -x "$(command -v $PY_BINARY)" ]; then
-    sudo yum install -y ${PY_BINARY:-python2}
-    alternatives --set python /usr/bin/${PY_BINARY:-python2}
+    sudo ${INSTALL_CMD} install -y ${PY_BINARY:-python3}
+    alternatives --set python /usr/bin/${PY_BINARY:-python3}
 fi
 
-# Python 2 dependencies
-PYTHON_DEPENDENCIES=""
-PACKAGE_VERSION="python27${PACKAGE_VERSION_SUFFIX}"
-if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][0])') -eq 3 ]]
-then
-    # Python 3 dependencies
-    PYTHON_DEPENDENCIES=", rh-python36, rh-python36-python-pip"
-    PACKAGE_VERSION="python3${PACKAGE_VERSION_SUFFIX}"
-fi
+PYTHON_DEPENDENCIES=", rh-python36, rh-python36-python-pip"
+PACKAGE_VERSION="python3${PACKAGE_VERSION_SUFFIX}"
 
 CURDIR="${BASH_SOURCE[0]}";RL="readlink";([[ `uname -s`=='Darwin' ]] || RL="$RL -f")
 while([ -h "${CURDIR}" ]) do CURDIR=`$RL "${CURDIR}"`; done
@@ -77,7 +77,7 @@ ZATO_TARGET_DIR=$ZATO_ROOT_DIR/$ZATO_VERSION
 echo Building RHEL RPM zato-$ZATO_VERSION-$PACKAGE_VERSION.$RHEL_VERSION.$ARCH
 
 function prepare {
-  sudo yum install -y rpm-build rpmdevtools wget
+  sudo ${INSTALL_CMD} install -y rpm-build rpmdevtools wget
   rpmdev-setuptree
 }
 
@@ -104,27 +104,18 @@ function checkout_zato {
 function install_zato {
     cd $ZATO_TARGET_DIR/code
 
-    sed -i -e 's|dateparser==0.5.1|dateparser==0.7.1|' \
-           requirements.txt
-    if [[ "${PY_BINARY}" == "python2" ]]; then
-        sed -i -e 's|librabbitmq==.*|librabbitmq==2.0.0|' \
-            _req_py27.txt
-        sed -i \
-            -e "s|python-devel |python2-devel python3-devel |" \
-            $ZATO_TARGET_DIR/code/_install-rhel.sh
-    else
-        sed -i \
-            -e "s|python-devel |python3-devel |" \
-            -e "s|virtualenv==15.1.0|virtualenv==16.7.5|" \
-            $ZATO_TARGET_DIR/code/_install-rhel.sh
-    fi
+    sed -i \
+        -e "s|python-devel |python3-devel |" \
+        -e "s|virtualenv==15.1.0|virtualenv|" \
+        $ZATO_TARGET_DIR/code/_install-rhel.sh
+
     ./install.sh -p ${PY_BINARY}
     find $ZATO_TARGET_DIR/. -name *.pyc -exec rm -f {} \;
     find $ZATO_TARGET_DIR/. ! -perm /004 -exec chmod 644 {} \;
 }
 
 function build_rpm {
-    sudo yum install -y ${PY_BINARY:-python2}-devel
+    sudo ${INSTALL_CMD} install -y ${PY_BINARY:-python2}-devel
     rm -f $SOURCE_DIR/zato.spec
     cat $SOURCE_DIR/zato.spec.template
     cp $SOURCE_DIR/zato.spec.template $SOURCE_DIR/zato.spec

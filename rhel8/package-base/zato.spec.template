@@ -120,5 +120,7 @@ source /opt/zato/.bashrc
 
 
 %changelog
+* Tue Oct 08 2020  aherrera (at) zato.io
+- * Add CentOS 8 support
 * Tue Jun 26 2018  dsuch (at) zato.io
 - * Full changelog is available online at https://zato.io/docs/project/changelog.html
