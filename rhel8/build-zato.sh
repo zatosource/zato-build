@@ -104,11 +104,11 @@ function checkout_zato {
 function install_zato {
     cd $ZATO_TARGET_DIR/code
 
-    sed -i \
-        -e "s|python-devel |python3-devel |" \
-        -e "s|virtualenv==15.1.0|virtualenv|" \
-        $ZATO_TARGET_DIR/code/_install-rhel.sh
-
+    sudo ${INSTALL_CMD} install -y python3
+    sudo ${INSTALL_CMD} -y groupinstall development
+    sudo ${INSTALL_CMD} install -y 'dnf-command(config-manager)'
+    sudo ${INSTALL_CMD} config-manager --set-enabled PowerTools
+    
     ./install.sh -p ${PY_BINARY}
     find $ZATO_TARGET_DIR/. -name *.pyc -exec rm -f {} \;
     find $ZATO_TARGET_DIR/. ! -perm /004 -exec chmod 644 {} \;
