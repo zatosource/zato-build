@@ -1,26 +1,34 @@
 language: python
+
+services:
+  - docker
+
 cache:
   directories:
     - /tmp/travis-cache
 
+before_cache:
+  - sudo rm -rf /tmp/travis-cache/root/.cache/pip/http
+
 # https://zato.io/docs/admin/guide/install/index.html#operating-system-considerations
 env:
-  - MODE=packaging IMAGE=centos:7
-  - MODE=packaging IMAGE=centos:7 PY_BINARY=python3
-  - MODE=packaging IMAGE=ubuntu:16.04
-  - MODE=packaging IMAGE=ubuntu:16.04 PY_BINARY=python3
-  - MODE=packaging IMAGE=ubuntu:18.04
-  - MODE=packaging IMAGE=ubuntu:18.04 PY_BINARY=python3
-  - MODE=packaging IMAGE=debian:8
-  - MODE=packaging IMAGE=debian:8 PY_BINARY=python3
-  - MODE=packaging IMAGE=debian:9
-  - MODE=packaging IMAGE=debian:9 PY_BINARY=python3
-  # - MODE=packaging IMAGE=alpine:3.7
-  # - MODE=packaging IMAGE=alpine:3.7 PY_BINARY=python3
-  # - MODE=packaging IMAGE=alpine:3.8
-  # - MODE=packaging IMAGE=alpine:3.8 PY_BINARY=python3
-  # - MODE=packaging IMAGE=alpine:3.9
-  # - MODE=packaging IMAGE=alpine:3.9 PY_BINARY=python3
+  jobs:
+    - MODE=packaging IMAGE=centos:7
+    - MODE=packaging IMAGE=centos:7 PY_BINARY=python3
+    - MODE=packaging IMAGE=ubuntu:16.04
+    - MODE=packaging IMAGE=ubuntu:16.04 PY_BINARY=python3
+    - MODE=packaging IMAGE=ubuntu:18.04
+    - MODE=packaging IMAGE=ubuntu:18.04 PY_BINARY=python3
+    # - MODE=packaging IMAGE=debian:8
+    # - MODE=packaging IMAGE=debian:8 PY_BINARY=python3
+    - MODE=packaging IMAGE=debian:9
+    - MODE=packaging IMAGE=debian:9 PY_BINARY=python3
+    # - MODE=packaging IMAGE=alpine:3.7
+    # - MODE=packaging IMAGE=alpine:3.7 PY_BINARY=python3
+    # - MODE=packaging IMAGE=alpine:3.8
+    # - MODE=packaging IMAGE=alpine:3.8 PY_BINARY=python3
+    # - MODE=packaging IMAGE=alpine:3.9
+    # - MODE=packaging IMAGE=alpine:3.9 PY_BINARY=python3
 
 sudo: required
 
@@ -31,14 +39,16 @@ dist: xenial
 
 before_install:
   - sudo apt-get update
-  - sudo apt-get install -y s3cmd
 
 matrix:
   allow_failures:
-    - osx
+    os: osx
 
 notifications:
   email: false
 
 script:
   - source .travis/test_${MODE}.sh
+
+before_cache:
+  - sudo rm -rf /tmp/travis-cache/root/.cache/pip/http

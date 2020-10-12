@@ -12,11 +12,6 @@ if __name__ == "__main__":
     parser.add_argument(
         '-t', '--token', type=str, required=True, help="TravisCI token")
     parser.add_argument(
-        '-d',
-        '--debug',
-        action='store_true',
-        help="Print debug information")
-    parser.add_argument(
         '-f',
         '--file',
         type=str,
@@ -34,6 +29,11 @@ if __name__ == "__main__":
         type=str,
         required=True,
         help="Repository branch name")
+    parser.add_argument(
+        '-d',
+        '--debug',
+        action='store_true',
+        help="print API response")
     args = parser.parse_args()
 
     endpoint = "https://api.travis-ci.org/repo/{repo}/requests".format(
@@ -61,23 +61,14 @@ if __name__ == "__main__":
         "Travis-API-Version": "3",
         "Authorization": "token {token}".format(token=args.token),
     }
-
-    if "env" in travisConfig.keys():
-        payloadData = travisConfig["env"]
-        if isinstance(payloadData, dict):
-            if "jobs" in payloadData.keys():
-                payloadData = payloadData["jobs"]
-        elif isinstance(payloadData, list) and payloadData[0] != "":
-            payloadData = payloadData[0]
-
-        payload["request"]["message"] = "branch: '{}' environment '{}'".format(args.branch, payloadData)
+    if "env" in travisConfig.keys() and travisConfig["env"]["jobs"][0] != "":
+        payload["request"]["message"] = "branch: '{}' environment '{}'".format(
+            args.branch, travisConfig["env"]["jobs"][0])
     try:
         r = requests.post(endpoint, headers=headers, data=json.dumps(payload))
+        resp = r.json()
+        print("Build triggered.. build status: {}".format(resp["@type"]))
         if args.debug:
-            print("Build triggered.. build status: {}".format(
-                json.dumps(json.loads(r.text), indent=2)))
-        else:
-            print("Build triggered.. build status: {}".format(
-                json.loads(r.text)["@type"]))
+            print("Response:\n{}".format(json.dumps(resp, indent=2)))
     except Exception as e:
         print(e)

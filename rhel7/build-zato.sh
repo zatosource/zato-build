@@ -1,5 +1,8 @@
 #!/bin/bash
 
+set -x
+[[ -z "$USER" ]] && USER=`whoami`
+
 function usage(){
     echo "$0 BRANCH_NAME ZATO_VERSION PYTHON_EXECUTABLE [PACKAGE_VERSION] [PROCESS]"
     echo ""
@@ -131,9 +134,9 @@ function checkout_zato {
 }
 
 function install_zato {
-    cp $SOURCE_DIR/_install-fedora.sh $ZATO_TARGET_DIR/code
     cd $ZATO_TARGET_DIR/code
-    sed -i -e 's|pg8000==1.13.1|pg8000==1.12.5|' requirements.txt
+    sed -i -e 's|pg8000==1.13.1|pg8000==1.12.5|' -e 's|pyasn1==0.4.5|pyasn1==0.4.8|' requirements.txt
+    sed -i -e 's|bzr==2.6.0|bzr==2.7.0|' _req_py27.txt
     ./install.sh -p ${PY_BINARY}
     find $ZATO_TARGET_DIR/. -name *.pyc -exec rm -f {} \;
     find $ZATO_TARGET_DIR/. ! -perm /004 -exec chmod 644 {} \;
