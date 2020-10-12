@@ -126,7 +126,10 @@ function install_zato {
     release=$(lsb_release -c | cut -f2)
     sed -i -e "s|sudo apt-get |sudo DEBIAN_FRONTEND=noninteractive apt-get |" ./install.sh ./_install-deb.sh
     
-    if [[ "$release" == "buster" ]]; then
+    if [[ "$release" == "stretch" ]]; then
+        # Correction for Python 3.5
+        sed -i -e 's|amqp==.*|amqp==2.6.1|' requirements.txt
+    elif [[ "$release" == "buster" ]]; then
     #     # if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][0])') -eq 3 ]];then
     #     #     # 
     #     #     sudo apt-get install -y python3-dev
