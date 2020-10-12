@@ -138,6 +138,7 @@ function install_zato {
     sed -i -e 's|pg8000==1.13.1|pg8000==1.12.5|' -e 's|pyasn1==0.4.5|pyasn1==0.4.8|' requirements.txt
     sed -i -e 's|bzr==2.6.0|bzr==2.7.0|' _req_py27.txt
     ./install.sh -p ${PY_BINARY}
+    make run-tests
     find $ZATO_TARGET_DIR/. -name *.pyc -exec rm -f {} \;
     find $ZATO_TARGET_DIR/. ! -perm /004 -exec chmod 644 {} \;
 }
