@@ -42,11 +42,23 @@ if [ "$(type -p apt-get)" ]; then
   fi
 
 elif [ "$(type -p yum)" ]; then
+  INSTALL_CMD="yum"
+
+  if [ "$(type -p dnf)" ]
+  then
+      INSTALL_CMD="dnf"
+  fi
+
   RHEL_VERSION=el7
   if ! [ -x "$(command -v lsb_release)" ]; then
-      sudo yum install -y redhat-lsb-core
+      sudo ${INSTALL_CMD} install -y redhat-lsb-core
   fi
-  if [[ ${PY_BINARY} == "python3" && -z "$(lsb_release -r|grep '\s8.')" ]]; then
+
+  if [[ "$(lsb_release -sir)" =~ '^CentOS.8\.' ]]
+  then
+    sudo ${INSTALL_CMD} install -y 'dnf-command(config-manager)'
+    sudo ${INSTALL_CMD} config-manager --set-enabled PowerTools
+  elif [[ ${PY_BINARY} == "python3" && -z "$(lsb_release -r|grep '\s8.')" ]]; then
     sudo yum install -y centos-release-scl-rh
     sudo yum-config-manager --enable centos-sclo-rh-testing
 
@@ -62,7 +74,7 @@ elif [ "$(type -p yum)" ]; then
     source /opt/rh/rh-python36/enable
   fi
 
-  find /tmp/packages/ -type f -name \*.rpm -exec yum install -y {} \;
+  find /tmp/packages/ -type f -name \*.rpm -exec ${INSTALL_CMD} install -y {} \;
 elif [ "$(type -p apk)" ]; then
   apk update
   apk add python py-pip py-setuptools git ca-certificates
