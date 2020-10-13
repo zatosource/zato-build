@@ -128,7 +128,10 @@ function install_zato {
     
     if [[ "$release" == "stretch" ]]; then
         # Correction for Python 3.5
-        sed -i -e 's|amqp==.*|amqp==2.6.1|' -e 's|humanize==.*|humanize==2.6.0|' requirements.txt
+        sed -i -e 's|amqp==.*|amqp==2.6.1|' \
+        -e 's|humanize==.*|humanize==2.6.0|' \
+        -e 's|kombu==.*|kombu==4.6.11|' \
+        requirements.txt
     elif [[ "$release" == "buster" ]]; then
     #     # if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][0])') -eq 3 ]];then
     #     #     # 
