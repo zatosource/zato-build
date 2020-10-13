@@ -110,21 +110,16 @@ function install_zato {
     sudo ${INSTALL_CMD} config-manager --set-enabled PowerTools
     
     ./install.sh -p ${PY_BINARY}
-    pwd && ls -alh
-    for f in zato-server zato-cy;do
-        pushd $i
-        make run-tests || exit 1
-        popd
-    done
-    pushd zato-sso
-        make sso-test || exit 1
-    popd
+    run_tests_zato || exit 1
+
     find $ZATO_TARGET_DIR/. -name *.pyc -exec rm -f {} \;
     find $ZATO_TARGET_DIR/. ! -perm /004 -exec chmod 644 {} \;
+    [[ -f ./code/hotfixman.sh ]] && rm -f ./code/hotfixman.sh
+    [[ -f ./code/hotfixes ]] && rm -rf ./code/hotfixes
 }
 
 function run_tests_zato {
-    for f in zato-server zato-cy;do
+    for i in zato-server zato-cy;do
         pushd $i
         make run-tests || exit 1
         popd
@@ -135,7 +130,7 @@ function run_tests_zato {
 }
 
 function build_rpm {
-    sudo ${INSTALL_CMD} install -y ${PY_BINARY:-python2}-devel
+    sudo ${INSTALL_CMD} install -y ${PY_BINARY:-python3}-devel
     rm -f $SOURCE_DIR/zato.spec
     cat $SOURCE_DIR/zato.spec.template
     cp $SOURCE_DIR/zato.spec.template $SOURCE_DIR/zato.spec
