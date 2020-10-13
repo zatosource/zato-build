@@ -131,6 +131,7 @@ function install_zato {
         sed -i -e 's|amqp==.*|amqp==2.6.1|' \
         -e 's|humanize==.*|humanize==2.6.0|' \
         -e 's|kombu==.*|kombu==4.6.11|' \
+        -e 's|vine==.*|vine==1.3.0|' \
         requirements.txt
     elif [[ "$release" == "buster" ]]; then
     #     # if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][0])') -eq 3 ]];then
