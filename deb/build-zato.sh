@@ -186,7 +186,15 @@ function install_zato {
     fi
 
     ./install.sh -p ${PY_BINARY}
-    run_tests_zato || exit 1
+    pwd && ls -alh
+    for f in zato-server zato-cy;do
+        pushd $i
+        make run-tests || exit 1
+        popd
+    done
+    pushd zato-sso
+        make sso-test || exit 1
+    popd
 
     find $ZATO_TARGET_DIR/. -name *.pyc -exec rm -f {} \;
     find $ZATO_TARGET_DIR/. ! -perm /004 -exec chmod 644 {} \;
