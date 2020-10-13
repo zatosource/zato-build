@@ -186,7 +186,6 @@ function install_zato {
     fi
 
     ./install.sh -p ${PY_BINARY}
-    make run-tests
 
     find $ZATO_TARGET_DIR/. -name *.pyc -exec rm -f {} \;
     find $ZATO_TARGET_DIR/. ! -perm /004 -exec chmod 644 {} \;
@@ -194,6 +193,18 @@ function install_zato {
     rm -rf ./code/hotfixes
     cd $CURDIR
 
+}
+
+function run_tests_zato {
+    cd $ZATO_TARGET_DIR/code
+    for f in zato-server zato-cy;do
+        pushd $i
+        make run-tests || exit 1
+        popd
+    done
+    pushd zato-sso
+        make sso-test || exit 1
+    popd
 }
 
 function build_deb {
@@ -244,4 +255,5 @@ function build_deb {
 cleanup
 checkout_zato
 install_zato
+run_tests_zato
 build_deb
