@@ -134,51 +134,10 @@ function install_zato {
         -e 's|vine==.*|vine==1.3.0|' \
         requirements.txt
     elif [[ "$release" == "buster" ]]; then
-    #     # if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][0])') -eq 3 ]];then
-    #     #     # 
-    #     #     sudo apt-get install -y python3-dev
-    #     # #     sed -i \
-    #     # #         -e 's|toolz==0.8.2|toolz==0.10.0|' \
-    #     # #         -e 's|lxml==.*|lxml==4.3.4|' \
-    #     # #         requirements.txt
-    #     # else
-    #     #     sudo apt-get install -y python-dev libffi-dev
-    #     # fi
-
-    #     # # sed -i \
-    #     # #     -e 's|numpy==.*|numpy==1.16.4|' \
-    #     # #     -e 's|sarge==.*|sarge==0.1.5|' \
-    #     # #     -e 's|pyyaml==.*|pyyaml==5.1.1|' \
-    #     # #     _postinstall.sh \
-    #     # #     requirements.txt
         sudo apt-get install -y libsasl2-dev libldap2-dev libssl-dev pkg-config libtool cmake build-essential cmake autoconf
-
     elif [[ "$release" == "focal" ]]; then
         export TZ=GMT
         ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-        # if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][0])') -eq 3 ]];then
-        #     sed -i -e "s|\$PY_BINARY\-pip|python-pip-whl|" ./_install-deb.sh
-        #     # sed -i \
-        #     #     -e 's|scipy==.*|scipy==1.3.3|' \
-        #     #     _postinstall.sh \
-        #     #     requirements.txt
-        #     sudo apt-get install -y python3-apt python3-distutils python3-dev
-        # else
-        #     sed -i -e "s|\$PY_BINARY\-pip||" ./_install-deb.sh
-        #     sudo apt-get install -y python-dev libffi-dev
-        # fi
-        # sudo apt-get install -y libsasl2-dev libldap2-dev libssl-dev pkg-config libtool cmake build-essential
-
-        # sed -i \
-        #     -e 's|numpy==.*|numpy==1.16.4|' \
-        #     -e 's|sarge==.*|sarge==0.1.5|' \
-        #     -e 's|pyyaml==.*|pyyaml==5.1.2|' \
-        #     -e 's|^toolz==.*|toolz==0.10.0|' \
-        #     -e 's|^cytoolz==.*|cytoolz==0.10.1|' \
-        #     -e 's|cffi==.*|cffi==1.14.0|' \
-        #     -e 's|lxml==.*|lxml==4.4.3|' \
-        #     _postinstall.sh \
-        #     requirements.txt
         sed -i \
             -e 's| lsb-release| lsb-release\n sudo apt-get build-dep -y python3-numpy|' \
             _install-deb.sh
@@ -186,7 +145,9 @@ function install_zato {
     fi
 
     ./install.sh -p ${PY_BINARY}
-    run_tests_zato || exit 1
+    if [[ "${SKIP_TESTS:-n}" == "y" ]]; then
+        run_tests_zato || exit 1
+    fi
 
     find $ZATO_TARGET_DIR/. -name *.pyc -exec rm -f {} \;
     find $ZATO_TARGET_DIR/. ! -perm /004 -exec chmod 644 {} \;
