@@ -15,6 +15,7 @@ env:
   global:
   - ZATO_VERSION: 3.2.0
   - PY_BINARY: python3
+  - ZATO_UPLOAD_PACKAGES: "y"
   jobs:
     - MODE=packaging IMAGE=debian:10
     - MODE=packaging IMAGE=ubuntu:18.04
