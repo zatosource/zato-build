@@ -125,9 +125,7 @@ function install_zato {
     release=$(lsb_release -c | cut -f2)
     sed -i -e "s|sudo apt-get |sudo DEBIAN_FRONTEND=noninteractive apt-get |" ./install.sh ./_install-deb.sh
     
-    if [[ "$release" == "buster" ]]; then
-        sudo apt-get install -y libsasl2-dev libldap2-dev libssl-dev pkg-config libtool cmake build-essential cmake autoconf
-    elif [[ "$release" == "focal" ]]; then
+    if [[ "$release" == "focal" ]]; then
         export TZ=GMT
         DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends tzdata && \
             ln -fs /usr/share/zoneinfo/$TZ /etc/localtime && \
@@ -135,9 +133,8 @@ function install_zato {
         sed -i \
             -e 's| lsb-release| lsb-release\n sudo apt-get build-dep -y python3-numpy|' \
             _install-deb.sh
-        sudo apt-get install -y libsasl2-dev libldap2-dev libssl-dev pkg-config libtool cmake build-essential cmake autoconf
     fi
-    sudo apt-get install -y python3-distutils
+    sudo apt-get install -y libsasl2-dev libldap2-dev libssl-dev pkg-config libtool cmake build-essential cmake autoconf python3-distutils python3-dev
 
     ./install.sh -p ${PY_BINARY}
     if [[ "${SKIP_TESTS:-n}" == "y" ]]; then
