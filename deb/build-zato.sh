@@ -58,7 +58,7 @@ if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][0])') -eq 3 ]]
 then
     # Python 3 dependencies
     PACKAGE_VERSION="${PACKAGE_VERSION_SUFFIX}python3"
-    PYTHON_DEPENDENCIES="python3, python3-pip"
+    PYTHON_DEPENDENCIES="python3, python3-pip, python3-distutils"
 fi
 
 CURDIR="${BASH_SOURCE[0]}";RL="readlink";([[ `uname -s`=='Darwin' ]] || RL="$RL -f")
