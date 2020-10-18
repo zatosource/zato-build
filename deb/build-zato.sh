@@ -79,7 +79,6 @@ fi
 # Ubuntu and Debian require different versions of packages.
 if command -v lsb_release > /dev/null; then
     release=$(lsb_release -c | cut -f2)
-    LIBGFORTRAN=libgfortran3
 
     if [[ "$release" == "buster" || "$release" == "bionic" ]]; then
         LIBEVENT_VERSION=2.1-6
@@ -126,18 +125,13 @@ function install_zato {
     release=$(lsb_release -c | cut -f2)
     sed -i -e "s|sudo apt-get |sudo DEBIAN_FRONTEND=noninteractive apt-get |" ./install.sh ./_install-deb.sh
     
-    if [[ "$release" == "stretch" ]]; then
-        # Correction for Python 3.5
-        sed -i -e 's|amqp==.*|amqp==2.6.1|' \
-        -e 's|humanize==.*|humanize==2.6.0|' \
-        -e 's|kombu==.*|kombu==4.6.11|' \
-        -e 's|vine==.*|vine==1.3.0|' \
-        requirements.txt
-    elif [[ "$release" == "buster" ]]; then
+    if [[ "$release" == "buster" ]]; then
         sudo apt-get install -y libsasl2-dev libldap2-dev libssl-dev pkg-config libtool cmake build-essential cmake autoconf
     elif [[ "$release" == "focal" ]]; then
         export TZ=GMT
-        ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+        DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends tzdata && \
+            ln -fs /usr/share/zoneinfo/$TZ /etc/localtime && \
+            dpkg-reconfigure --frontend noninteractive tzdata
         sed -i \
             -e 's| lsb-release| lsb-release\n sudo apt-get build-dep -y python3-numpy|' \
             _install-deb.sh
@@ -189,11 +183,6 @@ function build_deb {
     SIZE=`du -sk $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/opt |awk '{print $1}'`
 
     sed "s/Version: VER/Version: $ZATO_VERSION-$PACKAGE_VERSION/g" $SOURCE_DIR/DEBIAN/control | sed "s/Architecture: ARCH/Architecture: $ARCH/g" | sed "s/Installed-Size: SIZE/Installed-Size: $SIZE/g" > $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/control
-    # sed -i "s/LIBATLAS3BASE/$LIBATLAS3BASE/g" $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/control
-    # sed -i "s/LIBBLAS3/$LIBBLAS3/g" $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/control
-    # sed -i "s/LIBLAPACK3/$LIBLAPACK3/g" $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/control
-    # sed -i "s/LIBGFORTRAN/$LIBGFORTRAN/g" $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/control
-    # sed -i "s/LIBUMFPACK_VERSION/$LIBUMFPACK_VERSION/g" $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/control
     sed -i "s/LIBEVENT_VERSION/$LIBEVENT_VERSION/g" $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/control
     sed -i "s/RELEASE_NAME/$RELEASE_NAME/g" $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/control
     sed -i "s/PYTHON_DEPENDENCIES/$PYTHON_DEPENDENCIES/g" $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/control
