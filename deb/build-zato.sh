@@ -137,6 +137,7 @@ function install_zato {
             _install-deb.sh
         sudo apt-get install -y libsasl2-dev libldap2-dev libssl-dev pkg-config libtool cmake build-essential cmake autoconf
     fi
+    sudo apt-get install -y python3-distutils
 
     ./install.sh -p ${PY_BINARY}
     if [[ "${SKIP_TESTS:-n}" == "y" ]]; then
