@@ -109,7 +109,8 @@ ZATO_TARGET_DIR=$ZATO_ROOT_DIR/$ZATO_VERSION
 echo Building RHEL RPM zato-$ZATO_VERSION-$PACKAGE_VERSION.$RHEL_VERSION.$ARCH
 
 function prepare {
-  sudo yum install -y rpm-build rpmdevtools wget
+  sudo yum install -y rpm-build rpmdevtools wget yum-utils
+  sudo yum-config-manager -y --enable extras
   rpmdev-setuptree
 }
 
@@ -136,6 +137,7 @@ function checkout_zato {
 function install_zato {
     cd $ZATO_TARGET_DIR/code
     sed -i -e 's|pg8000==1.13.1|pg8000==1.12.5|' -e 's|pyasn1==0.4.5|pyasn1==0.4.8|' requirements.txt
+    sed -i -e 's|source \./bin/activate|source \./bin/activate\n\./bin/python -m pip install -U setuptools pip|' _install-rhel.sh
 
     ./install.sh -p ${PY_BINARY}
     if [[ "${SKIP_TESTS:-n}" == "y" ]]; then
