@@ -12,7 +12,7 @@ Requires(postun): /usr/sbin/userdel
 
 AutoReqProv: no
 
-Requires: tix, suitesparse, openssl, postgresql-libs, zlib, libevent, git, haproxy, swig, uuid, libxslt, bash-completion, gcc-c++, clang, PYTHON_DEPS
+Requires: tix, suitesparse, openssl, postgresql-libs, zlib, libevent, git, haproxy, swig, uuid, libxslt, bash-completion, gcc-c++, llvm, clang, PYTHON_DEPS
 Provides: %{name} = %{version}-%{release}
 
 
