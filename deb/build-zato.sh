@@ -119,9 +119,6 @@ function checkout_zato {
 function install_zato {
 
     cd $ZATO_TARGET_DIR/code
-    sed -i -e 's|pyasn1==0.4.5|pyasn1==0.4.8|' requirements.txt
-    sed -i -e 's|pg8000==1.13.1|pg8000==1.12.3|' _req_py3.txt
-
     release=$(lsb_release -c | cut -f2)
     sed -i -e "s|sudo apt-get |sudo DEBIAN_FRONTEND=noninteractive apt-get |" ./install.sh ./_install-deb.sh
     
