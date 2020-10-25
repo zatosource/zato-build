@@ -72,18 +72,11 @@ PACKAGE_VERSION="python27${PACKAGE_VERSION_SUFFIX}"
 if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][0])') -eq 3 ]]
 then
     # Python 3 dependencies
-    PYTHON_DEPENDENCIES=", rh-python36, rh-python36-python-pip"
+    PYTHON_DEPENDENCIES=", python3, python3-pip"
     PACKAGE_VERSION="python3${PACKAGE_VERSION_SUFFIX}"
 
-    sudo yum install -y centos-release-scl-rh
-    sudo yum-config-manager --enable centos-sclo-rh-testing
-
-    # On RHEL, enable RHSCL and RHSCL-beta repositories for you system:
-    sudo yum-config-manager --enable rhel-server-rhscl-7-rpms
-    sudo yum-config-manager --enable rhel-server-rhscl-beta-7-rpms
-
     # 2. Install the collection:
-    sudo yum install -y rh-python36
+    sudo yum install -y python3
 
     # 3. Start using software collections:
     # scl enable rh-python36 bash
@@ -136,7 +129,6 @@ function checkout_zato {
 
 function install_zato {
     cd $ZATO_TARGET_DIR/code
-    sed -i -e 's|pg8000==1.13.1|pg8000==1.12.5|' -e 's|pyasn1==0.4.5|pyasn1==0.4.8|' requirements.txt
     sed -i -e 's|source \./bin/activate|source \./bin/activate\n\./bin/python -m pip install -U setuptools pip|' _install-rhel.sh
 
     CXXFLAGS="-std=c++11" ./install.sh -p ${PY_BINARY}
