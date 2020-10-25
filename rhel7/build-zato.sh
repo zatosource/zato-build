@@ -102,9 +102,13 @@ ZATO_TARGET_DIR=$ZATO_ROOT_DIR/$ZATO_VERSION
 echo Building RHEL RPM zato-$ZATO_VERSION-$PACKAGE_VERSION.$RHEL_VERSION.$ARCH
 
 function prepare {
-  sudo yum install -y rpm-build rpmdevtools wget yum-utils
-  sudo yum-config-manager -y --enable extras
-  rpmdev-setuptree
+    sudo yum install -y rpm-build rpmdevtools wget yum-utils centos-release-scl
+    sudo yum-config-manager -y --enable extras
+    rpmdev-setuptree
+
+    sudo yum-config-manager -y--enable rhel-server-rhscl-7-rpms
+
+    sudo yum install -y devtoolset-9
 }
 
 function cleanup {
@@ -130,7 +134,9 @@ function checkout_zato {
 function install_zato {
     cd $ZATO_TARGET_DIR/code
 
-    CXXFLAGS="-std=c++11" ./install.sh -p ${PY_BINARY}
+    source /opt/rh/devtoolset-9/enable
+
+    ./install.sh -p ${PY_BINARY}
     if [[ "${SKIP_TESTS:-n}" == "y" ]]; then
         run_tests_zato || exit 1
     fi
