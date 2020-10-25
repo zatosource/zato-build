@@ -129,7 +129,6 @@ function checkout_zato {
 
 function install_zato {
     cd $ZATO_TARGET_DIR/code
-    sed -i -e 's|source \./bin/activate|source \./bin/activate\n\./bin/python -m pip install -U setuptools pip|' _install-rhel.sh
 
     CXXFLAGS="-std=c++11" ./install.sh -p ${PY_BINARY}
     if [[ "${SKIP_TESTS:-n}" == "y" ]]; then

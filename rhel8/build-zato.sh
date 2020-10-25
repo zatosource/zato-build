@@ -111,7 +111,6 @@ function install_zato {
     sudo ${INSTALL_CMD} dnf update -y
 
     sudo ${INSTALL_CMD} config-manager --set-enabled PowerTools
-    sed -i -e 's|source \./bin/activate|source \./bin/activate\n\./bin/python -m pip install -U setuptools pip|' _install-rhel.sh
     
     ./install.sh -p ${PY_BINARY}
     if [[ "${SKIP_TESTS:-n}" == "y" ]]; then
