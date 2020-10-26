@@ -1,3 +1,7 @@
+
+# prevents the building of /usr/lib/.build-id directories and files:
+%global _build_id_links none
+
 Name:           zato
 Version:        ZATO_VERSION
 Release:        ZATO_RELEASE
@@ -12,10 +16,10 @@ Requires(postun): /usr/sbin/userdel
 
 AutoReqProv: no
 
-Requires: tix, suitesparse, openssl, postgresql-libs, zlib, libevent, git, haproxy, swig, uuid, libxslt, bash-completion
+Requires: tix, openssl, libpq, zlib, libevent, git, haproxy, swig, uuid, libxslt, bash-completion, PYTHON_DEPS
 Provides: %{name} = %{version}-%{release}
 
-
+BuildRequires: /usr/bin/pathfix.py
 
 %description
 Zato - ESB, SOA, REST, APIs and Cloud Integrations in Python
@@ -72,6 +76,12 @@ fi
 exit 0
 
 %prep
+# Fix all Python shebangs recursively in .
+# -p preserves timestamps
+# -n prevents creating ~backup files
+# -i specifies the interpreter for the shebang
+# Need to list files that do not match ^[a-zA-Z0-9_]+\.py$ explicitly!
+pathfix.py -pni "%{__python3} %{py3_shbang_opts}" /opt/zato/ZATO_VERSION/code/bin/zato /opt/zato/ZATO_VERSION/code/bin/pip
 
 %files
 %defattr(-,zato,zato,-)
@@ -110,5 +120,7 @@ source /opt/zato/.bashrc
 
 
 %changelog
+* Tue Oct 08 2020  aherrera (at) zato.io
+- * Add CentOS 8 support
 * Tue Jun 26 2018  dsuch (at) zato.io
 - * Full changelog is available online at https://zato.io/docs/project/changelog.html

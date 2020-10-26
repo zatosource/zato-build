@@ -1,0 +1,240 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "zato.zatoscheduler.fullname" . | quote }}
+  labels:
+    {{- include "zato.zatoscheduler.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.zatoscheduler.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "zato.zatoscheduler.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "zato.zatoscheduler.selectorLabels" . | nindent 8 }}
+      annotations:
+        checksum/config: {{ printf "%s%s%s%s" (print $.Template.BasePath "/deployment.yaml") (print $.Template.BasePath "/service.yaml") (print $.Template.BasePath "/../values.yaml") (print $.Template.BasePath "/../Chart.yaml") | sha256sum | quote }}
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      serviceAccountName: {{ include "zato.serviceAccountName" . | quote }}
+      securityContext:
+        {{- toYaml .Values.zatoscheduler.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Values.zatoscheduler.fullname | quote }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ default .Chart.AppVersion .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
+          env:
+            - name: ZATO_POSITION
+              value: "scheduler"
+            {{- include "zato.variables" . | nindent 12 }}
+          resources:
+            {{- toYaml .Values.zatoscheduler.resources | nindent 12 }}
+      {{- with .Values.zatoscheduler.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.zatoscheduler.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.zatoscheduler.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "zato.zatobootstrap.fullname" . | quote }}
+  labels:
+    {{- include "zato.zatobootstrap.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.zatobootstrap.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "zato.zatobootstrap.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "zato.zatobootstrap.selectorLabels" . | nindent 8 }}
+      annotations:
+        checksum/config: {{ printf "%s%s%s%s" (print $.Template.BasePath "/deployment.yaml") (print $.Template.BasePath "/service.yaml") (print $.Template.BasePath "/../values.yaml") (print $.Template.BasePath "/../Chart.yaml") | sha256sum | quote }}
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      serviceAccountName: {{ include "zato.serviceAccountName" . | quote }}
+      securityContext:
+        {{- toYaml .Values.zatobootstrap.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Values.zatobootstrap.fullname | quote }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ default .Chart.AppVersion .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
+          env:
+            - name: ZATO_POSITION
+              value: "load-balancer"
+            {{- include "zato.variables" . | nindent 12 }}
+          resources:
+            {{- toYaml .Values.zatobootstrap.resources | nindent 12 }}
+      {{- with .Values.zatobootstrap.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.zatobootstrap.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.zatobootstrap.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+
+---
+apiVersion: apps/v1
+kind: {{ default "Deployment" .Values.zatoserver.deploymentKind | quote }}
+metadata:
+  name: {{ include "zato.zatowebadmin.fullname" . | quote }}
+  labels:
+    {{- include "zato.zatowebadmin.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.zatowebadmin.replicaCount }}
+  {{- if eq .Values.zatowebadmin.deploymentKind "StatefulSet" }}
+  serviceName: {{ include "zato.zatowebadmin.fullname" . | quote }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "zato.zatowebadmin.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "zato.zatowebadmin.selectorLabels" . | nindent 8 }}
+      annotations:
+        checksum/config: {{ printf "%s%s%s%s" (print $.Template.BasePath "/deployment.yaml") (print $.Template.BasePath "/service.yaml") (print $.Template.BasePath "/../values.yaml") (print $.Template.BasePath "/../Chart.yaml") | sha256sum | quote }}
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      serviceAccountName: {{ include "zato.serviceAccountName" . | quote }}
+      securityContext:
+        {{- toYaml .Values.zatowebadmin.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Values.zatowebadmin.fullname | quote }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ default .Chart.AppVersion .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
+          env:
+            - name: ZATO_POSITION
+              value: "webadmin"
+            {{- include "zato.variables" . | nindent 12 }}
+          ports:
+            - name: {{ default "web" .Values.zatowebadmin.service.name | quote }}
+              containerPort: {{ default 8183 .Values.zatowebadmin.service.port }}
+              protocol: TCP
+          livenessProbe:
+            {{- include "zato.zatowebadmin.livenessProbe" . | nindent 12 }}
+          readinessProbe:
+            {{- include "zato.zatowebadmin.readinessProbe" . | nindent 12 }}
+          startupProbe:
+            {{- include "zato.zatowebadmin.startupProbe" . | nindent 12 }}
+          resources:
+            {{- toYaml .Values.zatowebadmin.resources | nindent 12 }}
+      {{- with .Values.zatowebadmin.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.zatowebadmin.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.zatowebadmin.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+
+---
+apiVersion: apps/v1
+kind: {{ default "Deployment" .Values.zatoserver.deploymentKind | quote }}
+metadata:
+  name: {{ include "zato.zatoserver.fullname" . | quote }}
+  labels:
+    {{- include "zato.zatoserver.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.zatoserver.replicaCount }}
+  {{- if eq .Values.zatoserver.deploymentKind "StatefulSet" }}
+  serviceName: {{ include "zato.zatoserver.fullname" . | quote }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "zato.zatoserver.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "zato.zatoserver.selectorLabels" . | nindent 8 }}
+      annotations:
+        checksum/config: {{ printf "%s%s%s%s" (print $.Template.BasePath "/deployment.yaml") (print $.Template.BasePath "/service.yaml") (print $.Template.BasePath "/../values.yaml") (print $.Template.BasePath "/../Chart.yaml") | sha256sum | quote }}
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      serviceAccountName: {{ include "zato.serviceAccountName" . | quote }}
+      securityContext:
+        {{- toYaml .Values.zatoserver.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Values.zatoserver.fullname | quote }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ default .Chart.AppVersion .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
+          env:
+            - name: ZATO_POSITION
+              value: "server"
+            {{- include "zato.variables" . | nindent 12 }}
+          ports:
+            - name: {{ default "server" .Values.zatoserver.service.name | quote }}
+              containerPort: {{ default 17010 .Values.zatoserver.service.port }}
+              protocol: TCP
+          livenessProbe:
+            {{- include "zato.zatoserver.livenessProbe" . | nindent 12 }}
+          readinessProbe:
+            {{- include "zato.zatoserver.readinessProbe" . | nindent 12 }}
+          startupProbe:
+            {{- include "zato.zatoserver.startupProbe" . | nindent 12 }}
+          {{- if .Values.zatoserver.volumes }}
+          volumeMounts:
+            {{- range .Values.zatoserver.volumes }}
+            - {{- toYaml .mount | nindent 14 }}
+            {{- end }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.zatoserver.resources | nindent 12 }}
+      {{- if .Values.zatoserver.volumes }}
+      volumes:
+        {{- range .Values.zatoserver.volumes }}
+        - {{- toYaml .volume | nindent 10 }}
+        {{- end }}
+      {{- end }}
+      {{- with .Values.zatoserver.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.zatoserver.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.zatoserver.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}

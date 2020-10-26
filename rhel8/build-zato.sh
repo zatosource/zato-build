@@ -1,14 +1,11 @@
 #!/bin/bash
 
-set -x
-[[ -z "$USER" ]] && USER=`whoami`
-
 function usage(){
     echo "$0 BRANCH_NAME ZATO_VERSION PYTHON_EXECUTABLE [PACKAGE_VERSION] [PROCESS]"
     echo ""
     echo "BRANCH_NAME: zatosource/zato branch name to build (e.g. master)"
     echo "ZATO_VERSION: zato version to build (e.g. 3.0.0)"
-    echo "PYTHON_EXECUTABLE: Python executable to use (e.g. python, python2 or python3)"
+    echo "PYTHON_EXECUTABLE: Python executable to use (with the version e.g. python2 or python3)"
     echo "PACKAGE_VERSION: (optional) package version to build. The acceptable values for package-version are:"
     echo "                 * \"\" (empty) or \"stable\", for stable versions."
     echo "                 * \"alpha\", \"beta\", \"pre\" or \"rc\" followed by one or more digits."
@@ -30,8 +27,8 @@ if [[ -z "$2" || -z "$(echo $2| grep -E '^[0-9]+\.[0-9]+\.[0-9]+')" ]] ; then
     exit 1
 fi
 
-if [[ -z "$3" || -z "$(echo $3| grep -E '^python[2,3]?\.?')" ]] ; then
-    echo Argument 3 must be the Python executable to use e.g. python, python2 or python3.
+if [[ -z "$3" || -z "$(echo $3| grep -E '^python3')" ]] ; then
+    echo Argument 3 must be the Python executable to use with the version: python3.
     exit 1
 fi
 
@@ -40,55 +37,27 @@ if [[ -n "$4" && -z "$(echo $4| grep -E '^(stable|alpha|beta|pre|rc)')" ]] ; the
     exit 1
 fi
 
+INSTALL_CMD="yum"
+
+if [ "$(type -p dnf)" ]
+then
+    INSTALL_CMD="dnf"
+fi
+
 BRANCH_NAME=$1
 ZATO_VERSION=$2
-PY_BINARY=$3
+PY_BINARY=python3
+[[ "${PY_BINARY}" == "python" ]] && PY_BINARY="python3"
 [[ -n "$4" ]] && PACKAGE_VERSION_SUFFIX="_${4}"
 TRAVIS_PROCESS_NAME=$5
 
 if ! [ -x "$(command -v $PY_BINARY)" ]; then
-    if [[ "$PY_BINARY" == "python3" ]]; then
-        sudo yum install -y centos-release-scl-rh
-        sudo yum-config-manager --enable centos-sclo-rh-testing
-
-        # On RHEL, enable RHSCL and RHSCL-beta repositories for you system:
-        sudo yum-config-manager --enable rhel-server-rhscl-7-rpms
-        sudo yum-config-manager --enable rhel-server-rhscl-beta-7-rpms
-
-        # 2. Install the collection:
-        sudo yum install -y rh-python36
-
-        # 3. Start using software collections:
-        # scl enable rh-python36 bash
-        source /opt/rh/rh-python36/enable
-    else
-        sudo yum install -y $PY_BINARY
-    fi
+    sudo ${INSTALL_CMD} install -y ${PY_BINARY:-python3}
+    alternatives --set python /usr/bin/${PY_BINARY:-python3}
 fi
 
-# Python 2 dependencies
-PYTHON_DEPENDENCIES=""
-PACKAGE_VERSION="python27${PACKAGE_VERSION_SUFFIX}"
-if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][0])') -eq 3 ]]
-then
-    # Python 3 dependencies
-    PYTHON_DEPENDENCIES=", rh-python36, rh-python36-python-pip"
-    PACKAGE_VERSION="python3${PACKAGE_VERSION_SUFFIX}"
-
-    sudo yum install -y centos-release-scl-rh
-    sudo yum-config-manager --enable centos-sclo-rh-testing
-
-    # On RHEL, enable RHSCL and RHSCL-beta repositories for you system:
-    sudo yum-config-manager --enable rhel-server-rhscl-7-rpms
-    sudo yum-config-manager --enable rhel-server-rhscl-beta-7-rpms
-
-    # 2. Install the collection:
-    sudo yum install -y rh-python36
-
-    # 3. Start using software collections:
-    # scl enable rh-python36 bash
-    source /opt/rh/rh-python36/enable
-fi
+PYTHON_DEPENDENCIES=", rh-python36, rh-python36-python-pip"
+PACKAGE_VERSION="python3${PACKAGE_VERSION_SUFFIX}"
 
 CURDIR="${BASH_SOURCE[0]}";RL="readlink";([[ `uname -s`=='Darwin' ]] || RL="$RL -f")
 while([ -h "${CURDIR}" ]) do CURDIR=`$RL "${CURDIR}"`; done
@@ -99,17 +68,16 @@ TMP_DIR=$CURDIR/tmp
 HOME=${HOME:-$CURDIR}
 RPM_BUILD_DIR=$HOME/rpmbuild
 
-RHEL_VERSION=el7
+RHEL_VERSION=el8
 ARCH=`uname -i`
 
 ZATO_ROOT_DIR=/opt/zato
 ZATO_TARGET_DIR=$ZATO_ROOT_DIR/$ZATO_VERSION
 
-
 echo Building RHEL RPM zato-$ZATO_VERSION-$PACKAGE_VERSION.$RHEL_VERSION.$ARCH
 
 function prepare {
-  sudo yum install -y rpm-build rpmdevtools wget
+  sudo ${INSTALL_CMD} install -y rpm-build rpmdevtools wget
   rpmdev-setuptree
 }
 
@@ -135,16 +103,23 @@ function checkout_zato {
 
 function install_zato {
     cd $ZATO_TARGET_DIR/code
-    sed -i -e 's|pg8000==1.13.1|pg8000==1.12.5|' -e 's|pyasn1==0.4.5|pyasn1==0.4.8|' requirements.txt
-    sed -i -e 's|bzr==2.6.0|bzr==2.7.0|' _req_py27.txt
+
+    sudo ${INSTALL_CMD} install -y python3
+    sudo ${INSTALL_CMD} -y groupinstall development
+    sudo ${INSTALL_CMD} install -y 'dnf-command(config-manager)'
+    sudo ${INSTALL_CMD} config-manager --set-enabled PowerTools
+    
     ./install.sh -p ${PY_BINARY}
     find $ZATO_TARGET_DIR/. -name *.pyc -exec rm -f {} \;
     find $ZATO_TARGET_DIR/. ! -perm /004 -exec chmod 644 {} \;
 }
 
 function build_rpm {
+    sudo ${INSTALL_CMD} install -y ${PY_BINARY:-python2}-devel
     rm -f $SOURCE_DIR/zato.spec
+    cat $SOURCE_DIR/zato.spec.template
     cp $SOURCE_DIR/zato.spec.template $SOURCE_DIR/zato.spec
+    sed -i.bak "s/PYTHON_DEPS/${PY_BINARY}/g" $SOURCE_DIR/zato.spec
     sed -i.bak "s/ZATO_VERSION/$ZATO_VERSION/g" $SOURCE_DIR/zato.spec
     sed -i.bak "s/ZATO_RELEASE/$PACKAGE_VERSION.$RHEL_VERSION/g" $SOURCE_DIR/zato.spec
     cat $SOURCE_DIR/zato.spec
