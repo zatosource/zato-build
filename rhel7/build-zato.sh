@@ -72,18 +72,11 @@ PACKAGE_VERSION="python27${PACKAGE_VERSION_SUFFIX}"
 if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][0])') -eq 3 ]]
 then
     # Python 3 dependencies
-    PYTHON_DEPENDENCIES=", rh-python36, rh-python36-python-pip"
+    PYTHON_DEPENDENCIES=", python3, python3-pip"
     PACKAGE_VERSION="python3${PACKAGE_VERSION_SUFFIX}"
 
-    sudo yum install -y centos-release-scl-rh
-    sudo yum-config-manager --enable centos-sclo-rh-testing
-
-    # On RHEL, enable RHSCL and RHSCL-beta repositories for you system:
-    sudo yum-config-manager --enable rhel-server-rhscl-7-rpms
-    sudo yum-config-manager --enable rhel-server-rhscl-beta-7-rpms
-
     # 2. Install the collection:
-    sudo yum install -y rh-python36
+    sudo yum install -y python3
 
     # 3. Start using software collections:
     # scl enable rh-python36 bash
@@ -109,8 +102,13 @@ ZATO_TARGET_DIR=$ZATO_ROOT_DIR/$ZATO_VERSION
 echo Building RHEL RPM zato-$ZATO_VERSION-$PACKAGE_VERSION.$RHEL_VERSION.$ARCH
 
 function prepare {
-  sudo yum install -y rpm-build rpmdevtools wget
-  rpmdev-setuptree
+    sudo yum install -y rpm-build rpmdevtools wget yum-utils centos-release-scl
+    sudo yum-config-manager -y --enable extras
+    rpmdev-setuptree
+
+    sudo yum-config-manager -y--enable rhel-server-rhscl-7-rpms
+
+    sudo yum install -y devtoolset-9
 }
 
 function cleanup {
@@ -135,16 +133,36 @@ function checkout_zato {
 
 function install_zato {
     cd $ZATO_TARGET_DIR/code
-    sed -i -e 's|pg8000==1.13.1|pg8000==1.12.5|' -e 's|pyasn1==0.4.5|pyasn1==0.4.8|' requirements.txt
-    sed -i -e 's|bzr==2.6.0|bzr==2.7.0|' _req_py27.txt
+
+    source /opt/rh/devtoolset-9/enable
+
     ./install.sh -p ${PY_BINARY}
+    if [[ "${SKIP_TESTS:-n}" == "y" ]]; then
+        run_tests_zato || exit 1
+    fi
+
     find $ZATO_TARGET_DIR/. -name *.pyc -exec rm -f {} \;
     find $ZATO_TARGET_DIR/. ! -perm /004 -exec chmod 644 {} \;
+    [[ -f ./code/hotfixman.sh ]] && rm -f ./code/hotfixman.sh
+    [[ -f ./code/hotfixes ]] && rm -rf ./code/hotfixes
+}
+
+function run_tests_zato {
+    for i in zato-server zato-cy;do
+        pushd $i
+        make run-tests || exit 1
+        popd
+    done
+    pushd zato-sso
+        make sso-test || exit 1
+    popd
 }
 
 function build_rpm {
+    sudo ${INSTALL_CMD} install -y ${PY_BINARY:-python3}-devel
     rm -f $SOURCE_DIR/zato.spec
     cp $SOURCE_DIR/zato.spec.template $SOURCE_DIR/zato.spec
+    sed -i.bak "s/PYTHON_DEPS/${PY_BINARY}/g" $SOURCE_DIR/zato.spec
     sed -i.bak "s/ZATO_VERSION/$ZATO_VERSION/g" $SOURCE_DIR/zato.spec
     sed -i.bak "s/ZATO_RELEASE/$PACKAGE_VERSION.$RHEL_VERSION/g" $SOURCE_DIR/zato.spec
     cat $SOURCE_DIR/zato.spec

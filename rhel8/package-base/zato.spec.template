@@ -16,7 +16,7 @@ Requires(postun): /usr/sbin/userdel
 
 AutoReqProv: no
 
-Requires: tix, openssl, libpq, zlib, libevent, git, haproxy, swig, uuid, libxslt, bash-completion, PYTHON_DEPS
+Requires: tix, openssl, libpq, zlib, libevent, git, haproxy, swig, uuid, libxslt, bash-completion, gcc-c++, llvm, clang, PYTHON_DEPS
 Provides: %{name} = %{version}-%{release}
 
 BuildRequires: /usr/bin/pathfix.py

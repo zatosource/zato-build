@@ -107,17 +107,36 @@ function install_zato {
     sudo ${INSTALL_CMD} install -y python3
     sudo ${INSTALL_CMD} -y groupinstall development
     sudo ${INSTALL_CMD} install -y 'dnf-command(config-manager)'
+    sudo ${INSTALL_CMD} dnf install -y epel-release
+    sudo ${INSTALL_CMD} dnf update -y
+
     sudo ${INSTALL_CMD} config-manager --set-enabled PowerTools
     
     ./install.sh -p ${PY_BINARY}
+    if [[ "${SKIP_TESTS:-n}" == "y" ]]; then
+        run_tests_zato || exit 1
+    fi
+
     find $ZATO_TARGET_DIR/. -name *.pyc -exec rm -f {} \;
     find $ZATO_TARGET_DIR/. ! -perm /004 -exec chmod 644 {} \;
+    [[ -f ./code/hotfixman.sh ]] && rm -f ./code/hotfixman.sh
+    [[ -f ./code/hotfixes ]] && rm -rf ./code/hotfixes
+}
+
+function run_tests_zato {
+    for i in zato-server zato-cy;do
+        pushd $i
+        make run-tests || exit 1
+        popd
+    done
+    pushd zato-sso
+        make sso-test || exit 1
+    popd
 }
 
 function build_rpm {
-    sudo ${INSTALL_CMD} install -y ${PY_BINARY:-python2}-devel
+    sudo ${INSTALL_CMD} install -y ${PY_BINARY:-python3}-devel
     rm -f $SOURCE_DIR/zato.spec
-    cat $SOURCE_DIR/zato.spec.template
     cp $SOURCE_DIR/zato.spec.template $SOURCE_DIR/zato.spec
     sed -i.bak "s/PYTHON_DEPS/${PY_BINARY}/g" $SOURCE_DIR/zato.spec
     sed -i.bak "s/ZATO_VERSION/$ZATO_VERSION/g" $SOURCE_DIR/zato.spec

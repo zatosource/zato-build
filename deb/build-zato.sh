@@ -58,7 +58,7 @@ if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][0])') -eq 3 ]]
 then
     # Python 3 dependencies
     PACKAGE_VERSION="${PACKAGE_VERSION_SUFFIX}python3"
-    PYTHON_DEPENDENCIES="python3, python3-pip"
+    PYTHON_DEPENDENCIES="python3, python3-pip, python3-distutils"
 fi
 
 CURDIR="${BASH_SOURCE[0]}";RL="readlink";([[ `uname -s`=='Darwin' ]] || RL="$RL -f")
@@ -79,75 +79,27 @@ fi
 # Ubuntu and Debian require different versions of packages.
 if command -v lsb_release > /dev/null; then
     release=$(lsb_release -c | cut -f2)
-    LIBGFORTRAN=libgfortran3
 
-    if [[ "$release" == "buster" ]]; then
-        LIBATLAS3BASE=libatlas3-base
-        LIBGFORTRAN=libgfortran5
-        LIBBLAS3=libblas3
-        LIBLAPACK3=liblapack3
-        LIBUMFPACK_VERSION=5
+    if [[ "$release" == "buster" || "$release" == "bionic" ]]; then
         LIBEVENT_VERSION=2.1-6
-    elif [[ "$release" == "precise" ]] || [[ "$release" == "wheezy" ]]; then
-        LIBATLAS3BASE=libatlas3gf-base
-        LIBBLAS3=libblas3gf
-        LIBLAPACK3=liblapack3gf
-        LIBUMFPACK_VERSION=5.4.0
-        LIBEVENT_VERSION=2.0-5
-    elif [[ "$release" == "xenial" ]]; then
-        LIBATLAS3BASE=libatlas3-base
-        LIBBLAS3=libblas3
-        LIBLAPACK3=liblapack3
-        LIBUMFPACK_VERSION=5.7.1
-        LIBEVENT_VERSION=2.0-5
     elif [[ "$release" == "focal" ]]; then
-        PYTHON_DEPENDENCIES="python, cython"
-        if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][0])') -eq 3 ]];then
-            PYTHON_DEPENDENCIES="python3, python3-pip, cython3, python3-scipy, python3-numpy"
-        fi
+        PYTHON_DEPENDENCIES="python3, python3-pip, cython3, python3-scipy, python3-numpy"
         echo "PYTHON_DEPENDENCIES: ${PYTHON_DEPENDENCIES}"
-        LIBATLAS3BASE=libatlas3-base
-        LIBGFORTRAN=libgfortran5
-        LIBBLAS3=libblas3
-        LIBLAPACK3=liblapack3
-        LIBUMFPACK_VERSION=5
         LIBEVENT_VERSION=2.1-7
         sudo sed -i -e 's|^# deb-src \(.*\)verse$|deb-src \1verse|' \
                     -e 's|^# deb-src \(.*\)restricted$|deb-src \1restricted|' /etc/apt/sources.list
         sudo apt-get update -y
-    elif [[ "$release" == "bionic" ]]; then
-        LIBATLAS3BASE=libatlas3-base
-        LIBBLAS3=libblas3
-        LIBLAPACK3=liblapack3
-        LIBUMFPACK_VERSION=5
-        LIBEVENT_VERSION=2.1-6
-    elif [[ "$release" == "stretch" ]]; then
-        LIBATLAS3BASE=libatlas3-base
-        LIBBLAS3=libblas3
-        LIBLAPACK3=liblapack3
-        LIBUMFPACK_VERSION=5
-        LIBEVENT_VERSION=2.0-5
     else
-        LIBATLAS3BASE=libatlas3gf-base
-        LIBBLAS3=libblas3gf
-        LIBLAPACK3=liblapack3gf
-        LIBUMFPACK_VERSION=5.6.2
+        # stretch
         LIBEVENT_VERSION=2.0-5
-    fi
-
-    # Add Debian-specific dependencies
-    if [[ "$release" == "wheezy" ]]; then
-        sudo apt-get install -y apt-transport-https python-software-properties
-        sudo apt-add-repository 'deb http://ftp.is.debian.org/debian wheezy-backports main'
-        sudo apt-get install -y --reinstall libffi5
     fi
 fi
 
 echo Building `lsb_release -is` DEB zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH-$RELEASE_NAME
 
 function cleanup {
-    sudo rm -rf $ZATO_TARGET_DIR
-    sudo rm -rf $CURDIR/BUILDROOT
+    [[ -d $ZATO_TARGET_DIR ]] && sudo rm -rf $ZATO_TARGET_DIR
+    [[ -d $CURDIR/BUILDROOT ]] && sudo rm -rf $CURDIR/BUILDROOT
 }
 
 function checkout_zato {
@@ -167,76 +119,41 @@ function checkout_zato {
 function install_zato {
 
     cd $ZATO_TARGET_DIR/code
-    sed -i -e 's|dateparser==0.5.1|dateparser==0.7.1|' -e 's|pyasn1==0.4.5|pyasn1==0.4.8|' requirements.txt
-    sed -i -e 's|bzr==2.6.0|bzr==2.7.0|' _req_py27.txt
-    if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][1])') -eq 4 ]]; then
-        sed -i -e 's|pg8000==1.13.1|pg8000==1.12.3|' _req_py3.txt
-    fi
-
     release=$(lsb_release -c | cut -f2)
     sed -i -e "s|sudo apt-get |sudo DEBIAN_FRONTEND=noninteractive apt-get |" ./install.sh ./_install-deb.sh
     
-    if [[ "$release" == "buster" ]]; then
-    #     # if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][0])') -eq 3 ]];then
-    #     #     # 
-    #     #     sudo apt-get install -y python3-dev
-    #     # #     sed -i \
-    #     # #         -e 's|toolz==0.8.2|toolz==0.10.0|' \
-    #     # #         -e 's|lxml==.*|lxml==4.3.4|' \
-    #     # #         requirements.txt
-    #     # else
-    #     #     sudo apt-get install -y python-dev libffi-dev
-    #     # fi
-
-    #     # # sed -i \
-    #     # #     -e 's|numpy==.*|numpy==1.16.4|' \
-    #     # #     -e 's|sarge==.*|sarge==0.1.5|' \
-    #     # #     -e 's|pyyaml==.*|pyyaml==5.1.1|' \
-    #     # #     _postinstall.sh \
-    #     # #     requirements.txt
-        sudo apt-get install -y libsasl2-dev libldap2-dev libssl-dev pkg-config libtool cmake build-essential cmake autoconf
-
-    elif [[ "$release" == "focal" ]]; then
-        # if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][0])') -eq 3 ]];then
-        #     sed -i -e "s|\$PY_BINARY\-pip|python-pip-whl|" ./_install-deb.sh
-        #     # sed -i \
-        #     #     -e 's|scipy==.*|scipy==1.3.3|' \
-        #     #     _postinstall.sh \
-        #     #     requirements.txt
-        #     sudo apt-get install -y python3-apt python3-distutils python3-dev
-        # else
-        #     sed -i -e "s|\$PY_BINARY\-pip||" ./_install-deb.sh
-        #     sudo apt-get install -y python-dev libffi-dev
-        # fi
-        # sudo apt-get install -y libsasl2-dev libldap2-dev libssl-dev pkg-config libtool cmake build-essential
-
-        # sed -i \
-        #     -e 's|numpy==.*|numpy==1.16.4|' \
-        #     -e 's|sarge==.*|sarge==0.1.5|' \
-        #     -e 's|pyyaml==.*|pyyaml==5.1.2|' \
-        #     -e 's|^toolz==.*|toolz==0.10.0|' \
-        #     -e 's|^cytoolz==.*|cytoolz==0.10.1|' \
-        #     -e 's|cffi==.*|cffi==1.14.0|' \
-        #     -e 's|lxml==.*|lxml==4.4.3|' \
-        #     _postinstall.sh \
-        #     requirements.txt
+    if [[ "$release" == "focal" ]]; then
+        export TZ=GMT
+        DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends tzdata && \
+            ln -fs /usr/share/zoneinfo/$TZ /etc/localtime && \
+            dpkg-reconfigure --frontend noninteractive tzdata
         sed -i \
             -e 's| lsb-release| lsb-release\n sudo apt-get build-dep -y python3-numpy|' \
             _install-deb.sh
-        sed -i \
-            -e 's|librabbitmq.*|amqp==2.6.0|' \
-            _req_py27.txt _req_py3.txt
-        sudo apt-get install -y libsasl2-dev libldap2-dev libssl-dev pkg-config libtool cmake build-essential cmake autoconf
     fi
+    sudo apt-get install -y libsasl2-dev libldap2-dev libssl-dev pkg-config libtool cmake build-essential cmake autoconf python3-distutils python3-dev
 
     ./install.sh -p ${PY_BINARY}
+    if [[ "${SKIP_TESTS:-n}" == "y" ]]; then
+        run_tests_zato || exit 1
+    fi
 
     find $ZATO_TARGET_DIR/. -name *.pyc -exec rm -f {} \;
     find $ZATO_TARGET_DIR/. ! -perm /004 -exec chmod 644 {} \;
-    rm -f ./code/hotfixman.sh
-    rm -rf ./code/hotfixes
+    [[ -f ./code/hotfixman.sh ]] && rm -f ./code/hotfixman.sh
+    [[ -f ./code/hotfixes ]] && rm -rf ./code/hotfixes
     cd $CURDIR
+}
 
+function run_tests_zato {
+    for i in zato-server zato-cy;do
+        pushd $i
+        make run-tests || exit 1
+        popd
+    done
+    pushd zato-sso
+        make sso-test || exit 1
+    popd
 }
 
 function build_deb {
@@ -261,11 +178,6 @@ function build_deb {
     SIZE=`du -sk $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/opt |awk '{print $1}'`
 
     sed "s/Version: VER/Version: $ZATO_VERSION-$PACKAGE_VERSION/g" $SOURCE_DIR/DEBIAN/control | sed "s/Architecture: ARCH/Architecture: $ARCH/g" | sed "s/Installed-Size: SIZE/Installed-Size: $SIZE/g" > $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/control
-    sed -i "s/LIBATLAS3BASE/$LIBATLAS3BASE/g" $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/control
-    sed -i "s/LIBBLAS3/$LIBBLAS3/g" $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/control
-    sed -i "s/LIBLAPACK3/$LIBLAPACK3/g" $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/control
-    sed -i "s/LIBGFORTRAN/$LIBGFORTRAN/g" $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/control
-    sed -i "s/LIBUMFPACK_VERSION/$LIBUMFPACK_VERSION/g" $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/control
     sed -i "s/LIBEVENT_VERSION/$LIBEVENT_VERSION/g" $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/control
     sed -i "s/RELEASE_NAME/$RELEASE_NAME/g" $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/control
     sed -i "s/PYTHON_DEPENDENCIES/$PYTHON_DEPENDENCIES/g" $CURDIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION\_$ARCH/DEBIAN/control

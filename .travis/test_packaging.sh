@@ -7,7 +7,7 @@ if [[ -z "`docker ps -a|grep target`" ]]; then
 
     name="${IMAGE:0:6}"
     version="${IMAGE##${name}:}"
-    ZATO_VERSION=${ZATO_VERSION:-3.0.0}
+    ZATO_VERSION=${ZATO_VERSION:-3.2.0}
     basepath="$(dirname "$(readlink -e $0)")"
 
     case "$name" in
