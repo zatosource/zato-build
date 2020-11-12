@@ -45,7 +45,7 @@ PY_BINARY=python3
 TRAVIS_PROCESS_NAME=$5
 
 if ! [ -x "$(command -v $PY_BINARY)" ]; then
-    sudo zypper install -y ${PY_BINARY:-python3}
+    sudo zypper --non-interactive install -y ${PY_BINARY:-python3}
     alternatives --set python /usr/bin/${PY_BINARY:-python3}
 fi
 
@@ -60,17 +60,17 @@ SOURCE_DIR=$CURDIR/package-base
 TMP_DIR=$CURDIR/tmp
 HOME=${HOME:-$CURDIR}
 RPM_BUILD_DIR=$HOME/rpmbuild
-
-RHEL_VERSION=suse
+LINUX_VERSION=suse
 ARCH=`uname -i`
 
 ZATO_ROOT_DIR=/opt/zato
 ZATO_TARGET_DIR=$ZATO_ROOT_DIR/$ZATO_VERSION
+PYTHON_DEPS="${PY_BINARY:-python3} ${PY_BINARY:-python3}-SQLAlchemy"
 
-echo Building RHEL RPM zato-$ZATO_VERSION-$PACKAGE_VERSION.$RHEL_VERSION.$ARCH
+echo Building Suse RPM zato-$ZATO_VERSION-$PACKAGE_VERSION.$LINUX_VERSION.$ARCH
 
 function prepare {
-  sudo zypper install -y rpm-build rpmdevtools wget
+  sudo zypper --non-interactive install -y rpm-build rpmdevtools wget
   rpmdev-setuptree
 }
 
@@ -97,13 +97,13 @@ function checkout_zato {
 function install_zato {
     cd $ZATO_TARGET_DIR/code
 
-    sudo zypper install -y python3
-    sudo zypper -y groupinstall development
-    sudo zypper install -y 'dnf-command(config-manager)'
-    sudo zypper dnf install -y epel-release
-    sudo zypper dnf update -y
+    sudo zypper --non-interactive install -y python3
+    sudo zypper --non-interactive -y groupinstall development
+    sudo zypper --non-interactive install -y 'dnf-command(config-manager)'
+    # sudo zypper --non-interactive dnf install -y epel-release
+    # sudo zypper --non-interactive dnf update -y
 
-    sudo zypper config-manager --set-enabled PowerTools
+    # sudo zypper --non-interactive config-manager --set-enabled PowerTools
     
     ./install.sh -p ${PY_BINARY}
     if [[ "${SKIP_TESTS:-n}" == "y" ]]; then
@@ -128,33 +128,33 @@ function run_tests_zato {
 }
 
 function build_rpm {
-    sudo zypper install -y ${PY_BINARY:-python3}-devel
+    sudo zypper --non-interactive install -y ${PY_BINARY:-python3}-devel
     rm -f $SOURCE_DIR/zato.spec
     cp $SOURCE_DIR/zato.spec.template $SOURCE_DIR/zato.spec
-    sed -i.bak "s/PYTHON_DEPS/${PY_BINARY}/g" $SOURCE_DIR/zato.spec
+    sed -i.bak "s/PYTHON_DEPS/${PYTHON_DEPS}/g" $SOURCE_DIR/zato.spec
     sed -i.bak "s/ZATO_VERSION/$ZATO_VERSION/g" $SOURCE_DIR/zato.spec
-    sed -i.bak "s/ZATO_RELEASE/$PACKAGE_VERSION.$RHEL_VERSION/g" $SOURCE_DIR/zato.spec
+    sed -i.bak "s/ZATO_RELEASE/$PACKAGE_VERSION.$LINUX_VERSION/g" $SOURCE_DIR/zato.spec
     cat $SOURCE_DIR/zato.spec
     mkdir -p $RPM_BUILD_DIR/SPECS/
     cp $SOURCE_DIR/zato.spec $RPM_BUILD_DIR/SPECS/
 
     mkdir $RPM_BUILD_DIR/BUILDROOT
-    mkdir $RPM_BUILD_DIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION.$RHEL_VERSION.$ARCH
-    mkdir $RPM_BUILD_DIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION.$RHEL_VERSION.$ARCH/opt
-    mkdir $RPM_BUILD_DIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION.$RHEL_VERSION.$ARCH$ZATO_ROOT_DIR
-    mkdir $RPM_BUILD_DIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION.$RHEL_VERSION.$ARCH/etc
-    mkdir $RPM_BUILD_DIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION.$RHEL_VERSION.$ARCH/etc/bash_completion.d
+    mkdir $RPM_BUILD_DIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION.$LINUX_VERSION.$ARCH
+    mkdir $RPM_BUILD_DIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION.$LINUX_VERSION.$ARCH/opt
+    mkdir $RPM_BUILD_DIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION.$LINUX_VERSION.$ARCH$ZATO_ROOT_DIR
+    mkdir $RPM_BUILD_DIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION.$LINUX_VERSION.$ARCH/etc
+    mkdir $RPM_BUILD_DIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION.$LINUX_VERSION.$ARCH/etc/bash_completion.d
     cd $CURDIR
-    cp -r ../bash_completion/zato $RPM_BUILD_DIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION.$RHEL_VERSION.$ARCH/etc/bash_completion.d/
-    cp -r ../init_scripts/etc $RPM_BUILD_DIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION.$RHEL_VERSION.$ARCH/
-    cp -r ../init_scripts/lib $RPM_BUILD_DIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION.$RHEL_VERSION.$ARCH/
-    cp -r $ZATO_TARGET_DIR $RPM_BUILD_DIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION.$RHEL_VERSION.$ARCH$ZATO_TARGET_DIR
+    cp -r ../bash_completion/zato $RPM_BUILD_DIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION.$LINUX_VERSION.$ARCH/etc/bash_completion.d/
+    cp -r ../init_scripts/etc $RPM_BUILD_DIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION.$LINUX_VERSION.$ARCH/
+    cp -r ../init_scripts/lib $RPM_BUILD_DIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION.$LINUX_VERSION.$ARCH/
+    cp -r $ZATO_TARGET_DIR $RPM_BUILD_DIR/BUILDROOT/zato-$ZATO_VERSION-$PACKAGE_VERSION.$LINUX_VERSION.$ARCH$ZATO_TARGET_DIR
     cd $RPM_BUILD_DIR/SPECS
     rpmbuild -ba zato.spec
 
     if [[ -n $TRAVIS_PROCESS_NAME && $TRAVIS_PROCESS_NAME == "travis" ]]; then
-        [[ -d /tmp/packages/$RHEL_VERSION/ ]] || mkdir -p /tmp/packages/$RHEL_VERSION/
-        mv /root/rpmbuild/RPMS/x86_64/zato-$ZATO_VERSION-$PACKAGE_VERSION.$RHEL_VERSION.$ARCH.rpm /tmp/packages/$RHEL_VERSION/
+        [[ -d /tmp/packages/$LINUX_VERSION/ ]] || mkdir -p /tmp/packages/$LINUX_VERSION/
+        mv /root/rpmbuild/RPMS/x86_64/zato-$ZATO_VERSION-$PACKAGE_VERSION.$LINUX_VERSION.$ARCH.rpm /tmp/packages/$LINUX_VERSION/
     fi
 }
 
@@ -162,4 +162,6 @@ prepare
 cleanup
 checkout_zato
 install_zato
+echo "waiting 1h"
+sleep 3600
 build_rpm
