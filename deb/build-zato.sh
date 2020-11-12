@@ -132,6 +132,19 @@ function install_zato {
             _install-deb.sh
     fi
     sudo apt-get install -y libsasl2-dev libldap2-dev libssl-dev pkg-config libtool cmake build-essential cmake autoconf python3-distutils python3-dev
+    sed -i -e 's|gevent==.*|gevent==20.6.2|' \
+	    -e 's|^psycogreen==.*|psycogreen==1.0.2|' \
+	    -e 's|^toolz==.*|toolz==0.10.0|' \
+	    -e 's|^lxml==.*|lxml==4.4.3|' \
+	    -e 's|^numpy==.*|numpy==1.16.4|' \
+	    -e 's|^sarge==.*|sarge==0.1.5|' \
+	    -e 's|^pyyaml==.*|pyyaml==5.1.2|' \
+	    -e 's|^scipy==.*|scipy==1.3.3|' \
+	    -e 's|^cytoolz==.*|cytoolz==0.10.1|' \
+	    -e 's|^cffi==.*|cffi==1.14.0|' \
+	    -e 's|^psycopg2==.*|psycopg2==2.8.4|' \
+	    requirements.txt
+    sed -i -e 's|numpy==1.14.0|numpy==1.19.0|' _postinstall.sh
 
     ./install.sh -p ${PY_BINARY}
     if [[ "${SKIP_TESTS:-n}" == "y" ]]; then
