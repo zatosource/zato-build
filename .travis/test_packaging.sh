@@ -10,10 +10,6 @@ if [[ -z "`docker ps -a|grep target`" ]]; then
     ZATO_VERSION=${ZATO_VERSION:-3.2.0}
     basepath="$(dirname "$(readlink -e $0)")"
 
-    if [[ -n "echo '${IMAGE}'|grep suse" ]]; then
-        repo="suse"
-    fi
-
     case "$name" in
       centos) repo="rhel$version" ;;
       debian|ubuntu) repo="deb" ;;

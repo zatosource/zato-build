@@ -88,7 +88,8 @@ if [[ -n "$IMAGE" ]]; then
     sleep 86400
 
   # Some official images lack sudo, which breaks install.sh.
-  if [[ -n "echo '${IMAGE}'|grep suse" ]]; then
+  if [[ "${IMAGE}" == *"suse"* ]]; then
+    export repo="suse"
     run zypper update -y
     run zypper install -y sudo git wget curl
 
