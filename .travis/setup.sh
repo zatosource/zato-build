@@ -95,7 +95,7 @@ if [[ -n "$IMAGE" ]]; then
 
     # testing
     run_checking zypper update -y
-    run_checking zypper install -y sudo git epel-release wget curl
+    run_checking zypper install -y sudo git wget curl
   elif [ "${IMAGE:0:6}" = "centos" ]; then
     run yum -y update
     run yum -y install sudo git wget curl
