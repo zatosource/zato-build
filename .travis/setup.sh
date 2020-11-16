@@ -88,7 +88,14 @@ if [[ -n "$IMAGE" ]]; then
     sleep 86400
 
   # Some official images lack sudo, which breaks install.sh.
-  if [ "${IMAGE:0:6}" = "centos" ]; then
+  if [[ -n "echo '${IMAGE}'|grep suse" ]]; then
+    run zypper update -y
+    run zypper install -y sudo git wget curl
+
+    # testing
+    run_checking zypper update -y
+    run_checking zypper install -y sudo git epel-release wget curl
+  elif [ "${IMAGE:0:6}" = "centos" ]; then
     run yum -y update
     run yum -y install sudo git wget curl
 
