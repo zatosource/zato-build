@@ -16,7 +16,6 @@ env:
   - ZATO_BRANCH: support/3.2
   - ZATO_VERSION: 3.2.0
   - PY_BINARY: python3
-  - SKIP_TESTS: y
   - ZATO_UPLOAD_PACKAGES: "y"
   jobs:
     - MODE=packaging IMAGE=debian:10
