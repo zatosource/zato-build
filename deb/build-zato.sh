@@ -134,26 +134,17 @@ function install_zato {
     sudo apt-get install -y libsasl2-dev libldap2-dev libssl-dev pkg-config libtool cmake build-essential cmake autoconf python3-distutils python3-dev
 
     ./install.sh -p ${PY_BINARY}
-    if [[ "${SKIP_TESTS:-n}" == "y" ]]; then
-        run_tests_zato || exit 1
-    fi
 
     find $ZATO_TARGET_DIR/. -name *.pyc -exec rm -f {} \;
     find $ZATO_TARGET_DIR/. ! -perm /004 -exec chmod 644 {} \;
     [[ -f ./code/hotfixman.sh ]] && rm -f ./code/hotfixman.sh
     [[ -f ./code/hotfixes ]] && rm -rf ./code/hotfixes
+    if [[ "${SKIP_TESTS:-n}" == "y" ]]; then
+        cd $ZATO_TARGET_DIR/
+        echo "Running tests"
+        make || exit 1
+    fi
     cd $CURDIR
-}
-
-function run_tests_zato {
-    for i in zato-server zato-cy;do
-        pushd $i
-        make run-tests || exit 1
-        popd
-    done
-    pushd zato-sso
-        make sso-test || exit 1
-    popd
 }
 
 function build_deb {
