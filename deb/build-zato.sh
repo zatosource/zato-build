@@ -141,6 +141,7 @@ function install_zato {
     [[ -f ./code/hotfixes ]] && rm -rf ./code/hotfixes
     if [[ "${SKIP_TESTS:-n}" == "y" ]]; then
         cd $ZATO_TARGET_DIR/
+        echo "Running tests"
         make || exit 1
     fi
     cd $CURDIR
