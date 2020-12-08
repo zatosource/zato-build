@@ -1,3 +1,5 @@
+%define skip_python2 1
+
 Name:           zato
 Version:        ZATO_VERSION
 Release:        ZATO_RELEASE
@@ -8,8 +10,7 @@ URL:            http://zato.io
 
 Source0:        https://github.com/zatosource/zato/archive/main.zip
 BuildRequires: %{python_module setuptools}
-BuildRequires: %{python_module py >= 1.4}
-BuildRequires: PYTHON_DEPS
+BuildRequires: %{pythons}
 
 Requires: tix, openssl, libpq, zlib, libevent, git, haproxy, swig, uuid, libxslt, bash-completion, gcc-c++, llvm, clang, PYTHON_DEPS
 Provides: %{name} = %{version}-%{release}
