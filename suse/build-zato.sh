@@ -49,7 +49,7 @@ if ! [ -x "$(command -v $PY_BINARY)" ]; then
     alternatives --set python /usr/bin/${PY_BINARY:-python3}
 fi
 
-PYTHON_DEPENDENCIES=", rh-python36, rh-python36-python-pip"
+PYTHON_DEPENDENCIES="python3, python3-pip"
 PACKAGE_VERSION="python3${PACKAGE_VERSION_SUFFIX}"
 
 CURDIR="${BASH_SOURCE[0]}";RL="readlink";([[ `uname -s`=='Darwin' ]] || RL="$RL -f")
@@ -70,6 +70,7 @@ PYTHON_DEPS="${PY_BINARY:-python3} ${PY_BINARY:-python3}-SQLAlchemy"
 echo Building Suse RPM zato-$ZATO_VERSION-$PACKAGE_VERSION.$LINUX_VERSION.$ARCH
 
 function prepare {
+  SUSEConnect -p PackageHub/15.2/x86_64
   sudo zypper --non-interactive install -y rpm-build rpmdevtools wget
   rpmdev-setuptree
 }
@@ -100,11 +101,11 @@ function install_zato {
     sudo zypper --non-interactive install -y python3
     sudo zypper --non-interactive -y groupinstall development
     sudo zypper --non-interactive install -y 'dnf-command(config-manager)'
-    # sudo zypper --non-interactive dnf install -y epel-release
-    # sudo zypper --non-interactive dnf update -y
 
-    # sudo zypper --non-interactive config-manager --set-enabled PowerTools
-    
+    sed -i -e 's|ln -fs $VIRTUAL_ENV/zato_extra_paths extlib|ln -fs ./zato_extra_paths extlib|' \
+           -e 's|"$VIRTUAL_ENV/zato_extra_paths"|"../zato_extra_paths"|' \
+           _postinstall.sh
+
     ./install.sh -p ${PY_BINARY}
     if [[ "${SKIP_TESTS:-n}" == "y" ]]; then
         run_tests_zato || exit 1
@@ -134,6 +135,7 @@ function build_rpm {
     sed -i.bak "s/PYTHON_DEPS/${PYTHON_DEPS}/g" $SOURCE_DIR/zato.spec
     sed -i.bak "s/ZATO_VERSION/$ZATO_VERSION/g" $SOURCE_DIR/zato.spec
     sed -i.bak "s/ZATO_RELEASE/$PACKAGE_VERSION.$LINUX_VERSION/g" $SOURCE_DIR/zato.spec
+    sed -i.bak "s/PYTHON_DEPENDENCIES/$PYTHON_DEPENDENCIES/g" $SOURCE_DIR/zato.spec
     cat $SOURCE_DIR/zato.spec
     mkdir -p $RPM_BUILD_DIR/SPECS/
     cp $SOURCE_DIR/zato.spec $RPM_BUILD_DIR/SPECS/
@@ -162,6 +164,4 @@ prepare
 cleanup
 checkout_zato
 install_zato
-echo "waiting 1h"
-sleep 3600
 build_rpm
