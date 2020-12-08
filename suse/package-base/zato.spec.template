@@ -8,7 +8,6 @@ Group:          ESB
 License:        LGPL
 URL:            http://zato.io
 
-Source0:        https://github.com/zatosource/zato/archive/main.zip
 BuildRequires: %{python_module setuptools}
 BuildRequires: %{pythons}
 
