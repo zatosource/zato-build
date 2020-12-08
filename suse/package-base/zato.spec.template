@@ -69,14 +69,6 @@ else
 fi
 exit 0
 
-%prep
-# Fix all Python shebangs recursively in .
-# -p preserves timestamps
-# -n prevents creating ~backup files
-# -i specifies the interpreter for the shebang
-# Need to list files that do not match ^[a-zA-Z0-9_]+\.py$ explicitly!
-pathfix.py -pni "%{__python3} %{py3_shbang_opts}" /opt/zato/ZATO_VERSION/code/bin/zato /opt/zato/ZATO_VERSION/code/bin/pip
-
 %files
 %defattr(-,zato,zato,-)
 /etc/bash_completion.d/zato
