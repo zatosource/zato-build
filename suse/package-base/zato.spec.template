@@ -9,7 +9,7 @@ URL:            http://zato.io
 Source0:        https://github.com/zatosource/zato/archive/main.zip
 BuildRequires: %{python_module setuptools}
 BuildRequires: %{python_module py >= 1.4}
-BuildRequires: %{python3}
+BuildRequires: PYTHON_DEPS
 
 Requires: tix, openssl, libpq, zlib, libevent, git, haproxy, swig, uuid, libxslt, bash-completion, gcc-c++, llvm, clang, PYTHON_DEPS
 Provides: %{name} = %{version}-%{release}
