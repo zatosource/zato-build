@@ -65,7 +65,7 @@ ARCH=`uname -i`
 
 ZATO_ROOT_DIR=/opt/zato
 ZATO_TARGET_DIR=$ZATO_ROOT_DIR/$ZATO_VERSION
-PYTHON_DEPS="${PY_BINARY:-python3} ${PY_BINARY:-python3}-SQLAlchemy"
+PYTHON_DEPS="${PY_BINARY:-python3} ${PY_BINARY:-python3}-devel ${PY_BINARY:-python3}-SQLAlchemy"
 
 echo Building Suse RPM zato-$ZATO_VERSION-$PACKAGE_VERSION.$LINUX_VERSION.$ARCH
 

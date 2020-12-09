@@ -11,7 +11,7 @@ URL:            http://zato.io
 BuildRequires: %{python_module setuptools}
 BuildRequires: %{pythons}
 
-Requires: tix, openssl, libpq5, zlib, libevent, git, haproxy, swig, uuid, libxslt, bash-completion, gcc-c++, llvm, clang, PYTHON_DEPS
+Requires: tix, openssl, libpq5, zlib, libevent, git, haproxy, swig, uuid, libxslt, bash-completion, gcc-c++, llvm, clang, postgresql-server-devel, PYTHON_DEPS
 Provides: %{name} = %{version}-%{release}
 
 %description
