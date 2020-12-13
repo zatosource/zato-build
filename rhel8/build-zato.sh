@@ -107,9 +107,12 @@ function install_zato {
     sudo ${INSTALL_CMD} install -y python3
     sudo ${INSTALL_CMD} -y groupinstall development
     sudo ${INSTALL_CMD} install -y 'dnf-command(config-manager)'
-    sudo ${INSTALL_CMD} dnf install -y epel-release
-    sudo ${INSTALL_CMD} dnf update -y
-    sudo ${INSTALL_CMD} config-manager --set-enabled $(sudo ${INSTALL_CMD} repolist all 2>/dev/null|grep PowerTools|awk '{print $1}'|head -n 1)
+    sudo ${INSTALL_CMD} install -y epel-release
+    sudo ${INSTALL_CMD} update -y
+
+    if [[ "$(sudo ${INSTALL_CMD} repolist all 2>/dev/null|grep PowerTools| awk '{print $NF}')" == "disabled" ]];then
+        sudo ${INSTALL_CMD} config-manager --set-enabled $(sudo ${INSTALL_CMD} repolist all 2>/dev/null|grep PowerTools|awk '{print $1}'|head -n 1)
+    fi
     
     ./install.sh -p ${PY_BINARY}
 
