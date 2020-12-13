@@ -109,9 +109,7 @@ function install_zato {
     sudo ${INSTALL_CMD} install -y 'dnf-command(config-manager)'
     sudo ${INSTALL_CMD} dnf install -y epel-release
     sudo ${INSTALL_CMD} dnf update -y
-
-    sudo ${INSTALL_CMD} repolist all
-    sudo ${INSTALL_CMD} config-manager --set-enabled PowerTools
+    sudo ${INSTALL_CMD} config-manager --set-enabled $(sudo ${INSTALL_CMD} repolist all 2>/dev/null|grep PowerTools|awk '{print $1}'|head -n 1)
     
     ./install.sh -p ${PY_BINARY}
 
