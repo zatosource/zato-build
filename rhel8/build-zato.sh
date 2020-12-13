@@ -110,6 +110,7 @@ function install_zato {
     sudo ${INSTALL_CMD} dnf install -y epel-release
     sudo ${INSTALL_CMD} dnf update -y
 
+    sudo ${INSTALL_CMD} repolist all
     sudo ${INSTALL_CMD} config-manager --set-enabled PowerTools
     
     ./install.sh -p ${PY_BINARY}
