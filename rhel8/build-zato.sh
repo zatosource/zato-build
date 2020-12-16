@@ -69,8 +69,19 @@ ZATO_TARGET_DIR=$ZATO_ROOT_DIR/$ZATO_VERSION
 
 echo Building RHEL RPM zato-$ZATO_VERSION-$PACKAGE_VERSION.$RHEL_VERSION.$ARCH
 
+set -x
+
 function prepare {
   sudo dnf install -y rpm-build rpmdevtools wget dnf-plugins-core
+  sudo dnf install -y python3
+  sudo dnf -y groupinstall development
+  sudo dnf install -y epel-release
+  sudo dnf install -y 'dnf-command(config-manager)'
+  sudo dnf config-manager --set-enabled $(sudo dnf repolist all 2>/dev/null|grep PowerTools|awk '{print $1}'|head -n 1)
+#   if [[ "$(grep enabled=0 /etc/yum.repos.d/CentOS-PowerTools.repo)" ]];then
+#     sudo set -i -e 's|enabled=0|enabled=1|' /etc/yum.repos.d/CentOS-PowerTools.repo
+#   fi
+  sudo dnf update -y
   rpmdev-setuptree
 }
 
@@ -96,17 +107,6 @@ function checkout_zato {
 
 function install_zato {
     cd $ZATO_TARGET_DIR/code
-
-    sudo dnf install -y python3
-    sudo dnf -y groupinstall development
-    # sudo dnf install -y 'dnf-command(config-manager)'
-    sudo dnf install -y epel-release
-    if [[ "$(grep enabled=0 /etc/yum.repos.d/CentOS-PowerTools.repo)" ]];then
-        sudo set -i -e 's|enabled=0|enabled=1|' /etc/yum.repos.d/CentOS-PowerTools.repo
-        # sudo dnf config-manager --set-enabled $(sudo dnf repolist all 2>/dev/null|grep PowerTools|awk '{print $1}'|head -n 1)
-    fi
-    sudo dnf update -y
-
 
     ./install.sh -p ${PY_BINARY}
 
