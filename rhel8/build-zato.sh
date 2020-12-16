@@ -108,6 +108,8 @@ function checkout_zato {
 function install_zato {
     cd $ZATO_TARGET_DIR/code
 
+    sed -i -e "s:config-manager --set-enabled PowerTools:config-manager --set-enabled \$(sudo \${INSTALL_CMD} repolist all|grep PowerTools | awk '{print \$1}'|head -n 1 ):" _install-rhel.sh
+
     ./install.sh -p ${PY_BINARY}
 
     find $ZATO_TARGET_DIR/. -name *.pyc -exec rm -f {} \;
