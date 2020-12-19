@@ -14,7 +14,7 @@ PY_BINARY=${2:-python}
 cd /tmp/packages || exit 1
 
 if [ "$(type -p apt-get)" ]; then
-  apt-get update
+  apt-get update -y
 
   if ! [ -x "$(command -v lsb_release)" ]; then
     sudo apt-get install -y lsb-release
@@ -28,29 +28,37 @@ if [ "$(type -p apt-get)" ]; then
     ln -s /usr/share/zoneinfo/GMT /etc/localtime
   fi
 
+  sudo dpkg-reconfigure --frontend noninteractive tzdata
+
   if [[ $(dpkg -s apt | grep -i version|cut -d ' ' -f 2|cut -d '.' -f 1,2) > 1.0 ]];then
+      DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends tzdata
       find /tmp/packages/ -type f -name \*.deb -exec apt-get install -y {} \;
   else
       find /tmp/packages/ -type f -name \*.deb -exec dpkg -i  {} \;
 
       # fix dependencies
-      dpkg --configure -a
-      apt-get install -f -y || exit 1
-  fi
-
-
-  # upgrade s3cmd, debian jessie (debian 8) version is too old
-  if [[ "$(lsb_release -r | awk '{print $2}' | cut -d . -f 1)" = 8 || "$(lsb_release -r | awk '{print $2}' | cut -d . -f 1)" = 10 ]]; then
-    git clone https://github.com/s3tools/s3cmd.git /opt/s3cmd
-    ln -fs /opt/s3cmd/s3cmd /usr/bin/s3cmd
+      DEBIAN_FRONTEND=noninteractive dpkg --configure -a
+      DEBIAN_FRONTEND=noninteractive apt-get install -f -y || exit 1
   fi
 
 elif [ "$(type -p yum)" ]; then
+  INSTALL_CMD="yum"
+
+  if [ "$(type -p dnf)" ]
+  then
+      INSTALL_CMD="dnf"
+  fi
+
   RHEL_VERSION=el7
   if ! [ -x "$(command -v lsb_release)" ]; then
-      sudo yum install -y redhat-lsb-core
+      sudo ${INSTALL_CMD} install -y redhat-lsb-core
   fi
-  if [[ ${PY_BINARY} == "python3" && -z "$(lsb_release -r|grep '\s8.')" ]]; then
+
+  if [[ "$(lsb_release -sir)" =~ '^CentOS.8\.' ]]
+  then
+    sudo ${INSTALL_CMD} install -y 'dnf-command(config-manager)'
+    sudo ${INSTALL_CMD} config-manager --set-enabled PowerTools
+  elif [[ ${PY_BINARY} == "python3" && -z "$(lsb_release -r|grep '\s8.')" ]]; then
     sudo yum install -y centos-release-scl-rh
     sudo yum-config-manager --enable centos-sclo-rh-testing
 
@@ -66,14 +74,11 @@ elif [ "$(type -p yum)" ]; then
     source /opt/rh/rh-python36/enable
   fi
 
-  find /tmp/packages/ -type f -name \*.rpm -exec yum install -y {} \;
+  find /tmp/packages/ -type f -name \*.rpm -exec ${INSTALL_CMD} install -y {} \;
 elif [ "$(type -p apk)" ]; then
   apk update
   apk add python py-pip py-setuptools git ca-certificates
   pip install python-dateutil
-  git clone https://github.com/s3tools/s3cmd.git /opt/s3cmd
-  ln -s /opt/s3cmd/s3cmd /usr/bin/s3cmd
-
   abuild-keygen -ani || exit 1
   ALPINE_VERSION="$(cat /etc/alpine-release)"
 
@@ -114,7 +119,6 @@ if [[ -n "$(grep 'Zato ' /tmp/zato-version | grep $PY_VERSION)" ]]; then
           echo "Package uploaded"
       else
           echo "Package upload failed"
-          s3cmd --version
           exit 1
       fi
   fi

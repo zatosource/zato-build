@@ -1,5 +1,8 @@
 #!/bin/bash
 
+set -x
+[[ -z "$USER" ]] && USER=`whoami`
+
 function usage(){
     echo "$0 BRANCH_NAME ZATO_VERSION PYTHON_EXECUTABLE [PACKAGE_VERSION] [PROCESS]"
     echo ""
@@ -44,48 +47,14 @@ PY_BINARY=$3
 TRAVIS_PROCESS_NAME=$5
 
 if ! [ -x "$(command -v $PY_BINARY)" ]; then
-    if [[ "$PY_BINARY" == "python3" ]]; then
-        sudo yum install -y centos-release-scl-rh
-        sudo yum-config-manager --enable centos-sclo-rh-testing
-
-        # On RHEL, enable RHSCL and RHSCL-beta repositories for you system:
-        sudo yum-config-manager --enable rhel-server-rhscl-7-rpms
-        sudo yum-config-manager --enable rhel-server-rhscl-beta-7-rpms
-
-        # 2. Install the collection:
-        sudo yum install -y rh-python36
-
-        # 3. Start using software collections:
-        # scl enable rh-python36 bash
-        source /opt/rh/rh-python36/enable
-    else
-        sudo yum install -y $PY_BINARY
-    fi
+    sudo yum install -y $PY_BINARY
 fi
 
-# Python 2 dependencies
-PYTHON_DEPENDENCIES=""
-PACKAGE_VERSION="python27${PACKAGE_VERSION_SUFFIX}"
-if [[ $(${PY_BINARY} -c 'import sys; print(sys.version_info[:][0])') -eq 3 ]]
-then
-    # Python 3 dependencies
-    PYTHON_DEPENDENCIES=", rh-python36, rh-python36-python-pip"
-    PACKAGE_VERSION="python3${PACKAGE_VERSION_SUFFIX}"
+# Python 3 dependencies
+PYTHON_DEPENDENCIES=", python3, python3-pip"
+PACKAGE_VERSION="python3${PACKAGE_VERSION_SUFFIX}"
 
-    sudo yum install -y centos-release-scl-rh
-    sudo yum-config-manager --enable centos-sclo-rh-testing
-
-    # On RHEL, enable RHSCL and RHSCL-beta repositories for you system:
-    sudo yum-config-manager --enable rhel-server-rhscl-7-rpms
-    sudo yum-config-manager --enable rhel-server-rhscl-beta-7-rpms
-
-    # 2. Install the collection:
-    sudo yum install -y rh-python36
-
-    # 3. Start using software collections:
-    # scl enable rh-python36 bash
-    source /opt/rh/rh-python36/enable
-fi
+sudo yum install -y python3
 
 CURDIR="${BASH_SOURCE[0]}";RL="readlink";([[ `uname -s`=='Darwin' ]] || RL="$RL -f")
 while([ -h "${CURDIR}" ]) do CURDIR=`$RL "${CURDIR}"`; done
@@ -106,8 +75,13 @@ ZATO_TARGET_DIR=$ZATO_ROOT_DIR/$ZATO_VERSION
 echo Building RHEL RPM zato-$ZATO_VERSION-$PACKAGE_VERSION.$RHEL_VERSION.$ARCH
 
 function prepare {
-  sudo yum install -y rpm-build rpmdevtools wget
-  rpmdev-setuptree
+    sudo yum install -y rpm-build rpmdevtools wget yum-utils centos-release-scl
+    sudo yum-config-manager -y --enable extras
+    rpmdev-setuptree
+
+    sudo yum-config-manager -y--enable rhel-server-rhscl-7-rpms
+
+    sudo yum install -y devtoolset-9
 }
 
 function cleanup {
@@ -131,17 +105,29 @@ function checkout_zato {
 }
 
 function install_zato {
-    cp $SOURCE_DIR/_install-fedora.sh $ZATO_TARGET_DIR/code
     cd $ZATO_TARGET_DIR/code
-    sed -i -e 's|pg8000==1.13.1|pg8000==1.12.5|' requirements.txt
+
+    source /opt/rh/devtoolset-9/enable
+
     ./install.sh -p ${PY_BINARY}
+
     find $ZATO_TARGET_DIR/. -name *.pyc -exec rm -f {} \;
     find $ZATO_TARGET_DIR/. ! -perm /004 -exec chmod 644 {} \;
+    [[ -f ./code/hotfixman.sh ]] && rm -f ./code/hotfixman.sh
+    [[ -f ./code/hotfixes ]] && rm -rf ./code/hotfixes
+    if [[ "${SKIP_TESTS:-n}" == "y" ]]; then
+        cd $ZATO_TARGET_DIR/
+        echo "Running tests"
+        make || exit 1
+    fi
 }
 
+
 function build_rpm {
+    sudo ${INSTALL_CMD} install -y ${PY_BINARY:-python3}-devel
     rm -f $SOURCE_DIR/zato.spec
     cp $SOURCE_DIR/zato.spec.template $SOURCE_DIR/zato.spec
+    sed -i.bak "s/PYTHON_DEPS/${PY_BINARY}/g" $SOURCE_DIR/zato.spec
     sed -i.bak "s/ZATO_VERSION/$ZATO_VERSION/g" $SOURCE_DIR/zato.spec
     sed -i.bak "s/ZATO_RELEASE/$PACKAGE_VERSION.$RHEL_VERSION/g" $SOURCE_DIR/zato.spec
     cat $SOURCE_DIR/zato.spec
