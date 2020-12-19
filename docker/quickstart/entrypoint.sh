@@ -8,7 +8,7 @@ git checkout -- ./requirements.txt && ./update.sh || exit 1
 cd /opt/zato/ || exit 1
 # touch /opt/zato/zato_user_password /opt/zato/change_zato_password && \
 
-    if [[ -z "${ZATO_SSH_PASSWORD}" ]]; then
+if [[ -z "${ZATO_SSH_PASSWORD}" ]]; then
     if [[ -f /opt/zato/zato_user_password ]];then
         echo "Reading the password for zato user from the file"
         ZATO_SSH_PASSWORD="$(cat /opt/zato/zato_user_password)"
@@ -78,6 +78,10 @@ fi
 if [[ ! -x "/opt/zato/env/qs-1/zato-qs-restart.sh" ]]; then
     # quickstart-bootstrap
     if [[ "${ODB_TYPE}" == "postgresql" && "${ODB_HOSTNAME}" == "localhost" && -z "$(ls /var/lib/postgresql/data)" ]]; then
+        export PGBINPATH="/usr/lib/postgresql/$(ls -1 /usr/lib/postgresql/|head -n 1)/bin"
+        echo "PGBINPATH=\"$PGBINPATH\"" >> /etc/environment
+        export PATH="$PATH:$PGBINPATH"
+        echo "PATH=\"$PATH\"" >> /etc/environment
         echo "Initializing Postgresql database"
         export PGPASSWORD="${ODB_PASSWORD}"
         su postgres -c "$PGBINPATH/initdb -E 'UTF-8' --username=\"${ODB_USERNAME:-postgres}\" --pwfile=<(echo \"$ODB_PASSWORD\") -D \"$PGDATA\";PGUSER=\"${PGUSER:-$POSTGRES_USER}\" $PGBINPATH/pg_ctl -D \"$PGDATA\" -o \"-c listen_addresses='127.0.0.1'\"  -w start"
@@ -90,7 +94,7 @@ EOSQL
         WAITS="${WAITS} -wait tcp://localhost:5432 -timeout 10m "
     fi
     # wait for ODB again
-    /usr/local/bin/dockerize ${WAITS}
+    [[ -n "${WAITS}" ]] && /usr/local/bin/dockerize ${WAITS}
     echo "Running quickstart-bootstrap"
     sudo -H -u zato /opt/zato/quickstart-bootstrap.sh
     if [[ "${ODB_TYPE}" == "postgresql" && "${ODB_HOSTNAME}" == "localhost" ]]; then
