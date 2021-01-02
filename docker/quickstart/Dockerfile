@@ -1,12 +1,11 @@
 # Zato
 
-FROM ubuntu:focal
+FROM ubuntu:20.04
 LABEL maintainer="Anielkis Herrera <aherrera@zato.io>, Dariusz Suchojad <dsuch@zato.io>"
 
 ENV ZATO_BIN /opt/zato/current/bin/zato
 ENV TZ=GMT
 ENV DEBIAN_FRONTEND=noninteractive
-ARG zato_py_version
 
 # Install helper programs used during Zato installation
 RUN apt-get update && apt-get install -y \
@@ -34,11 +33,11 @@ RUN ln -fs /usr/share/zoneinfo/GMT /etc/localtime && dpkg-reconfigure --frontend
 RUN add-apt-repository universe
 
 # Add the package signing key
-RUN curl -s https://zato.io/repo/zato-3.2-8678EFE11DA60B63.pgp.txt | sudo apt-key add -
+RUN curl -s https://zato.io/repo/zato-3.2-48849AAD40BCBB0E.pgp.txt | sudo apt-key add -
 
 # Add Zato repo and install the package
 # update sources and install Zato
-ENV ZATO_PY_VERSION=$zato_py_version
+# ENV ZATO_PY_VERSION=$zato_py_version
 RUN add-apt-repository "deb [arch=amd64] https://zato.io/repo/stable/3.2/ubuntu $(lsb_release -cs) main" && apt-get update && apt-get install -y zato
 
 # Install latest updates
