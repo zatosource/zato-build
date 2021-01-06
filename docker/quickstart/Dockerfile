@@ -57,15 +57,6 @@ RUN set -x \
     && chmod +x /usr/local/bin/gosu \
     && gosu nobody true
 
-# PostgreSQL
-ENV PG_MAJOR 10
-ENV PGBINPATH /usr/lib/postgresql/$PG_MAJOR/bin
-ENV PATH $PATH:$PGBINPATH
-ENV PGDATA /var/lib/postgresql/data
-RUN apt-get update && apt-get install -y postgresql postgresql-contrib postgresql-client && rm -rf /var/lib/apt/lists/*
-USER postgres
-RUN mkdir -p "$PGDATA" && chown -R postgres:postgres "$PGDATA" && chmod 777 "$PGDATA"
-
 USER root
 
 # Copy Docker basic structure

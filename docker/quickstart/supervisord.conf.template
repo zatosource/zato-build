@@ -39,18 +39,6 @@ numprocs=1
 dependent_startup=true
 {{ end }}
 
-{{ if or ( empty .Env.ODB_HOSTNAME ) ( eq .Env.ODB_HOSTNAME "localhost" ) }}
-[program:postgresql]
-command=postgres
-user=postgres
-environment=PGDATA="{{ .Env.PGDATA }}"
-autostart=false
-autorestart=true
-stderr_logfile=/var/log/postgresql/main.log
-numprocs=1
-dependent_startup=true
-{{ end }}
-
 [program:zato-load-balancer]
 command = /opt/zato/zato_start_load_balancer
 user = zato
@@ -71,6 +59,7 @@ killasgroup = true
 numprocs=1
 dependent_startup=true
 
+{{ if eq (default .Env.SERVERS_COUNT 1 ) 2 -}}
 [program:zatoserver2]
 command = /opt/zato/zato_start_server2
 user = zato
@@ -81,6 +70,7 @@ killasgroup = true
 numprocs=1
 dependent_startup=true
 dependent_startup_wait_for=zatoserver1:running
+{{- end }}
 
 [program:zatowebadmin]
 command = /opt/zato/zato_start_web_admin
