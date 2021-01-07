@@ -4,7 +4,7 @@ env | grep _ >> /etc/environment
 set -e
 
 cd /opt/zato/current || exit 1
-git pull && ./update.sh || exit 1
+git pull || exit 1
 cd /opt/zato/ || exit 1
 # touch /opt/zato/zato_user_password /opt/zato/change_zato_password && \
 
