@@ -104,17 +104,3 @@ killasgroup = true
 numprocs=1
 dependent_startup=true
 dependent_startup_wait_for=zatoserver1:running
-
-{{ if .Env.ZATO_IDE_PUBLISHER_PASSWORD }}
-[program:idepasswordupdate]
-command=/opt/zato/ide_password_update.sh
-directory=/opt/zato/
-user=zato
-autostart=false
-autorestart = unexpected
-stopasgroup = true
-killasgroup = true
-numprocs=1
-dependent_startup=true
-dependent_startup_wait_for=zatoserver1:running
-{{ end }}

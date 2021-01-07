@@ -60,8 +60,6 @@ RUN set -x \
 USER root
 
 # Copy Docker basic structure
-COPY entrypoint.sh /entrypoint.sh
-COPY quickstart-bootstrap.sh /opt/zato/quickstart-bootstrap.sh
 COPY import-utility.sh /opt/zato/import-utility.sh
 COPY supervisord.conf.template /opt/zato/supervisord.conf.template
 COPY update_password.config /opt/zato/update_password.config
@@ -70,10 +68,13 @@ COPY zato_start_server1 /opt/zato/zato_start_server1
 COPY zato_start_server2 /opt/zato/zato_start_server2
 COPY zato_start_web_admin /opt/zato/zato_start_web_admin
 COPY zato_start_scheduler /opt/zato/zato_start_scheduler
-COPY ide_password_update.sh /opt/zato/ide_password_update.sh
+COPY quickstart-bootstrap.sh /opt/zato/quickstart-bootstrap.sh
+COPY show-credentials.sh /opt/zato/show-credentials
+COPY entrypoint.sh /entrypoint.sh
 
 RUN chmod 755 /entrypoint.sh \
     /opt/zato/*.sh \
+    /opt/zato/show-credentials \
     /opt/zato/zato_start_load_balancer \
     /opt/zato/zato_start_server1 \
     /opt/zato/zato_start_server2 \

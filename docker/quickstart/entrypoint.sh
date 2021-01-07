@@ -73,6 +73,7 @@ fi
 if [[ ! -x "/opt/zato/env/qs-1/zato-qs-restart.sh" ]]; then
     # wait for ODB again
     echo "Running quickstart-bootstrap"
+    touch /opt/zato/zato_ide_password && chown zato. /opt/zato/zato_ide_password
     sudo -H -u zato /opt/zato/quickstart-bootstrap.sh
 fi
 
