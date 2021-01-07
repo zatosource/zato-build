@@ -14,7 +14,7 @@ if [[ -z "${ZATO_SSH_PASSWORD}" ]]; then
         ZATO_SSH_PASSWORD="$(cat /opt/zato/zato_user_password)"
     else
         echo "Generating a password for zato user"
-        ZATO_SSH_PASSWORD="$(uuidgen)"
+        ZATO_SSH_PASSWORD="$(uuidgen -r | mkpasswd -s |sed -e 's/[\/\-_\.]//g')"
     fi
 fi
 if [[ -z "${ZATO_WEB_ADMIN_PASSWORD}" ]]; then
@@ -23,7 +23,7 @@ if [[ -z "${ZATO_WEB_ADMIN_PASSWORD}" ]]; then
         ZATO_WEB_ADMIN_PASSWORD="$(cat /opt/zato/web_admin_password)"
     else
         echo "Generating a password for web admin"
-        ZATO_WEB_ADMIN_PASSWORD="$(uuidgen)"
+        ZATO_WEB_ADMIN_PASSWORD="$(uuidgen -r | mkpasswd -s |sed -e 's/[\/\-_\.]//g')"
     fi
 fi
 

@@ -23,7 +23,8 @@ RUN apt-get update && apt-get install -y \
     supervisor \
     vim \
     libpq-dev \
-    gnupg
+    gnupg \
+    whois
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends tzdata \
     && rm -rf /var/lib/apt/lists/* && apt-get update -y
