@@ -43,7 +43,7 @@ RUN add-apt-repository "deb [arch=amd64] https://zato.io/repo/stable/3.2/ubuntu 
 
 # Install latest updates
 WORKDIR /opt/zato/current
-RUN git pull && ./update.sh && mkdir -p /var/log/supervisor /var/run/sshd/
+RUN git pull && ./update.sh &&  mkdir -p /var/log/supervisor /var/run/sshd/
 RUN ./bin/pip install supervisord-dependent-startup && sed -i '/^\[include\]/i [eventlistener:dependentstartup]\ncommand=python -m supervisord_dependent_startup\nautostart=true\nautorestart=unexpected\nstartretries=0\nexitcodes=0,3\nevents=PROCESS_STATE\n' /etc/supervisor/supervisord.conf
 
 # Download Dockerize
@@ -70,12 +70,12 @@ COPY zato_start_server2 /opt/zato/zato_start_server2
 COPY zato_start_web_admin /opt/zato/zato_start_web_admin
 COPY zato_start_scheduler /opt/zato/zato_start_scheduler
 COPY quickstart-bootstrap.sh /opt/zato/quickstart-bootstrap.sh
-COPY show-credentials.sh /opt/zato/show-credentials
+COPY get-credentials /opt/zato/get-credentials
 COPY entrypoint.sh /entrypoint.sh
 
 RUN chmod 755 /entrypoint.sh \
     /opt/zato/*.sh \
-    /opt/zato/show-credentials \
+    /opt/zato/get-credentials \
     /opt/zato/zato_start_load_balancer \
     /opt/zato/zato_start_server1 \
     /opt/zato/zato_start_server2 \
