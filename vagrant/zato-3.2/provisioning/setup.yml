@@ -1,0 +1,376 @@
+---
+
+- name: General | Package Installation.
+  apt: name={{ item }} state=present
+  become: yes
+  register: apt_res
+  retries: 5
+  until: apt_res is success
+  loop:
+    - python-pip
+    - git
+    - apt-transport-https
+    - curl
+    - htop
+    - libcurl4-openssl-dev
+    - mc
+    - redis-server
+    - software-properties-common
+    - ssh
+    - sudo
+    - supervisor
+    - vim
+    - tzdata
+    - postgresql
+    - postgresql-contrib
+    - postgresql-client
+    - python-psycopg2
+
+- name: General | Add repository universe.
+  command: add-apt-repository universe
+
+- name: General | Ensure PostgreSQL is listening on all localhost
+  lineinfile: dest=/etc/postgresql/10/main/postgresql.conf
+     regexp='^#?listen_addresses\s*='
+     line="listen_addresses = '127.0.0.1'"
+     state=present
+  notify: restart postgresql
+
+- name: Zato | Add Zato's Apt signing key
+  apt_key:
+    url: https://zato.io/repo/zato-3.2-48849AAD40BCBB0E.pgp.txt
+    state: present
+  register: task_result
+  until: task_result is succeeded
+  retries: 10
+  delay: 5
+
+- name: Zato | Add Zato repository.
+  apt_repository:
+    repo: deb [arch=amd64] https://zato.io/repo/stable/3.2/ubuntu {{ ansible_distribution_release }} main
+    state: present
+    filename: zato
+  register: task_result
+  until: task_result is succeeded
+  retries: 10
+  delay: 5
+
+- name: Zato | Zato package installation.
+  apt: name=zato state=present
+  become: yes
+  register: apt_res
+  retries: 5
+  until: apt_res is success
+
+- name: Start service redis, if not started
+  service:
+    name: redis-server
+    state: started
+    enabled: yes
+
+- name: Start service postgresql, if not started
+  service:
+    name: postgresql
+    state: started
+    enabled: yes
+
+- name: Start service supervisor, if not started
+  service:
+    name: supervisor
+    state: started
+    enabled: yes
+
+- name: Zato | Download /opt/zato/dockerize
+  get_url:
+    url: https://github.com/powerman/dockerize/releases/download/v0.12.0/dockerize-linux-x86_64
+    dest: /usr/local/bin/dockerize
+    mode: 0755
+
+- name: Zato | Download /opt/zato/update_password.config
+  get_url:
+    url: https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/update_password.config
+    dest: /opt/zato/update_password.config
+    mode: 0644
+    owner: zato
+    group: zato
+
+- name: Zato | Download /opt/zato/zato_start_load_balancer
+  get_url:
+    url: https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/zato_start_load_balancer
+    dest: /opt/zato/zato_start_load_balancer
+    mode: 0755
+    owner: zato
+    group: zato
+
+- name: Zato | Download /opt/zato/zato_start_scheduler
+  get_url:
+    url: https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/zato_start_scheduler
+    dest: /opt/zato/zato_start_scheduler
+    mode: 0755
+    owner: zato
+    group: zato
+
+- name: Zato | Download /opt/zato/zato_start_server1
+  get_url:
+    url: https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/zato_start_server1
+    dest: /opt/zato/zato_start_server1
+    mode: 0755
+    owner: zato
+    group: zato
+
+- name: Zato | Download /opt/zato/zato_start_server2
+  get_url:
+    url: https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/zato_start_server2
+    dest: /opt/zato/zato_start_server2
+    mode: 0755
+    owner: zato
+    group: zato
+
+- name: Zato | Download /opt/zato/zato_start_web_admin
+  get_url:
+    url: https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/zato_start_web_admin
+    dest: /opt/zato/zato_start_web_admin
+    mode: 0755
+    owner: zato
+    group: zato
+
+- name: Zato | Download /opt/zato/hotdeploy-utility.sh
+  get_url:
+    url: https://raw.githubusercontent.com/zatosource/zato-build/master/docker/cloud/hotdeploy-utility.sh
+    dest: /opt/zato/hotdeploy-utility.sh
+    mode: 0755
+    owner: zato
+    group: zato
+
+- name: Zato | Enable enmasse
+  copy:
+    content: |
+      #!/bin/bash
+      source /opt/zato-env.sh
+
+      /usr/local/bin/dockerize -wait tcp://localhost:17010 -timeout 10m || exit 1
+
+      # add a new wait time
+      sleep 5
+
+      cd /opt/zato/env/qs-1 || exit 1
+      [[ -z ${ZATO_SERVER_PATH} ]] && ZATO_SERVER_PATH="/opt/zato/env/qs-1/server1"
+      if [[ ! -f ${ZATO_SERVER_PATH}/config/repo/server.conf ]]; then
+          echo "Zato server configuration not found at ${ZATO_SERVER_PATH}"
+          exit 1
+      fi
+
+      if [[ -n "$(echo "${ZATO_ENMASSE_FILE}"|grep -Eo '(http|https)://[^/"]+')" ]];then
+          echo "Downloading enmasse file from ${ZATO_ENMASSE_FILE}"
+          TMPFILE="$(mktemp -d)"
+          ZATO_ENMASSE_FILE_NAME=$(basename ${ZATO_ENMASSE_FILE})
+          curl "${ZATO_ENMASSE_FILE}" > ${TMPFILE}/${ZATO_ENMASSE_FILE_NAME}
+          ZATO_ENMASSE_FILE="${TMPFILE}/${ZATO_ENMASSE_FILE_NAME}"
+      fi
+
+      set -x # enable show commands
+      if [[ -f ${ZATO_ENMASSE_FILE} ]]; then
+          /opt/zato/current/bin/zato enmasse ${ZATO_SERVER_PATH} --input ${ZATO_ENMASSE_FILE} --import --replace-odb-objects
+      else
+          echo "enmasse file ${ZATO_ENMASSE_FILE} not found"
+          exit 1
+      fi
+      set +x # disable show commands
+    dest: /opt/zato/enmasse-utility.sh
+    mode: '0755'
+    owner: zato
+    group: zato
+  notify: restart supervisor
+
+- name: Zato | Create quickstart directory
+  file: path=/opt/zato/env/qs-1/ owner=zato group=zato
+        state=directory
+  become: yes
+  become_user: zato
+
+- name: Zato | create quickstart
+  shell: /opt/zato/current/bin/zato quickstart create \
+         --odb_host "localhost" \
+         --odb_port 5432 \
+         --odb_user "zato" \
+         --odb_db_name "zato" \
+         --odb_password "{{ dbpassword }}" \
+         --kvdb_password '' \
+         /opt/zato/env/qs-1 postgresql localhost 6379
+         --verbose
+  become: yes
+  become_user: zato
+  args:
+    creates: /opt/zato/env/qs-1/ca
+
+- name: Zato | Save ssh password
+  shell: |
+    set -x # enable show commands
+    [[ -f /opt/zato-env.sh ]] && source /opt/zato-env.sh
+
+    cd /opt/zato/
+    if [[ -z "${ZATO_SSH_PASSWORD}" ]]; then
+      echo "Generating a password for zato user"
+      ZATO_SSH_PASSWORD="$(uuidgen)"
+    fi
+
+    echo "${ZATO_SSH_PASSWORD}" > /opt/zato/zato_user_password && \
+      chown zato:zato /opt/zato/zato_user_password && \
+      echo "zato:${ZATO_SSH_PASSWORD}" > /opt/zato/change_zato_password && \
+      chpasswd < /opt/zato/change_zato_password
+  args:
+    chdir: /opt/zato/env/qs-1
+    creates: /opt/zato/zato_user_password
+    executable: /bin/bash
+
+- name: Zato | Set webadmin password
+  shell: |
+    set -x # enable show commands
+    [[ -f /opt/zato-env.sh ]] && source /opt/zato-env.sh
+
+    cd /opt/zato/
+    if [[ -z "${ZATO_WEB_ADMIN_PASSWORD}" ]]; then
+      echo "Generating a password for web admin"
+      ZATO_WEB_ADMIN_PASSWORD="$(uuidgen)"
+    fi
+
+    echo "${ZATO_WEB_ADMIN_PASSWORD}" > /opt/zato/web_admin_password
+    echo "password=${ZATO_WEB_ADMIN_PASSWORD}" >> /opt/zato/update_password.config
+
+    /opt/zato/current/bin/zato from-config \
+      /opt/zato/update_password.config --verbose || exit 1
+  args:
+    chdir: /opt/zato/env/qs-1
+    creates: /opt/zato/web_admin_password
+    executable: /bin/bash
+  become: yes
+  become_user: zato
+
+- name: Zato | Granting access to load-balancer
+  replace:
+   path: /opt/zato/env/qs-1/load-balancer/config/repo/zato.config
+   regexp: '127\.0\.0\.1:11223'
+   replace: '0.0.0.0:11223'
+   backup: yes
+
+- name: Zato | Reduce Workers in server1
+  replace:
+   path: /opt/zato/env/qs-1/server1/config/repo/server.conf
+   regexp: 'gunicorn_workers=2'
+   replace: 'gunicorn_workers=1'
+   backup: yes
+
+- name: Zato | Reduce Workers in server2
+  replace:
+   path: /opt/zato/env/qs-1/server2/config/repo/server.conf
+   regexp: 'gunicorn_workers=2'
+   replace: 'gunicorn_workers=1'
+   backup: yes
+
+- name: Zato | Checking if hot deploy is enabled.
+  stat:
+    path: /opt/hot-deploy
+  register: hot_deploy_details
+
+- name: Zato | Activating hot deploy
+  replace:
+   path: /opt/zato/env/qs-1/server1/config/repo/server.conf
+   regexp: 'pickup_dir=.*'
+   replace: 'pickup_dir=/opt/hot-deploy'
+   backup: yes
+  when: hot_deploy_details.stat.exists
+
+- name: Zato | Granting access to load-balancer
+  replace:
+   path: /opt/zato/env/qs-1/server1/config/repo/server.conf
+   regexp: '127\.0\.0\.1:11223'
+   replace: '0.0.0.0:11223'
+   backup: yes
+  when: hot_deploy_details.stat.exists
+
+- name: Zato | Copying Zato's supervisord config
+  copy:
+    src: provisioning/supervisord.conf
+    dest: /etc/supervisor/conf.d/zato.conf
+    mode: 0644
+  notify: restart supervisor
+
+- meta: flush_handlers
+
+- name: Zato | Set ide_publisher password
+  shell: |
+    set -x # enable show commands
+    [[ -f /opt/zato-env.sh ]] && source /opt/zato-env.sh
+
+    cd /opt/zato/
+    exec &> /opt/zato/ide_publisher_update.log
+
+    user_id=""
+
+    function get_user_id() {
+        # Wait for server1 to start
+        /usr/local/bin/dockerize -wait-http-status-code 200 -wait-retry-interval 5s -wait http://localhost:17010/zato/ping -timeout 10m
+
+        echo "get ide_publisher id"
+        user_id="$(curl -q "http://admin:$(cat /opt/zato/web_admin_password)@localhost:17010/zato/api/invoke/zato.security.basic-auth.get-list?cluster_id=1" 2>/dev/null | /opt/zato/jq '.[] | select(.username == "ide_publisher").id')"
+    }
+
+    function make_update() {
+        # Wait for server1 to start
+        /usr/local/bin/dockerize -wait-http-status-code 200 -wait-retry-interval 5s -wait http://localhost:17010/zato/ping -timeout 10m
+
+        echo "update ide_publisher password"
+        $ZATO_BIN service invoke --verbose --payload \
+            "{\"password1\":\"${ZATO_IDE_PUBLISHER_PASSWORD}\", \"password2\": \"${ZATO_IDE_PUBLISHER_PASSWORD}\", \"id\": ${user_id}}" \
+            /opt/zato/env/qs-1/server1/ zato.security.basic-auth.change-password
+    }
+
+    cd /opt/zato/env/qs-1 || exit 1
+    if [[ -n "${ZATO_IDE_PUBLISHER_PASSWORD}" ]]; then
+        if [[ ! -x /opt/zato/jq  ]]; then
+            wget -q -O /opt/zato/jq https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 && chmod +x /opt/zato/jq
+        fi
+
+        # run until no error
+        until get_user_id
+        do
+            sleep 2
+            echo "Retrying"
+        done
+
+        # run until no error
+        until make_update
+        do
+            sleep 2
+            echo "Retrying"
+        done
+    fi
+  args:
+    chdir: /opt/zato/env/qs-1
+    creates: /opt/zato/zato_ide_publisher_password
+    executable: /bin/bash
+  become: yes
+  become_user: zato
+
+- name: Zato | Enable Hot deploy updates
+  copy:
+    content: |
+      [program:hotdeploy]
+      command=/opt/zato/hotdeploy-utility.sh
+      directory=/opt/zato/
+      autorestart=unexpected
+      numprocs=1
+    dest: /etc/supervisor/conf.d/hotdeploy.conf
+  notify: restart supervisor
+
+- name: Zato | Enable enmasse-utility.sh
+  copy:
+    content: |
+      [program:enmasse]
+      command=/opt/zato/enmasse-utility.sh
+      directory=/opt/zato/
+      user=zato
+      autorestart=unexpected
+      numprocs=1
+    dest: /etc/supervisor/conf.d/enmasse.conf
+  notify: restart supervisor

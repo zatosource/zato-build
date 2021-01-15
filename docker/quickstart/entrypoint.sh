@@ -4,17 +4,17 @@ env | grep _ >> /etc/environment
 set -e
 
 cd /opt/zato/current || exit 1
-git checkout -- ./requirements.txt && ./update.sh || exit 1
+git pull || exit 1
 cd /opt/zato/ || exit 1
 # touch /opt/zato/zato_user_password /opt/zato/change_zato_password && \
 
-    if [[ -z "${ZATO_SSH_PASSWORD}" ]]; then
+if [[ -z "${ZATO_SSH_PASSWORD}" ]]; then
     if [[ -f /opt/zato/zato_user_password ]];then
         echo "Reading the password for zato user from the file"
         ZATO_SSH_PASSWORD="$(cat /opt/zato/zato_user_password)"
     else
         echo "Generating a password for zato user"
-        ZATO_SSH_PASSWORD="$(uuidgen)"
+        ZATO_SSH_PASSWORD="$(uuidgen -r | mkpasswd -s |sed -e 's/[\/\-_\.]//g')"
     fi
 fi
 if [[ -z "${ZATO_WEB_ADMIN_PASSWORD}" ]]; then
@@ -23,7 +23,7 @@ if [[ -z "${ZATO_WEB_ADMIN_PASSWORD}" ]]; then
         ZATO_WEB_ADMIN_PASSWORD="$(cat /opt/zato/web_admin_password)"
     else
         echo "Generating a password for web admin"
-        ZATO_WEB_ADMIN_PASSWORD="$(uuidgen)"
+        ZATO_WEB_ADMIN_PASSWORD="$(uuidgen -r | mkpasswd -s |sed -e 's/[\/\-_\.]//g')"
     fi
 fi
 
@@ -53,13 +53,8 @@ if [[ -n "${ODB_HOSTNAME}" ]]; then
     WAITS="${WAITS} -wait tcp://${ODB_HOSTNAME}:${ODB_PORT} -timeout 10m "
     echo "ODB_DATA=\"--odb_host ${ODB_HOSTNAME} --odb_port ${ODB_PORT} --odb_user ${ODB_USERNAME} --odb_db_name ${ODB_NAME} --odb_password ${ODB_PASSWORD}\"" >> /etc/environment
 else
-    export ODB_TYPE="postgresql"
-    export ODB_PORT="5432"
-    export ODB_HOSTNAME="localhost"
-    [[ -z "${ODB_USERNAME}" ]] && ODB_USERNAME="postgres"
-    [[ -z "${ODB_PASSWORD}" ]] && ODB_PASSWORD=""$(uuidgen)""
+    export ODB_TYPE="sqlite"
     echo "ODB_TYPE=\"${ODB_TYPE}\"" >> /etc/environment
-    echo "ODB_DATA=\"--odb_host ${ODB_HOSTNAME:-localhost} --odb_port ${ODB_PORT:-5432} --odb_user ${ODB_USERNAME:-postgres} --odb_db_name ${ODB_NAME:-zato} --odb_password ${ODB_PASSWORD}\"" >> /etc/environment
 fi
 
 /usr/local/bin/dockerize ${WAITS} -template /opt/zato/supervisord.conf.template:/opt/zato/supervisord.conf
@@ -76,29 +71,10 @@ if [[ ! -d /opt/zato/env/qs-1 ]];then
 fi
 
 if [[ ! -x "/opt/zato/env/qs-1/zato-qs-restart.sh" ]]; then
-    # quickstart-bootstrap
-    if [[ "${ODB_TYPE}" == "postgresql" && "${ODB_HOSTNAME}" == "localhost" && -z "$(ls /var/lib/postgresql/data)" ]]; then
-        echo "Initializing Postgresql database"
-        export PGPASSWORD="${ODB_PASSWORD}"
-        su postgres -c "$PGBINPATH/initdb -E 'UTF-8' --username=\"${ODB_USERNAME:-postgres}\" --pwfile=<(echo \"$ODB_PASSWORD\") -D \"$PGDATA\";PGUSER=\"${PGUSER:-$POSTGRES_USER}\" $PGBINPATH/pg_ctl -D \"$PGDATA\" -o \"-c listen_addresses='127.0.0.1'\"  -w start"
-        psql=( psql -v ON_ERROR_STOP=1 --username "${ODB_USERNAME:-postgres}" --no-password )
-        "${psql[@]}" --dbname postgres --set db="${ODB_NAME:-zato}" <<-'EOSQL'
-CREATE DATABASE :"db" ;
-EOSQL
-        psql+=( --dbname "$POSTGRES_DB" )
-        # create wait instruction for internal postgresql
-        WAITS="${WAITS} -wait tcp://localhost:5432 -timeout 10m "
-    fi
     # wait for ODB again
-    /usr/local/bin/dockerize ${WAITS}
     echo "Running quickstart-bootstrap"
+    touch /opt/zato/zato_ide_password && chown zato. /opt/zato/zato_ide_password
     sudo -H -u zato /opt/zato/quickstart-bootstrap.sh
-    if [[ "${ODB_TYPE}" == "postgresql" && "${ODB_HOSTNAME}" == "localhost" ]]; then
-        echo "Stopping initialization of Postgresql"
-        su postgres -c "PGUSER=\"${PGUSER:-$POSTGRES_USER}\" $PGBINPATH/pg_ctl -D \"$PGDATA\" -m fast -w stop"
-        sed -i -e "s|#log_destination = 'stderr'|log_destination = 'stderr'|" -e "s|#logging_collector = off|logging_collector = on|" /var/lib/postgresql/data/postgresql.conf
-        unset PGPASSWORD
-    fi
 fi
 
 # Hot deploy configuration

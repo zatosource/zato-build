@@ -107,7 +107,7 @@ spec:
     spec:
       containers:
       - name: scheduler
-        image: registry.gitlab.com/zatosource/docker-registry/cloud:3.1
+        image: registry.gitlab.com/zatosource/docker-registry/cloud:3.2
         imagePullPolicy: "Always"
         env:
           - name: ZATO_POSITION
@@ -168,7 +168,7 @@ spec:
     spec:
       containers:
       - name: bootstrap
-        image: registry.gitlab.com/zatosource/docker-registry/cloud:3.1
+        image: registry.gitlab.com/zatosource/docker-registry/cloud:3.2
         imagePullPolicy: "Always"
         env:
           - name: ZATO_POSITION
@@ -229,7 +229,7 @@ spec:
     spec:
       containers:
       - name: webadmin
-        image: registry.gitlab.com/zatosource/docker-registry/cloud:3.1
+        image: registry.gitlab.com/zatosource/docker-registry/cloud:3.2
         imagePullPolicy: "Always"
         env:
           - name: ZATO_POSITION
@@ -292,7 +292,7 @@ spec:
     spec:
       containers:
       - name: server
-        image: registry.gitlab.com/zatosource/docker-registry/cloud:3.1
+        image: registry.gitlab.com/zatosource/docker-registry/cloud:3.2
         imagePullPolicy: "Always"
         env:
           - name: ZATO_POSITION
@@ -357,7 +357,12 @@ kind: Service
 metadata:
   name: server
   namespace: {{ default "zato" .Env.NAMESPACE }}
+  annotations:
+    service.beta.kubernetes.io/do-loadbalancer-protocol: "http"
+    service.beta.kubernetes.io/do-loadbalancer-healthcheck-path: "/zato/ping"
 spec:
+  type: LoadBalancer
+  externalTrafficPolicy: Cluster
   ports:
     - name: api
       protocol: TCP
@@ -365,4 +370,3 @@ spec:
       targetPort: 17010
   selector:
     app: server
-  type: LoadBalancer
