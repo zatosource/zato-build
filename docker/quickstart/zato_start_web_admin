@@ -2,5 +2,13 @@
 
 cd /opt/zato
 
-rm -f /opt/zato/env/qs-1/web-admin/pidfile
-/opt/zato/current/bin/zato start /opt/zato/env/qs-1/web-admin --fg
+if [[ -d /opt/zato/env/qs-1/dashboard ]];then
+    rm -f /opt/zato/env/qs-1/dashboard/pidfile
+    /opt/zato/current/bin/zato start /opt/zato/env/qs-1/dashboard --fg
+elif [[ -d /opt/zato/env/qs-1/web-admin ]];then
+    rm -f /opt/zato/env/qs-1/web-admin/pidfile
+    [[ -d /opt/zato/env/qs-1/web-admin ]] && /opt/zato/current/bin/zato start /opt/zato/env/qs-1/web-admin --fg
+else
+    echo "Zato Dashboard's directory not found"
+    exit 1
+fi
