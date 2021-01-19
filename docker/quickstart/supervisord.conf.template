@@ -39,19 +39,7 @@ numprocs=1
 dependent_startup=true
 {{ end }}
 
-{{ if or ( empty .Env.ODB_HOSTNAME ) ( eq .Env.ODB_HOSTNAME "localhost" ) }}
-[program:postgresql]
-command=postgres
-user=postgres
-environment=PGDATA="{{ .Env.PGDATA }}"
-autostart=false
-autorestart=true
-stderr_logfile=/var/log/postgresql/main.log
-numprocs=1
-dependent_startup=true
-{{ end }}
-
-[program:zato-load-balancer]
+[program:loadbalancer]
 command = /opt/zato/zato_start_load_balancer
 user = zato
 autostart=false
@@ -61,7 +49,7 @@ killasgroup = true
 numprocs=1
 dependent_startup=true
 
-[program:zatoserver1]
+[program:server1]
 command = /opt/zato/zato_start_server1
 user = zato
 autostart=false
@@ -71,7 +59,8 @@ killasgroup = true
 numprocs=1
 dependent_startup=true
 
-[program:zatoserver2]
+{{ if eq (default .Env.SERVERS_COUNT 1 ) 2 -}}
+[program:server2]
 command = /opt/zato/zato_start_server2
 user = zato
 autostart=false
@@ -80,10 +69,11 @@ stopasgroup = true
 killasgroup = true
 numprocs=1
 dependent_startup=true
-dependent_startup_wait_for=zatoserver1:running
+dependent_startup_wait_for=server1:running
+{{- end }}
 
-[program:zatowebadmin]
-command = /opt/zato/zato_start_web_admin
+[program:dashboard]
+command = /opt/zato/zato_start_dashboard
 user = zato
 autostart=false
 autorestart = unexpected
@@ -91,9 +81,9 @@ stopasgroup = true
 killasgroup = true
 numprocs=1
 dependent_startup=true
-dependent_startup_wait_for=zatoserver1:running
+dependent_startup_wait_for=server1:running
 
-[program:zatoscheduler]
+[program:scheduler]
 command = /opt/zato/zato_start_scheduler
 user = zato
 autostart=false
@@ -102,7 +92,7 @@ stopasgroup = true
 killasgroup = true
 numprocs=1
 dependent_startup=true
-dependent_startup_wait_for=zatoserver1:running
+dependent_startup_wait_for=server1:running
 
 [program:import]
 command=/opt/zato/import-utility.sh
@@ -113,18 +103,4 @@ stopasgroup = true
 killasgroup = true
 numprocs=1
 dependent_startup=true
-dependent_startup_wait_for=zatoserver1:running
-
-{{ if .Env.ZATO_IDE_PUBLISHER_PASSWORD }}
-[program:idepasswordupdate]
-command=/opt/zato/ide_password_update.sh
-directory=/opt/zato/
-user=zato
-autostart=false
-autorestart = unexpected
-stopasgroup = true
-killasgroup = true
-numprocs=1
-dependent_startup=true
-dependent_startup_wait_for=zatoserver1:running
-{{ end }}
+dependent_startup_wait_for=server1:running

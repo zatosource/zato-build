@@ -4,7 +4,7 @@ source /etc/environment
 /usr/local/bin/dockerize -wait tcp://localhost:17010 -timeout 10m || exit 1
 
 # add a new wait time
-sleep 20
+sleep 10
 
 if [[ -d /opt/hot-deploy/ && -n "$(find /opt/hot-deploy/ -type f)" ]]; then
     find /opt/hot-deploy/ -type f -exec touch {} \;

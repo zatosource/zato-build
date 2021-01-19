@@ -13,6 +13,7 @@ before_cache:
 # https://zato.io/docs/admin/guide/install/index.html#operating-system-considerations
 env:
   global:
+  - ZATO_BRANCH: support/3.2
   - ZATO_VERSION: 3.2.0
   - PY_BINARY: python3
   - ZATO_UPLOAD_PACKAGES: "y"

@@ -1,4 +1,4 @@
-#!/opt/zato/3.1.0/code/bin/python
+#!/opt/zato/current/bin/python
 # -*- coding: utf-8 -*-
 
 """

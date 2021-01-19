@@ -37,13 +37,6 @@ if [[ -n "$4" && -z "$(echo $4| grep -E '^(stable|alpha|beta|pre|rc)')" ]] ; the
     exit 1
 fi
 
-INSTALL_CMD="yum"
-
-if [ "$(type -p dnf)" ]
-then
-    INSTALL_CMD="dnf"
-fi
-
 BRANCH_NAME=$1
 ZATO_VERSION=$2
 PY_BINARY=python3
@@ -52,7 +45,7 @@ PY_BINARY=python3
 TRAVIS_PROCESS_NAME=$5
 
 if ! [ -x "$(command -v $PY_BINARY)" ]; then
-    sudo ${INSTALL_CMD} install -y ${PY_BINARY:-python3}
+    sudo dnf install -y ${PY_BINARY:-python3}
     alternatives --set python /usr/bin/${PY_BINARY:-python3}
 fi
 
@@ -76,8 +69,19 @@ ZATO_TARGET_DIR=$ZATO_ROOT_DIR/$ZATO_VERSION
 
 echo Building RHEL RPM zato-$ZATO_VERSION-$PACKAGE_VERSION.$RHEL_VERSION.$ARCH
 
+set -x
+
 function prepare {
-  sudo ${INSTALL_CMD} install -y rpm-build rpmdevtools wget
+  sudo dnf install -y rpm-build rpmdevtools wget dnf-plugins-core
+  sudo dnf install -y python3
+  sudo dnf -y groupinstall development
+  sudo dnf install -y epel-release
+  sudo dnf install -y 'dnf-command(config-manager)'
+  sudo dnf config-manager --set-enabled $(sudo dnf repolist all 2>/dev/null|grep PowerTools|awk '{print $1}'|head -n 1)
+#   if [[ "$(grep enabled=0 /etc/yum.repos.d/CentOS-PowerTools.repo)" ]];then
+#     sudo set -i -e 's|enabled=0|enabled=1|' /etc/yum.repos.d/CentOS-PowerTools.repo
+#   fi
+  sudo dnf update -y
   rpmdev-setuptree
 }
 
@@ -104,39 +108,23 @@ function checkout_zato {
 function install_zato {
     cd $ZATO_TARGET_DIR/code
 
-    sudo ${INSTALL_CMD} install -y python3
-    sudo ${INSTALL_CMD} -y groupinstall development
-    sudo ${INSTALL_CMD} install -y 'dnf-command(config-manager)'
-    sudo ${INSTALL_CMD} dnf install -y epel-release
-    sudo ${INSTALL_CMD} dnf update -y
+    sed -i -e "s:config-manager --set-enabled PowerTools:config-manager --set-enabled \$(sudo \${INSTALL_CMD} repolist all|grep PowerTools | awk '{print \$1}'|head -n 1 ):" _install-rhel.sh
 
-    sudo ${INSTALL_CMD} repolist all
-    sudo ${INSTALL_CMD} config-manager --set-enabled PowerTools
-    
     ./install.sh -p ${PY_BINARY}
-    if [[ "${SKIP_TESTS:-n}" == "y" ]]; then
-        run_tests_zato || exit 1
-    fi
 
     find $ZATO_TARGET_DIR/. -name *.pyc -exec rm -f {} \;
     find $ZATO_TARGET_DIR/. ! -perm /004 -exec chmod 644 {} \;
     [[ -f ./code/hotfixman.sh ]] && rm -f ./code/hotfixman.sh
     [[ -f ./code/hotfixes ]] && rm -rf ./code/hotfixes
-}
-
-function run_tests_zato {
-    for i in zato-server zato-cy;do
-        pushd $i
-        make run-tests || exit 1
-        popd
-    done
-    pushd zato-sso
-        make sso-test || exit 1
-    popd
+    if [[ "${SKIP_TESTS:-n}" == "y" ]]; then
+        cd $ZATO_TARGET_DIR/
+        echo "Running tests"
+        make || exit 1
+    fi
 }
 
 function build_rpm {
-    sudo ${INSTALL_CMD} install -y ${PY_BINARY:-python3}-devel
+    sudo dnf install -y ${PY_BINARY:-python3}-devel
     rm -f $SOURCE_DIR/zato.spec
     cp $SOURCE_DIR/zato.spec.template $SOURCE_DIR/zato.spec
     sed -i.bak "s/PYTHON_DEPS/${PY_BINARY}/g" $SOURCE_DIR/zato.spec
