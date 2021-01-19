@@ -9,5 +9,5 @@ for f in ansible.cfg \
     provisioning/roles/.gitkeep
 do
     [[ -n "$(dirname $f)" && -d "$(dirname $f)" ]] || mkdir -p "$(dirname $f)"
-    curl "https://raw.githubusercontent.com/zatosource/zato-build/master/vagrant/zato-3.2/$f" > "${f}"
+    curl "https://raw.githubusercontent.com/zatosource/zato-build/main/vagrant/zato-3.2/$f" > "${f}"
 done

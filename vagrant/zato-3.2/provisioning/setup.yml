@@ -88,7 +88,7 @@
 
 - name: Zato | Download /opt/zato/update_password.config
   get_url:
-    url: https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/update_password.config
+    url: https://raw.githubusercontent.com/zatosource/zato-build/main/docker/quickstart/update_password.config
     dest: /opt/zato/update_password.config
     mode: 0644
     owner: zato
@@ -96,7 +96,7 @@
 
 - name: Zato | Download /opt/zato/zato_start_load_balancer
   get_url:
-    url: https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/zato_start_load_balancer
+    url: https://raw.githubusercontent.com/zatosource/zato-build/main/docker/quickstart/zato_start_load_balancer
     dest: /opt/zato/zato_start_load_balancer
     mode: 0755
     owner: zato
@@ -104,7 +104,7 @@
 
 - name: Zato | Download /opt/zato/zato_start_scheduler
   get_url:
-    url: https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/zato_start_scheduler
+    url: https://raw.githubusercontent.com/zatosource/zato-build/main/docker/quickstart/zato_start_scheduler
     dest: /opt/zato/zato_start_scheduler
     mode: 0755
     owner: zato
@@ -112,7 +112,7 @@
 
 - name: Zato | Download /opt/zato/zato_start_server1
   get_url:
-    url: https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/zato_start_server1
+    url: https://raw.githubusercontent.com/zatosource/zato-build/main/docker/quickstart/zato_start_server1
     dest: /opt/zato/zato_start_server1
     mode: 0755
     owner: zato
@@ -120,7 +120,7 @@
 
 - name: Zato | Download /opt/zato/zato_start_server2
   get_url:
-    url: https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/zato_start_server2
+    url: https://raw.githubusercontent.com/zatosource/zato-build/main/docker/quickstart/zato_start_server2
     dest: /opt/zato/zato_start_server2
     mode: 0755
     owner: zato
@@ -128,7 +128,7 @@
 
 - name: Zato | Download /opt/zato/zato_start_web_admin
   get_url:
-    url: https://raw.githubusercontent.com/zatosource/zato-build/master/docker/quickstart/zato_start_web_admin
+    url: https://raw.githubusercontent.com/zatosource/zato-build/main/docker/quickstart/zato_start_web_admin
     dest: /opt/zato/zato_start_web_admin
     mode: 0755
     owner: zato
@@ -136,7 +136,7 @@
 
 - name: Zato | Download /opt/zato/hotdeploy-utility.sh
   get_url:
-    url: https://raw.githubusercontent.com/zatosource/zato-build/master/docker/cloud/hotdeploy-utility.sh
+    url: https://raw.githubusercontent.com/zatosource/zato-build/main/docker/cloud/hotdeploy-utility.sh
     dest: /opt/zato/hotdeploy-utility.sh
     mode: 0755
     owner: zato
