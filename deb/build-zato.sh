@@ -134,6 +134,7 @@ function install_zato {
     sudo apt-get install -y libsasl2-dev libldap2-dev libssl-dev pkg-config libtool cmake build-essential cmake autoconf python3-distutils python3-dev
 
     ./install.sh -p ${PY_BINARY}
+    git checkout -- ./install.sh ./_install-deb.sh
 
     find $ZATO_TARGET_DIR/. -name *.pyc -exec rm -f {} \;
     find $ZATO_TARGET_DIR/. ! -perm /004 -exec chmod 644 {} \;
