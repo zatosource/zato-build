@@ -65,7 +65,8 @@ COPY hotdeploy-utility.sh /opt/zato/hotdeploy-utility.sh
 COPY enmasse-utility.sh /opt/zato/enmasse-utility.sh
 COPY zato.conf /etc/supervisor/conf.d/zato.conf
 
-RUN chmod 755 /usr/local/bin/configset.py /entrypoint.sh /opt/zato/hotdeploy-utility.sh /opt/zato/enmasse-utility.sh
+RUN chmod 755 /usr/local/bin/configset.py /entrypoint.sh /opt/zato/hotdeploy-utility.sh /opt/zato/enmasse-utility.sh && \
+    chown -R zato:zato /opt/zato
 
 EXPOSE 8183 17010 17011 11223
 ENTRYPOINT ["/tini", "--"]

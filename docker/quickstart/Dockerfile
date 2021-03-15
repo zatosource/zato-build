@@ -80,7 +80,8 @@ RUN chmod 755 /entrypoint.sh \
     /opt/zato/zato_start_server1 \
     /opt/zato/zato_start_server2 \
     /opt/zato/zato_start_dashboard \
-    /opt/zato/zato_start_scheduler && chown zato. /opt/zato/update_password.config
+    /opt/zato/zato_start_scheduler && chown zato. /opt/zato/update_password.config && \
+    chown -R zato:zato /opt/zato
 
 EXPOSE 22 6379 8183 17010 17011 11223
 CMD [ "/entrypoint.sh" ]
