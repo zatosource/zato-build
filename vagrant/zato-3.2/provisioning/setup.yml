@@ -126,10 +126,10 @@
     owner: zato
     group: zato
 
-- name: Zato | Download /opt/zato/zato_start_web_admin
+- name: Zato | Download /opt/zato/zato_start_dashboard
   get_url:
-    url: https://raw.githubusercontent.com/zatosource/zato-build/main/docker/quickstart/zato_start_web_admin
-    dest: /opt/zato/zato_start_web_admin
+    url: https://raw.githubusercontent.com/zatosource/zato-build/main/docker/quickstart/zato_start_dashboard
+    dest: /opt/zato/zato_start_dashboard
     mode: 0755
     owner: zato
     group: zato
