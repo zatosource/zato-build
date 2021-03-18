@@ -196,6 +196,7 @@
          --odb_db_name "zato" \
          --odb_password "{{ dbpassword }}" \
          --kvdb_password '' \
+         --servers 2 \
          /opt/zato/env/qs-1 postgresql localhost 6379
          --verbose
   become: yes
@@ -222,6 +223,19 @@
     chdir: /opt/zato/env/qs-1
     creates: /opt/zato/zato_user_password
     executable: /bin/bash
+
+- name: Zato | Dashboard path verification
+  stat:
+    path: /opt/zato/env/qs-1/web-admin
+  register: dashboard_old_path
+
+- name: Zato | Backward compatibility
+  replace:
+   path: /opt/zato/update_password.config
+   regexp: 'dashboard'
+   replace: 'web-admin'
+   backup: yes
+  when: dashboard_old_path.stat.exists and dashboard_old_path.stat.isdir
 
 - name: Zato | Set webadmin password
   shell: |
