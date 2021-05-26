@@ -140,7 +140,7 @@ function install_zato {
     find $ZATO_TARGET_DIR/. ! -perm /004 -exec chmod 644 {} \;
     [[ -f ./code/hotfixman.sh ]] && rm -f ./code/hotfixman.sh
     [[ -f ./code/hotfixes ]] && rm -rf ./code/hotfixes
-    if [[ "${SKIP_TESTS:-n}" == "y" ]]; then
+    if [[ "${SKIP_TESTS:-n}" == "n" ]]; then
         cd $ZATO_TARGET_DIR/
         echo "Running tests"
         make || exit 1
