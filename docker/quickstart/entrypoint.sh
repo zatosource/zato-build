@@ -5,6 +5,9 @@ set -e
 
 cd /opt/zato/current || exit 1
 git pull || exit 1
+if [[ -z "${RUN_ZATO_UPDATE}" && "${RUN_ZATO_UPDATE}" == "y" ]]; then
+    ./update.sh
+fi
 cd /opt/zato/ || exit 1
 
 if [[ -z "${ZATO_SSH_PASSWORD}" ]]; then
